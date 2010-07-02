@@ -1,0 +1,780 @@
+CurrencyTable = {}
+
+function AddCurrency( ply, handle, id, encoded, decoded )
+	local currencydata = {}
+	currencydata.name = encoded.name
+	currencydata.centenials = encoded.centenials
+	currencydata.slang = encoded.slang
+	currencydata.abr   = encoded.abr
+	CurrencyTable = currencydata
+end
+datastream.Hook( "addcurrency", AddCurrency )
+
+Schemas = {}
+
+function AddSchema(data)
+	local schema = data:ReadString()
+	AddRclicks(schema)
+	AddCharCreates(schema)
+end
+usermessage.Hook("addschema", AddSchema)
+
+RclickTable = {}
+
+function AddRclicks(schema)
+		local list = file.FindInLua( "tiramisu/gamemode/schemas/" .. schema .. "/rclick/*.lua" )	
+		for k,v in pairs( list ) do
+			local path = "tiramisu/gamemode/schemas/" .. schema .. "/rclick/" .. v
+			RCLICK = { }
+			include( path )
+			table.insert(RclickTable, RCLICK);
+		end
+end
+
+
+InventoryTable = {}
+
+function AddItem(data)
+	local itemdata = {}
+	itemdata.Name = data:ReadString();
+	itemdata.Class = data:ReadString();
+	itemdata.Description = data:ReadString();
+	itemdata.Model = data:ReadString();
+	
+	table.insert(InventoryTable, itemdata);
+end
+usermessage.Hook("addinventory", AddItem);
+
+function ClearItems()
+	
+	InventoryTable = {}
+	
+end
+usermessage.Hook("clearinventory", ClearItems);
+
+BusinessTable = {};
+
+function AddBusinessItem(data)
+	local itemdata = {}
+	itemdata.Name = data:ReadString();
+	itemdata.Class = data:ReadString();
+	itemdata.Description = data:ReadString();
+	itemdata.Model = data:ReadString();
+	itemdata.Price = data:ReadLong();
+	
+	table.insert(BusinessTable, itemdata);
+end
+usermessage.Hook("addbusiness", AddBusinessItem);
+
+function ClearBusinessItems()
+	
+	BusinessTable = {}
+	
+end
+usermessage.Hook("clearbusiness", ClearBusinessItems);
+
+function InitHiddenButton()
+	HiddenButton = vgui.Create("DButton") -- HOLY SHIT WHAT A HACKY METHOD FO SHO
+	HiddenButton:SetSize(ScrW(), ScrH());
+	HiddenButton:SetText("");
+	HiddenButton:SetDrawBackground(false);
+	HiddenButton:SetDrawBorder(false);
+	HiddenButton.DoRightClick = function()
+		local Vect = gui.ScreenToVector(gui.MouseX(), gui.MouseY());
+		local tracedata = {};
+		tracedata.start = LocalPlayer():GetShootPos();
+		tracedata.endpos = LocalPlayer():GetShootPos() + (Vect * 100);
+		tracedata.filter = LocalPlayer();
+		local trace = util.TraceLine(tracedata);
+		
+		if(trace.HitNonWorld) then
+			local target = trace.Entity;
+			
+			local ContextMenu = DermaMenu()
+			
+				for k,v in pairs (RclickTable) do
+					if v.Condition(target) then ContextMenu:AddOption(v.Name, function() v.Click(target, LocalPlayer()) end) end
+				end
+				
+			ContextMenu:Open();
+		end
+	end
+end
+
+function CreateModelWindow()
+
+	if(ModelWindow) then
+	
+		ModelWindow:Remove();
+		ModelWindow = nil;
+		
+	end
+
+	ModelWindow = vgui.Create( "DFrame" )
+	ModelWindow:SetTitle("Select Model");
+
+	local mdlPanel = vgui.Create( "DModelPanel", ModelWindow )
+	mdlPanel:SetSize( 300, 300 )
+	mdlPanel:SetPos( 10, 20 )
+	mdlPanel:SetModel( models[1] )
+	mdlPanel:SetAnimSpeed( 0.0 )
+	mdlPanel:SetAnimated( false )
+	mdlPanel:SetAmbientLight( Color( 50, 50, 50 ) )
+	mdlPanel:SetDirectionalLight( BOX_TOP, Color( 255, 255, 255 ) )
+	mdlPanel:SetDirectionalLight( BOX_FRONT, Color( 255, 255, 255 ) )
+	mdlPanel:SetCamPos( Vector( 50, 0, 50 ) )
+	mdlPanel:SetLookAt( Vector( 0, 0, 50 ) )
+	mdlPanel:SetFOV( 70 )
+
+	local RotateSlider = vgui.Create("DNumSlider", ModelWindow);
+	RotateSlider:SetMax(360);
+	RotateSlider:SetMin(0);
+	RotateSlider:SetText("Rotate");
+	RotateSlider:SetDecimals( 0 );
+	RotateSlider:SetWidth(300);
+	RotateSlider:SetPos(10, 290);
+
+	local BodyButton = vgui.Create("DButton", ModelWindow);
+	BodyButton:SetText("Body");
+	BodyButton.DoClick = function()
+
+		mdlPanel:SetCamPos( Vector( 50, 0, 50) );
+		mdlPanel:SetLookAt( Vector( 0, 0, 50) );
+		mdlPanel:SetFOV( 70 );
+		
+	end
+	BodyButton:SetPos(10, 40);
+
+	local FaceButton = vgui.Create("DButton", ModelWindow);
+	FaceButton:SetText("Face");
+	FaceButton.DoClick = function()
+
+		mdlPanel:SetCamPos( Vector( 50, 0, 60) );
+		mdlPanel:SetLookAt( Vector( 0, 0, 60) );
+		mdlPanel:SetFOV( 40 );
+		
+	end
+	FaceButton:SetPos(10, 60);
+
+	local FarButton = vgui.Create("DButton", ModelWindow);
+	FarButton:SetText("Far");
+	FarButton.DoClick = function()
+
+		mdlPanel:SetCamPos( Vector( 100, 0, 30) );
+		mdlPanel:SetLookAt( Vector( 0, 0, 30) );
+		mdlPanel:SetFOV( 70 );
+		
+	end
+	FarButton:SetPos(10, 80);
+	
+	local OkButton = vgui.Create("DButton", ModelWindow);
+	OkButton:SetText("OK");
+	OkButton.DoClick = function()
+
+		SetChosenModel(mdlPanel.Entity:GetModel());
+		ModelWindow:Remove();
+		ModelWindow = nil;
+		
+	end
+	OkButton:SetPos(10, 100);
+
+	function mdlPanel:LayoutEntity(Entity)
+
+		self:RunAnimation();
+		Entity:SetAngles( Angle( 0, RotateSlider:GetValue(), 0) )
+		
+	end
+
+	local i = 1;
+	
+	local LastMdl = vgui.Create( "DSysButton", ModelWindow )
+	LastMdl:SetType("left");
+	LastMdl.DoClick = function()
+
+		i = i - 1;
+		
+		if(i == 0) then
+			i = #models;
+		end
+		
+		mdlPanel:SetModel(models[i]);
+		
+	end
+
+	LastMdl:SetPos(10, 165);
+
+	local NextMdl = vgui.Create( "DSysButton", ModelWindow )
+	NextMdl:SetType("right");
+	NextMdl.DoClick = function()
+
+		i = i + 1;
+
+		if(i > #models) then
+			i = 1;
+		end
+		
+		mdlPanel:SetModel(models[i]);
+		
+	end
+	NextMdl:SetPos( 245, 165);
+	
+	ModelWindow:SetSize( 320, 330 )
+	ModelWindow:Center()	
+	ModelWindow:MakePopup()
+	ModelWindow:SetKeyboardInputEnabled( false )
+	
+end
+
+
+function InitHUDMenu()
+
+	InitHiddenButton();
+	/*
+	HUDMenu = vgui.Create( "DFrame" )
+	HUDMenu:SetPos( ScrW() - 130 - 5, 5 )
+	HUDMenu:SetSize( 130, 150 )
+	HUDMenu:SetTitle( "Player Menu" )
+	HUDMenu:SetVisible( true )
+	HUDMenu:SetDraggable( false )
+	HUDMenu:ShowCloseButton( false )
+
+	local label = vgui.Create("DLabel", HUDMenu);
+	label:SetWide(0);
+	label:SetPos(5, 25);
+	label:SetText("Name: " .. LocalPlayer():Nick());
+	
+	local label3 = vgui.Create("DLabel", HUDMenu);
+	label3:SetWide(0);
+	label3:SetPos(5, 40);
+	label3:SetText("Title: " .. LocalPlayer():GetNWString("title"));
+	
+	local label4 = vgui.Create("DLabel", HUDMenu);
+	label4:SetWide(0);
+	label4:SetPos(5, 55);
+	label4:SetText("Assosciation: " .. team.GetName(LocalPlayer():Team()));
+
+	local label5 = vgui.Create("DLabel", HUDMenu);
+	label5:SetWide(0);
+	label5:SetPos(5, 70);
+	label5:SetText(LocalPlayer():GetNWString("money") .. " " .. CurrencyTable.abr);
+	
+	local spawnicon = vgui.Create( "SpawnIcon", HUDMenu);
+	spawnicon:SetSize( 128, 128 );
+	spawnicon:SetPos(1,21);
+	spawnicon:SetIconSize( 128 )
+	spawnicon:SetModel(LocalPlayer():GetModel());
+	spawnicon:SetToolTip("Open Player Menu");
+	
+	local FadeSize = 130;
+	
+	function UpdateGUIData()
+		label:SetText("Name: " .. LocalPlayer():Nick());
+		
+		label3:SetText("Title: " .. LocalPlayer():GetNWString("title"));
+		
+		label4:SetText("Assosciation: " .. team.GetName(LocalPlayer():Team()));
+
+		label5:SetText(LocalPlayer():GetNWString("money") .. " " ..CurrencyTable.abr);
+
+		spawnicon:SetModel(LocalPlayer():GetModel());
+	end
+	
+	spawnicon.PaintOver = function()
+		spawnicon:SetPos(FadeSize - 129, 21);
+		HUDMenu:SetSize(FadeSize, 150);
+		HUDMenu:SetPos(ScrW() - FadeSize - 5, 5 );
+		
+		label:SetWide(FadeSize - 128);
+		label3:SetWide(FadeSize - 128);
+		label4:SetWide(FadeSize - 128);
+		label5:SetWide(FadeSize - 128);
+		
+		if(FadeSize > 130) then
+			FadeSize = FadeSize - 5;
+		end
+		
+		UpdateGUIData();
+	end
+	
+	spawnicon.PaintOverHovered = function()
+		
+		spawnicon:SetPos(FadeSize - 129, 21);
+		HUDMenu:SetSize(FadeSize, 150);
+		HUDMenu:SetPos(ScrW() - FadeSize - 5, 5 );
+		
+		label:SetWide(FadeSize - 128);
+		label3:SetWide(FadeSize - 128);
+		label4:SetWide(FadeSize - 128);
+		label5:SetWide(FadeSize - 128);
+		
+		if(FadeSize < 320) then
+			FadeSize = FadeSize + 5;
+		end
+		
+		UpdateGUIData();
+	end*/
+end
+
+function CreatePlayerMenu()
+	if(PlayerMenu) then
+		PlayerMenu:Remove();
+		PlayerMenu = nil;
+	end
+	
+	PlayerMenu = vgui.Create( "DFrame" )
+	PlayerMenu:SetPos( ScrW() / 2 - 320, ScrH() / 2 - 240 )
+	PlayerMenu:SetSize( 640, 480 )
+	PlayerMenu:SetTitle( "" )
+	--PlayerMenu:SetBackgroundBlur( true )
+	PlayerMenu:SetVisible( true )
+	PlayerMenu:SetDraggable( true )
+	PlayerMenu:ShowCloseButton( true )
+	function PlayerMenu:Paint()
+	end
+	PlayerMenu:MakePopup()
+
+	
+	PropertySheet = vgui.Create( "DPropertySheet" )
+	PropertySheet:SetParent(PlayerMenu)
+	PropertySheet:SetPos( 2, 30 )
+	PropertySheet:SetSize( 636, 448 )
+	
+	local PlayerInfo = vgui.Create( "DPanelList" )
+	PlayerInfo:SetPadding(20);
+	PlayerInfo:SetSpacing(20);
+	PlayerInfo:EnableHorizontal(false);
+	
+	local icdata = vgui.Create( "DForm" );
+	icdata:SetPadding(4);
+	icdata:SetName(LocalPlayer():Nick() or "");
+	
+	local FullData = vgui.Create("DPanelList");
+	FullData:SetSize(0, 84);
+	FullData:SetPadding(10);
+	
+	local DataList = vgui.Create("DPanelList");
+	DataList:SetSize(0, 64);
+	
+	local spawnicon = vgui.Create( "SpawnIcon");
+	spawnicon:SetModel(LocalPlayer():GetModel());
+	spawnicon:SetSize( 64, 64 );
+	DataList:AddItem(spawnicon);
+	
+	local DataList2 = vgui.Create( "DPanelList" )
+	
+	local label2 = vgui.Create("DLabel");
+	label2:SetText("Title: " .. LocalPlayer():GetNWString("title"));
+	DataList2:AddItem(label2);
+	
+	local label3 = vgui.Create("DLabel");
+	label3:SetText("Assosciation: " .. team.GetName(LocalPlayer():Team()));
+	DataList2:AddItem(label3);
+
+	local Divider = vgui.Create("DHorizontalDivider");
+	Divider:SetLeft(spawnicon);
+	Divider:SetRight(DataList2);
+	Divider:SetLeftWidth(64);
+	Divider:SetHeight(64);
+	
+	DataList:AddItem(spawnicon);
+	DataList:AddItem(DataList2);
+	DataList:AddItem(Divider);
+
+	FullData:AddItem(DataList)
+	
+	icdata:AddItem(FullData)
+	
+	local vitals = vgui.Create( "DForm" );
+	vitals:SetPadding(4);
+	vitals:SetName("Vital Signs");
+	
+	local VitalData = vgui.Create("DPanelList");
+	VitalData:SetAutoSize(true)
+	VitalData:SetPadding(10);
+	vitals:AddItem(VitalData);
+	
+	local healthstatus = ""
+	local hp = LocalPlayer():Health();
+	
+	if(!LocalPlayer():Alive()) then healthstatus = "Dead";
+	elseif(hp > 95) then healthstatus = "Healthy";
+	elseif(hp > 50 and hp < 95) then healthstatus = "OK";
+	elseif(hp > 30 and hp < 50) then healthstatus = "Near Death";
+	elseif(hp > 1 and hp < 30) then healthstatus = "Death Imminent"; end
+	
+	local health = vgui.Create("DLabel");
+	health:SetText("Vitals: " .. healthstatus);
+	VitalData:AddItem(health);
+	
+	PlayerInfo:AddItem(icdata)
+	PlayerInfo:AddItem(vitals)
+	
+	CharPanel = vgui.Create( "DPanelList" )
+	CharPanel:SetPadding(20);
+	CharPanel:SetSpacing(10);
+	CharPanel:EnableVerticalScrollbar();
+	CharPanel:EnableHorizontal(false);
+	
+	local label = vgui.Create("DLabel");
+	label:SetText("Click your character to select it");
+	CharPanel:AddItem(label);
+	
+	/*charlist = vgui.Create( "DPanelList" )
+	charlist:SetPadding(20);
+	charlist:SetSpacing(10);
+	charlist:EnableHorizontal(false);
+	CharPanel:AddItem( charlist )*/
+	
+	local widthnshit = 600
+	local numberofchars = table.getn( ExistingChars )
+	local modelnumber = {}
+	
+	local function AddCharacterModel( n, model )
+		
+		local mdlpanel = modelnumber[n]
+		
+		mdlpanel = vgui.Create( "DModelPanel" )
+		mdlpanel:SetSize( 200, 180 )
+		mdlpanel:SetModel( model )
+		mdlpanel:SetAnimSpeed( 0.0 )
+		mdlpanel:SetAnimated( false )
+		mdlpanel:SetAmbientLight( Color( 50, 50, 50 ) )
+		mdlpanel:SetDirectionalLight( BOX_TOP, Color( 255, 255, 255 ) )
+		mdlpanel:SetDirectionalLight( BOX_FRONT, Color( 255, 255, 255 ) )
+		mdlpanel:SetCamPos( Vector( 100, 0, 40 ) )
+		mdlpanel:SetLookAt( Vector( 0, 0, 40 ) )
+		mdlpanel:SetFOV( 70 )
+
+		mdlpanel.PaintOver = function()
+			surface.SetTextColor(Color(255,255,255,255));
+			surface.SetFont("Trebuchet18");
+			surface.SetTextPos((180 - surface.GetTextSize(ExistingChars[n]['name'])) / 2 , 0);
+			surface.DrawText(ExistingChars[n]['name'])
+		end
+		
+		function mdlpanel:OnMousePressed()
+			local Options = DermaMenu()
+			Options:AddOption("Select Character", function() 
+				LocalPlayer():ConCommand("rp_selectchar " .. n);
+				LocalPlayer().MyModel = ""
+			
+				PlayerMenu:Remove();
+				PlayerMenu = nil;
+			end )
+			Options:AddOption("Delete Character", function() 
+				LocalPlayer():ConCommand("rp_confirmremoval " .. n);
+				PlayerMenu:Remove();
+				PlayerMenu = nil;
+			end )
+			Options:Open()
+		end
+
+		function mdlpanel:LayoutEntity(Entity)
+
+			self:RunAnimation();
+			
+		end
+		function InitAnim()
+		
+			if(mdlpanel.Entity) then		
+				local iSeq = mdlpanel.Entity:LookupSequence( "idle_angry" );
+				mdlpanel.Entity:ResetSequence(iSeq);
+			
+			end
+			
+		end
+		
+		InitAnim()
+		CharPanel:AddItem(mdlpanel);
+	
+	end
+	
+	
+	for k, v in pairs(ExistingChars) do
+		AddCharacterModel( k, v['model'] )
+		
+	end
+	
+	local newchar = vgui.Create("DButton");
+	newchar:SetSize(100, 25);
+	newchar:SetText("New Character");
+	newchar.DoClick = function ( btn )
+		CAKE.NextStep()
+		PlayerMenu:Remove();
+		PlayerMenu = nil;
+	end
+	CharPanel:AddItem( newchar )
+	/*
+	Commands = vgui.Create( "DPanelList" )
+	Commands:SetPadding(20);
+	Commands:SetSpacing(20);
+	Commands:EnableHorizontal(true);
+	Commands:EnableVerticalScrollbar(true);
+	
+	local Flags = vgui.Create("DListView");
+	Flags:SetSize(550,446);
+	Flags:SetMultiSelect(false)
+	Flags:AddColumn("Flag Name");
+	Flags:AddColumn("Salary");
+	Flags:AddColumn("Business Access");
+	Flags:AddColumn("Public Flag");
+	Flags:AddColumn("Flag Key");
+	
+	function Flags:DoDoubleClick(LineID, Line)
+	
+		LocalPlayer():ConCommand("rp_flag " .. TeamTable[LineID].flagkey);
+		PlayerMenu:Remove();
+		PlayerMenu = nil;
+		
+	end
+	
+	for k, v in pairs(TeamTable) do
+		local yesno = "";
+		if(v.public) then
+			yesno = "Yes";
+		elseif(!v.public) then
+			yesno = "No";
+		end
+		
+		local yesno2 = "";
+		if(v.business) then
+			yesno2 = "Yes";
+		elseif(!v.business) then
+			yesno2 = "No";
+		end
+		
+		Flags:AddLine(v.name, tostring(v.salary), yesno2, yesno, v.flagkey);
+	end
+	
+	Commands:AddItem(Flags);*/
+	
+	Inventory = vgui.Create( "DPanelList" )
+	Inventory:SetPadding(20);
+	Inventory:SetSpacing(20);
+	Inventory:EnableHorizontal(true);
+	Inventory:EnableVerticalScrollbar(true);
+	
+	for k, v in pairs(InventoryTable) do
+		local spawnicon = vgui.Create( "SpawnIcon");
+		spawnicon:SetSize( 128, 128 );
+		spawnicon:SetIconSize( 128 )
+		spawnicon:SetModel(v.Model);
+		spawnicon:SetToolTip(v.Description);
+		
+		local function DeleteMyself()
+			spawnicon:Remove()
+		end
+		
+		spawnicon.DoClick = function ( btn )
+		
+			local ContextMenu = DermaMenu()
+				ContextMenu:AddOption("Drop", function() LocalPlayer():ConCommand("rp_dropitem " .. v.Class); DeleteMyself(); end);
+			ContextMenu:Open();
+			
+		end
+		
+		spawnicon.PaintOver = function()
+			surface.SetTextColor(Color(255,255,255,255));
+			surface.SetFont("DefaultSmall");
+			surface.SetTextPos(64 - surface.GetTextSize(v.Name) / 2, 5);
+			surface.DrawText(v.Name)
+		end
+		
+		spawnicon.PaintOverHovered = function()
+			surface.SetTextColor(Color(255,255,255,255));
+			surface.SetFont("DefaultSmall");
+			surface.SetTextPos(64 - surface.GetTextSize(v.Name) / 2, 5);
+			surface.DrawText(v.Name)
+		end
+		
+		Inventory:AddItem(spawnicon);
+	end
+	
+	/*
+	Business = vgui.Create( "DPanelList" )
+	Business:SetPadding(20);
+	Business:SetSpacing(20);
+	Business:EnableHorizontal(true);
+	Business:EnableVerticalScrollbar(true);
+	if(TeamTable[LocalPlayer():Team()] != nil) then
+			for k, v in pairs(BusinessTable) do
+				local spawnicon = vgui.Create( "SpawnIcon");
+				spawnicon:SetSize( 32, 32 );
+				spawnicon:SetIconSize( 32 )
+				spawnicon:SetModel(v.Model);
+				spawnicon:SetToolTip(v.Description);
+				
+				spawnicon.DoClick = function ( btn )
+				
+					local ContextMenu = DermaMenu()
+						if(tonumber(LocalPlayer():GetNWString("money")) >= v.Price) then
+							ContextMenu:AddOption("Purchase", function() LocalPlayer():ConCommand("rp_buyitem " .. v.Class); end);
+						else
+							ContextMenu:AddOption("Not Enough Tokens!");
+						end
+					ContextMenu:Open();
+					
+				end
+				
+				spawnicon.PaintOver = function()
+					surface.SetTextColor(Color(255,255,255,255));
+					surface.SetFont("DefaultSmall");
+					surface.SetTextPos(64 - surface.GetTextSize(v.Name .. " (" .. v.Price .. ")") / 2, 5);
+					surface.DrawText(v.Name .. " (" .. v.Price .. ")")
+				end
+				
+				spawnicon.PaintOverHovered = function()
+					surface.SetTextColor(Color(255,255,255,255));
+					surface.SetFont("DefaultSmall");
+					surface.SetTextPos(64 - surface.GetTextSize(v.Name .. " (" .. v.Price .. ")") / 2, 5);
+					surface.DrawText(v.Name .. " (" .. v.Price .. ")")
+				end
+				
+				Business:AddItem(spawnicon);
+			end
+	end*/
+	
+	Scoreboard = vgui.Create( "DPanelList" )
+	Scoreboard:SetPadding(0);
+	Scoreboard:SetSpacing(0);
+
+	-- Let's draw the SCOREBOARD.
+	
+	for k, v in pairs(player.GetAll()) do
+		local DataList = vgui.Create("DPanelList");
+		DataList:SetAutoSize( true )
+		
+		local CollapsableCategory = vgui.Create("DCollapsibleCategory");
+		CollapsableCategory:SetExpanded( 0 )
+		CollapsableCategory:SetLabel( v:Nick() );
+		Scoreboard:AddItem(CollapsableCategory);
+		
+		local spawnicon = vgui.Create( "SpawnIcon");
+		spawnicon:SetModel(v:GetModel());
+		spawnicon:SetSize( 64, 64 );
+		DataList:AddItem(spawnicon);
+		
+		local DataList2 = vgui.Create( "DPanelList" )
+		DataList2:SetAutoSize( true )
+		
+		local label = vgui.Create("DLabel");
+		label:SetText("OOC Name: " .. v:Name());
+		DataList2:AddItem(label);
+		
+		local label2 = vgui.Create("DLabel");
+		label2:SetText("Title: " .. v:GetNWString("title"));
+		DataList2:AddItem(label2);
+		
+		local label3 = vgui.Create("DLabel");
+		label3:SetText("Assosciation: " .. team.GetName(v:Team()));
+		DataList2:AddItem(label3);
+		
+		local Divider = vgui.Create("DHorizontalDivider");
+		Divider:SetLeft(spawnicon);
+		Divider:SetRight(DataList2);
+		Divider:SetLeftWidth(64);
+		Divider:SetHeight(64);
+		
+		DataList:AddItem(spawnicon);
+		DataList:AddItem(DataList2);
+		DataList:AddItem(Divider);
+		
+		CollapsableCategory:SetContents(DataList);
+	end
+	
+	Clothing = vgui.Create( "DPanelList" )
+	Clothing:SetPadding(20);
+	Clothing:SetSpacing(20);
+	Clothing:EnableHorizontal(false);
+	Clothing:EnableVerticalScrollbar(true);
+	local ClothingBox = vgui.Create("DListView");
+	ClothingBox:SetMultiSelect( false )
+	ClothingBox:SetSize(550,150);
+	ClothingBox:AddColumn("Item Name");
+	ClothingBox:AddColumn("Item Class");
+	ClothingBox:AddLine( "Default Clothes", "none" )
+	for k, v in pairs( InventoryTable ) do
+		if( string.match( v.Class, "clothing" ) ) then
+			ClothingBox:AddLine( v.Name, v.Class )
+		end
+	end
+	Clothing:AddItem( ClothingBox )
+	local Helmets = vgui.Create("DListView");
+	Helmets:SetMultiSelect( false )
+	Helmets:SetSize( 550, 150 )
+	Helmets:AddColumn( "Item Name" )
+	Helmets:AddColumn( "Item Class" )
+	Helmets:AddLine( "Default Helmet/Face", "none" )
+	for k, v in pairs( InventoryTable ) do
+		if( string.match( v.Class, "helmet" ) ) then
+			Helmets:AddLine( v.Name, v.Class )
+		end
+	end
+	Clothing:AddItem( Helmets )
+	local applyclothes = vgui.Create("DButton");
+	applyclothes:SetSize(100, 25);
+	applyclothes:SetText("Apply");
+	applyclothes.DoClick = function ( btn )
+		if #ClothingBox:GetSelected() > 0 and #Helmets:GetSelected() > 0 then
+			LocalPlayer():ConCommand( "rp_setclothing \"" .. ClothingBox:GetSelected()[1]:GetValue( 2 ) .. "\" \"" .. Helmets:GetSelected()[1]:GetValue( 2 ) .. "\"" )
+		end
+	end
+	Clothing:AddItem( applyclothes )
+	
+	local Help = vgui.Create( "DPanelList" )
+	Help:SetPadding(20);
+	Help:EnableHorizontal(false);
+	Help:EnableVerticalScrollbar(true);
+	local html = vgui.Create( "HTML")
+	html:SetPos(0,30)
+	html:SetSize(256, 370)
+	html:OpenURL( "http://blissroleplay.wikia.org" )
+	Help:AddItem( html )
+	
+	Business = vgui.Create( "DPanelList" )
+	Business:SetPadding(0);
+	Business:SetSpacing(0);
+    
+    BizSheet = vgui.Create( "DPropertySheet" )
+    BizSheet:SetPos( 0, 0 )
+    Business:AddItem( BizSheet )
+	   
+	MyBiz = vgui.Create( "DPanelList" )
+	MyBiz:SetPadding( 10 );
+	MyBiz:SetPos( 100, 100 )
+	MyBiz:SetSpacing( 10 );
+	MyBiz:EnableHorizontal( false );
+	MyBiz:EnableVerticalScrollbar(false);
+	labellol1 = vgui.Create( "DLabel" )
+	labellol1:SetPos( 100, 100 )
+	labellol1:SetText( "TESTING!" )
+	MyBiz:AddItem( labellol1 )
+	Business:AddItem( MyBiz )
+	
+	SearchBiz = vgui.Create( "DPanelList" )
+	SearchBiz:SetPos( 100, 100 )
+	SearchBiz:SetPadding( 10 );
+	SearchBiz:SetSpacing( 10 );
+	SearchBiz:EnableHorizontal( false );
+	SearchBiz:EnableVerticalScrollbar(false);
+	labellol2 = vgui.Create( "DLabel" )
+	labellol2:SetPos( 100, 100 )
+	labellol2:SetText( "TESTING!" )
+	Business:AddItem( SearchBiz)
+	SearchBiz:AddItem( labellol2 )
+	--Business:AddItem( MyBiz )
+
+	BizSheet:AddSheet( "My Group", MyBiz, "gui/silkicons/group", false, false, "The group which you belong");
+	BizSheet:AddSheet( "Search Groups", SearchBiz, "gui/silkicons/magnifier", false, false, "Search all groups");
+	
+	PropertySheet:AddSheet( "Player Menu", PlayerInfo, "gui/silkicons/user", false, false, "General information.");
+	PropertySheet:AddSheet( "Character Menu", CharPanel, "gui/silkicons/group", false, false, "Switch to another character or create a new one.");
+	--PropertySheet:AddSheet( "Commands/Flagging", Commands, "gui/silkicons/wrench", false, false, "Execute some common commands or set your flag.");
+	PropertySheet:AddSheet( "Backpack", Inventory, "gui/silkicons/box", false, false, "View your inventory.")
+	--PropertySheet:AddSheet( "Business", Business, "gui/silkicons/box", false, false, "Purchase items.");
+	PropertySheet:AddSheet( "Clothing", Clothing, "gui/silkicons/anchor", false, false, "Change your clothes." )
+	PropertySheet:AddSheet( "Scoreboard", Scoreboard, "gui/silkicons/application_view_detail", false, false, "View the scoreboard.");		
+	PropertySheet:AddSheet( "INFO.Net", Help, "gui/silkicons/magnifier", false, false, "Get some information about Bliss");
+	PropertySheet:AddSheet( "Groups", Business, "gui/silkicons/group", false, false, "Armies, corporations and businesses.");
+end
+usermessage.Hook("playermenu", CreatePlayerMenu);
