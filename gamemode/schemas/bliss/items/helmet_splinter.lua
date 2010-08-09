@@ -1,5 +1,5 @@
 ITEM.Name = "SPLINTER Space-Grade Helmet";
-ITEM.Class = "helmet_nanosuit";
+ITEM.Class = "helmet_splinter";
 ITEM.Description = "With embedded comm device and targeting aid";
 ITEM.Model = "models/player/Neo_heavy.mdl";
 ITEM.Purchaseable = true;

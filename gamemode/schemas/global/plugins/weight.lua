@@ -10,7 +10,6 @@ function meta:TakeExtraItem( item )
 	for k, v in pairs( inv ) do
 		if( v == class ) then
 			inv[ k ] = nil;
-			PrintTable( inv );
 			CAKE.SetCharField( self, "extrainventory", inv);
 			self:RefreshExtraInventory( );
 			CAKE.DayLog( "economy.txt", "Removing item '" .. class .. "' from " .. CAKE.FormatCharString( self ) .. " extra inventory" );

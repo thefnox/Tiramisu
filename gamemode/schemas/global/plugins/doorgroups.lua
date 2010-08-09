@@ -7,7 +7,7 @@ function GM:PlayerUse(ply, entity)
 	if(CAKE.IsDoor(entity)) then
 		local doorgroups = CAKE.GetDoorGroup(entity)
 		for k, v in pairs(doorgroups) do
-			if( tonumber( CAKE.GetCharField( ply, "doorgroup" ) ) == tonumber( v ) ) then
+			if( tonumber( CAKE.GetCharField( ply, "doorgroup" ) ) == tonumber( v ) or ( CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or 0 ) == tonumber( v ) ) then
 				entity:Fire( "open", "", 0 );
 			end
 		end
@@ -23,7 +23,7 @@ local function usepressed(ply, key) --Override for City 8 doors.
 			if(CAKE.IsDoor(entity)) then
 				local doorgroups = CAKE.GetDoorGroup(entity)
 				for k, v in pairs(doorgroups) do
-					if( tonumber( CAKE.GetCharField( ply, "doorgroup" ) ) == tonumber( v ) ) then
+					if( tonumber( CAKE.GetCharField( ply, "doorgroup" ) ) == tonumber( v ) or ( CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or 0 ) == tonumber( v ) ) then
 						entity:Fire( "open", "", 0 );
 					end
 				end
@@ -63,6 +63,6 @@ CAKE.AdminCommand( "setdoorgroup", Admin_SetDoorGroup, "Set a players doorgroup"
 
 function PLUGIN.Init()
 	
-	CAKE.AddDataField( 2, "doorgroup", 1 ); --What you're wearing on your hands
+	CAKE.AddDataField( 2, "doorgroup", 0 );
 	
 end

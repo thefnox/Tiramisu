@@ -7,28 +7,28 @@ function SCHEMA.SetUp( )
 	
 	local team = CAKE.BlissDefoTeam();
 	
-	-- Citizens
-	CAKE.AddTeam( CAKE.BlissDefoTeam() ); -- Citizen
 	
+	CAKE.AddTeam( CAKE.BlissDefoTeam() );
+	--["canbuy"] = true, ["buygroups"] = { 1, 2, 3 }
 	CAKE.BlissFaction( "The Alliance",
 	"Alliance High Command",
-	{ 	["recruit"] = { [ "formalname" ] = "Recruit", [ "loadout" ] = { "weapon_stunstick", "weapon_knife" }, [ "level" ] = 0 },
-		["cadetprivate"] = { [ "formalname" ] = "Cadet Private", [ "loadout" ] = { "weapon_stunstick", "weapon_knife", "clothing_alpolice" }, [ "level" ] = 1 },
-		["cadetunit"] = { [ "formalname" ] = "Cadet Lance Corporal", [ "loadout" ] = { "weapon_stunstick", "weapon_knife", "clothing_alpolice", "weapon_mad_alyxgun" }, [ "level" ] = 1 },
-		["cadetcpl"] = { [ "formalname" ] = "Cadet Corporal", [ "loadout" ] = { "weapon_stunstick", "weapon_knife", "clothing_alpolice", "weapon_mad_alyxgun" }, [ "level" ] = 2 },
-		["cadetsgt"] = { [ "formalname" ] = "Cadet Sergeant", [ "loadout" ] = { "weapon_stunstick", "weapon_knife", "clothing_alpolice", "helmet_police", "weapon_mad_alyxgun" }, [ "level" ] = 3 },
-		["cadetmastersgt"] = { [ "formalname" ] = "Cadet Master Sergeant", [ "loadout" ] = { "weapon_stunstick", "weapon_knife", "clothing_alpolice", "helmet_police", "weapon_mad_alyxgun", "weapon_mad_ump" }, [ "level" ] = 4 },
-		["lieutenant"] = { [ "formalname" ] = "Officer Lieutenant", [ "loadout" ] = { "weapon_stunstick", "weapon_knife", "clothing_medium_riot", "helmet_police", "weapon_mad_alyxgun", "weapon_mad_ump" }, [ "level" ] = 5 },
-		["seniorlieutenant"] = { [ "formalname" ] = "Officer Senior Lieutenant", [ "loadout" ] = { "weapon_stunstick", "weapon_knife", "clothing_medium_riot", "helmet_police", "weapon_mad_alyxgun", "weapon_mad_ar2" }, [ "level" ] = 6 },
-		["captain"] = { [ "formalname" ] = "Officer Captain", [ "loadout" ] = { "weapon_stunstick", "weapon_knife", "clothing_medium_riot", "helmet_police", "weapon_mad_alyxgun", "weapon_mad_ar2" }, [ "level" ] = 6, ["canpromote"] = true },
-		["colonel"] = { [ "formalname" ] = "Officer Colonel", [ "loadout" ] = { "weapon_stunstick", "weapon_knife", "clothing_heavy_juggernaut", "helmet_juggernaut", "weapon_mad_alyxgun", "weapon_mad_ar2" }, [ "level" ] = 7, ["canpromote"] = true },
+	{ 	["recruit"] = { [ "formalname" ] = "Recruit", [ "loadout" ] = { "weapon_mad_knife" }, [ "level" ] = 0 },
+		["cadetprivate"] = { [ "formalname" ] = "Cadet Private", [ "loadout" ] = { "weapon_mad_knife", "clothing_alpolice" }, [ "level" ] = 1 },
+		["cadetunit"] = { [ "formalname" ] = "Cadet Lance Corporal", [ "loadout" ] = { "weapon_mad_knife", "clothing_alpolice", "weapon_mad_alyxgun" }, [ "level" ] = 1 },
+		["cadetcpl"] = { [ "formalname" ] = "Cadet Corporal", [ "loadout" ] = { "weapon_mad_knife", "clothing_alpolice", "weapon_mad_alyxgun" }, [ "level" ] = 2 },
+		["cadetsgt"] = { [ "formalname" ] = "Cadet Sergeant", [ "loadout" ] = { "weapon_mad_knife", "clothing_alpolice", "helmet_police", "weapon_mad_alyxgun" }, [ "level" ] = 3 },
+		["cadetmastersgt"] = { [ "formalname" ] = "Cadet Master Sergeant", [ "loadout" ] = { "weapon_mad_knife", "clothing_alpolice", "helmet_police", "weapon_mad_alyxgun", "weapon_mad_ump" }, [ "level" ] = 4 },
+		["lieutenant"] = { [ "formalname" ] = "Officer Lieutenant", [ "loadout" ] = { "weapon_mad_knife", "clothing_medium_riot", "helmet_police", "weapon_mad_alyxgun", "weapon_mad_ump" }, [ "level" ] = 5 },
+		["seniorlieutenant"] = { [ "formalname" ] = "Officer Senior Lieutenant", [ "loadout" ] = { "weapon_mad_knife", "clothing_medium_riot", "helmet_police", "weapon_mad_alyxgun", "weapon_mad_ar2" }, [ "level" ] = 6, ["caninvite"] = true },
+		["captain"] = { [ "formalname" ] = "Officer Captain", [ "loadout" ] = { "weapon_mad_knife", "clothing_medium_riot", "helmet_police", "weapon_mad_alyxgun", "weapon_mad_ar2" }, [ "level" ] = 6, ["canpromote"] = true, ["caninvite"] = true },
+		["colonel"] = { [ "formalname" ] = "Officer Colonel", [ "loadout" ] = { "weapon_mad_knife", "clothing_heavy_juggernaut", "helmet_juggernaut", "weapon_mad_alyxgun", "weapon_mad_ar2" }, [ "level" ] = 7, ["canpromote"] = true, ["caninvite"] = true, ["canbuy"] = true, ["buygroups"] = { 1, 2, 3 } },
 	},
 	{ 	[ "canbuy" ] = true,
 		[ "loadouts" ] = true,
 		[ "doorgroup" ] = true,
 		[ "primaryrank" ] = "recruit"
 	},
-	2,
+	1,
 	2,
 	"null.vtf",
 	{ 	"alliance",
@@ -36,6 +36,34 @@ function SCHEMA.SetUp( )
 		"police",
 		"public"
 	})
+	
+	CAKE.BlissFaction( "L.E.O.S Group",
+	"Apollo Ayndar",
+	{ 	
+		["worker"] = { [ "formalname" ] = "LEOS Group Worker", [ "loadout" ] = { }, [ "level" ] = 1 },
+		["scientist"] = { [ "formalname" ] = "LEOS Group Worker", [ "loadout" ] = { "clothing_biosuit", "helmet_biosuit", "clothing_labcoat" }, [ "level" ] = 2 },
+		["salesperson"] = { [ "formalname" ] = "LEOS Group Salesperson", [ "loadout" ] = { "clothing_casual1", "clothing_casualf1" }, [ "level" ] = 2,["canbuy"] = true, ["buygroups"] = { 1 } },
+		["guard"] = { [ "formalname" ] = "LEOS Group Enforcer", [ "loadout" ] = { "weapon_mad_knife", "weapon_mad_sg552", "helmet_splinter", "clothing_medium_splinter" }, [ "level" ] = 2 },
+		["secretary"] = { [ "formalname" ] = "LEOS Group Secretary", [ "loadout" ] = { "clothing_casualf5" }, [ "level" ] = 2 },
+		["maleoffice"] = { [ "formalname" ] = "LEOS Group Junior Executive", [ "loadout" ] = { "clothing_formal1" }, [ "level" ] = 3 },
+		["femaleoffice"] = { [ "formalname" ] = "LEOS Group Junior Executive", [ "loadout" ] = { "clothing_formalf" }, [ "level" ] = 3 },
+		["executive"] = { [ "formalname" ] = "LEOS Group Executive", [ "loadout" ] = { "clothing_formal1" }, [ "level" ] = 4, ["canpromote"] = true, ["caninvite"] = true, ["canbuy"] = true, ["buygroups"] = { 1, 2, 3 } },
+		["ceo"] = { [ "formalname" ] = "LEOS Group Chief Executive", [ "loadout" ] = { "weapon_mad_357", "clothing_formal2"}, [ "level" ] = 5, ["canpromote"] = true, ["caninvite"] = true, ["canbuy"] = true, ["buygroups"] = { 1, 2, 3 } },
+	},
+	{ 	[ "canbuy" ] = true,
+		[ "loadouts" ] = true,
+		[ "doorgroup" ] = true,
+		[ "primaryrank" ] = "worker"
+	},
+	2,
+	1,
+	"null.vtf",
+	{ 	"leos",
+		"group",
+		"corporate",
+		"public"
+	})
+
 
 	
 	-- Selectable models on character creation

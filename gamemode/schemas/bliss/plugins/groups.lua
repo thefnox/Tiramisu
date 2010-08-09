@@ -272,6 +272,7 @@ local function ccLeaveGroup( ply, cmd, args )
 		end
 		CAKE.SendChat( ply, "You have left " .. group )
 		CAKE.SendConsole( ply, "You have left " .. group )
+		datastream.StreamToClients( ply, "recievemygroup", {} )
 		CAKE.SetCharField( ply, "group", "None" )
 	else
 		CAKE.SetCharField( ply, "group", "None" )
@@ -286,7 +287,7 @@ local function ccSendInvite( ply, cmd, args )
 	
 	local group = CAKE.GetCharField( ply, "group" )
 	local rank = CAKE.GetCharField( ply, "grouprank" )
-	local permission = CAKE.GetRankPermission( group, rank, "canpromote" )
+	local permission = CAKE.GetRankPermission( group, rank, "caninvite" )
 	local target = CAKE.FindPlayer( args[1] )
 	local targetgroup = CAKE.GetCharField( target, "group" )
 	
@@ -320,6 +321,20 @@ local function ccAcceptInvite( ply, cmd, args )
 		CAKE.SendChat( ply, "You have joined " .. group .. "." )
 		CAKE.SendConsole( ply, "You have joined " .. group .. "." )
 		CAKE.SetCharRank( promoter, rank, ply )
+		local name = CAKE.GetCharField( ply, "group" )
+		local rank = CAKE.GetCharField( ply, "grouprank" )
+		local rankname = CAKE.GetRankPermission( name, rank, "formalname" )
+		local type = CAKE.GetGroupField( name, "Type" )
+		local founder = CAKE.GetGroupField( name, "Founder" )
+		local rankpermissions = CAKE.GetRankPermissions( name, rank )
+		datastream.StreamToClients( ply, "recievemygroup", {
+			[ "Name" ]		= name,
+			[ "Type" ]		= type,
+			[ "Founder" ]	= founder,
+			[ "Rank" ]		= rankname,
+			[ "RankPermissions" ] = rankpermissions,
+			[ "Inventory" ]	= {}
+		})
 	end
 
 end
