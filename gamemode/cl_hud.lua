@@ -63,11 +63,9 @@ function DrawDeathMeter( )
 
 	local timeleft = LocalPlayer( ):GetNWInt( "deathmoderemaining" );
 	local w = ( timeleft / 120 ) * 198
-	
-	draw.RoundedBox( 8, ScrW( ) / 2 - 100, 5, 200, 50, Color( GUIcolor_trans ) );
-	draw.RoundedBox( 8, ScrW( ) / 2 - 98, 7, w, 46, Color( 255, 0, 0, 255 ) );
-	
-	draw.DrawText( "Time Left ( Type !acceptdeath to respawn )", "ChatFont", ScrW( ) / 2 - 93, 25 - 5, Color( 255,255,255,255 ), 0 );
+
+	draw.DrawText( "You have been mortally wounded. Type !acceptdeath to respawn ( You will lose your weapons )", "ChatFont", ScrW( ) / 2 - 250, 25 - 5, Color( 255,255,255,255 ), 0 );
+	draw.DrawText( "Or wait " .. tostring( timeleft ) .. " seconds" , "ChatFont", ScrW( ) / 2 - 93, 50 - 5, Color( 255,255,255,255 ), 0 );
 	
 end
 
@@ -118,7 +116,7 @@ function DrawPlayerInfo( )
 				
 					draw.DrawText( v:Nick( ), "DefaultSmall", screenpos.x, screenpos.y, Color( 255, 255, 255, alpha ), 1 )
 					draw.DrawText( v:GetNWString( "title" ), "DefaultSmall", screenpos.x, screenpos.y + 10, Color( 255, 255, 255, alpha ), 1 )
-					--draw.DrawText( v:GetNWString( "title2" ), "DefaultSmall", screenpos.x, screenpos.y + 20, Color( 255, 255, 255, alpha ), 1 )
+					draw.DrawText( v:GetNWString( "title2" ), "DefaultSmall", screenpos.x, screenpos.y + 20, Color( 255, 255, 255, alpha ), 1 )
 				
 					if( v:GetNWInt( "chatopen" ) == 1 ) then
 					
@@ -140,7 +138,30 @@ function GM:HUDPaint( )
 	--DrawTime( );
 	DrawPlayerInfo( );
 	DrawTargetInfo( );
+	if LocalPlayer():GetNWInt("deathmode", 0 ) == 1 then
+		DrawDeathMeter( )
+	end
 end
+
+local function DrawRagdollsAndShit()
+	if LocalPlayer():GetNWInt("deathmode", 0 ) == 1 then
+		local matWhite = CreateMaterial( "iWhite", "UnlitGeneric", {
+			[ "$basetexture" ] = "lights/white"
+		} )
+		render.SetMaterial( matWhite )
+		render.DrawScreenQuad()
+		render.ClearDepth()
+		if ValidEntity( CAKE.ViewRagdoll ) then
+			CAKE.ViewRagdoll:DrawModel()
+			CAKE.ViewRagdoll:DrawShadow()
+			for k, v in pairs (CAKE.ViewRagdoll.Clothing) do
+				v:DrawModel()
+				v:DrawShadow()
+			end
+		end
+	end
+end
+hook.Add( "PostDrawOpaqueRenderables", "DrawRagdollsAndShit", DrawRagdollsAndShit )
 
 local function EditGear( handler, id, encoded, decoded )
 

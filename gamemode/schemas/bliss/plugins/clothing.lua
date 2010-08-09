@@ -39,7 +39,11 @@ local function PlayerDeath( Victim, Inflictor, Attacker )
 		if( Victim.Clothing ) then
 			for k, v in pairs( Victim.Clothing ) do
 				if( ValidEntity( v ) ) then
-					v:SetParent( Victim:GetRagdollEntity() )
+					if ValidEntity( Victim.deathrag ) then
+						v:SetParent( Victim.deathrag )
+					else
+						v:SetParent( Victim:GetRagdollEntity() )
+					end
 					v:Initialize()
 				end
 			end
@@ -51,9 +55,9 @@ end
 hook.Add( "PlayerDeath", "PlayerRemoveClothing", PlayerDeath )
 
 
-	local meta = FindMetaTable( "Player" );
+local meta = FindMetaTable( "Player" );
 	
-	function CAKE.SetClothing( ply, body, helmet, glove )
+function CAKE.SetClothing( ply, body, helmet, glove )
 		
 		local usegloves = false
 		local usearmor = false
@@ -93,7 +97,7 @@ hook.Add( "PlayerDeath", "PlayerRemoveClothing", PlayerDeath )
 		CAKE.HandleClothing( ply, body, 1 )
 		CAKE.HandleClothing( ply, helmet or body, 2 )
 		CAKE.HandleClothing( ply, glove or body, 3 )
-		--ply:SetRenderMode( RENDERMODE_NONE )
+		CAKE.CalculateEncumberment( ply )
 		
 	end
 	
@@ -112,6 +116,15 @@ hook.Add( "PlayerDeath", "PlayerRemoveClothing", PlayerDeath )
 		end
 		
 		self.Clothing = {}
+		
+	end
+	
+	function meta:RemoveHelmet()
+	
+		local body = CAKE.GetCharField( self, "clothing" )
+		local face = CAKE.GetCharField( self, "model" )
+		local gloves = CAKE.GetCharField( self, "gloves" )
+		CAKE.SetClothing( self, body, face, gloves )
 		
 	end
 	
@@ -203,12 +216,16 @@ local function SpawnClothingHook( ply )
 			ply:RemoveClothing()
 			local clothes = CAKE.GetCharField( ply, "clothing" )
 			local helmet = CAKE.GetCharField( ply, "helmet" )
-			ply:SetNWString( "model", clothes )
 			CAKE.SetClothing( ply, clothes, helmet, "none" )
 			CAKE.SetCharField( ply, "clothing", clothes )
 			CAKE.SetCharField( ply, "helmet", helmet )
 			CAKE.SendConsole( ply, "Clothing set to:" .. clothes );
 			CAKE.SendConsole( ply, "Helmet set to:" .. helmet );
+			if clothes != "none" then
+				ply:SetNWString( "model", CAKE.ItemData[ clothes ].Model )
+			else
+				ply:SetNWString( "model", CAKE.GetCharField( ply, "model" ) )
+			end
 		end)
 	end
 end
@@ -247,6 +264,7 @@ local function ccSetClothing( ply, cmd, args )
 	CAKE.SetClothing( ply, body, helmet, gloves )
 	CAKE.SetCharField( ply, "clothing", body )
 	CAKE.SetCharField( ply, "helmet", helmet )
+	
 
 end
 concommand.Add( "rp_setclothing", ccSetClothing );

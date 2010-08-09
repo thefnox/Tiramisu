@@ -99,12 +99,38 @@ hook.Add( "PlayerDeath", "CakePlayerDeath", RemoveWeaponsAtDeath )*/
 local function WeaponsLoadout( ply )
 	
 	if ply:IsCharLoaded() then
-		if(ply:GetNWInt("charactercreate") != 1) then
+		if !ply.CheatedDeath then
+			if(ply:GetNWInt("charactercreate") != 1) then
+				for k, v in pairs( CAKE.GetCharField( ply, "weapons" ) ) do
+					ply:Give( v )
+				end
+				ply:RemoveAllAmmo( )
+				ply:RestoreAmmo()
+				if ply.GetLoadout then
+					local group = CAKE.GetCharField( ply, "group" )
+					local rank = CAKE.GetCharField( ply, "grouprank" )
+					ply.GetLoadout = false
+					if CAKE.GetGroupFlag( group, "loadouts" ) then
+						for k, v in pairs( CAKE.GetRankPermission( group, rank, "loadout" ) ) do
+							if !ply:HasItem( v ) then
+								ply:GiveItem( v )
+							end
+						end
+					end
+				end
+			end
+		else
 			for k, v in pairs( CAKE.GetCharField( ply, "weapons" ) ) do
-				ply:Give( v )
+				ply:TakeItem( v )
+			end
+			for k, v in pairs( CAKE.GetCharField( ply, "inventory" ) ) do
+				if string.match( v, "weapon" ) then 
+					ply:TakeItem( v )
+				end
 			end
 			ply:RemoveAllAmmo( )
-			ply:RestoreAmmo()
+			CAKE.SetCharField( ply, "weapons", {} )
+			CAKE.SetCharField( ply, "ammo", {} )
 		end
 	end
 

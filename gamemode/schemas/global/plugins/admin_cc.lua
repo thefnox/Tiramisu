@@ -437,6 +437,29 @@ function Admin_HeadRatio( ply, cmd, args)
 	   CAKE.SetCharField(target, "headratio", tonumber( args[2] ) );
 	   
 end
+
+function Admin_ForceJoin( ply, cmd, args)
+
+		local target = CAKE.FindPlayer(args[1])
+	   
+		if(target != nil and target:IsValid() and target:IsPlayer()) then
+			-- klol
+		else
+			CAKE.SendChat( ply, "Target not found!" );
+			return;
+		end
+	   
+		CAKE.SetCharField(target, "group", args[2] );
+	   	CAKE.SetCharField( target, "grouprank", args[3] )
+		ply.GetLoadout = true
+		
+end
+
+function Admin_CreateItem( ply, cmd, args ) -- Why the fuck wasn't this here on the first place...
+
+	CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ) );
+	
+end
 	
 -- Let's make some ADMIN COMMANDS!
 function PLUGIN.Init( )
@@ -461,7 +484,9 @@ function PLUGIN.Init( )
 	CAKE.AdminCommand( "setconvar", Admin_SetConVar, "Set a Convar", true, true, 4 );
 	CAKE.AdminCommand( "listvars", Admin_ListVars, "List convars", true, true, 4 );
 	CAKE.AdminCommand( "setflags", Admin_SetFlags, "Set a players flags", true, true, 3 );
+	CAKE.AdminCommand( "forcejoin", Admin_ForceJoin, "Forces a player to join a group", true, true, 3 );
 	CAKE.AdminCommand( "adddoor", Admin_AddDoor, "Add a door to a doorgroup", true, true, 4 );
+	CAKE.AdminCommand( "createitem", Admin_CreateItem, "Creates an item", true, true, 4 );
 	CAKE.AdminCommand( "setrank", Admin_SetRank, "Set the rank of another player", true, true, 5 )
 	CAKE.AdminCommand( "setmoney", Admin_SetMoney, "Set the money of another player", true, true, 5 )
 	CAKE.AdminCommand( "addspawn", Admin_AddSpawn, "Add a new spawn point.", true, true, 4 )

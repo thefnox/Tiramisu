@@ -18,6 +18,23 @@ local NeverAimed =
 	"hands"
 }
 
+function MakeAim( ply )
+	
+	if ValidEntity( ply:GetActiveWeapon() ) then
+		if !table.HasValue( NeverAimed, ply:GetActiveWeapon():GetClass() ) then
+			ply:SetNWBool( "aiming", true )
+			if SERVER then
+				ply:DrawViewModel( true )
+			end
+			--ply:GetActiveWeapon():SendWeaponAnim( ACT_VM_DRAW )
+			ply:GetActiveWeapon():SetNWBool( "NPCAimed", true );
+		else
+			MakeUnAim( ply )
+		end
+	end
+
+end
+
 function MakeUnAim( ply )
 
 	if ValidEntity( ply:GetActiveWeapon() ) then
@@ -35,21 +52,6 @@ function MakeUnAim( ply )
 		end
 	end
 	
-end
-
-function MakeAim( ply )
-	
-	if ValidEntity( ply:GetActiveWeapon() ) then
-		if !table.HasValue( NeverAimed, ply:GetActiveWeapon():GetClass() ) then
-			ply:SetNWBool( "aiming", true )
-			if SERVER then
-				ply:DrawViewModel( true )
-			end
-			--ply:GetActiveWeapon():SendWeaponAnim( ACT_VM_DRAW )
-			ply:GetActiveWeapon():SetNWBool( "NPCAimed", true );
-		end
-	end
-
 end
 
 local function HolsterToggle( ply )
@@ -658,7 +660,6 @@ local function DetectHoldType( act )
 end
 
 function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed )
-
 	local eye = ply:EyeAngles()
 	ply:SetLocalAngles( eye )
 
@@ -668,8 +669,7 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed )
 	
 	local estyaw = math.Clamp( math.atan2(velocity.y, velocity.x) * 180 / 3.141592, -180, 180 )
 	local myaw = math.NormalizeAngle(math.NormalizeAngle(eye.y) - estyaw)
-	
-        // set the move_yaw (because it's not an hl2mp model)
+
 	ply:SetPoseParameter("move_yaw", myaw * -1 ) 
 	
 	local len2d = velocity:Length2D()

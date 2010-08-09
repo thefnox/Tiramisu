@@ -13,7 +13,7 @@ CAKE.MySQLPlayerColumns = { }
 CAKE.MySQLCharColumns = {}
 -- This is so you can concatinate the player's steam ID later, without having to manually add the comma
 CAKE.MySQLDefaultPlayerValues = {}  
-CAKE.MySQLDefaultCharValues = {}
+CAKE.MySQLDefaultCharValues = {} --Hello if you're reading this it means you stole this gamemode, congratulations.
 CAKE.MySQLAutoBuildDelay = 1 -- No touchy
 CAKE.MySQLSelfBuild = false --Set this to true if you want MySQL to automatically create itself, this takes approximately 60 seconds, you should reset your server afterwards.
 CAKE.GDatabaseConfig = {} --Don't touch

@@ -203,9 +203,11 @@ end
 
 function GM:PlayerSpawn( ply )
 	
-	if(CAKE.PlayerData[CAKE.FormatSteamID(ply:SteamID())] == nil) then
+	if( !ply:IsCharLoaded() ) then
 		return; -- Player data isn't loaded. This is an initial spawn.
 	end
+	
+	CAKE.SavePlayerData( ply )
 	
 	datastream.StreamToClients( ply, "RecieveViewRagdoll", { ["ragdoll"] = false } )
 	ply:RemoveClothing()
@@ -239,11 +241,38 @@ function GM:PlayerSpawn( ply )
 		timer.Start( ply:SteamID() .. "rechargetimer" )
 	end
 	
+	timer.Create( ply:SteamID() .. "savetimer", 10, 0, function()
+		CAKE.SavePlayerData( ply )
+	end)
+	
 	-- Reset all the variables
 	ply:ChangeMaxHealth(CAKE.ConVars[ "DefaultHealth" ] - ply:MaxHealth());
 	ply:ChangeMaxArmor(0 - ply:MaxArmor());
 	ply:ChangeMaxWalkSpeed(CAKE.ConVars[ "WalkSpeed" ] - ply:MaxWalkSpeed());
 	ply:ChangeMaxRunSpeed(CAKE.ConVars[ "RunSpeed" ] - ply:MaxRunSpeed());
+	ply:SetPoseParameter("move_yaw", 0 )
+	MakeUnAim( ply )
+	
+	ply:RefreshExtraInventory( )
+	
+	if CAKE.GetCharField( ply, "group" ) == "None" or CAKE.GetCharField( ply, "group" ) == "none" then
+		--datastream.StreamToClients( ply, "recievemygroup", {} )
+	else
+		local name = CAKE.GetCharField( ply, "group" )
+		local rank = CAKE.GetCharField( ply, "grouprank" )
+		local rankname = CAKE.GetRankPermission( name, rank, "formalname" )
+		local type = CAKE.GetGroupField( name, "Type" )
+		local founder = CAKE.GetGroupField( name, "Founder" )
+		local rankpermissions = CAKE.GetRankPermissions( name, rank )
+		datastream.StreamToClients( ply, "recievemygroup", {
+			[ "Name" ]		= name,
+			[ "Type" ]		= type,
+			[ "Founder" ]	= founder,
+			[ "Rank" ]		= rank,
+			[ "RankPermissions" ] = rankpermissions,
+			[ "Inventory" ]	= {}
+		})
+	end
 	
 	CAKE.CallHook( "PlayerSpawn", ply )
 	CAKE.CallTeamHook( "PlayerSpawn", ply ); -- Change player speeds perhaps?
@@ -296,6 +325,40 @@ function GM:PlayerDeath(ply)
 	CAKE.DeathMode(ply);
 	CAKE.CallHook("PlayerDeath", ply);
 	CAKE.CallTeamHook("PlayerDeath", ply);
+	
+end
+
+function GM:PlayerDeathThink(ply)
+
+	ply.nextsecond = CAKE.NilFix(ply.nextsecond, CurTime())
+	ply.deathtime = CAKE.NilFix(ply.deathtime, 60);
+	
+	if(CurTime() > ply.nextsecond) then
+	
+		if(ply.deathtime < 59) then
+		
+			ply.deathtime = ply.deathtime + 1;
+			ply.nextsecond = CurTime() + 1;
+			ply:SetNWInt("deathmoderemaining", 60 - ply.deathtime);
+			
+		else
+			if ply.CheatedDeath then
+				ply:Spawn();
+			else
+				ply:Spawn();
+				ply:SetPos( ply.deathrag:GetPos() + Vector( 0, 10, 0 ) )
+				ply:SetHealth( 10 )
+				ply.deathrag:Remove()
+				ply.deathrag = nil
+			end
+			ply.deathtime = nil;
+			ply.nextsecond = nil;
+			ply:SetNWInt("deathmode", 0);
+			ply:SetNWInt("deathmoderemaining", 0);
+			
+		end
+		
+	end
 	
 end
 

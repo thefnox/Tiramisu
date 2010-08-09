@@ -1,5 +1,5 @@
 ITEM.Name = "AL-CDU3 Cadet Uniform";
-ITEM.Class = "clothing_police";
+ITEM.Class = "clothing_alpolice";
 ITEM.Description = "Alliance Cadet Uniform, allows simple protection.";
 ITEM.Model = "models/Police.mdl";
 ITEM.Purchaseable = true;

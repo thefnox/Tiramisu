@@ -18,12 +18,18 @@ CAKE.Running = false;
 CAKE.Loaded = false;
 CAKE.Skin = "void"
 
-CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 0, true, true )
+CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 1, true, true )
 CAKE.RenderBody = CreateClientConVar( "rp_renderbody", 1, true, true )
 CAKE.FirstPersonForward = CreateClientConVar( "rp_firstpersonforward", 0, true, true )
 CAKE.FirstPersonUp = CreateClientConVar( "rp_firstpersonup", 7, true, true )
 CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true )
 CAKE.ViewRagdoll = false
+
+CAKE.Clothing = "none"
+CAKE.Helmet = "none"
+CAKE.Gear = {}
+
+CAKE.MyGroup = {}
 
 CAKE.models = {  };
 readysent = false;

@@ -5,13 +5,13 @@ PLUGIN.Description = "A set of default chat commands"; -- The description or pur
 function Broadcast( ply, text )
 
 	-- Check to see if the player's team allows broadcasting
-	local team = ply:Team( );
+	local team = CAKE.GetCharField( ply, "group" )
 	
-	if( CAKE.Teams[ team ][ "broadcast" ] ) then
+	if( CAKE.GetGroupFlag( team, "CanBroadcast" ) ) then
 		
 		for k, v in pairs( player.GetAll( ) ) do
 		
-			CAKE.SendChat( v, ply:Nick( ) .. " [BROADCAST]: " .. text );
+			CAKE.SendChat( v, "[BROADCAST]: " .. text );
 			
 		end
 	
@@ -19,6 +19,34 @@ function Broadcast( ply, text )
 	
 	return "";
 	
+end
+
+function RemoveHelmet( ply, text )
+	
+	local gender = CAKE.GetCharField( ply, "gender" )
+	local article = ""
+	
+	if gender == "Female" then
+		article = "her"
+	else
+		article = "his"
+	end
+	
+	for k, v in pairs(player.GetAll()) do
+		
+		local range = CAKE.ConVars[ "TalkRange" ]
+			
+		if( v:EyePos( ):Distance( ply:EyePos( ) ) <= range ) then
+			
+			CAKE.SendChat( v, "*** " .. ply:Nick() .. " removed " .. article .. " helmet." );
+				
+		end
+			
+	end
+	
+	ply:RemoveHelmet()
+	
+
 end
 
 function Advertise( ply, text )
@@ -55,22 +83,19 @@ function Radio( ply, text )
 
 	local players = player.GetAll();
 	local heardit = {};
+	local frequency = CAKE.GetCharField( ply, "frequency" )
 
 	if(CAKE.Teams[ply:Team()] == nil) then return ""; end
 
-	if(CAKE.Teams[ply:Team()]["radio_groups"] != {}) then
-		for k, v in pairs(CAKE.Teams[ply:Team()]["radio_groups"]) do
-			
-			for k2, v2 in pairs(player.GetAll()) do
-				if(CAKE.Teams[v2:Team()] != nil) then
-					if(table.HasValue(CAKE.Teams[v2:Team()]["radio_groups"], v)) then
-						CAKE.SendChat(v2, "[RADIO] " .. ply:Nick() .. ": " .. text);
-						table.insert(heardit, v2);
-					end
+	if(frequency != 0) then
+		for k2, v2 in pairs(player.GetAll()) do
+			if(CAKE.Teams[v2:Team()] != nil) then
+				if( CAKE.GetCharField( v2, "frequency" ) == frequency ) then
+					CAKE.SendChat(v2, "[RADIO] " .. ply:Nick() .. ": " .. text);
+					table.insert(heardit, v2);
 				end
 			end
 		end
-
 	end
 
 	for k, v in pairs(players) do
@@ -101,6 +126,8 @@ end
 
 function PLUGIN.Init( ) -- We run this in init, because this is called after the entire gamemode has been loaded.
 
+	CAKE.AddDataField( 2, "frequency", 0 )
+
 	CAKE.ConVars[ "AdvertiseEnabled" ] = "1"; -- Can players advertise
 	CAKE.ConVars[ "AdvertisePrice" ] = 25; -- How much do advertisements cost
 	CAKE.ConVars[ "OOCDelay" ] = 10; -- How long do you have to wait between OOC Chat
@@ -123,6 +150,7 @@ function PLUGIN.Init( ) -- We run this in init, because this is called after the
 	CAKE.ChatCommand( "//", OOCChat ); -- OOC Chat
 	CAKE.ChatCommand( "/bc", Broadcast ); -- Broadcast
 	CAKE.ChatCommand( "/radio", Radio ); -- Radio
+	CAKE.ChatCommand( "/removehelmet", RemoveHelmet );
 	
 	CAKE.AddHook("Player_Preload", "chat_modplayervars", Chat_ModPlayerVars); -- Put in our OOCDelay variable
 	

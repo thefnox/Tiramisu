@@ -4,7 +4,7 @@ include('shared.lua')
 function ENT:Draw()
 	
 	if !CAKE.Thirdperson:GetBool() and self.Entity:GetDTInt( 1 ) == 2 then
-		if LocalPlayer():EntIndex() == self.Entity:GetDTInt( 2 ) and CAKE.RenderBody:GetBool() then
+		if self.Entity:GetParent() == LocalPlayer() and CAKE.RenderBody:GetBool() then
 			return
 		end
 	end
@@ -159,7 +159,43 @@ local head = {
 	"ValveBiped.Bip01_hair42",
 	"ValveBiped.Bip01_hair43",
 	"ValveBiped.Bip01_hair44",
-	"ValveBiped.Bip01_hair45"
+	"ValveBiped.Bip01_hair45",
+	"Head",
+	"headBase",
+	"brow_Left",
+	"brow_right",
+	"eyeBlink_Right",
+	"outBrow_left",
+	"outBrow_Right",
+	"underEye_left",
+	"underEye_Right",
+	"mouthBase",
+	"cheek_Left",
+	"cheek_right",
+	"innerUpperLip_Left",
+	"upperLip_Left",
+	"innerUpperLip_right",
+	"upperLip_right",
+	"jawBone",
+	"innerLowLip_right",
+	"lowerLip_right",
+	"innerLowLip_left",
+	"lowerLip_Left",
+	"LowerCheek_left",
+	"lowerCheek_right",
+	"Tongue",
+	"outerUpperLip_left",
+	"LipCorner_Left",
+	"outerUpperLip_right",
+	"LipCorner_right",
+	"Eye_Right",
+	"Eye_Left",
+	"lowLid_Right",
+	"eyeBlink_Left",
+	"lowLid_Left",
+	"Sneer",
+	"Neck",
+	"Neck1"
 	
 }
 local bodyaddup = {
@@ -226,17 +262,13 @@ function ENT:BuildBonePositions( NumBones, NumPhysBones )
 			if ( table.HasValue( headinflate, i ) ) then
 				for k, v in pairs( headinflate ) do
 					if i == v then
-						--BoneScale( self, i, self.Entity:GetDTInt( headaddup[ k ] )  )
+						--BoneScale( self, i, self.Entity:GetDTInt( headaddup[ k ] ) )
 						break
 					end
 				end
 			end
 		end
 	end
-	/*
-	local realboneid = self.Entity:LookupBone( "ValveBiped.Bip01_Head1" )
-
-	BoneScale( self, realboneid )*/
 
 end
 

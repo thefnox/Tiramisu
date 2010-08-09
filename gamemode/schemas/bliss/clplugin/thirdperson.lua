@@ -7,6 +7,9 @@ end
 
 local function RecieveViewRagdoll( handler, id, encoded, decoded )
 	CAKE.ViewRagdoll = decoded.ragdoll
+	if ValidEntity( CAKE.ViewRagdoll ) then
+		CAKE.ViewRagdoll.Clothing = decoded.clothing
+	end
 end
 datastream.Hook( "RecieveViewRagdoll", RecieveViewRagdoll )
 
@@ -96,7 +99,7 @@ local function Thirdperson(ply, pos, angles, fov)
 		end
 		if( CAKE.Thirdperson:GetBool() ) then
 			
-			if CAKE.ViewRagdoll then
+			if ValidEntity( CAKE.ViewRagdoll ) then
 				pos = CAKE.ViewRagdoll:GetPos()
 			end
 			
@@ -131,9 +134,9 @@ local function Thirdperson(ply, pos, angles, fov)
 			end
 			
 		else
-			if CAKE.Headbob:GetBool() and !CAKE.ViewRagdoll then
+			if CAKE.Headbob:GetBool() and !ValidEntity( CAKE.ViewRagdoll ) then
 				headpos, headang = LocalPlayer():GetBonePosition( LocalPlayer():LookupBone( "ValveBiped.Bip01_Head1" ) )
-			elseif CAKE.ViewRagdoll then
+			elseif ValidEntity( CAKE.ViewRagdoll ) then
 				headpos, headang = CAKE.ViewRagdoll:GetBonePosition( CAKE.ViewRagdoll:LookupBone( "ValveBiped.Bip01_Head1" ) )
 			else
 				headpos, headang = pos, angles

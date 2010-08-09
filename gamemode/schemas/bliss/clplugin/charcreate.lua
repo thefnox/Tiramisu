@@ -3,24 +3,7 @@ CLPLUGIN.Author = "Matt/Ryaga"
 --Yep, 650 lines of character creation, clientside. Beat that, Tacoscript 2
 
 local function ErrorMessage( msg )
-	      if( errorpnl ) then
-		      errorpnl:Remove()
-		      errorpnl = nil
-	      end
-
-	      errorpnl = vgui.Create( "DFrame" )
-	      errorpnl:SetPos( ScrW() / 2 - 75, ScrH() / 2 - 50 )
-	      errorpnl:SetSize( 150, 100 )
-	      errorpnl:SetTitle( "Error!" )
-	      errorpnl:SetVisible( true )
-	      errorpnl:SetDraggable( false )
-	      errorpnl:ShowCloseButton( true )
-	      errorpnl:MakePopup()
-	      local label = vgui.Create("DLabel", errorpnl);
-	      label:SetPos( 2, 23 )
-	      label:SetSize(140,75);
-	      label:SetText( msg );
-
+	Derma_Message(msg, "Error!", "OK")
 end
 
 local Race = {}
@@ -68,50 +51,49 @@ Race[ "Human" ][ "models" ][ "male" ] = {
 	      }
 		
 Race[ "Ztarian" ] = {}
-Race[ "Ztarian" ][ "desc" ] = [[ The Ztarian people are a race of bipedal, reptilian beings, who's most distinctive feature would be the precense of only 3 fingers and toes per respective limb. 
+Race[ "Ztarian" ][ "desc" ] = [[ The Ztarian people are a race of bipedal, reptilian beings. They present extreme sexual dimorphism, males having only 6 fingers and 4 toes, while.
 
-This race has many similarity to the human race in terms of organization, language and technology. The first contact with humans ocurred over 200 years ago, and Human/Ztarian relationships have remained rather constant through the years
+This race has many similarities to the human race in terms of organization, language and technology. It’s suggested that Ztarians may have visited Earth in the past, but these claims cannot be fully verified.
 
 The Ztarians have far more endurance than humans, due to their two hearts, although they are weaker in comparison. Their vocal chords allow them to speak both human languages, and their own Kul'tu language, which is unpronounceable by humans.
 
-Their religion is similar to Islam, it is shared by all Ztarians ( Except heathens and heretics ). Females are not allowed to show their faces to anybody but their husbands.]]
+Their religion is similar to Islam and Ancient Egyptian Mythology, it is shared by all Ztarians (Except heathens and heretics). ]]
 Race[ "Ztarian" ][ "models" ] = {}
 Race[ "Ztarian" ][ "models" ][ "male" ] = {
-			"models/kal'reegar.mdl",
-			"models/slash/garrus/garrus.mdl",
-			"models/quarianmale.mdl"
-			
+			"models/slash/garrus/garrus.mdl"
 	      }
 Race[ "Ztarian" ][ "models" ][ "female" ] = {
-			"models/slash/tali/talizorah.mdl",
-			"models/femalequarian.mdl"
+			"models/kit/Mercs/asari_01.mdl",
+			"models/kit/Mercs/asari_02.mdl",
+			"models/kit/Mercs/asari_03.mdl",
+			"models/kit/Mercs/asari_04.mdl",
+			"models/kit/Mercs/asari_05.mdl",
+			"models/kit/Mercs/asari_06.mdl",
+			"models/kit/Mercs/asari_07.mdl",
+			"models/kit/Mercs/asari_08.mdl"
 	      }
 		  
 Race[ "Sentient" ] = {}
-Race[ "Sentient" ][ "desc" ] = [[ The Sentients aren't a race, per se. Sentients are robots built for the precise purpose of coexisting with human beings. By a general rule, they are referred to as males, never as a 'thing', however 'female' robots are not a rare sight.
+Race[ "Sentient" ][ "desc" ] = [[ The Sentients aren't a race, per se. Sentients are robots built for the precise purpose of coexisting with human beings and Ztarians. By a general rule, they are referred to as males, never as a 'thing', however 'female' robots are not a rare sight.
 
 Sentients have the capability to learn, to reason, and to feel, however they lack all of the biological needs carbon based beings have, thus, much controversy has arisen on recent years regarding their status as living beings and as a race.
 
-Not all sentients are built by other races, many sentients were built from the ground up by other sentients, or were "born" in sentient built factories. Sentients consider themselves as "silicon based lifeforms".
+Most  Sentients are not built by other races. Many Sentients were built from the ground up by other Sentients, or were "born" in Sentient built factories.  Sentients consider themselves as "silicon based lifeforms" and never servants to the other races.
 
-Many sentients nowadays struggle for their recognition as living beings with feelings. Supremacists from all races have surfaced, and have attempted to enslave them. There are no laws protecting the freedom of sentients. ]]
+Many Sentients nowadays struggle for their recognition as living beings with feelings.  Supremacists from all races have surfaced, and conflicts quickly arise.  The presence of “Mother”, the supreme Sentient, has allowed Sentients to rally around a central figure in their cause for independence and equality with organic beings. ]]
 Race[ "Sentient" ][ "models" ] = {}
 Race[ "Sentient" ][ "models" ][ "male" ] = {
-			"models/slash/legion/legion.mdl",
 			"models/assdroid.mdl",
 			"models/largedroid.mdl",
 			"models/protdroid.mdl",
 			"models/wardroid.mdl",
-			"models/player/slow/tau_commander/slow_tau_commander.mdl",
 			"models/slash/LOKI/loki.mdl"
 	      }
 Race[ "Sentient" ][ "models" ][ "female" ] = {
-			"models/slash/legion/legion.mdl",
 			"models/assdroid.mdl",
 			"models/largedroid.mdl",
 			"models/protdroid.mdl",
 			"models/wardroid.mdl",
-			"models/player/slow/tau_commander/slow_tau_commander.mdl",
 			"models/slash/LOKI/loki.mdl"
 	    }		  
 
@@ -122,7 +104,7 @@ local Deity = "None"
 local Alignment = "True Neutral"
 local Age = "30"
 local models = {}
-local Birthplace = "EDEN-3"
+local Birthplace = "THEOS-2"
 local Height = 150
 local Gender = "Male"
 local Title1 = "Title1"
@@ -188,7 +170,7 @@ function firststep()
 				   return;
 			   end
 			   selectedrace = tostring( RaceBox:GetSelectedItems()[1]:GetValue() )
-			   models = table.Copy( Race[ RaceBox:GetSelectedItems()[1]:GetValue() ][ "models" ] )
+			   models = Race[ RaceBox:GetSelectedItems()[1]:GetValue() ][ "models" ] 
 			   Step1:Remove();
 			   Step1 = nil;
         secondstep()
@@ -472,8 +454,8 @@ function secondstep()
 	      GoBackButton:SetPos( 75, 400 )
 	      GoBackButton.DoClick = function( btn )
 		      firststep()
-		      secondstep:Remove();
-		      secondstep = nil;
+		      Step2:Remove();
+		      Step2 = nil;
 	      end
 	      
 end
@@ -608,8 +590,8 @@ function thirdstep()
 	      GoBackButton:SetPos( 75, 660 )
 	      GoBackButton.DoClick = function( btn )
 		      secondstep()
-		      thirdstep:Remove();
-		      thirdstep = nil;
+		      Step3:Remove();
+		      Step3 = nil;
 	      end
 	      
 	      local apply = vgui.Create("DButton", Step3);

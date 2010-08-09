@@ -18,6 +18,8 @@ function CAKE.CreateGroup( name, tbl )
 		CAKE.Groups[ name ] = tbl
 	end
 	
+	PrintTable( tbl )
+	
 end
 
 function CAKE.GetGroupField( name, field )
@@ -53,6 +55,50 @@ function CAKE.GetGroupFlag( name, flag )
 	end
 	
 	return false
+	
+end
+
+function CAKE.GetRankPermission( name, rank, permission )
+
+	if CAKE.Groups[ name ] then
+		if CAKE.Groups[ name ].Ranks[ rank ] then
+			for k, v in pairs ( CAKE.Groups[ name ].Ranks[ rank ] ) do
+				if k == permission then
+					return v
+				end
+			end
+		end
+	end
+	
+	return false
+	
+end
+
+function CAKE.GetRankPermissions( name, rank )
+
+	if CAKE.Groups[ name ] then
+		if CAKE.Groups[ name ].Ranks[ rank ] then
+			return CAKE.Groups[ name ].Ranks[ rank ]
+		end
+	end
+	
+	return false
+	
+end
+
+function CAKE.SetCharRank( promoter, rank, ply )
+	
+	local group = CAKE.GetCharField( promoter, "group" )
+	local promoterrank = CAKE.GetCharField( promoter, "grouprank" )
+	local plyrank = CAKE.GetCharField( ply, "grouprank" )
+	if group == CAKE.GetCharField( ply, "group" ) and promoterrank != plyrank and CAKE.GetRankPermission( group, promoterrank, "canpromote" ) then
+		local promoterlevel = CAKE.GetRankPermission( group, promoterrank, "level" )
+		local plylevel = CAKE.GetRankPermission( group, plyrank, "level" )
+		if promoterlevel > plylevel and promoterlevel <= CAKE.GetRankPermission( group, rank, "level" ) then
+			CAKE.SetCharField( ply, "grouprank", rank )
+			ply.GetLoadout = true
+		end
+	end
 	
 end
 
@@ -235,3 +281,46 @@ local function ccLeaveGroup( ply, cmd, args )
 
 end
 concommand.Add( "rp_leavegroup", ccLeaveGroup )
+
+local function ccSendInvite( ply, cmd, args )
+	
+	local group = CAKE.GetCharField( ply, "group" )
+	local rank = CAKE.GetCharField( ply, "grouprank" )
+	local permission = CAKE.GetRankPermission( group, rank, "canpromote" )
+	local target = CAKE.FindPlayer( args[1] )
+	local targetgroup = CAKE.GetCharField( target, "group" )
+	
+	if permission and targetgroup == "None" then
+	
+		if !target.Invited then
+			target.Invited = {}
+		end
+		target.Invited[ group ] = true
+		umsg.Start( ply, "recievegroupinvite" )
+			umsg.String( group )
+			umsg.String( ply:Nick() )
+		umsg.End()
+		CAKE.SendChat( ply, "You have sent " .. target:Nick() .. " a group invitation" )
+		CAKE.SendConsole( ply, "You have sent " .. target:Nick() .. " a group invitation" )
+	
+	end
+
+end
+concommand.Add( "rp_sendinvite", ccSendInvite )
+
+local function ccAcceptInvite( ply, cmd, args )
+	
+	local group = args[1]
+	local rank = CAKE.GetGroupFlag( group, "primaryrank" )
+	local promoter = CAKE.FindTarget( args[2] )
+	
+	if ply.Invited and ply.Invited[ group ] then
+		CAKE.SetCharField( ply, "group", group )
+		CAKE.SetCharField( ply, "grouprank", rank )
+		CAKE.SendChat( ply, "You have joined " .. group .. "." )
+		CAKE.SendConsole( ply, "You have joined " .. group .. "." )
+		CAKE.SetCharRank( promoter, rank, ply )
+	end
+
+end
+concommand.Add( "rp_acceptinvite", ccAcceptInvite )

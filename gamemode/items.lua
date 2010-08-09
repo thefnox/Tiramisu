@@ -44,41 +44,37 @@ function CAKE.CreateItem( class, pos, ang )
 	
 end
 
-function ccCreateItem( ply, cmd, args )
-
-
-	if( ply:IsAdmin( ) or ply:IsSuperAdmin( ) ) then
-	
-		-- Drop the item 80 units infront of him.
-		CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ) );
-		
-	end
-	
-end
-concommand.Add( "rp_createitem", ccCreateItem );
-
 function ccDropItem( ply, cmd, args )
 	
-	local inv = CAKE.GetCharField( ply, "inventory" );
-	for k, v in pairs( inv ) do
-		if( v == args[ 1 ] ) then
-			if( string.match( v, "weapon" ) )then
-				ply:StripWeapon( v )
-				if( table.HasValue( CAKE.GetCharField( ply, "weapons" ), v ) ) then
-					local weapons = CAKE.GetCharField( ply, "weapons" )
-					for k2, v2 in pairs( weapons ) do
-						if v2 == v then
-							v2 = nil
+	if ply:ItemHasFlag( args[1], "extracargo" ) then
+		CAKE.RemoveExtraCargoHold( ply, args[1] )
+	else
+		local inv = CAKE.GetCharField( ply, "inventory" );
+		for k, v in pairs( inv ) do
+			if( v == args[ 1 ] ) then
+				if( string.match( v, "weapon" ) )then
+					ply:StripWeapon( v )
+					if( table.HasValue( CAKE.GetCharField( ply, "weapons" ), v ) ) then
+						local weapons = CAKE.GetCharField( ply, "weapons" )
+						for k2, v2 in pairs( weapons ) do
+							if v2 == v then
+								table.remove( weapons, k2 )
+							end
 						end
+						CAKE.SetCharField( ply, "weapons", weapons )
 					end
-					CAKE.SetCharField( ply, "weapons", weapons )
 				end
+				CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ) );
+				ply:TakeItem( args[ 1 ] );
+				return;
 			end
-			CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ) );
-			ply:TakeItem( args[ 1 ] );
-			return;
 		end
 	end
+	
+	CAKE.CalculateEncumberment( ply )
+	
+	ply:RefreshInventory( )
+	ply:RefreshExtraInventory( );
 	
 end
 concommand.Add( "rp_dropitem", ccDropItem );

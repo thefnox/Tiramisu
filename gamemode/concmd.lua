@@ -130,6 +130,7 @@ concommand.Add( "rp_changename", ccChangeName );
 function ccAcceptDeath( ply, cmd, args )
 
 	ply.deathtime = 120;
+	ply.CheatedDeath = true
 	
 end
 concommand.Add( "rp_acceptdeath", ccAcceptDeath );
@@ -329,13 +330,25 @@ function ccPickupItem( ply, cmd, args )
 	local item = ents.GetByIndex( tonumber( args[ 1 ] ) );
 	
 	if( item != nil and item:IsValid( ) and item:GetClass( ) == "item_prop" and item:GetPos( ):Distance( ply:GetShootPos( ) ) < 100 ) then
-		
-		if( string.match( item.Class, "weapon" ) ) then
-			ply:Give( item.Class )
+		if CAKE.CanPickupItem( ply, item.Class ) then
+			if ply:ItemHasFlag( item.Class , "extracargo" ) then
+				CAKE.SetCharField( ply, "extracargo", tonumber( ply:GetFlagValue( item.Class, "extracargo" ) ) )
+				if item.IsContainer then
+					for k,v in pairs(item.Inv) do
+						ply:GiveExtraItem( v )
+						CAKE.TakeContItem( item, v )
+					end
+				end
+			end
+			if( string.match( item.Class, "weapon" ) ) then
+				ply:Give( item.Class )
+			end
+			item:Pickup( ply );
+			ply:GiveItem( item.Class );
+		else
+			CAKE.SendChat( ply, "Clean up some space in your inventory before picking up this item!" )
+			CAKE.SendConsole( ply, "Clean up some space in your inventory before picking up this item!" )
 		end
-		
-		item:Pickup( ply );
-		ply:GiveItem( item.Class );
 		
 	end
 

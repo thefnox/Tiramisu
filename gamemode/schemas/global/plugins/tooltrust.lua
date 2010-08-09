@@ -170,9 +170,9 @@ end
 function PLUGIN.Init()
 
 	CAKE.ConVars[ "Default_Tooltrust" ] = "0"; -- Are players allowed to have the toolgun when they first start.
-	CAKE.ConVars[ "Default_Gravtrust" ] = "0"; -- Are players allowed to have the gravgun when they first start.
-	CAKE.ConVars[ "Default_Phystrust" ] = "0"; -- Are players allowed to have the physgun when they first start.
-	CAKE.ConVars[ "Default_Proptrust" ] = "0"; -- Are players allowed to spawn props when they first start.
+	CAKE.ConVars[ "Default_Gravtrust" ] = "1"; -- Are players allowed to have the gravgun when they first start.
+	CAKE.ConVars[ "Default_Phystrust" ] = "1"; -- Are players allowed to have the physgun when they first start.
+	CAKE.ConVars[ "Default_Proptrust" ] = "1"; -- Are players allowed to spawn props when they first start.
 	
 	CAKE.AddDataField( 1, "tooltrust", CAKE.ConVars[ "Default_Tooltrust" ] ); -- Is the player allowed to have the toolgun
 	CAKE.AddDataField( 1, "gravtrust", CAKE.ConVars[ "Default_Gravtrust" ] ); -- Is the player allowed to have the gravity gun

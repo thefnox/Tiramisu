@@ -362,15 +362,15 @@ end
 
 function PLUGIN.Init()
 
-	CAKE.ConVars[ "Default_Extraprops" ] = 0;
-	CAKE.ConVars[ "Default_Extraragdolls" ] = 0;
+	CAKE.ConVars[ "Default_Extraprops" ] = 1;
+	CAKE.ConVars[ "Default_Extraragdolls" ] = 1;
 	CAKE.ConVars[ "Default_Extravehicles" ] = 0;
 	CAKE.ConVars[ "Default_Extraeffects" ] = 0;
 	
 	CAKE.ConVars[ "PropLimit" ] = 30;
-	CAKE.ConVars[ "RagdollLimit" ] = 0;
+	CAKE.ConVars[ "RagdollLimit" ] = 2;
 	CAKE.ConVars[ "VehicleLimit" ] = 0;
-	CAKE.ConVars[ "EffectLimit" ] = 0;
+	CAKE.ConVars[ "EffectLimit" ] = 2;
 	
 	CAKE.AddDataField( 1, "extraprops", CAKE.ConVars[ "Default_Extraprops" ] );
 	CAKE.AddDataField( 1, "extraragdolls", CAKE.ConVars[ "Default_Extraragdolls" ] );

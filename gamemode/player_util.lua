@@ -8,21 +8,31 @@
 -------------------------------
 
 function CAKE.SendChat( ply, msg )
-
-	ply:PrintMessage( 3, msg );
+	
+	if ply:IsPlayer() then
+		ply:PrintMessage( 3, msg );
+	else
+		print( msg )
+	end
 	
 end
 
 function CAKE.SendConsole( ply, msg )
 
-	ply:PrintMessage( 2, msg ); -- At least I THINK it is 2..
+	if ply:IsPlayer() then
+		ply:PrintMessage( 2, msg ); -- At least I THINK it is 2..
+	else
+		print( msg )
+	end
 	
 end
 
 DecayingRagdolls = {};
 
 function CAKE.DeathMode( ply )
-
+	
+	
+	ply.CheatedDeath = false
 	CAKE.DayLog( "script.txt", "Starting death mode for " .. ply:SteamID( ) );
 	local mdl = ply:GetModel( )
 	
@@ -44,7 +54,10 @@ function CAKE.DeathMode( ply )
 		end
 	end
 	
-	datastream.StreamToClients( ply, "RecieveViewRagdoll", { ["ragdoll"] = rag } )
+	rag.clothing = ply.Clothing
+	ply.Clothing = nil
+	
+	datastream.StreamToClients( ply, "RecieveViewRagdoll", { ["ragdoll"] = rag, ["clothing"] = rag.clothing } )
 	
 	--ply:SetViewEntity( rag );
 	
@@ -146,6 +159,7 @@ function meta:GiveItem( class )
 	local inv = CAKE.GetCharField( self, "inventory" );
 	table.insert( inv, class );
 	CAKE.SetCharField( self, "inventory", inv);
+	CAKE.CalculateEncumberment( self )
 	self:RefreshInventory( );
 
 end
@@ -163,6 +177,7 @@ function meta:TakeItem( class )
 			return;
 		end
 	end
+	CAKE.CalculateEncumberment( self )
 	
 end
 
@@ -180,6 +195,7 @@ function meta:RefreshInventory( )
 			umsg.String( CAKE.ItemData[ v ].Class );
 			umsg.String( CAKE.ItemData[ v ].Description );
 			umsg.String( CAKE.ItemData[ v ].Model );
+			umsg.Short( CAKE.GetWeight( v ) )
 		umsg.End( );
 	end
 end

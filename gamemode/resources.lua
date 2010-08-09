@@ -21,9 +21,9 @@ end
 -- A recursive function to find all the files in models and material folders
 local function FindFiles(Dir, Level)
     if (Dir) then
-        Files = file.Find("../gamemodes/Void/content/"..Dir.."/*.*")
+        Files = file.Find("../gamemodes/tiramisu/content/"..Dir.."/*.*")
     else
-        Files = file.Find("../gamemodes/Void/content/*.*")
+        Files = file.Find("../gamemodes/tiramisu/content/*.*")
 		
 		print("-------------------------------------------------")
 		print("------- ADDING RESOURCES TO DOWNLOAD LIST -------")
@@ -33,7 +33,7 @@ local function FindFiles(Dir, Level)
     Level = Level or 0
     Dir = Dir or ""
     for k,v in pairs(Files) do
-        local IsDir = file.IsDir("../gamemodes/Void/content/".. Dir .. "/" .. v)
+        local IsDir = file.IsDir("../gamemodes/tiramisu/content/".. Dir .. "/" .. v)
         if (IsDir) then
             FindFiles(Dir .. "/" .. v, Level + 1)
         else
@@ -45,4 +45,4 @@ local function FindFiles(Dir, Level)
         end
     end
 end
---FindFiles()
+FindFiles()

@@ -18,6 +18,28 @@ function AddSchema(data)
 	AddCharCreates(schema)
 end
 usermessage.Hook("addschema", AddSchema)
+/*
+		[ "Name" ]		= name,
+		[ "Type" ]		= data:ReadString(),
+		[ "Founder" ]	= data:ReadString(),
+		[ "Rank" ]		= data:ReadString(),
+		[ "RankPermissions" ] = string.Explode( ",", data:ReadString() ),
+		[ "Inventory" ]	= {}
+*/
+
+local function RecieveMyGroup( handler, id, encoded, decoded )
+	
+	CAKE.MyGroup.Name = decoded.Name
+	CAKE.MyGroup.Type = decoded.Type
+	CAKE.MyGroup.Founder = decoded.Founder
+	CAKE.MyGroup.Rank = decoded.Rank
+	CAKE.MyGroup.RankPermissions = decoded.RankPermissions
+	CAKE.MyGroup.Inventory = decoded.Inventory
+	PrintTable( CAKE.MyGroup )
+
+end
+datastream.Hook("recievemygroup", RecieveMyGroup )
+
 
 RclickTable = {}
 
@@ -40,6 +62,7 @@ function AddItem(data)
 	itemdata.Class = data:ReadString();
 	itemdata.Description = data:ReadString();
 	itemdata.Model = data:ReadString();
+	itemdata.Weight = data:ReadShort();
 	
 	table.insert(InventoryTable, itemdata);
 end
@@ -62,9 +85,26 @@ function AddBusinessItem(data)
 	itemdata.Model = data:ReadString();
 	itemdata.Price = data:ReadLong();
 	
+	print( itemdata.Class )
+	
 	table.insert(BusinessTable, itemdata);
 end
 usermessage.Hook("addbusiness", AddBusinessItem);
+
+MyGroupInventory = {}
+
+function AddMyGroupItem(data)
+	local itemdata = {}
+	itemdata.Name = data:ReadString();
+	itemdata.Class = data:ReadString();
+	itemdata.Description = data:ReadString();
+	itemdata.Model = data:ReadString();
+	itemdata.Price = data:ReadLong();
+	
+	
+	table.insert(MyGroupInventory, itemdata);
+end
+usermessage.Hook("addmygroupitem", AddMyGroupItem);
 
 function ClearBusinessItems()
 	
@@ -72,6 +112,16 @@ function ClearBusinessItems()
 	
 end
 usermessage.Hook("clearbusiness", ClearBusinessItems);
+
+function RecieveGroupInvite( um )
+	local group = um:ReadString()
+	local promoter = um:ReadString()
+	Derma_Query("You have recieved an invitation from " .. promoter .. " to join: " .. group, "Group Invite",
+				"Accept", function() RunConsoleCommand("rp_acceptinvite", group, promoter ) end,
+				"Decline", function() print( "You have declined a group invite" ) end)
+
+end
+usermessage.Hook("recievegroupinvite", RecieveGroupInvite);
 
 function InitHiddenButton()
 	HiddenButton = vgui.Create("DButton") -- HOLY SHIT WHAT A HACKY METHOD FO SHO
@@ -356,7 +406,7 @@ function CreatePlayerMenu()
 	DataList:SetSize(0, 64);
 	
 	local spawnicon = vgui.Create( "SpawnIcon");
-	spawnicon:SetModel(LocalPlayer():GetModel());
+	spawnicon:SetModel(LocalPlayer():GetNWString( "model", LocalPlayer():GetModel()) );
 	spawnicon:SetSize( 64, 64 );
 	DataList:AddItem(spawnicon);
 	
@@ -414,6 +464,7 @@ function CreatePlayerMenu()
 	CharPanel:SetSpacing(10);
 	CharPanel:EnableVerticalScrollbar();
 	CharPanel:EnableHorizontal(false);
+
 	
 	local label = vgui.Create("DLabel");
 	label:SetText("Click your character to select it");
@@ -448,7 +499,7 @@ function CreatePlayerMenu()
 		mdlpanel.PaintOver = function()
 			surface.SetTextColor(Color(255,255,255,255));
 			surface.SetFont("Trebuchet18");
-			surface.SetTextPos((180 - surface.GetTextSize(ExistingChars[n]['name'])) / 2 , 0);
+			surface.SetTextPos( surface.GetTextSize(ExistingChars[n]['name']) , 0);
 			surface.DrawText(ExistingChars[n]['name'])
 		end
 		
@@ -504,135 +555,217 @@ function CreatePlayerMenu()
 		PlayerMenu = nil;
 	end
 	CharPanel:AddItem( newchar )
-	/*
-	Commands = vgui.Create( "DPanelList" )
-	Commands:SetPadding(20);
-	Commands:SetSpacing(20);
-	Commands:EnableHorizontal(true);
-	Commands:EnableVerticalScrollbar(true);
 	
-	local Flags = vgui.Create("DListView");
-	Flags:SetSize(550,446);
-	Flags:SetMultiSelect(false)
-	Flags:AddColumn("Flag Name");
-	Flags:AddColumn("Salary");
-	Flags:AddColumn("Business Access");
-	Flags:AddColumn("Public Flag");
-	Flags:AddColumn("Flag Key");
+	Inventory = vgui.Create( "DPropertySheet" )
 	
-	function Flags:DoDoubleClick(LineID, Line)
+	InventorySheet = vgui.Create( "DPanelList" )
+	InventorySheet:SetPadding(10);
+	InventorySheet:SetSpacing(10);
+	InventorySheet:EnableHorizontal(false);
+	InventorySheet:EnableVerticalScrollbar(false);
+	local elipsis = ""
 	
-		LocalPlayer():ConCommand("rp_flag " .. TeamTable[LineID].flagkey);
-		PlayerMenu:Remove();
-		PlayerMenu = nil;
+	local availablespace = 10
+	
+	local function drawinventoryicons()
+		availablespace = 10
+		InventorySheet:Clear()
 		
-	end
-	
-	for k, v in pairs(TeamTable) do
-		local yesno = "";
-		if(v.public) then
-			yesno = "Yes";
-		elseif(!v.public) then
-			yesno = "No";
+		local label = vgui.Create( "DLabel" )
+		label:SizeToContents()
+		InventorySheet:AddItem(label);
+		for k, v in pairs(InventoryTable) do
+			
+			if string.len( v.Name ) > 6 then
+				elipsis = "..."
+			else
+				elipsis = ""
+			end
+			
+			local spawnicon = vgui.Create( "SpawnIcon");
+			spawnicon:SetSize( 64, 64 );
+			spawnicon:SetIconSize( 64 )
+			spawnicon:SetModel(v.Model);
+			spawnicon:SetToolTip(v.Description);
+			
+			local function DeleteMyself()
+				spawnicon:Remove()
+			end
+			
+			spawnicon.DoClick = function ( btn )
+			
+				local ContextMenu = DermaMenu()
+					ContextMenu:AddOption("Drop", function() LocalPlayer():ConCommand("rp_dropitem " .. v.Class); DeleteMyself(); drawinventoryicons(); end);
+					if CAKE.ExtraCargo > 0 then
+						ContextMenu:AddOption("Transfer to Cargo", function() LocalPlayer():ConCommand("rp_pickupextra " .. v.Class); DeleteMyself(); drawinventoryicons(); drawextrainventory(); end);
+					end
+				ContextMenu:Open();
+				
+			end
+			
+			spawnicon.PaintOver = function()
+				surface.SetTextColor(Color(255,255,255,255));
+				surface.SetFont("DefaultSmall");
+				surface.SetTextPos(32 - surface.GetTextSize( string.sub( v.Name, 1, 6 ) .. elipsis) / 2, 5);
+				surface.DrawText( string.sub( v.Name, 1, 6 ) .. elipsis )
+				
+				surface.SetTextColor(Color(255,255,255,255));
+				surface.SetFont("DefaultSmall");
+				surface.SetTextPos(60, 60);
+				surface.DrawText( v.Weight )
+			end
+			
+			spawnicon.PaintOverHovered = function()
+				surface.SetTextColor(Color(255,255,255,255));
+				surface.SetFont("DefaultSmall");
+				surface.SetTextPos(32 - surface.GetTextSize( string.sub( v.Name, 1, 6 ) .. elipsis ) / 2, 5);
+				surface.DrawText(string.sub( v.Name, 1, 6 ) .. elipsis)
+				
+				surface.SetTextColor(Color(255,255,255,255));
+				surface.SetFont("DefaultSmall");
+				surface.SetTextPos(60, 60);
+				surface.DrawText( v.Weight )
+			end
+			
+			availablespace = availablespace - v.Weight
+			
+			InventorySheet:AddItem(spawnicon);
 		end
 		
-		local yesno2 = "";
-		if(v.business) then
-			yesno2 = "Yes";
-		elseif(!v.business) then
-			yesno2 = "No";
-		end
+		label:SetText( "Available space: " .. tostring( math.Clamp( availablespace, 0, 100 ) ) .. ".kg" )
+	end
+	drawinventoryicons()
+	
+	ExtraSheet = vgui.Create( "DPanelList" )
+	ExtraSheet:SetPadding(10);
+	ExtraSheet:SetSpacing(10);
+	ExtraSheet:EnableHorizontal(false);
+	ExtraSheet:EnableVerticalScrollbar(false);
+	local elipsis = ""
+	
+	local function drawextrainventory()
+		local label = vgui.Create( "DLabel" )
+		label:SizeToContents()
+		label:SetText( "Cargohold Capacity: " .. tostring( CAKE.ExtraCargo ) .. ".kg" )
+		ExtraSheet:AddItem(label);
 		
-		Flags:AddLine(v.name, tostring(v.salary), yesno2, yesno, v.flagkey);
+		for k, v in pairs(ExtraInventory) do
+			
+			if string.len( v.Name ) > 6 then
+				elipsis = "..."
+			else
+				elipsis = ""
+			end
+			
+			local spawnicon = vgui.Create( "SpawnIcon");
+			spawnicon:SetSize( 64, 64 );
+			spawnicon:SetIconSize( 64 )
+			spawnicon:SetModel(v.Model);
+			spawnicon:SetToolTip(v.Description);
+			
+			local function DeleteMyself()
+				spawnicon:Remove()
+			end
+			
+			spawnicon.DoClick = function ( btn )
+			
+				local ContextMenu = DermaMenu()
+					ContextMenu:AddOption("Transfer to Backpack", function()
+						LocalPlayer():ConCommand("rp_dropextraitem " .. v.Class);
+						DeleteMyself();
+						drawextrainventory()
+						drawinventoryicons()
+					end);
+				ContextMenu:Open();
+				
+			end
+			
+			spawnicon.PaintOver = function()
+				surface.SetTextColor(Color(255,255,255,255));
+				surface.SetFont("DefaultSmall");
+				surface.SetTextPos(32 - surface.GetTextSize( string.sub( v.Name, 1, 6 ) .. elipsis) / 2, 5);
+				surface.DrawText( string.sub( v.Name, 1, 6 ) .. elipsis )
+				
+				surface.SetTextColor(Color(255,255,255,255));
+				surface.SetFont("DefaultSmall");
+				surface.SetTextPos(60, 60);
+				surface.DrawText( v.Weight )
+			end
+			
+			spawnicon.PaintOverHovered = function()
+				surface.SetTextColor(Color(255,255,255,255));
+				surface.SetFont("DefaultSmall");
+				surface.SetTextPos(32 - surface.GetTextSize( string.sub( v.Name, 1, 6 ) .. elipsis ) / 2, 5);
+				surface.DrawText(string.sub( v.Name, 1, 6 ) .. elipsis)
+				
+				surface.SetTextColor(Color(255,255,255,255));
+				surface.SetFont("DefaultSmall");
+				surface.SetTextPos(60, 60);
+				surface.DrawText( v.Weight )
+			end
+			
+			ExtraSheet:AddItem(spawnicon);
+		end
 	end
 	
-	Commands:AddItem(Flags);*/
+	if CAKE.ExtraCargo > 0 then
+		
+		drawextrainventory()
+		drawinventoryicons()
+		
+	else
+		local label = vgui.Create( "DLabel" )
+		label:SizeToContents()
+		label:SetText( "You don't have an extra container to put your cargo on!" )
+		ExtraSheet:AddItem(label);
+	end
 	
-	Inventory = vgui.Create( "DPanelList" )
-	Inventory:SetPadding(20);
-	Inventory:SetSpacing(20);
-	Inventory:EnableHorizontal(true);
-	Inventory:EnableVerticalScrollbar(true);
-	
-	for k, v in pairs(InventoryTable) do
+	BusinessSheet = vgui.Create( "DPanelList" )
+	BusinessSheet:SetPadding(20);
+	BusinessSheet:SetSpacing(20);
+	BusinessSheet:EnableHorizontal(true);
+	BusinessSheet:EnableVerticalScrollbar(true);
+
+	for k, v in pairs(BusinessTable) do
 		local spawnicon = vgui.Create( "SpawnIcon");
-		spawnicon:SetSize( 128, 128 );
-		spawnicon:SetIconSize( 128 )
+		spawnicon:SetSize( 32, 32 );
+		spawnicon:SetIconSize( 32 )
 		spawnicon:SetModel(v.Model);
 		spawnicon:SetToolTip(v.Description);
-		
-		local function DeleteMyself()
-			spawnicon:Remove()
-		end
-		
+				
 		spawnicon.DoClick = function ( btn )
-		
+				
 			local ContextMenu = DermaMenu()
-				ContextMenu:AddOption("Drop", function() LocalPlayer():ConCommand("rp_dropitem " .. v.Class); DeleteMyself(); end);
+			if(tonumber(LocalPlayer():GetNWString("money")) >= v.Price) then
+				ContextMenu:AddOption("Purchase", function() LocalPlayer():ConCommand("rp_buyitem " .. v.Class); end);
+			else
+				ContextMenu:AddOption("Not Enough Tokens!");
+			end
+				
 			ContextMenu:Open();
-			
+					
 		end
-		
+				
 		spawnicon.PaintOver = function()
 			surface.SetTextColor(Color(255,255,255,255));
 			surface.SetFont("DefaultSmall");
-			surface.SetTextPos(64 - surface.GetTextSize(v.Name) / 2, 5);
-			surface.DrawText(v.Name)
+			surface.SetTextPos(64 - surface.GetTextSize(v.Name .. " (" .. v.Price .. ")") / 2, 5);
+			surface.DrawText(v.Name .. " (" .. v.Price .. ")")
 		end
-		
+				
 		spawnicon.PaintOverHovered = function()
 			surface.SetTextColor(Color(255,255,255,255));
 			surface.SetFont("DefaultSmall");
-			surface.SetTextPos(64 - surface.GetTextSize(v.Name) / 2, 5);
-			surface.DrawText(v.Name)
+			surface.SetTextPos(64 - surface.GetTextSize(v.Name .. " (" .. v.Price .. ")") / 2, 5);
+			surface.DrawText(v.Name .. " (" .. v.Price .. ")")
 		end
-		
-		Inventory:AddItem(spawnicon);
+				
+		BusinessSheet:AddItem(spawnicon);
 	end
 	
-	/*
-	Business = vgui.Create( "DPanelList" )
-	Business:SetPadding(20);
-	Business:SetSpacing(20);
-	Business:EnableHorizontal(true);
-	Business:EnableVerticalScrollbar(true);
-	if(TeamTable[LocalPlayer():Team()] != nil) then
-			for k, v in pairs(BusinessTable) do
-				local spawnicon = vgui.Create( "SpawnIcon");
-				spawnicon:SetSize( 32, 32 );
-				spawnicon:SetIconSize( 32 )
-				spawnicon:SetModel(v.Model);
-				spawnicon:SetToolTip(v.Description);
-				
-				spawnicon.DoClick = function ( btn )
-				
-					local ContextMenu = DermaMenu()
-						if(tonumber(LocalPlayer():GetNWString("money")) >= v.Price) then
-							ContextMenu:AddOption("Purchase", function() LocalPlayer():ConCommand("rp_buyitem " .. v.Class); end);
-						else
-							ContextMenu:AddOption("Not Enough Tokens!");
-						end
-					ContextMenu:Open();
-					
-				end
-				
-				spawnicon.PaintOver = function()
-					surface.SetTextColor(Color(255,255,255,255));
-					surface.SetFont("DefaultSmall");
-					surface.SetTextPos(64 - surface.GetTextSize(v.Name .. " (" .. v.Price .. ")") / 2, 5);
-					surface.DrawText(v.Name .. " (" .. v.Price .. ")")
-				end
-				
-				spawnicon.PaintOverHovered = function()
-					surface.SetTextColor(Color(255,255,255,255));
-					surface.SetFont("DefaultSmall");
-					surface.SetTextPos(64 - surface.GetTextSize(v.Name .. " (" .. v.Price .. ")") / 2, 5);
-					surface.DrawText(v.Name .. " (" .. v.Price .. ")")
-				end
-				
-				Business:AddItem(spawnicon);
-			end
-	end*/
+	Inventory:AddSheet( "Backpack", InventorySheet, "gui/silkicons/box", false, false, "View your inventory.")
+	Inventory:AddSheet( "Business", BusinessSheet, "gui/silkicons/box", false, false, "View your store.")
+	Inventory:AddSheet( "Extra Cargo", ExtraSheet, "gui/silkicons/box", false, false, "Open your additional cargohold.")
 	
 	Scoreboard = vgui.Create( "DPanelList" )
 	Scoreboard:SetPadding(0);
@@ -666,7 +799,7 @@ function CreatePlayerMenu()
 		DataList2:AddItem(label2);
 		
 		local label3 = vgui.Create("DLabel");
-		label3:SetText("Assosciation: " .. team.GetName(v:Team()));
+		label3:SetText("Title2: " .. v:GetNWString("title2"));
 		DataList2:AddItem(label3);
 		
 		local Divider = vgui.Create("DHorizontalDivider");
@@ -682,14 +815,47 @@ function CreatePlayerMenu()
 		CollapsableCategory:SetContents(DataList);
 	end
 	
-	Clothing = vgui.Create( "DPanelList" )
-	Clothing:SetPadding(20);
-	Clothing:SetSpacing(20);
-	Clothing:EnableHorizontal(false);
-	Clothing:EnableVerticalScrollbar(true);
-	local ClothingBox = vgui.Create("DListView");
+	Clothing = vgui.Create( "DPropertySheet" )
+	
+	ClothingSheet = vgui.Create( "DPanelList" )
+	ClothingSheet:SetPadding(0);
+	ClothingSheet:SetSpacing(0);
+	ClothingSheet:EnableHorizontal(false);
+	ClothingSheet:EnableVerticalScrollbar(false)
+	
+	local desc = ""
+	
+	ClothingMdlPanel = vgui.Create( "DModelPanel" )
+	ClothingMdlPanel:SetSize( 200, 200 )
+	if CAKE.Clothing == "none" then
+		ClothingMdlPanel:SetModel( LocalPlayer():GetNWString( "model", "models/kleiner.mdl" ) )
+	else
+		for k, v in pairs( InventoryTable ) do
+			if v.Class == CAKE.Clothing then
+				ClothingMdlPanel:SetModel( v.Model )
+				desc = v.Description
+				break
+			end
+		end
+	end
+	ClothingMdlPanel:SetAnimSpeed( 0.0 )
+	ClothingMdlPanel:SetAnimated( false )
+	ClothingMdlPanel:SetAmbientLight( Color( 50, 50, 50 ) )
+	ClothingMdlPanel:SetDirectionalLight( BOX_TOP, Color( 255, 255, 255 ) )
+	ClothingMdlPanel:SetDirectionalLight( BOX_FRONT, Color( 255, 255, 255 ) )
+	ClothingMdlPanel:SetCamPos( Vector( 50, 0, 50 ) )
+	ClothingMdlPanel:SetLookAt( Vector( 0, 0, 50 ) )
+	ClothingMdlPanel:SetFOV( 70 )
+	ClothingMdlPanel.PaintOver = function()
+		surface.SetTextColor(Color(255,255,255,255));
+		surface.SetFont("UiBold");
+		surface.SetTextPos( surface.GetTextSize( desc ) , 260 );
+		surface.DrawText(desc)
+	end
+	
+	ClothingBox = vgui.Create("DListView");
 	ClothingBox:SetMultiSelect( false )
-	ClothingBox:SetSize(550,150);
+	ClothingBox:SetSize(310,130);
 	ClothingBox:AddColumn("Item Name");
 	ClothingBox:AddColumn("Item Class");
 	ClothingBox:AddLine( "Default Clothes", "none" )
@@ -698,10 +864,67 @@ function CreatePlayerMenu()
 			ClothingBox:AddLine( v.Name, v.Class )
 		end
 	end
-	Clothing:AddItem( ClothingBox )
+	ClothingBox.DoDoubleClick = function(parent, index, list)
+		if list:GetValue(2) == "none" then
+			CAKE.Clothing = "none"
+			desc = ""
+			LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
+			ClothingMdlPanel:SetModel( LocalPlayer():GetNWString( "model", "models/kleiner.mdl" ) )
+		else
+			for k, v in pairs( InventoryTable ) do
+				if v.Class == list:GetValue(2) then
+					ClothingMdlPanel:SetModel( v.Model )
+					CAKE.Clothing = v.Class
+					desc = v.Description
+					--LocalPlayer():ConCommand("rp_setclothing " .. TeamTable[LineID].flagkey);
+					LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
+				end
+			end
+		end
+		
+	end
+	ClothingSheet:AddItem( ClothingBox )
+	ClothingSheet:AddItem( ClothingMdlPanel )
+	
+	Clothing:AddSheet( "Clothing/Armor", ClothingSheet, "gui/silkicons/user", false, false, "Set your clothes")
+	
+	HelmetSheet = vgui.Create( "DPanelList" )
+	HelmetSheet:SetPadding(0);
+	HelmetSheet:SetSpacing(00);
+	HelmetSheet:EnableHorizontal(false);
+	HelmetSheet:EnableVerticalScrollbar(true);
+	
+	HelmetMdlPanel = vgui.Create( "DModelPanel" )
+	HelmetMdlPanel:SetSize( 250, 250 )
+	if CAKE.Clothing == "none" then
+		HelmetMdlPanel:SetModel( LocalPlayer():GetNWString( "model", "models/kleiner.mdl" ) )
+	else
+		for k, v in pairs( InventoryTable ) do
+			if v.Class == CAKE.Clothing then
+				HelmetMdlPanel:SetModel( v.Model )
+				desc = v.Description
+				break
+			end
+		end
+	end
+	HelmetMdlPanel:SetAnimSpeed( 0.0 )
+	HelmetMdlPanel:SetAnimated( false )
+	HelmetMdlPanel:SetAmbientLight( Color( 50, 50, 50 ) )
+	HelmetMdlPanel:SetDirectionalLight( BOX_TOP, Color( 255, 255, 255 ) )
+	HelmetMdlPanel:SetDirectionalLight( BOX_FRONT, Color( 255, 255, 255 ) )
+	HelmetMdlPanel:SetCamPos( Vector( 50, 0, 60)  )
+	HelmetMdlPanel:SetLookAt( Vector( 0, 0, 60 ) )
+	HelmetMdlPanel:SetFOV( 40 )
+	HelmetMdlPanel.PaintOver = function()
+		surface.SetTextColor(Color(255,255,255,255));
+		surface.SetFont("UiBold");
+		surface.SetTextPos( surface.GetTextSize( desc ) , 260 );
+		surface.DrawText(desc)
+	end
+	
 	local Helmets = vgui.Create("DListView");
 	Helmets:SetMultiSelect( false )
-	Helmets:SetSize( 550, 150 )
+	Helmets:SetSize(310,130);
 	Helmets:AddColumn( "Item Name" )
 	Helmets:AddColumn( "Item Class" )
 	Helmets:AddLine( "Default Helmet/Face", "none" )
@@ -710,16 +933,30 @@ function CreatePlayerMenu()
 			Helmets:AddLine( v.Name, v.Class )
 		end
 	end
-	Clothing:AddItem( Helmets )
-	local applyclothes = vgui.Create("DButton");
-	applyclothes:SetSize(100, 25);
-	applyclothes:SetText("Apply");
-	applyclothes.DoClick = function ( btn )
-		if #ClothingBox:GetSelected() > 0 and #Helmets:GetSelected() > 0 then
-			LocalPlayer():ConCommand( "rp_setclothing \"" .. ClothingBox:GetSelected()[1]:GetValue( 2 ) .. "\" \"" .. Helmets:GetSelected()[1]:GetValue( 2 ) .. "\"" )
+	Helmets.DoDoubleClick = function(parent, index, list)
+		if list:GetValue(2) == "none" then
+			CAKE.Helmet = "none"
+			desc = ""
+			LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
+			HelmetMdlPanel:SetModel( LocalPlayer():GetNWString( "model", "models/kleiner.mdl" ) )
+		else
+			for k, v in pairs( InventoryTable ) do
+				if v.Class == list:GetValue(2) then
+					HelmetMdlPanel:SetModel( v.Model )
+					CAKE.Helmet = v.Class
+					desc = v.Description
+					--LocalPlayer():ConCommand("rp_setclothing " .. TeamTable[LineID].flagkey);
+					LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
+				end
+			end
 		end
+		
 	end
-	Clothing:AddItem( applyclothes )
+	
+	HelmetSheet:AddItem( Helmets )
+	HelmetSheet:AddItem( HelmetMdlPanel )
+	
+	Clothing:AddSheet( "Helmets", HelmetSheet, "gui/silkicons/user", false, false, "Set your helmet")
 	
 	local Help = vgui.Create( "DPanelList" )
 	Help:SetPadding(20);
@@ -728,16 +965,11 @@ function CreatePlayerMenu()
 	local html = vgui.Create( "HTML")
 	html:SetPos(0,30)
 	html:SetSize(256, 370)
-	html:OpenURL( "http://blissroleplay.wikia.org" )
+	html:OpenURL( "http://blissrp.wikia.com/" )
 	Help:AddItem( html )
 	
-	Business = vgui.Create( "DPanelList" )
-	Business:SetPadding(0);
-	Business:SetSpacing(0);
-    
-    BizSheet = vgui.Create( "DPropertySheet" )
-    BizSheet:SetPos( 0, 0 )
-    Business:AddItem( BizSheet )
+    BizPanel = vgui.Create( "DPropertySheet" )
+    BizPanel:SetPos( 0, 0 )
 	   
 	MyBiz = vgui.Create( "DPanelList" )
 	MyBiz:SetPadding( 10 );
@@ -745,36 +977,56 @@ function CreatePlayerMenu()
 	MyBiz:SetSpacing( 10 );
 	MyBiz:EnableHorizontal( false );
 	MyBiz:EnableVerticalScrollbar(false);
-	labellol1 = vgui.Create( "DLabel" )
-	labellol1:SetPos( 100, 100 )
-	labellol1:SetText( "TESTING!" )
-	MyBiz:AddItem( labellol1 )
-	Business:AddItem( MyBiz )
 	
+	/*
+		CAKE.MyGroup[ "Name" ]		= name,
+		[ "Type" ]		= data:ReadString(),
+		[ "Founder" ]	= data:ReadString(),
+		[ "Rank" ]		= data:ReadString(),
+		[ "RankPermissions" ] = string.Explode( ",", data:ReadString() ),
+		[ "Inventory" ]	= {}
+*/
+	if #CAKE.MyGroup < 1 then
+		labellol = vgui.Create( "DLabel" )
+		labellol:SetText( "You are not a member of any groups!" )
+		MyBiz:AddItem( labellol )
+	else
+		labellol1 = vgui.Create( "DLabel" )
+		labellol1:SetText( "Group Name:" .. CAKE.MyGroup.Name )
+		MyBiz:AddItem( labellol1 )
+		labellol2 = vgui.Create( "DLabel" )
+		labellol2:SetText( "Type of Group:" .. CAKE.MyGroup,Type )
+		MyBiz:AddItem( labellol2 )
+		labellol3 = vgui.Create( "DLabel" )
+		labellol3:SetText( "Founder:" .. CAKE.MyGroup.Founder )
+		MyBiz:AddItem( labellol3 )
+		labellol4 = vgui.Create( "DLabel" )
+		labellol4:SetText( "Rank:" .. CAKE.MyGroup.Rank )
+		MyBiz:AddItem( labellol4 )
+	end
 	SearchBiz = vgui.Create( "DPanelList" )
 	SearchBiz:SetPos( 100, 100 )
 	SearchBiz:SetPadding( 10 );
 	SearchBiz:SetSpacing( 10 );
 	SearchBiz:EnableHorizontal( false );
 	SearchBiz:EnableVerticalScrollbar(false);
-	labellol2 = vgui.Create( "DLabel" )
-	labellol2:SetPos( 100, 100 )
-	labellol2:SetText( "TESTING!" )
-	Business:AddItem( SearchBiz)
-	SearchBiz:AddItem( labellol2 )
+	labellolz = vgui.Create( "DLabel" )
+	labellolz:SetText( "TESTING!" )
+	SearchBiz:AddItem( labellolz )
+	
 	--Business:AddItem( MyBiz )
 
-	BizSheet:AddSheet( "My Group", MyBiz, "gui/silkicons/group", false, false, "The group which you belong");
-	BizSheet:AddSheet( "Search Groups", SearchBiz, "gui/silkicons/magnifier", false, false, "Search all groups");
+	BizPanel:AddSheet( "My Group", MyBiz, "gui/silkicons/group", false, false, "The group which you belong");
+	BizPanel:AddSheet( "Search Groups", SearchBiz, "gui/silkicons/magnifier", false, false, "Search all groups");
 	
 	PropertySheet:AddSheet( "Player Menu", PlayerInfo, "gui/silkicons/user", false, false, "General information.");
 	PropertySheet:AddSheet( "Character Menu", CharPanel, "gui/silkicons/group", false, false, "Switch to another character or create a new one.");
 	--PropertySheet:AddSheet( "Commands/Flagging", Commands, "gui/silkicons/wrench", false, false, "Execute some common commands or set your flag.");
-	PropertySheet:AddSheet( "Backpack", Inventory, "gui/silkicons/box", false, false, "View your inventory.")
+	PropertySheet:AddSheet( "Inventory", Inventory, "gui/silkicons/box", false, false, "View your inventory.")
 	--PropertySheet:AddSheet( "Business", Business, "gui/silkicons/box", false, false, "Purchase items.");
 	PropertySheet:AddSheet( "Clothing", Clothing, "gui/silkicons/anchor", false, false, "Change your clothes." )
 	PropertySheet:AddSheet( "Scoreboard", Scoreboard, "gui/silkicons/application_view_detail", false, false, "View the scoreboard.");		
 	PropertySheet:AddSheet( "INFO.Net", Help, "gui/silkicons/magnifier", false, false, "Get some information about Bliss");
-	PropertySheet:AddSheet( "Groups", Business, "gui/silkicons/group", false, false, "Armies, corporations and businesses.");
+	PropertySheet:AddSheet( "Groups", BizPanel, "gui/silkicons/group", false, false, "Armies, corporations and businesses.");
 end
 usermessage.Hook("playermenu", CreatePlayerMenu);
