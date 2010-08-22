@@ -179,17 +179,9 @@ function ccLockDoor( ply, cmd, args )
 	local entity = ents.GetByIndex( tonumber( args[ 1 ] ) );
 	
 	if( CAKE.IsDoor( entity ) ) then
-	
-		if( entity.owner == ply ) then
-		
-			entity:Fire( "lock", "", 0 );
+
+		entity:Fire( "lock", "", 0 );
 			
-		else
-		
-			CAKE.SendChat( ply, "This is not your door!" );
-			
-		end
-		
 	end
 
 end
@@ -201,16 +193,8 @@ function ccUnLockDoor( ply, cmd, args )
 	
 	if( CAKE.IsDoor( entity ) ) then
 	
-		if( entity.owner == ply ) then
-		
 			entity:Fire( "unlock", "", 0 );
-			
-		else
-		
-			CAKE.SendChat( ply, "This is not your door!" );
-			
-		end
-		
+
 	end
 
 end
@@ -321,6 +305,10 @@ function ccDropWeapon( ply, cmd, args )
 	
 		local wep = ply:GetActiveWeapon( )
 		CAKE.DropWeapon( ply, wep )
+		if ply:HasItem( wep:GetClass() ) then
+			ply:TakeItem( wep:GetClass() )
+		end
+		CAKE.RemoveGearItem( ply, wep:GetClass() )
 	
 end
 concommand.Add( "rp_dropweapon", ccDropWeapon );
@@ -342,6 +330,8 @@ function ccPickupItem( ply, cmd, args )
 			end
 			if( string.match( item.Class, "weapon" ) ) then
 				ply:Give( item.Class )
+				CAKE.HandleGear( ply, item.Class )
+				CAKE.SaveGear( ply )
 			end
 			item:Pickup( ply );
 			ply:GiveItem( item.Class );
@@ -454,14 +444,15 @@ local function ccRemoveChar( ply, cmd, args )
 	CAKE.RemoveCharacter( ply, id )
 	
 end
+concommand.Add( "rp_removechar", ccRemoveChar )
 
+/*
 local function ccEditGear( ply, cmd, args )
 
 	local ent = ents.GetByIndex( tonumber( args[ 1 ] ) )
 	datastream.StreamToClients( ply, "EditGear", { ["entity"] = ent });
 end
-concommand.Add( "rp_editgear", ccEditGear )
-concommand.Add( "rp_removechar", ccRemoveChar )
+concommand.Add( "rp_editgear", ccEditGear )*/
 
 local function ccCodeItem( ply, cmd, args )
 	

@@ -74,7 +74,7 @@ function DrawPlayerInfo( )
 
 	for k, v in pairs( player.GetAll( ) ) do	
 	
-		if( v != LocalPlayer( ) and !v:GetNWBool( "observe", false )) then
+		if( v != LocalPlayer( ) and !v:GetNWBool( "observe" )) then
 		
 			if( v:Alive( ) ) then
 			
@@ -141,6 +141,30 @@ function GM:HUDPaint( )
 	if LocalPlayer():GetNWInt("deathmode", 0 ) == 1 then
 		DrawDeathMeter( )
 	end
+	if PlayerMenu then
+		local matWhite = CreateMaterial( "iWhite", "UnlitGeneric", {
+			[ "$basetexture" ] = "lights/white"
+		} )
+		render.SetMaterial( matWhite )
+		render.DrawScreenQuad()
+		render.ClearDepth()
+		LocalPlayer():DrawModel()
+		LocalPlayer():DrawShadow()
+		for k, v in pairs( CAKE.Gear ) do
+			if ValidEntity( v[ "entity" ] ) then
+				v[ "entity" ]:DrawModel()
+				v[ "entity" ]:DrawShadow()
+			end
+		end
+		
+		for k, v in pairs( CAKE.ClothingTbl ) do
+			if ValidEntity( v ) then
+				v:DrawModel()
+				v:DrawShadow()
+			end
+		end
+	end
+	
 end
 
 local function DrawRagdollsAndShit()

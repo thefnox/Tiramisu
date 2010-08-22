@@ -6,8 +6,9 @@ function GM:PlayerUse(ply, entity)
 
 	if(CAKE.IsDoor(entity)) then
 		local doorgroups = CAKE.GetDoorGroup(entity)
+		local groupdoor = CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or 0
 		for k, v in pairs(doorgroups) do
-			if( tonumber( CAKE.GetCharField( ply, "doorgroup" ) ) == tonumber( v ) or ( CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or 0 ) == tonumber( v ) ) then
+			if( tonumber( CAKE.GetCharField( ply, "doorgroup" ) ) == tonumber( v ) or tonumber( groupdoor ) == tonumber( v ) ) then
 				entity:Fire( "open", "", 0 );
 			end
 		end
@@ -22,8 +23,9 @@ local function usepressed(ply, key) --Override for City 8 doors.
 			local entity = trace.Entity
 			if(CAKE.IsDoor(entity)) then
 				local doorgroups = CAKE.GetDoorGroup(entity)
+				local groupdoor = CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or 0
 				for k, v in pairs(doorgroups) do
-					if( tonumber( CAKE.GetCharField( ply, "doorgroup" ) ) == tonumber( v ) or ( CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or 0 ) == tonumber( v ) ) then
+					if( tonumber( groupdoor ) == tonumber( v ) ) then
 						entity:Fire( "open", "", 0 );
 					end
 				end

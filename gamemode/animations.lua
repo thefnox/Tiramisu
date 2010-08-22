@@ -120,17 +120,11 @@ hook.Add( "KeyPress", "NPCWeaponHook", NPCWeaponHook )
 local Anims = {}
 Anims.Male = {}
 Anims.Male[ "models" ] = {
-	"models/barney.mdl",
-	"models/eli.mdl",
-	"models/breen.mdl",
-	"models/Gustavio/maleanimtree.mdl",
-	"models/Gustavio/combineanimtree.mdl",
-	"models/Gustavio/metroanimtree.mdl",
-	"models/kleiner.mdl"
+	"models/Gustavio/maleanimtree.mdl"
 }
 Anims.Male[ "default" ] = { 
         [ "idle" ] = "ACT_IDLE",
-        [ "walk" ] = "ACT_WALK",
+        [ "walk" ] = "&switch:models/Gustavio/barneyanimtree.mdl;ACT_WALK",
         [ "run" ] = "ACT_RUN",
         [ "jump" ] = "ACT_JUMP",
         [ "land" ] = "ACT_LAND",
@@ -318,14 +312,11 @@ Anims.Male[ "slam" ] = {
  
 Anims.Female = {}
 Anims.Female[ "models" ] = {
-	"models/alyx.mdl",
-	"models/Gustavio/femaleanimtree.mdl",
-	"models/Gustavio/alyxanimtree.mdl"
- 
+	"models/Gustavio/femaleanimtree.mdl"
 }
 Anims.Female[ "default" ] = { 
         [ "idle" ] = "ACT_IDLE",
-        [ "walk" ] = "ACT_WALK",
+        [ "walk" ] = "&switch:models/Gustavio/alyxanimtree.mdl;ACT_WALK",
         [ "run" ] = "ACT_RUN",
         [ "jump" ] = "ACT_JUMP",
         [ "land" ] = "ACT_LAND",
@@ -662,6 +653,7 @@ end
 function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed )
 	local eye = ply:EyeAngles()
 	ply:SetLocalAngles( eye )
+	ply:SetEyeTarget( ply:EyePos( ) )
 
 	if CLIENT then
 		ply:SetRenderAngles( eye ) 
@@ -671,6 +663,14 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed )
 	local myaw = math.NormalizeAngle(math.NormalizeAngle(eye.y) - estyaw)
 
 	ply:SetPoseParameter("move_yaw", myaw * -1 ) 
+	ply:SetPoseParameter("body_yaw", 0 )
+	ply:SetPoseParameter("spine_yaw", 0 )
+	
+	if ply.Clothing then
+		if ValidEntity( ply.Clothing[ 2 ] ) then
+			ply.Clothing[ 2 ]:SetEyeTarget( ply:EyePos( ) )
+		end
+	end
 	
 	local len2d = velocity:Length2D()
 	local rate = 1.0
@@ -687,13 +687,15 @@ end
 
 local function HandleLanding( ply )
 
-	ply.CalcIdeal = ACT_LAND
-	ply:Freeze( true )
-	timer.Simple( 0.8, function()
-		ply.m_bLanding = false
-		ply:Freeze( false )
-		ply:AnimRestartMainSequence()
-	end)
+	if !ply:GetNWBool( "observe" ) then
+		ply.CalcIdeal = ACT_LAND
+		ply:Freeze( true )
+		timer.Simple( 0.8, function()
+			ply.m_bLanding = false
+			ply:Freeze( false )
+			ply:AnimRestartMainSequence()
+		end)
+	end
 
 end
 
@@ -720,7 +722,7 @@ function GM:HandlePlayerJumping( ply )
 				end
 				
                 if (CurTime() - ply.m_flJumpStartTime) > 0.6 then
-                        if ply:OnGround() and !ply.m_bLanding then
+                        if ply:OnGround() and !ply.m_bLanding and !ply:GetNWBool( "observe" ) then
 							ply.m_bLanding = true
 							ply:Freeze( true )
 							timer.Simple( 0.3, function()
@@ -816,6 +818,48 @@ function GM:HandlePlayerDriving( ply )
                         
                 return true
         end
+		
+		if ply:GetNWBool( "sittingchair", false ) then
+			if !ply.IsSittingDamn then
+				ply.CalcIdeal = ACT_BUSY_SIT_CHAIR_ENTRY
+				timer.Simple( 1.5, function()
+					ply.IsSittingDamn = true
+				end)
+				return true
+			else
+				ply.CalcIdeal = ACT_BUSY_SIT_CHAIR
+				return true
+			end
+		else
+			if ply.IsSittingDamn then
+				ply.CalcIdeal = ACT_BUSY_SIT_CHAIR_EXIT
+				timer.Simple( 0.8, function()
+					ply.IsSittingDamn = false
+				end)
+				return true
+			end
+		end
+		
+		if ply:GetNWBool( "sittingground", false ) then
+			if !ply.IsSittingGround then
+				ply.CalcIdeal = ACT_BUSY_SIT_GROUND_ENTRY
+				timer.Simple( 2, function()
+					ply.IsSittingGround = true
+				end)
+				return true
+			else
+				ply.CalcIdeal = ACT_BUSY_SIT_GROUND
+				return true
+			end
+		else
+			if ply.IsSittingGround then
+				ply.CalcIdeal = ACT_BUSY_SIT_GROUND_EXIT
+				timer.Simple( 1.4, function()
+					ply.IsSittingGround = false
+				end)
+				return true
+			end
+		end
         
         return false
 end

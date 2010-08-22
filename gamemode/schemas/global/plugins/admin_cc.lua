@@ -104,23 +104,22 @@ function Admin_Observe( ply, cmd, args )
 	   if( not ply:GetNWBool( "observe" )) then
 
 		   ply:GodEnable();
-		   for k, v in pairs( ply.Clothing ) do
-			   if type( v ) != "table" then --So it isn't gear.
-				   if ValidEntity( v ) then
-					   v:SetNoDraw( true );
-				   end
-			   end
-		   end
+			if ply.Clothing then
+			    for k, v in pairs( ply.Clothing ) do
+					if ValidEntity( v ) then
+						v:SetNoDraw( true );
+					end
+			    end
+			end
 		   
-		   if( ply.Clothing.Gear ) then
-			   for k, v in pairs( ply.Clothing.Gear ) do
-				   for k2, v2 in pairs( ply.Clothing.Gear[ v ] ) do
-					   if ValidEntity( v2 ) then
-						   v2:SetNoDraw( true );
-					   end
-				   end
-			   end
-		   end
+			if( ply.Gear ) then
+				for k, v in pairs( ply.Gear ) do
+					if ValidEntity( v[ "entity"] ) then
+						v[ "entity"]:SetDTBool( 1, false );
+						v[ "entity"]:SetNoDraw( true );
+					end
+				end
+			end
 		   
 		   if( ValidEntity( ply:GetActiveWeapon() ) ) then
 			   ply:GetActiveWeapon():SetNoDraw( true );
@@ -142,15 +141,14 @@ function Admin_Observe( ply, cmd, args )
 			   end
 		   end
 		   
-		   if( ply.Clothing.Gear ) then
-			   for k, v in pairs( ply.Clothing.Gear ) do
-				   for k2, v2 in pairs( ply.Clothing.Gear[ v ] ) do
-					   if ValidEntity( v2 ) then
-						   v2:SetNoDraw( false );
-					   end
-				   end
-			   end
-		   end
+			if( ply.Gear ) then
+				for k, v in pairs( ply.Gear ) do
+					if ValidEntity( v[ "entity"] ) then
+						v[ "entity"]:SetDTBool( 1, true );
+						v[ "entity"]:SetNoDraw( false );
+					end
+				end
+			end
 		   
 		   if( ply:GetActiveWeapon() ) then
 			   ply:GetActiveWeapon():SetNoDraw( false );
@@ -460,19 +458,31 @@ function Admin_CreateItem( ply, cmd, args ) -- Why the fuck wasn't this here on 
 	CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ) );
 	
 end
+
+function Admin_ListItems( ply, cmd, args )
+	
+	local str = ""
+	for k, v in ipairs( CAKE.ItemData ) do
+	
+		str = str .. v.Class .. "\n"
+		CAKE.SendConsole( ply, str )
+	
+	end
+
+end
 	
 -- Let's make some ADMIN COMMANDS!
 function PLUGIN.Init( )
 
 	CAKE.ConVars[ "MaxBan" ] = 300; -- What is the maximum ban limit for regular admins?
 	
-	CAKE.AddAdminRank( "Event Cooirdinator", 1)
-	CAKE.AddAdminRank( "Trial Moderator", 2)
+	CAKE.AddAdminRank( "Event Coordinator", 2)
 	CAKE.AddAdminRank( "Moderator", 3)
 	CAKE.AddAdminRank( "Administrator", 4)
 	CAKE.AddAdminRank( "Super Administrator", 5)
 	
 	CAKE.AdminCommand( "help", Admin_Help, "List of all admin commands", true, true, 1 );
+	CAKE.AdminCommand( "listitems", Admin_ListItems, "List of all items", true, true, 1 );
 	CAKE.AdminCommand( "observe", Admin_Observe, "Enter observe mode", true, true, 1 );
 	CAKE.AdminCommand( "noclip", Admin_Noclip, "Enter admin noclip mode", true, true, 1 );
 	CAKE.AdminCommand( "kick", Admin_Kick, "Kick someone on the server", true, true, 2 );
@@ -488,7 +498,7 @@ function PLUGIN.Init( )
 	CAKE.AdminCommand( "adddoor", Admin_AddDoor, "Add a door to a doorgroup", true, true, 4 );
 	CAKE.AdminCommand( "createitem", Admin_CreateItem, "Creates an item", true, true, 4 );
 	CAKE.AdminCommand( "setrank", Admin_SetRank, "Set the rank of another player", true, true, 5 )
-	CAKE.AdminCommand( "setmoney", Admin_SetMoney, "Set the money of another player", true, true, 5 )
+	CAKE.AdminCommand( "setmoney", Admin_SetMoney, "Set the money of another player", true, true, 4 )
 	CAKE.AdminCommand( "addspawn", Admin_AddSpawn, "Add a new spawn point.", true, true, 4 )
 	CAKE.AdminCommand( "addstash", Admin_AddStash, "Add a new stash point.", true, true, 4 )
 	

@@ -51,6 +51,7 @@ include( "sql_main.lua" ); --MySQL handling
 include( "spawnpoints.lua" ) -- Handling spawn points.
 include( "stashes.lua" ) -- Stashes
 include( "resources.lua" ) -- Automatic resource handling
+--include( "sv_usermessages.lua" )
 
 CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ); -- Load the schema and plugins, this is NOT initializing.
 
@@ -79,25 +80,6 @@ function GM:Initialize( ) -- Initialize the gamemode
 	
 	timer.Create( "timesave", 120, 0, CAKE.SaveTime );
 	timer.Create( "sendtime", 1, 0, CAKE.SendTime );
-	
-	-- SALAARIIEEESS?!?!?!?!?!?! :O
-	timer.Create( "givemoney", CAKE.ConVars[ "SalaryInterval" ] * 60, 0, function( )
-		if( CAKE.ConVars[ "SalaryEnabled" ] == "1" ) then
-		
-			for k, v in pairs( player.GetAll( ) ) do
-			
-				if( CAKE.Teams[ v:Team( ) ] != nil ) then
-				
-					CAKE.ChangeMoney( v, CAKE.Teams[ v:Team( ) ][ "salary" ] );
-					CAKE.SendChat( v, "Paycheck! " .. CAKE.Teams[ v:Team( ) ][ "salary" ] .. " credits earned." );
-					
-				end
-				
-			end 
-			
-		end
-
-	end )
 	
 	CAKE.CallHook("GamemodeInitialize");
 	
@@ -245,6 +227,10 @@ function GM:PlayerSpawn( ply )
 		CAKE.SavePlayerData( ply )
 	end)
 	
+	timer.Create( ply:SteamID() .. "gunchecktimer", 0.1, 0, function()
+		ply:HideActiveWeapon()
+	end)
+	
 	-- Reset all the variables
 	ply:ChangeMaxHealth(CAKE.ConVars[ "DefaultHealth" ] - ply:MaxHealth());
 	ply:ChangeMaxArmor(0 - ply:MaxArmor());
@@ -256,7 +242,7 @@ function GM:PlayerSpawn( ply )
 	ply:RefreshExtraInventory( )
 	
 	if CAKE.GetCharField( ply, "group" ) == "None" or CAKE.GetCharField( ply, "group" ) == "none" then
-		--datastream.StreamToClients( ply, "recievemygroup", {} )
+		datastream.StreamToClients( ply, "recievemygroup", {} )
 	else
 		local name = CAKE.GetCharField( ply, "group" )
 		local rank = CAKE.GetCharField( ply, "grouprank" )
@@ -268,7 +254,7 @@ function GM:PlayerSpawn( ply )
 			[ "Name" ]		= name,
 			[ "Type" ]		= type,
 			[ "Founder" ]	= founder,
-			[ "Rank" ]		= rank,
+			[ "Rank" ]		= rankname,
 			[ "RankPermissions" ] = rankpermissions,
 			[ "Inventory" ]	= {}
 		})
@@ -367,16 +353,4 @@ function GM:DoPlayerDeath( ply, attacker, dmginfo )
 
 	-- We don't want kills, deaths, nor ragdolls being made. Kthx.
 	
-end
-
-function GM:PlayerUse(ply, entity)
-	if(CAKE.IsDoor(entity)) then
-		local doorgroups = CAKE.GetDoorGroup(entity)
-		for k, v in pairs(doorgroups) do
-			if(table.HasValue(CAKE.Teams[ply:Team()]["door_groups"], v)) then
-				return false;
-			end
-		end
-	end
-	return self.BaseClass:PlayerUse(ply, entity);
 end

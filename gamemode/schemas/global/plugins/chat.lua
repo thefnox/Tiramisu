@@ -7,7 +7,7 @@ function Broadcast( ply, text )
 	-- Check to see if the player's team allows broadcasting
 	local team = CAKE.GetCharField( ply, "group" )
 	
-	if( CAKE.GetGroupFlag( team, "CanBroadcast" ) ) then
+	if( CAKE.GetGroupFlag( team, "canbroadcast" ) ) then
 		
 		for k, v in pairs( player.GetAll( ) ) do
 		
@@ -15,6 +15,40 @@ function Broadcast( ply, text )
 			
 		end
 	
+	end
+	
+	return "";
+	
+end
+
+function Event( ply, text )
+
+	-- Check to see if the player's team allows broadcasting
+	if( CAKE.PlayerRank(ply) > 3 ) then
+		
+		for k, v in pairs( player.GetAll( ) ) do
+		
+			CAKE.SendChat( v, "[EVENT]: " .. text );
+			
+		end
+	
+	end
+	
+	return "";
+	
+end
+
+function PersonalMessage( ply, text )
+
+	-- Check to see if the player's team allows broadcasting
+	local exp = string.Explode( " ", text )
+	local target = CAKE.FindPlayer( exp[1] )
+	table.remove( exp, 1)
+	if target then
+		CAKE.SendChat( target, "[FROM:" .. ply:Nick() .. "]" .. table.concat( exp, " " ) )
+		CAKE.SendChat( ply, "[TO:" .. target:Nick() .. "]" .. table.concat( exp, " " ) )
+	else
+		CAKE.SendChat( ply, "Target not found!" )
 	end
 	
 	return "";
@@ -46,6 +80,7 @@ function RemoveHelmet( ply, text )
 	
 	ply:RemoveHelmet()
 	
+	return "";
 
 end
 
@@ -83,14 +118,14 @@ function Radio( ply, text )
 
 	local players = player.GetAll();
 	local heardit = {};
-	local frequency = CAKE.GetCharField( ply, "frequency" )
+	local group = CAKE.GetCharField( ply, "group" )
 
 	if(CAKE.Teams[ply:Team()] == nil) then return ""; end
 
-	if(frequency != 0) then
+	if(group != 0) then
 		for k2, v2 in pairs(player.GetAll()) do
 			if(CAKE.Teams[v2:Team()] != nil) then
-				if( CAKE.GetCharField( v2, "frequency" ) == frequency ) then
+				if( CAKE.GetCharField( v2, "group" ) == group ) then
 					CAKE.SendChat(v2, "[RADIO] " .. ply:Nick() .. ": " .. text);
 					table.insert(heardit, v2);
 				end
@@ -145,12 +180,12 @@ function PLUGIN.Init( ) -- We run this in init, because this is called after the
 	CAKE.SimpleChatCommand( ".//", CAKE.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3" ); -- Local OOC Chat
 	CAKE.SimpleChatCommand( "[[", CAKE.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3" ); -- Local OOC Chat
 
-	CAKE.ChatCommand( "/ad", Advertise ); -- Advertisements
-	CAKE.ChatCommand( "/ooc", OOCChat ); -- OOC Chat
-	CAKE.ChatCommand( "//", OOCChat ); -- OOC Chat
+	CAKE.ChatCommand( "/ad", Advertise );
+	CAKE.ChatCommand( "/event", Event );	-- Advertisements
 	CAKE.ChatCommand( "/bc", Broadcast ); -- Broadcast
 	CAKE.ChatCommand( "/radio", Radio ); -- Radio
 	CAKE.ChatCommand( "/removehelmet", RemoveHelmet );
+	CAKE.ChatCommand( "/pm", PersonalMessage );
 	
 	CAKE.AddHook("Player_Preload", "chat_modplayervars", Chat_ModPlayerVars); -- Put in our OOCDelay variable
 	

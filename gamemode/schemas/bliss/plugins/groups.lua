@@ -97,6 +97,10 @@ function CAKE.SetCharRank( promoter, rank, ply )
 		if promoterlevel > plylevel and promoterlevel <= CAKE.GetRankPermission( group, rank, "level" ) then
 			CAKE.SetCharField( ply, "grouprank", rank )
 			ply.GetLoadout = true
+			umsg.Start( "recievegroupinvite", ply )
+				umsg.String( rank )
+				umsg.String( promoter:Nick() )
+			umsg.End()
 		end
 	end
 	
@@ -289,20 +293,23 @@ local function ccSendInvite( ply, cmd, args )
 	local rank = CAKE.GetCharField( ply, "grouprank" )
 	local permission = CAKE.GetRankPermission( group, rank, "caninvite" )
 	local target = CAKE.FindPlayer( args[1] )
-	local targetgroup = CAKE.GetCharField( target, "group" )
 	
-	if permission and targetgroup == "None" then
+	if permission then
 	
 		if !target.Invited then
 			target.Invited = {}
 		end
 		target.Invited[ group ] = true
-		umsg.Start( ply, "recievegroupinvite" )
+		umsg.Start( "recievegroupinvite", target )
 			umsg.String( group )
 			umsg.String( ply:Nick() )
 		umsg.End()
-		CAKE.SendChat( ply, "You have sent " .. target:Nick() .. " a group invitation" )
-		CAKE.SendConsole( ply, "You have sent " .. target:Nick() .. " a group invitation" )
+		CAKE.SendChat( target, "You have sent " .. target:Nick() .. " a group invitation" )
+		CAKE.SendConsole( target, "You have sent " .. target:Nick() .. " a group invitation" )
+	else
+	
+		CAKE.SendChat( ply, "You don't have permission to invite people." )
+		CAKE.SendConsole( ply, "You don't have permission to invite people." )
 	
 	end
 
@@ -313,7 +320,7 @@ local function ccAcceptInvite( ply, cmd, args )
 	
 	local group = args[1]
 	local rank = CAKE.GetGroupFlag( group, "primaryrank" )
-	local promoter = CAKE.FindTarget( args[2] )
+	local promoter = CAKE.FindPlayer( args[2] )
 	
 	if ply.Invited and ply.Invited[ group ] then
 		CAKE.SetCharField( ply, "group", group )
@@ -339,3 +346,17 @@ local function ccAcceptInvite( ply, cmd, args )
 
 end
 concommand.Add( "rp_acceptinvite", ccAcceptInvite )
+
+local function ccPromote( ply, cmd, args )
+
+	local target = CAKE.FindPlayer( args[1] )
+	local rank = args[2]
+	
+	if target then
+		CAKE.SetCharRank( ply, rank, target )
+	else
+		CAKE.SendChat( "Can't find target!" )
+	end
+	
+end
+concommand.Add( "rp_promote", ccPromote )

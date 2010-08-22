@@ -144,7 +144,7 @@ end
    Name: ENT:SetupDataTables()
    Desc: Setup the data tables.
 ---------------------------------------------------------*/
-function ENT:SetupDataTables()  
+function SWEP:SetupDataTables()  
 
 	self:DTVar("Bool", 0, "Holsted")
 	self:DTVar("Bool", 1, "Ironsights")

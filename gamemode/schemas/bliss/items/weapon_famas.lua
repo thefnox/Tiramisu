@@ -5,6 +5,10 @@ ITEM.Model = "models/weapons/w_rif_famas.mdl";
 ITEM.Purchaseable = true;
 ITEM.Price = 600;
 ITEM.ItemGroup = 2;
+ITEM.Offset = Vector( -5,-5,2 )
+ITEM.OffsetAngle = Angle( 45,0,0 )
+ITEM.Bone = "chest"
+ITEM.WeaponType = "big"
 
 function ITEM:Drop(ply)
 

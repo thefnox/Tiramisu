@@ -5,6 +5,10 @@ ITEM.Model = "models/weapons/w_smg1.mdl";
 ITEM.Purchaseable = true;
 ITEM.Price = 350;
 ITEM.ItemGroup = 2;
+ITEM.Offset = Vector( 4,-4,-2 )
+ITEM.OffsetAngle = Angle( 45,0,0 )
+ITEM.Bone = "chest"
+ITEM.WeaponType = "big"
 
 function ITEM:Drop(ply)
 

@@ -14,6 +14,8 @@ local function WeaponEquipItem( wep )
 				CAKE.SetCharField( ply, "weapons", weapons )
 			end
 			ply:GiveItem( wep:GetClass( ) )
+			CAKE.HandleGear( ply, wep:GetClass( ) )
+			CAKE.SaveGear( ply )
 		end 
  
 	end)
@@ -114,6 +116,9 @@ local function WeaponsLoadout( ply )
 						for k, v in pairs( CAKE.GetRankPermission( group, rank, "loadout" ) ) do
 							if !ply:HasItem( v ) then
 								ply:GiveItem( v )
+								if string.match( v, "weapon" ) then
+									ply:Give( v )
+								end
 							end
 						end
 					end

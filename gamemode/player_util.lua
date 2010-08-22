@@ -31,6 +31,10 @@ DecayingRagdolls = {};
 
 function CAKE.DeathMode( ply )
 	
+	if ValidEntity( ply.deathrag ) then
+		ply.deathrag:Remove()
+		ply.deathrag = nil
+	end
 	
 	ply.CheatedDeath = false
 	CAKE.DayLog( "script.txt", "Starting death mode for " .. ply:SteamID( ) );
@@ -54,8 +58,19 @@ function CAKE.DeathMode( ply )
 		end
 	end
 	
+	if( ply.Gear ) then
+		for k, v in pairs( ply.Gear ) do
+			if( ValidEntity( v[ "entity" ] ) ) then
+				v[ "entity" ]:SetParent( rag )
+				v[ "entity" ]:SetDTInt( 1, rag:LookupBone( CAKE.BoneShorttoFull( k ) ) )
+				v[ "entity" ]:Initialize()
+			end
+		end
+	end
+	
 	rag.clothing = ply.Clothing
 	ply.Clothing = nil
+	ply.Gear = nil
 	
 	datastream.StreamToClients( ply, "RecieveViewRagdoll", { ["ragdoll"] = rag, ["clothing"] = rag.clothing } )
 	
@@ -170,7 +185,6 @@ function meta:TakeItem( class )
 	for k, v in pairs( inv ) do
 		if( v == class ) then
 			inv[ k ] = nil;
-			PrintTable( inv );
 			CAKE.SetCharField( self, "inventory", inv);
 			self:RefreshInventory( );
 			CAKE.DayLog( "economy.txt", "Removing item '" .. class .. "' from " .. CAKE.FormatCharString( self ) .. " inventory" );
@@ -208,36 +222,26 @@ end
 function meta:RefreshBusiness( )
 	self:ClearBusiness( )
 		
-	if(CAKE.Teams[self:Team()] == nil) then return; end -- Team not assigned
-	local business = CAKE.GetCharField( self, "buygroups" )
+	if !self:IsCharLoaded() then return; end -- Team not assigned
+	local group = CAKE.GetCharField( self, "group" )
+	local rank = CAKE.GetCharField( self, "grouprank" )
+	local canBuy = CAKE.GetRankPermission( group, rank, "canbuy" )
 	
-	for k, v in pairs( CAKE.ItemData ) do
-		if v.Purchaseable then
-			if type( v.ItemGroup ) == "table" then
-				for k2, v2 in pairs( business ) do
-					if table.HasValue( v.ItemGroup, v2 ) then
-						umsg.Start( "addbusiness", self );
-						umsg.String( v.Name );
-						umsg.String( v.Class );
-						umsg.String( v.Description );
-						umsg.String( v.Model );
-						umsg.Long( v.Price );
-						umsg.End( )		
-					end
-				end
-			else
-				if table.HasValue( business, v.ItemGroup ) then
+	if canBuy then
+		local buygroups = CAKE.GetRankPermission( group, rank, "buygroups" )
+		for k, v in pairs( CAKE.ItemData ) do
+			if v.Purchaseable then
+				if table.HasValue( buygroups, v.ItemGroup ) then
 					umsg.Start( "addbusiness", self );
-						umsg.String( v.Name );
-						umsg.String( v.Class );
-						umsg.String( v.Description );
-						umsg.String( v.Model );
-						umsg.Long( v.Price );
-					umsg.End( );
+					umsg.String( v.Name );
+					umsg.String( v.Class );
+					umsg.String( v.Description );
+					umsg.String( v.Model );
+					umsg.Long( v.Price );
+					umsg.End( )		
 				end
 			end
 		end
-	
 	end
 end
 

@@ -54,6 +54,8 @@ function ccDropItem( ply, cmd, args )
 			if( v == args[ 1 ] ) then
 				if( string.match( v, "weapon" ) )then
 					ply:StripWeapon( v )
+					CAKE.RemoveGearItem( ply, v )
+					CAKE.SaveGear( ply )
 					if( table.HasValue( CAKE.GetCharField( ply, "weapons" ), v ) ) then
 						local weapons = CAKE.GetCharField( ply, "weapons" )
 						for k2, v2 in pairs( weapons ) do
@@ -81,49 +83,29 @@ concommand.Add( "rp_dropitem", ccDropItem );
 
 function ccBuyItem( ply, cmd, args )
 	
-	local business = CAKE.GetCharField( ply, "buygroups" )
+	local group = CAKE.GetCharField( ply, "group" )
+	local rank = CAKE.GetCharField( ply, "grouprank" )
+	local canBuy = CAKE.GetRankPermission( group, rank, "canbuy" )
 	local itemgroup = CAKE.ItemData[ args[ 1 ] ].ItemGroup
 	if( CAKE.ItemData[ args[ 1 ] ] != nil ) then
-		if( business ) then --Let's make business
-			if( type( itemgroup ) == "table" ) then
-				for k, v in pairs( itemgroup ) do
-					if( table.HasValue( business, v ) ) then
-		
-						if( CAKE.ItemData[ args[ 1 ] ].Purchaseable and tonumber(CAKE.GetCharField(ply, "money" )) >= CAKE.ItemData[ args[ 1 ] ].Price ) then
+		if( canBuy ) then --Let's make business
+			local buygroups = CAKE.GetRankPermission( group, rank, "buygroups" )
+			if( table.HasValue( buygroups, itemgroup ) ) then
+				if( CAKE.ItemData[ args[ 1 ] ].Purchaseable and tonumber(CAKE.GetCharField(ply, "money" )) >= CAKE.ItemData[ args[ 1 ] ].Price ) then
 					
-							CAKE.ChangeMoney( ply, 0 - CAKE.ItemData[ args[ 1 ] ].Price );
-							CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ) );
-				
-						else
-						
-							CAKE.SendChat( ply, "You do not have enough money to purchase this item!" );
+					CAKE.ChangeMoney( ply, 0 - CAKE.ItemData[ args[ 1 ] ].Price );
+					CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ) );
 					
-						end
-					end
+				else
+					
+					CAKE.SendChat( ply, "You do not have enough money to purchase this item!" );
+					
 				end
 			else
-				if( table.HasValue( business, itemgroup ) ) then
-		
-					if( CAKE.ItemData[ args[ 1 ] ].Purchaseable and tonumber(CAKE.GetCharField(ply, "money" )) >= CAKE.ItemData[ args[ 1 ] ].Price ) then
-				
-						CAKE.ChangeMoney( ply, 0 - CAKE.ItemData[ args[ 1 ] ].Price );
-						CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ) );
-			
-					else
-					
-						CAKE.SendChat( ply, "You do not have enough money to purchase this item!" );
-					
-					end
-				else
-			
-					CAKE.SendChat( ply, "You cannot purchase this item!" );
-				
-				end
+				CAKE.SendChat( ply, "You cannot purchase this item!" );
 			end
 		else
-		
-			CAKE.SendChat( ply, "You do not have access to Business!" );
-			
+				CAKE.SendChat( ply, "You do not have access to Business!" );
 		end
 	
 	end

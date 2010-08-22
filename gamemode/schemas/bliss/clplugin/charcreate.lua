@@ -60,7 +60,8 @@ The Ztarians have far more endurance than humans, due to their two hearts, altho
 Their religion is similar to Islam and Ancient Egyptian Mythology, it is shared by all Ztarians (Except heathens and heretics). ]]
 Race[ "Ztarian" ][ "models" ] = {}
 Race[ "Ztarian" ][ "models" ][ "male" ] = {
-			"models/slash/garrus/garrus.mdl"
+			"models/slash/garrus/garrus.mdl",
+			"models/quarianmale.mdl"
 	      }
 Race[ "Ztarian" ][ "models" ][ "female" ] = {
 			"models/kit/Mercs/asari_01.mdl",
@@ -70,7 +71,8 @@ Race[ "Ztarian" ][ "models" ][ "female" ] = {
 			"models/kit/Mercs/asari_05.mdl",
 			"models/kit/Mercs/asari_06.mdl",
 			"models/kit/Mercs/asari_07.mdl",
-			"models/kit/Mercs/asari_08.mdl"
+			"models/kit/Mercs/asari_08.mdl",
+			"models/talizorah.mdl"
 	      }
 		  
 Race[ "Sentient" ] = {}

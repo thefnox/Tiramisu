@@ -99,9 +99,9 @@ function CAKE.SetClothing( ply, body, helmet, glove )
 		CAKE.HandleClothing( ply, glove or body, 3 )
 		CAKE.CalculateEncumberment( ply )
 		
-	end
+end
 	
-	function meta:RemoveClothing()
+function meta:RemoveClothing()
 		if self.Clothing then
 			CAKE.RemoveAllGear( self )
 		
@@ -115,20 +115,19 @@ function CAKE.SetClothing( ply, body, helmet, glove )
 			end
 		end
 		
-		self.Clothing = {}
-		
-	end
+	self.Clothing = {}	
+end
 	
-	function meta:RemoveHelmet()
+function meta:RemoveHelmet()
 	
 		local body = CAKE.GetCharField( self, "clothing" )
 		local face = CAKE.GetCharField( self, "model" )
 		local gloves = CAKE.GetCharField( self, "gloves" )
 		CAKE.SetClothing( self, body, face, gloves )
 		
-	end
+end
 	
-	function CAKE.HandleClothing( ply, model, type )
+function CAKE.HandleClothing( ply, model, type )
 		
 		if !ply.Clothing then
 			ply.Clothing = {}
@@ -144,70 +143,6 @@ function CAKE.SetClothing( ply, body, helmet, glove )
 		ply.Clothing[ type ]:SetAngles( ply:GetAngles() )
 		ply.Clothing[ type ]:Spawn()
 		
-	end
-	
-	function CAKE.HandleGear( ply, model, bone, offset, angle )
-	
-		if !ply.Clothing then
-			ply.Clothing = {}
-		end
-		
-		if !ply.Clothing.Gear then
-			ply.Clothing.Gear = {}
-		end
-		
-		if !ply.Clothing.Gear[ bone ] then
-			ply.Clothing.Gear[ bone ] = {}
-		end
-		
-		local index = #ply.Clothing.Gear + 1
-		
-		ply.Clothing.Gear[ bone ][ index ] = ents.Create( "player_gear" )
-		ply.Clothing.Gear[ bone ][ index ]:SetDTInt( 1, ply:LookupBone( bone ) )
-		ply.Clothing.Gear[ bone ][ index ]:SetDTEntity( 2, ply )
-		ply.Clothing.Gear[ bone ][ index ]:SetDTAngle( 3, angle )
-		ply.Clothing.Gear[ bone ][ index ]:SetDTVector( 4, offset )
-		ply.Clothing.Gear[ bone ][ index ]:SetModel( model )
-		ply.Clothing.Gear[ bone ][ index ]:SetParent( ply )
-		ply.Clothing.Gear[ bone ][ index ]:SetPos( ply:GetPos() )
-		ply.Clothing.Gear[ bone ][ index ]:SetAngles( ply:GetAngles() )
-		--ply.Clothing.Gear[ index ]:SetModelScale( scale )
-		ply.Clothing.Gear[ bone ][ index ]:Spawn()
-		
-		print( " WHOA WHOA! SETTING YOUR SHIT TO THE FOLLOWING! BONEID:" .. tostring( ply.Clothing.Gear[ bone ][ index ]:GetDTInt( 1 ) )
-		.. ", ENTITY:" .. tostring( ply.Clothing.Gear[ bone ][ index ]:GetDTEntity( 2 ):Nick() )
-		.. ", ANGLE:" .. tostring( ply.Clothing.Gear[ bone ][ index ]:GetDTAngle( 3 ) )
-		.. ", VECTOR:" .. tostring( ply.Clothing.Gear[ bone ][ index ]:GetDTVector( 4 ) )
-		.. ", ENTITY ID:" .. tostring( ply.Clothing.Gear[ bone ][ index ]:EntIndex() ) .. "!" )
-	end
-	
-function CAKE.RemoveGear( ply, bone, index )
-		if index then
-		ply.Clothing.Gear[ bone ][ index ]:Remove()
-		ply.Clothing.Gear[ bone ][ index ] = nil
-	else
-		for k, v in pairs( ply.Clothing.Gear[ bone ] ) do
-			v:Remove()
-			v = nil
-		end
-		ply.Clothing.Gear[ bone ] = {}
-	end
-end
-	
-function CAKE.RemoveAllGear( ply )
-	if ply.Clothing.Gear then
-		for k, v in pairs( ply.Clothing.Gear ) do
-			for k2, v2 in pairs( ply.Clothing.Gear[ v ] ) do
-				if ValidEntity( v2 ) then
-					v2:Remove()
-					v2 = nil		
-				end
-			end
-			ply.Clothing.Gear[ v ] = {}
-		end
-	end
-		
-	ply.Clothing.Gear = {}
 end
 	
 local function SpawnClothingHook( ply )
@@ -226,6 +161,9 @@ local function SpawnClothingHook( ply )
 			else
 				ply:SetNWString( "model", CAKE.GetCharField( ply, "model" ) )
 			end
+			CAKE.RemoveAllGear( ply )
+			CAKE.RestoreGear( ply )
+			CAKE.SendConsole( ply, "Gear Restored" )
 		end)
 	end
 end
@@ -264,35 +202,11 @@ local function ccSetClothing( ply, cmd, args )
 	CAKE.SetClothing( ply, body, helmet, gloves )
 	CAKE.SetCharField( ply, "clothing", body )
 	CAKE.SetCharField( ply, "helmet", helmet )
+	datastream.StreamToClients( ply, "recieveclothing",  ply.Clothing )
 	
 
 end
 concommand.Add( "rp_setclothing", ccSetClothing );
-
-local function ccSetGear( ply, cmd, args )
-	
-	local model = args[1]
-	local bone = args[2]
-	local offset = Vector( tonumber( args[3] ), tonumber( args[4] ), tonumber( args[5] ) )
-	local angle = Angle( tonumber( args[6] ), tonumber( args[7] ), tonumber( args[8] ) )
-	
-	CAKE.HandleGear( ply, model, bone, offset, angle )
-
-end
-concommand.Add( "rp_setgear", ccSetGear )
-
-local function ccRemoveGear( ply, cmd, args )
-	
-	if( args[2] and args[2] != "" ) then
-		CAKE.RemoveGear( ply, args[1], tonumber( args[2] ))
-	elseif( args[1] and args[1] != "" ) then
-		CAKE.RemoveGear( ply, args[1] )
-	else
-		CAKE.RemoveAllGear( ply )
-	end
-
-end
-concommand.Add( "rp_removegear", ccRemoveGear )
 
 function PLUGIN.Init()
 	

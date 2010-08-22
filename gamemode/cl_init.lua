@@ -28,6 +28,7 @@ CAKE.ViewRagdoll = false
 CAKE.Clothing = "none"
 CAKE.Helmet = "none"
 CAKE.Gear = {}
+CAKE.ClothingTbl = {}
 
 CAKE.MyGroup = {}
 
@@ -44,6 +45,7 @@ include( "cl_binds.lua" );
 include( "cl_skin.lua" );
 include( "cl_charactercreate.lua" );
 include( "cl_playermenu.lua" );
+--include( "cl_usermessages.lua" )
 include( "animations.lua" )
 
 CAKE.Loaded = true;

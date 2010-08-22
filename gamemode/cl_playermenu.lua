@@ -29,13 +29,12 @@ usermessage.Hook("addschema", AddSchema)
 
 local function RecieveMyGroup( handler, id, encoded, decoded )
 	
-	CAKE.MyGroup.Name = decoded.Name
-	CAKE.MyGroup.Type = decoded.Type
-	CAKE.MyGroup.Founder = decoded.Founder
-	CAKE.MyGroup.Rank = decoded.Rank
-	CAKE.MyGroup.RankPermissions = decoded.RankPermissions
-	CAKE.MyGroup.Inventory = decoded.Inventory
-	PrintTable( CAKE.MyGroup )
+	CAKE.MyGroup.Name = decoded.Name or false
+	CAKE.MyGroup.Type = decoded.Type or ""
+	CAKE.MyGroup.Founder = decoded.Founder or ""
+	CAKE.MyGroup.Rank = decoded.Rank or ""
+	CAKE.MyGroup.RankPermissions = decoded.RankPermissions or {}
+	CAKE.MyGroup.Inventory = decoded.Inventory or {}
 
 end
 datastream.Hook("recievemygroup", RecieveMyGroup )
@@ -85,7 +84,7 @@ function AddBusinessItem(data)
 	itemdata.Model = data:ReadString();
 	itemdata.Price = data:ReadLong();
 	
-	print( itemdata.Class )
+	--print( itemdata.Class )
 	
 	table.insert(BusinessTable, itemdata);
 end
@@ -122,6 +121,14 @@ function RecieveGroupInvite( um )
 
 end
 usermessage.Hook("recievegroupinvite", RecieveGroupInvite);
+
+function RecieveGroupPromotion( um )
+	local rank = um:ReadString()
+	local promoter = um:ReadString()
+	Derma_Query("You have recieved an promotion from " .. promoter .. " to rank: " .. rank, "Congratulations!",
+				"Accept", function() RunConsoleCommand("rp_acceptinvite", group, promoter ) end)
+end
+usermessage.Hook("recievegrouppromotion", RecieveGroupPromotion);
 
 function InitHiddenButton()
 	HiddenButton = vgui.Create("DButton") -- HOLY SHIT WHAT A HACKY METHOD FO SHO
@@ -379,6 +386,7 @@ function CreatePlayerMenu()
 	PlayerMenu:SetVisible( true )
 	PlayerMenu:SetDraggable( true )
 	PlayerMenu:ShowCloseButton( true )
+	PlayerMenu:SetDeleteOnClose( true )
 	function PlayerMenu:Paint()
 	end
 	PlayerMenu:MakePopup()
@@ -574,6 +582,13 @@ function CreatePlayerMenu()
 		local label = vgui.Create( "DLabel" )
 		label:SizeToContents()
 		InventorySheet:AddItem(label);
+		
+		local grid = vgui.Create( "DGrid" )
+		grid:SetCols( 8 )
+		grid:SetColWide( 74 )
+		grid:SetRowHeight( 74 )
+		InventorySheet:AddItem(grid);
+		
 		for k, v in pairs(InventoryTable) do
 			
 			if string.len( v.Name ) > 6 then
@@ -589,15 +604,16 @@ function CreatePlayerMenu()
 			spawnicon:SetToolTip(v.Description);
 			
 			local function DeleteMyself()
-				spawnicon:Remove()
+				grid:RemoveItem( spawnicon )
 			end
 			
 			spawnicon.DoClick = function ( btn )
 			
 				local ContextMenu = DermaMenu()
-					ContextMenu:AddOption("Drop", function() LocalPlayer():ConCommand("rp_dropitem " .. v.Class); DeleteMyself(); drawinventoryicons(); end);
+					ContextMenu:AddOption("Drop", function() LocalPlayer():ConCommand("rp_dropitem " .. v.Class); DeleteMyself(); end);
 					if CAKE.ExtraCargo > 0 then
-						ContextMenu:AddOption("Transfer to Cargo", function() LocalPlayer():ConCommand("rp_pickupextra " .. v.Class); DeleteMyself(); drawinventoryicons(); drawextrainventory(); end);
+						--drawinventoryicons(); drawextrainventory();
+						ContextMenu:AddOption("Transfer to Cargo", function() LocalPlayer():ConCommand("rp_pickupextra " .. v.Class); DeleteMyself(); end);
 					end
 				ContextMenu:Open();
 				
@@ -629,7 +645,7 @@ function CreatePlayerMenu()
 			
 			availablespace = availablespace - v.Weight
 			
-			InventorySheet:AddItem(spawnicon);
+			grid:AddItem(spawnicon);
 		end
 		
 		label:SetText( "Available space: " .. tostring( math.Clamp( availablespace, 0, 100 ) ) .. ".kg" )
@@ -986,22 +1002,22 @@ function CreatePlayerMenu()
 		[ "RankPermissions" ] = string.Explode( ",", data:ReadString() ),
 		[ "Inventory" ]	= {}
 */
-	if #CAKE.MyGroup < 1 then
+	if !CAKE.MyGroup.Name then
 		labellol = vgui.Create( "DLabel" )
 		labellol:SetText( "You are not a member of any groups!" )
 		MyBiz:AddItem( labellol )
 	else
 		labellol1 = vgui.Create( "DLabel" )
-		labellol1:SetText( "Group Name:" .. CAKE.MyGroup.Name )
+		labellol1:SetText( "Group Name: " .. CAKE.MyGroup.Name )
 		MyBiz:AddItem( labellol1 )
 		labellol2 = vgui.Create( "DLabel" )
-		labellol2:SetText( "Type of Group:" .. CAKE.MyGroup,Type )
+		labellol2:SetText( "Type of Group: " .. CAKE.MyGroup.Type )
 		MyBiz:AddItem( labellol2 )
 		labellol3 = vgui.Create( "DLabel" )
-		labellol3:SetText( "Founder:" .. CAKE.MyGroup.Founder )
+		labellol3:SetText( "Founder: " .. CAKE.MyGroup.Founder )
 		MyBiz:AddItem( labellol3 )
 		labellol4 = vgui.Create( "DLabel" )
-		labellol4:SetText( "Rank:" .. CAKE.MyGroup.Rank )
+		labellol4:SetText( "Rank: " .. CAKE.MyGroup.Rank )
 		MyBiz:AddItem( labellol4 )
 	end
 	SearchBiz = vgui.Create( "DPanelList" )

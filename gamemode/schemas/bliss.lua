@@ -24,6 +24,7 @@ function SCHEMA.SetUp( )
 		["colonel"] = { [ "formalname" ] = "Officer Colonel", [ "loadout" ] = { "weapon_mad_knife", "clothing_heavy_juggernaut", "helmet_juggernaut", "weapon_mad_alyxgun", "weapon_mad_ar2" }, [ "level" ] = 7, ["canpromote"] = true, ["caninvite"] = true, ["canbuy"] = true, ["buygroups"] = { 1, 2, 3 } },
 	},
 	{ 	[ "canbuy" ] = true,
+		[ "canbroadcast" ] = true,
 		[ "loadouts" ] = true,
 		[ "doorgroup" ] = true,
 		[ "primaryrank" ] = "recruit"
@@ -51,6 +52,7 @@ function SCHEMA.SetUp( )
 		["ceo"] = { [ "formalname" ] = "LEOS Group Chief Executive", [ "loadout" ] = { "weapon_mad_357", "clothing_formal2"}, [ "level" ] = 5, ["canpromote"] = true, ["caninvite"] = true, ["canbuy"] = true, ["buygroups"] = { 1, 2, 3 } },
 	},
 	{ 	[ "canbuy" ] = true,
+		[ "canbroadcast" ] = true,
 		[ "loadouts" ] = true,
 		[ "doorgroup" ] = true,
 		[ "primaryrank" ] = "worker"

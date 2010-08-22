@@ -123,8 +123,7 @@ function ccAdmin( ply, cmd, args )
 	
 	end
 		
-	end
-	
+end
 concommand.Add("rp_admin", ccAdmin) 
 
 function CAKE.AddAdminRank(name, int)

@@ -2,7 +2,7 @@ include('shared.lua')
 
 
 function ENT:Draw()
-	
+
 	if !CAKE.Thirdperson:GetBool() and self.Entity:GetDTInt( 1 ) == 2 then
 		if self.Entity:GetParent() == LocalPlayer() and CAKE.RenderBody:GetBool() then
 			return
@@ -262,7 +262,7 @@ function ENT:BuildBonePositions( NumBones, NumPhysBones )
 			if ( table.HasValue( headinflate, i ) ) then
 				for k, v in pairs( headinflate ) do
 					if i == v then
-						--BoneScale( self, i, self.Entity:GetDTInt( headaddup[ k ] ) )
+						BoneScale( self, i, self.Entity:GetDTInt( headaddup[ k ] ) )
 						break
 					end
 				end
