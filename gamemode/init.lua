@@ -192,15 +192,11 @@ function GM:PlayerSpawn( ply )
 	CAKE.SavePlayerData( ply )
 	
 	datastream.StreamToClients( ply, "RecieveViewRagdoll", { ["ragdoll"] = false } )
-	ply:RemoveClothing()
 	
 	ply.DamageProtection = {}
 	ply:StripWeapons( );
 	
-	self.BaseClass:PlayerSpawn( ply )
 	CAKE.SpawnPointHandle( ply )
-	
-	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] );
 	
 	if( ply:GetNWInt( "deathmode" ) == 1 ) then
 	
@@ -260,6 +256,8 @@ function GM:PlayerSpawn( ply )
 		})
 	end
 	
+	self.BaseClass:PlayerSpawn( ply )
+	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] );
 	CAKE.CallHook( "PlayerSpawn", ply )
 	CAKE.CallTeamHook( "PlayerSpawn", ply ); -- Change player speeds perhaps?
 	
@@ -268,33 +266,32 @@ end
 
 function GM:PlayerSetModel(ply)
 	
-	if(CAKE.Teams[ply:Team()] != nil) then
+	if !ply:GetNWBool( "specialmodel", false ) then
+		if(ply:IsCharLoaded()) then
+				local m = ""
+				if( CAKE.GetCharField( ply, "gender" ) == "Female" ) then
+					m = "models/Gustavio/femaleanimtree.mdl"
+					--m = "models/alyx.mdl"
+					ply:SetNWString( "gender", "Female" )
+				else
+					m = "models/Gustavio/maleanimtree.mdl"
+					--m = "models/barney.mdl"
+					ply:SetNWString( "gender", "Male" )
+				end
+				
+				ply:SetModel( m );
+				--ply:SetMaterial( "null" )
+				--ply:SetRenderMode( RENDERMODE_NORMAL )
+				CAKE.CallHook( "PlayerSetModel", ply, m);
+		else
 			
-			local m = ""
-			if( CAKE.GetCharField( ply, "gender" ) == "Female" ) then
-				m = "models/Gustavio/femaleanimtree.mdl"
-				--m = "models/alyx.mdl"
-				ply:SetNWString( "gender", "Female" )
-			else
-				m = "models/Gustavio/maleanimtree.mdl"
-				--m = "models/barney.mdl"
-				ply:SetNWString( "gender", "Male" )
-			end
-			
-			ply:SetModel( m );
-			--ply:SetMaterial( "null" )
-			--ply:SetRenderMode( RENDERMODE_NORMAL )
+			local m = "models/kleiner.mdl";
+			ply:SetModel("models/kleiner.mdl");
 			CAKE.CallHook( "PlayerSetModel", ply, m);
-
-	else
-		
-		local m = "models/kleiner.mdl";
-		ply:SetModel("models/kleiner.mdl");
-		CAKE.CallHook( "PlayerSetModel", ply, m);
-		
+			
+		end
 	end
-	
-	CAKE.CallTeamHook( "PlayerSetModel", ply, m); -- Hrm. Looks like the teamhook will take priority over the regular hook.. PREPARE FOR HELLFIRE (puts on helmet)
+	CAKE.CallTeamHook( "PlayerSetModel", ply, m or ply:GetModel()); -- Hrm. Looks like the teamhook will take priority over the regular hook.. PREPARE FOR HELLFIRE (puts on helmet)
 
 end
 

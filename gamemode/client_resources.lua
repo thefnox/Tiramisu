@@ -29,3 +29,4 @@ AddResource( "lua", "cl_playermenu.lua"); -- The F1 playermenu
 AddResource( "lua", "player_shared.lua"); -- Shared player functions
 AddResource( "lua", "animations.lua"); -- Shared player functions
 AddResource( "lua", "cl_usermessages.lua")
+AddResource( "lua", "cl_skin.lua")

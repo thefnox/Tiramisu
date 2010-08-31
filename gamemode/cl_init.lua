@@ -18,7 +18,7 @@ CAKE.Running = false;
 CAKE.Loaded = false;
 CAKE.Skin = "void"
 
-CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 1, true, true )
+CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 0, true, true )
 CAKE.RenderBody = CreateClientConVar( "rp_renderbody", 1, true, true )
 CAKE.FirstPersonForward = CreateClientConVar( "rp_firstpersonforward", 0, true, true )
 CAKE.FirstPersonUp = CreateClientConVar( "rp_firstpersonup", 7, true, true )
@@ -96,7 +96,7 @@ function message_AddOOCline( um )
 	local color = Color( red, blue, green, um:ReadFloat() )
 	chat.AddText( Color(255,255,255,255), "[OOC]", color, playername, Color(255,255,255,255), " :", Color(255,255,255,255), text )
 	--chat.AddText( text )
-	end
+end
 usermessage.Hook( "AddOOCLine", message_AddOOCline);
 
 function ConfirmCharRemove( um )

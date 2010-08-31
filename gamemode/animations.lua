@@ -547,7 +547,7 @@ local function HandleSequence( ply, seq )
 			local exp2 = string.Explode( ":", exp[1] )
 			local model = exp2[2]
 			seq = exp[2]
-			if( string.lower( ply:GetModel() ) != string.lower( model ) ) then
+			if( string.lower( ply:GetModel() ) != string.lower( model ) and !ply:GetNWBool( "specialmodel", false ) ) then
 				ply:SetModel( model )
 				return FindEnumeration( seq )
 			end
@@ -567,7 +567,7 @@ local function HandleSequence( ply, seq )
 		end
 	else
 		
-		if ply:GetModel() != "models/Gustavio/femaleanimtree.mdl" or ply:GetModel() != "models/Gustavio/maleanimtree.mdl" then
+		if ( ply:GetModel() != "models/Gustavio/femaleanimtree.mdl" or ply:GetModel() != "models/Gustavio/maleanimtree.mdl" ) and !ply:GetNWBool( "specialmodel", false ) then
 			if ply:GetNWBool( "charloaded", false ) then
 				if( ply:GetNWString( "gender", "Male" ) == "Female" ) then
 					ply:SetModel( "models/Gustavio/femaleanimtree.mdl" )

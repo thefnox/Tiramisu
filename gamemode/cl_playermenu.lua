@@ -398,8 +398,8 @@ function CreatePlayerMenu()
 	PropertySheet:SetSize( 636, 448 )
 	
 	local PlayerInfo = vgui.Create( "DPanelList" )
-	PlayerInfo:SetPadding(20);
-	PlayerInfo:SetSpacing(20);
+	PlayerInfo:SetPadding(10);
+	PlayerInfo:SetSpacing(10);
 	PlayerInfo:EnableHorizontal(false);
 	
 	local icdata = vgui.Create( "DForm" );
@@ -421,12 +421,16 @@ function CreatePlayerMenu()
 	local DataList2 = vgui.Create( "DPanelList" )
 	
 	local label2 = vgui.Create("DLabel");
-	label2:SetText("Title: " .. LocalPlayer():GetNWString("title"));
+	label2:SetText("Title: " .. LocalPlayer():GetNWString("title", ""));
 	DataList2:AddItem(label2);
 	
 	local label3 = vgui.Create("DLabel");
-	label3:SetText("Assosciation: " .. team.GetName(LocalPlayer():Team()));
+	label3:SetText("Title 2: " .. LocalPlayer():GetNWString("title2", ""));
 	DataList2:AddItem(label3);
+	
+	local label4 = vgui.Create("DLabel");
+	label4:SetText( CurrencyTable.name .. ": " .. LocalPlayer():GetNWString("money", "0" ));
+	DataList2:AddItem(label4);
 
 	local Divider = vgui.Create("DHorizontalDivider");
 	Divider:SetLeft(spawnicon);
@@ -464,8 +468,77 @@ function CreatePlayerMenu()
 	health:SetText("Vitals: " .. healthstatus);
 	VitalData:AddItem(health);
 	
+	local Tools = vgui.Create( "DForm" );
+	Tools:SetPadding(4);
+	Tools:SetAutoSize( false )
+	Tools:SetName("Player Tools");
+	
+	local ToolData = vgui.Create("DPanelList");
+	ToolData:SetAutoSize(true)
+	ToolData:SetPadding(10);
+	ToolData:SetSpacing(4);
+	Tools:AddItem(ToolData );
+	
+	local modellabel = vgui.Create("DLabel");
+	modellabel:SetSize(30,25);
+	modellabel:SetPos(5, 50);
+	modellabel:SetText("Model: ")
+	
+	local modelname = vgui.Create("DTextEntry");
+	modelname:SetSize(450,20);
+	modelname:SetPos(390, 50);
+	modelname:SetText("");
+	
+	local permacheck = vgui.Create( "DCheckBoxLabel" )
+	permacheck:SetText( "Permanently change your model" )
+	
+	local specialcheck = vgui.Create( "DCheckBoxLabel" )
+	specialcheck:SetText( "Non bipedal/prop/special model" )
+	
+	local selectedpart = 0
+	local bodypart = vgui.Create( "DMultiChoice" )
+	bodypart:AddChoice("Whole Body")
+	bodypart:AddChoice("Torso/Legs")
+	bodypart:AddChoice("Head")
+	bodypart:AddChoice("Hands")
+	bodypart:ChooseOptionID( 1 )
+	function bodypart:OnSelect(index,value,data)
+		selectedpart = index - 1
+		print( tostring( selectedpart ) )
+	end
+		
+	local settemp = vgui.Create("DButton");
+	settemp:SetSize(75, 25);
+	settemp:SetText("Change Your Model");
+	settemp.DoClick = function ( btn )
+		
+		if(modelname:GetValue() == "" ) then
+			LocalPlayer():PrintMessage(3, "You must enter a model's file path!");
+			return;
+		end
+		 
+		local permabool = permacheck:GetChecked(true)
+		local permastr = "0"
+		local specialbool = specialcheck:GetChecked(true)
+		local specialstr = "0"
+		if permabool then permastr = "1" end
+		if specialbool then specialstr = "1" end
+		
+		LocalPlayer():ConCommand("rp_changemodel \"" .. modelname:GetValue() .. "\" " .. permastr .. " " .. specialstr .. " " .. tostring(selectedpart));
+		
+	end
+	
+	
+	ToolData:AddItem(modellabel)
+	ToolData:AddItem(modelname)
+	ToolData:AddItem(settemp)
+	ToolData:AddItem(permacheck)
+	ToolData:AddItem(specialcheck)
+	ToolData:AddItem(bodypart)
+	
 	PlayerInfo:AddItem(icdata)
 	PlayerInfo:AddItem(vitals)
+	PlayerInfo:AddItem(Tools)
 	
 	CharPanel = vgui.Create( "DPanelList" )
 	CharPanel:SetPadding(20);
@@ -724,7 +797,7 @@ function CreatePlayerMenu()
 		end
 	end
 	
-	if CAKE.ExtraCargo > 0 then
+	if CAKE.ExtraCargo and CAKE.ExtraCargo > 0 then
 		
 		drawextrainventory()
 		drawinventoryicons()
@@ -981,7 +1054,7 @@ function CreatePlayerMenu()
 	local html = vgui.Create( "HTML")
 	html:SetPos(0,30)
 	html:SetSize(256, 370)
-	html:OpenURL( "http://blissrp.wikia.com/" )
+	html:OpenURL( "http://aeria.omgforum.net/" )
 	Help:AddItem( html )
 	
     BizPanel = vgui.Create( "DPropertySheet" )
@@ -1030,6 +1103,50 @@ function CreatePlayerMenu()
 	labellolz:SetText( "TESTING!" )
 	SearchBiz:AddItem( labellolz )
 	
+	local Options = vgui.Create( "DPanelList" )
+	Options:SetPadding(20);
+	Options:SetSpacing(15)
+	Options:EnableHorizontal(false);
+	Options:EnableVerticalScrollbar(true);
+	Options:SetAutoSize(false)
+	
+	local ThirdpersonCheck = vgui.Create( "DCheckBoxLabel"  )
+	ThirdpersonCheck:SetText( "Toggle thirdperson camera" )
+	ThirdpersonCheck:SetConVar( "rp_thirdperson" ) -- ConCommand must be a 1 or 0 value
+	Options:AddItem( ThirdpersonCheck )
+	
+	local RenderbodyCheck = vgui.Create( "DCheckBoxLabel"  )
+	RenderbodyCheck:SetText( "Toggle rendering of your body in firstperson" )
+	RenderbodyCheck:SetConVar( "rp_renderbody" ) -- ConCommand must be a 1 or 0 value
+	Options:AddItem( RenderbodyCheck )
+	
+	local HeadbobCheck = vgui.Create( "DCheckBoxLabel"  )
+	HeadbobCheck:SetText( "Toggle head bobbing" )
+	HeadbobCheck:SetConVar( "rp_headbob" ) -- ConCommand must be a 1 or 0 value
+	Options:AddItem( HeadbobCheck )
+	
+	local colormixer = vgui.Create( "DColorMixer");
+	colormixer:SetColor( Color( 0, 0, 255, 100 ) )
+	colormixer:SetSize( 200, 200 )
+	
+	local OOCColor = vgui.Create( "DLabel" )
+	OOCColor:SetText( "OOC Color" )
+	OOCColor:SetFont( "HUDNumber" )
+	function OOCColor:PaintOver()
+		OOCColor:SetTextColor( colormixer:GetColor() )
+	end
+	
+	local SetOOCColor = vgui.Create( "DButton" )
+	SetOOCColor:SetText( "Set your OOC Color" )
+	SetOOCColor.DoClick = function()
+		local color = OOCColor:GetColor()
+		RunConsoleCommand( "rp_ooccolor", tostring( color.r ), tostring( color.g ), tostring( color.b ), tostring( color.a ) )
+	end
+	Options:AddItem( OOCColor )
+	Options:AddItem( colormixer )
+	Options:AddItem( SetOOCColor )
+	
+	
 	--Business:AddItem( MyBiz )
 
 	BizPanel:AddSheet( "My Group", MyBiz, "gui/silkicons/group", false, false, "The group which you belong");
@@ -1042,7 +1159,8 @@ function CreatePlayerMenu()
 	--PropertySheet:AddSheet( "Business", Business, "gui/silkicons/box", false, false, "Purchase items.");
 	PropertySheet:AddSheet( "Clothing", Clothing, "gui/silkicons/anchor", false, false, "Change your clothes." )
 	PropertySheet:AddSheet( "Scoreboard", Scoreboard, "gui/silkicons/application_view_detail", false, false, "View the scoreboard.");		
-	PropertySheet:AddSheet( "INFO.Net", Help, "gui/silkicons/magnifier", false, false, "Get some information about Bliss");
+	PropertySheet:AddSheet( "Forums", Help, "gui/silkicons/magnifier", false, false, "Get some information about Olden");
 	PropertySheet:AddSheet( "Groups", BizPanel, "gui/silkicons/group", false, false, "Armies, corporations and businesses.");
+	PropertySheet:AddSheet( "Options", Options,  "gui/silkicons/application_view_detail", false, false, "Set additional options");
 end
 usermessage.Hook("playermenu", CreatePlayerMenu);

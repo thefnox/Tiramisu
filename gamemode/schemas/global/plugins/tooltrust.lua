@@ -2,33 +2,290 @@ PLUGIN.Name = "Tool Trust"; -- What is the plugin name
 PLUGIN.Author = "LuaBanana"; -- Author of the plugin
 PLUGIN.Description = "Toolgun permissions, as well as physgun ban."; -- The description or purpose of the plugin
 
-function Tooltrust_Give(ply)
+SpawnTable = {};
 
-	if(tostring(CAKE.GetPlayerField(ply, "tooltrust")) == "1") then
+function CAKE.MaxProps(ply)
+
+	return tonumber(CAKE.ConVars[ "PropLimit" ]) + tonumber(CAKE.GetPlayerField(ply, "tooltrust") * 20);
 	
-		ply:Give("gmod_tool");
+end
+
+function CAKE.MaxRagdolls(ply)
+
+	return tonumber(CAKE.ConVars[ "RagdollLimit" ]) + tonumber(CAKE.GetPlayerField(ply, "tooltrust") * 4);
+	
+end
+
+function CAKE.MaxVehicles(ply)
+
+	return tonumber(CAKE.ConVars[ "VehicleLimit" ]) + tonumber(CAKE.GetPlayerField(ply, "tooltrust") - 3 );
+	
+end
+
+function CAKE.MaxEffects(ply)
+
+	return tonumber(CAKE.ConVars[ "EffectLimit" ]) + tonumber(CAKE.GetPlayerField(ply, "tooltrust") * 3);
+	
+end
+
+function CAKE.CreateSpawnTable(ply)
+	
+	SpawnTable[CAKE.FormatSteamID(ply:SteamID())] = {};
+	
+	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	spawntable.props = {};
+	spawntable.ragdolls = {};
+	spawntable.vehicles = {};
+	spawntable.effects = {};
+
+end
+
+function GM:PlayerSpawnProp(ply, mdl)
+
+	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	
+	if(CAKE.GetPlayerField(ply, "tooltrust") <= 0) then
+	
+		CAKE.SendChat(ply, "You are not allowed to spawn anything!");
+		return false;
 		
 	end
 	
-	if(tostring(CAKE.GetPlayerField(ply, "phystrust")) == "1") then
+	if(spawntable != nil) then
 	
+		local spawned = 0;
+		
+		for k, v in pairs(spawntable.props) do
+		
+			if(v != nil and v:IsValid()) then
+			
+				spawned = spawned + 1;
+			
+			else
+			
+				spawntable.props[k] = nil; -- No longer exists. Wipe it out.
+			
+			end
+			
+		end
+		
+		if(spawned >= CAKE.MaxProps(ply)) then
+		
+			CAKE.SendChat(ply, "You have reached your limit! (" .. CAKE.MaxProps(ply) .. ")");
+			return false;
+			
+		else
+		
+			return true;
+			
+		end
+		
+	else
+
+		CAKE.CreateSpawnTable(ply)
+		return true;
+		
+	end
+	
+end
+
+function GM:PlayerSpawnRagdoll(ply, mdl)
+
+	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	
+	if(CAKE.GetPlayerField(ply, "tooltrust") <= 1 ) then
+	
+		CAKE.SendChat(ply, "You are not allowed to spawn anything!");
+		return false;
+		
+	end
+	
+	if(spawntable != nil) then
+	
+		local spawned = 0;
+		
+		for k, v in pairs(spawntable.ragdolls) do
+		
+			if(v != nil and v:IsValid()) then
+			
+				spawned = spawned + 1;
+			
+			else
+			
+				spawntable.ragdolls[k] = nil; -- No longer exists. Wipe it out.
+			
+			end
+			
+		end
+		
+		if(spawned >= CAKE.MaxRagdolls(ply)) then
+		
+			CAKE.SendChat(ply, "You have reached your limit! (" .. CAKE.MaxRagdolls(ply) .. ")");
+			return false;
+			
+		else
+		
+			return true;
+			
+		end
+		
+	else
+
+		CAKE.CreateSpawnTable(ply)
+		return true;
+		
+	end
+	
+end
+
+function GM:PlayerSpawnVehicle(ply)
+
+	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	
+	if(CAKE.GetPlayerField(ply, "tooltrust") <= 4) then
+	
+		CAKE.SendChat(ply, "You are not allowed to spawn vehicles!");
+		return false;
+		
+	end
+	
+	if(spawntable != nil) then
+	
+		local spawned = 0;
+		
+		for k, v in pairs(spawntable.vehicles) do
+		
+			if(v != nil and v:IsValid()) then
+			
+				spawned = spawned + 1;
+			
+			else
+			
+				spawntable.vehicles[k] = nil; -- No longer exists. Wipe it out.
+			
+			end
+			
+		end
+		
+		if(spawned >= CAKE.MaxVehicles(ply)) then
+		
+			CAKE.SendChat(ply, "You have reached your limit! (" .. CAKE.MaxVehicles(ply) .. ")");
+			return false;
+			
+		else
+		
+			return true;
+			
+		end
+		
+	else
+
+		CAKE.CreateSpawnTable(ply)
+		return true;
+		
+	end
+	
+end
+
+function GM:PlayerSpawnEffect(ply, mdl)
+
+	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	
+	if(CAKE.GetPlayerField(ply, "tooltrust") <= 1) then
+	
+		CAKE.SendChat(ply, "You are not allowed to spawn anything!");
+		return false;
+		
+	end
+	
+	if(spawntable != nil) then
+	
+		local spawned = 0;
+		
+		for k, v in pairs(spawntable.effects) do
+		
+			if(v != nil and v:IsValid()) then
+			
+				spawned = spawned + 1;
+			
+			else
+			
+				spawntable.effects[k] = nil; -- No longer exists. Wipe it out.
+			
+			end
+			
+		end
+		
+		if(spawned >= CAKE.MaxEffects(ply)) then
+		
+			CAKE.SendChat(ply, "You have reached your limit! (" .. CAKE.MaxEffects(ply) .. ")");
+			return false;
+			
+		else
+		
+			return true;
+			
+		end
+		
+	else
+
+		CAKE.CreateSpawnTable(ply)
+		return true;
+		
+	end
+	
+end
+
+function GM:PlayerSpawnedProp(ply, mdl, ent)
+
+	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	table.insert(spawntable.props, ent);
+	
+end
+
+function GM:PlayerSpawnedRagdoll(ply, mdl, ent)
+
+	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	table.insert(spawntable.ragdolls, ent);
+	
+end
+
+function GM:PlayerSpawnedVehicle(ply, ent)
+
+	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	table.insert(spawntable.vehicles, ent);
+	
+end
+
+function GM:PlayerSpawnedEffect(ply, mdl, ent)
+
+	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	table.insert(spawntable.effects, ent);
+	
+end
+
+function Tooltrust_Give(ply)
+
+	if(tostring(CAKE.GetPlayerField(ply, "tooltrust")) >= "0") then
+	
+		ply:Give("weapon_physcannon");
+	
+	end
+	
+	if(tostring(CAKE.GetPlayerField(ply, "tooltrust")) >= "1") then
+	
+		ply:Give("gmod_tool");
 		ply:Give("weapon_physgun");
 	
 	end
-	
-	if(tostring(CAKE.GetPlayerField(ply, "gravtrust")) == "1") then
-	
-		ply:Give("weapon_physcannon");
-		
-	end
-	
+
 end
 
 function Admin_Tooltrust(ply, cmd, args)
 
 	if(#args != 2) then
 	
-		CAKE.SendChat( ply, "Invalid number of arguments! ( rp_admin tooltrust \"name\" 1/0 )" );
+		CAKE.SendChat( ply, "Invalid number of arguments! ( rp_admin tooltrust \"name\" value )" );
 		return;
 
 	end
@@ -42,148 +299,46 @@ function Admin_Tooltrust(ply, cmd, args)
 		return;
 	end
 	
-	if(args[2] == "1") then
-	
-		CAKE.SetPlayerField(target, "tooltrust", 1);
-		target:Give("gmod_tool");
-		CAKE.SendChat( target, "You have been given tooltrust by " .. ply:Name() );
-		CAKE.SendChat( ply, target:Name() .. " has been given tooltrust" );
+		CAKE.SetPlayerField(target, "tooltrust", tonumber(args[2]));
+		CAKE.SendChat( target, "Your TT Level has been set to " .. args[2] .. " by " .. ply:Name() );
+		CAKE.SendChat( ply, target:Name() .. " [" .. target:SteamID() .. "] | " .. target:Nick() .. "'s TT Level has been set to " .. args[2] );
 		
-	elseif(args[2] == "0") then
-	
-		CAKE.SetPlayerField(target, "tooltrust", 0);
-		target:StripWeapon("gmod_tool");
-		CAKE.SendChat( target, "Your tooltrust has been removed by " .. ply:Name() );
-		CAKE.SendChat( ply, target:Name() .. "'s tooltrust has been removed" );
+	if( tonumber(args[2]) <= 0 ) then
 		
+	target:StripWeapon("gmod_tool");
+	target:StripWeapon("weapon_physgun");
+	
+	else	
+	
+	target:Give("weapon_physgun");
+	target:Give("gmod_tool");
+	
+	end
+	
+	if( tonumber(args[2]) <= -1 ) then
+		
+	target:StripWeapon("weapon_physcannon");
+	
+	else	
+	
+	target:Give("weapon_physcannon");
+	
 	end
 	
 end
 
-function Admin_Phystrust(ply, cmd, args)
-
-	if(#args != 2) then
-	
-		CAKE.SendChat( ply, "Invalid number of arguments! ( rp_admin phystrust \"name\" 1/0 )" );
-		return;
-
-	end
-	
-	local target = CAKE.FindPlayer(args[1])
-	
-	if(target != nil and target:IsValid() and target:IsPlayer()) then
-		-- klol
-	else
-		CAKE.SendChat( ply, "Target not found!" );
-		return;
-	end
-	
-	if(args[2] == "0") then
-	
-		CAKE.SetPlayerField(target, "phystrust", 0);
-		target:StripWeapon("weapon_physgun");
-		CAKE.SendChat( target, "You have been banned from the physics gun by " .. ply:Name());
-		CAKE.SendChat( ply, target:Name() .. " has been banned from the physics gun" );
-		
-	elseif(args[2] == "1") then
-	
-		CAKE.SetPlayerField(target, "phystrust", 1);
-		target:Give("weapon_physgun");
-		CAKE.SendChat( target, "You have been given the physgun by " .. ply:Name() );
-		CAKE.SendChat( ply, target:Name() .. " has been given a physgun" );
-		
-	end
-	
-end
-
-function Admin_Gravtrust(ply, cmd, args)
-
-	if(#args != 2) then
-	
-		CAKE.SendChat( ply, "Invalid number of arguments! ( rp_admin gravtrust \"name\" 1/0 )" );
-		return;
-
-	end
-	
-	local target = CAKE.FindPlayer(args[1])
-	
-	if(target != nil and target:IsValid() and target:IsPlayer()) then
-		-- klol
-	else
-		CAKE.SendChat( ply, "Target not found!" );
-		return;
-	end
-	
-	if(args[2] == "0") then
-	
-		CAKE.SetPlayerField(target, "gravtrust", 0);
-		target:StripWeapon("weapon_physcannon");
-		CAKE.SendChat( target, "You have been banned from the gravity gun by " .. ply:Name());
-		CAKE.SendChat( ply, target:Name() .. " has been banned from the gravity gun" );
-		
-	elseif(args[2] == "1") then
-	
-		CAKE.SetPlayerField(target, "gravtrust", 1);
-		target:Give("weapon_physcannon");
-		CAKE.SendChat( target, "You have been given the gravgun by " .. ply:Name() );
-		CAKE.SendChat( ply, target:Name() .. " has been given a gravgun" );
-		
-	end
-	
-end
-
-function Admin_Proptrust(ply, cmd, args)
-
-	if(#args != 2) then
-	
-		CAKE.SendChat( ply, "Invalid number of arguments! ( rp_admin proptrust \"name\" 1/0 )" );
-		return;
-
-	end
-	
-	local target = CAKE.FindPlayer(args[1])
-	
-	if(target != nil and target:IsValid() and target:IsPlayer()) then
-		-- klol
-	else
-		CAKE.SendChat( ply, "Target not found!" );
-		return;
-	end
-	
-	if(args[2] == "0") then
-	
-		CAKE.SetPlayerField(target, "proptrust", 0);
-		CAKE.SendChat( target, "You have been banned from spawning props by " .. ply:Name());
-		CAKE.SendChat( ply, target:Name() .. " has been banned from spawning props" );
-		
-	elseif(args[2] == "1") then
-	
-		CAKE.SetPlayerField(target, "proptrust", 1);
-		CAKE.SendChat( target, "You have been allowed to spawn props by " .. ply:Name() );
-		CAKE.SendChat( ply, target:Name() .. " has been allowed to spawn props" );
-		
-	end
-	
-end
-
-	
 function PLUGIN.Init()
 
-	CAKE.ConVars[ "Default_Tooltrust" ] = 0; -- Are players allowed to have the toolgun when they first start.
-	CAKE.ConVars[ "Default_Gravtrust" ] = 1; -- Are players allowed to have the gravgun when they first start.
-	CAKE.ConVars[ "Default_Phystrust" ] = 0; -- Are players allowed to have the physgun when they first start.
-	CAKE.ConVars[ "Default_Proptrust" ] = 1; -- Are players allowed to spawn props when they first start.
+	CAKE.ConVars[ "PropLimit" ] = 20;
+	CAKE.ConVars[ "RagdollLimit" ] = 1;
+	CAKE.ConVars[ "VehicleLimit" ] = 0;
+	CAKE.ConVars[ "EffectLimit" ] = 1;
+	CAKE.ConVars[ "Default_Tooltrust" ] = "0"; -- Are players allowed to have the toolgun when they first start.
 	
 	CAKE.AddDataField( 1, "tooltrust", CAKE.ConVars[ "Default_Tooltrust" ] ); -- Is the player allowed to have the toolgun
-	CAKE.AddDataField( 1, "gravtrust", CAKE.ConVars[ "Default_Gravtrust" ] ); -- Is the player allowed to have the gravity gun
-	CAKE.AddDataField( 1, "phystrust", CAKE.ConVars[ "Default_Phystrust" ] ); -- Is the player allowed to have the physics gun
-	CAKE.AddDataField( 1, "proptrust", CAKE.ConVars[ "Default_Proptrust" ] ); -- Is the player allowed to spawn props
 	
 	CAKE.AddHook("PlayerSpawn", "tooltrust_give", Tooltrust_Give);
 	
 	CAKE.AdminCommand( "tooltrust", Admin_Tooltrust, "Change someones tooltrust", true, true, 3 );
-	CAKE.AdminCommand( "gravtrust", Admin_Gravtrust, "Change someones gravtrust", true, true, 3 );
-	CAKE.AdminCommand( "phystrust", Admin_Phystrust, "Change someones phystrust", true, true, 3 );
-	CAKE.AdminCommand( "proptrust", Admin_Proptrust, "Change someones proptrust", true, true, 3 );
 	
 end

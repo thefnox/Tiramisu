@@ -21,9 +21,9 @@ local function TiramisuPostProcess()
 	tab[ "$pp_colour_mulr" ] = 0
 	tab[ "$pp_colour_mulg" ] = 0
 	tab[ "$pp_colour_mulb" ] = 0
-	bloommultiply = 0.11
+	bloommultiply = 0
 	blurmultiply = 0
-	if LocalPlayer():Health() < 61 and LocalPlayer():GetNWInt("deathmode", 0 ) != 1 and LocalPlayer():Alive() then
+	if LocalPlayer():Health() < 61 and LocalPlayer():GetNWInt("deathmode", 0 ) != 1 and LocalPlayer():Alive()  then
 		perc = LocalPlayer():Health() / 60 
 		bloommultiply = ( ( 1 - perc ) * 1 ) + 0.11
 		blurmultiply = 1 - perc

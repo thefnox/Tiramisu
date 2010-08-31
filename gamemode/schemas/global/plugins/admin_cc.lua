@@ -127,6 +127,7 @@ function Admin_Observe( ply, cmd, args )
 		   
 		   ply:SetNotSolid( true );
 		   ply:SetMoveType( 8 );
+		   ply:SetNoDraw( true )
 		   
 		   ply:SetNWBool( "observe", true )
 		   
@@ -156,7 +157,7 @@ function Admin_Observe( ply, cmd, args )
 		   
 		   ply:SetNotSolid( false );
 		   ply:SetMoveType( 2 );
-		   
+		    ply:SetNoDraw( false )
 		   ply:SetNWBool( "observe", false )
 		   
 	   end

@@ -159,6 +159,17 @@ function Chat_ModPlayerVars(ply)
 		
 end
 
+function Title( ply, text )
+	ply:ConCommand( "rp_title \"" .. text .. "\"" )
+	return "";
+end
+
+function Title2( ply, text )
+	ply:ConCommand( "rp_title2 \"" .. text .. "\"" )
+	return "";
+end
+
+
 function PLUGIN.Init( ) -- We run this in init, because this is called after the entire gamemode has been loaded.
 
 	CAKE.AddDataField( 2, "frequency", 0 )
@@ -172,6 +183,7 @@ function PLUGIN.Init( ) -- We run this in init, because this is called after the
 	CAKE.ConVars[ "MeRange" ] = 1.0; -- How far will me chat go
 	CAKE.ConVars[ "LOOCRange" ] = 1.0; -- How far will LOOC chat go
 	
+	CAKE.SimpleChatCommand( "/?", CAKE.ConVars[ "MeRange" ], "??? : $3" ); -- Anon chat
 	CAKE.SimpleChatCommand( "/me", CAKE.ConVars[ "MeRange" ], "*** $1 $3" ); -- Me chat
 	CAKE.SimpleChatCommand( "/it", CAKE.ConVars[ "MeRange" ], "*** $3" ); -- It chat
 	CAKE.SimpleChatCommand( "/anon", CAKE.ConVars[ "MeRange" ], "???: $3" ); -- It chat
@@ -186,6 +198,8 @@ function PLUGIN.Init( ) -- We run this in init, because this is called after the
 	CAKE.ChatCommand( "/radio", Radio ); -- Radio
 	CAKE.ChatCommand( "/removehelmet", RemoveHelmet );
 	CAKE.ChatCommand( "/pm", PersonalMessage );
+	CAKE.ChatCommand( "/title", Title );
+	CAKE.ChatCommand( "/title2", Title2 );
 	
 	CAKE.AddHook("Player_Preload", "chat_modplayervars", Chat_ModPlayerVars); -- Put in our OOCDelay variable
 	

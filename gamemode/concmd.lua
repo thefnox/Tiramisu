@@ -82,7 +82,7 @@ function ccSetTitle( ply, cmd, args )
 
 	local title = args[ 1 ];
 	
-	if( string.len( title ) > 33 ) then
+	if( string.len( title ) > 63 ) then
 	
 		CAKE.SendChat( ply, "Title is too long! Max 32 characters" );
 		return;
@@ -101,7 +101,7 @@ function ccSetTitle2( ply, cmd, args )
 
 	local title = args[ 1 ];
 	
-	if( string.len( title ) > 33 ) then
+	if( string.len( title ) > 63 ) then
 	
 		CAKE.SendChat( ply, "Title is too long! Max 32 characters" );
 		return;

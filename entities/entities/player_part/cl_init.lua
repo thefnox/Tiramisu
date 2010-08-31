@@ -13,6 +13,11 @@ function ENT:Draw()
 	self.Entity:DrawModel()
 	self.Entity:DrawShadow( true )
 	
+	if self.Entity:GetParent():IsPlayer() then
+		local trace = self.Entity:GetParent():GetEyeTrace( )
+		self.Entity:SetEyeTarget( trace.HitPos )
+	end
+	
 end
 
 local function BoneScale( self, realboneid, scale )

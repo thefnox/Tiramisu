@@ -377,14 +377,12 @@ function CAKE.SetCharField( ply, fieldname, data )
 end
 	
 function CAKE.GetCharField( ply, fieldname )
-
-	local SteamID = CAKE.FormatSteamID( ply:SteamID() );
 	
 	if ( !CAKE.UseMySQL ) then
 		-- Check to see if this is a valid field
 		if( CAKE.CharacterDataFields[ fieldname ] ) then
 	
-			return CAKE.NilFix(CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ], "");
+			return CAKE.NilFix(CAKE.PlayerData[ CAKE.FormatSteamID( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ], CAKE.CharacterDataFields[ fieldname ]);
 		 
 		else
 	
@@ -395,7 +393,7 @@ function CAKE.GetCharField( ply, fieldname )
 		if( CAKE.CharacterDataFields[ fieldname ] ) then
 		local field = gdatabase.ThreadedQuery( "SELECT " .. fieldname .. " FROM ti_chars WHERE 'steamid' = '" .. SteamID .. "'", CAKE.DB )
 	
-			return CAKE.NilFix( field , "");
+			return CAKE.NilFix( field , CAKE.CharacterDataFields[ fieldname ]);
 		 
 		else
 	
