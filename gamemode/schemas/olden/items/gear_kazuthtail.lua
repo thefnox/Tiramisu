@@ -5,8 +5,8 @@ ITEM.Model = "models/Olden/jiggle_tail.mdl";
 ITEM.Purchaseable = false;
 ITEM.Price = 0;
 ITEM.ItemGroup = 1;
-ITEM.Offset = Vector( 0,15,-36 )
-ITEM.OffsetAngle = Angle( -20,90,0 )
+ITEM.Offset = Vector( 0,-6,10 )
+ITEM.OffsetAngle = Angle( -135,-90,0 )
 ITEM.Bone = "pelvis"
 
 function ITEM:Drop(ply)

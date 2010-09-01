@@ -41,7 +41,7 @@ function CAKE.BoneFulltoShort( bone )
 	end
 end
 
-function CAKE.HandleGear( ply, item, bone, offset, angle, scale )
+function CAKE.HandleGear( ply, item, bone, offset, angle, scale, skin )
 
 		local bone = bone or CAKE.ItemData[ item ].Bone or "head"
 		
@@ -58,6 +58,7 @@ function CAKE.HandleGear( ply, item, bone, offset, angle, scale )
 		local offset = offset or CAKE.ItemData[ item ].Offset or Vector( 0, 0, 0 )
 		local angle = angle or CAKE.ItemData[ item ].OffsetAngle or Angle( 0, 0, 0 )
 		local scale = scale or CAKE.ItemData[ item ].Scale or Vector( 1, 1, 1 )
+		local skin = skin or CAKE.ItemData[ item ].Skin or 0
 		
 		ply.Gear[ bone ][ "entity" ] = ents.Create( "player_gear" )
 		ply.Gear[ bone ][ "entity" ]:SetModel( model )
@@ -74,6 +75,7 @@ function CAKE.HandleGear( ply, item, bone, offset, angle, scale )
 			ply.Gear[ bone ][ "entity" ]:GetPhysicsObject( ):EnableCollisions( false )
 		end
 		ply.Gear[ bone ][ "entity" ]:Spawn()
+		ply.Gear[ bone ][ "entity" ]:SetSkin( skin )
 		ply.Gear[ bone ][ "item" ] = item
 		
 end
@@ -138,8 +140,8 @@ local function ccSetGear( ply, cmd, args )
 	end
 	
 	CAKE.RemoveGear( ply, bone )
-	CAKE.SaveGear( ply )
 	CAKE.HandleGear( ply, item, bone, offset, angle, scale )
+	CAKE.SaveGear( ply )
 
 end
 concommand.Add( "rp_setgear", ccSetGear )
@@ -151,6 +153,7 @@ local function ccRemoveGear( ply, cmd, args )
 	else
 		CAKE.RemoveAllGear( ply )
 	end
+	CAKE.SaveGear( ply )
 
 end
 concommand.Add( "rp_removegear", ccRemoveGear )
@@ -194,6 +197,8 @@ local function ccEditGear( ply, cmd, args )
 	ply.Gear[ bone ][ "entity" ]:SetDTVector( 2, scale )
 	ply.Gear[ bone ][ "entity" ]:SetDTAngle( 1, angle )
 	ply.Gear[ bone ][ "entity" ]:SetDTBool( 1, visible )
+	
+	CAKE.SaveGear( ply )
 
 end
 concommand.Add( "rp_editgear", ccEditGear )
