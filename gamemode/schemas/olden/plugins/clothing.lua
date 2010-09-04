@@ -73,6 +73,7 @@ function CAKE.SetClothing( ply, body, helmet, glove )
 	CAKE.HandleClothing( ply, helmet or body, 2 )
 	CAKE.HandleClothing( ply, glove or body, 3 )
 	CAKE.CalculateEncumberment( ply )
+	datastream.StreamToClients( ply, "recieveclothing",  ply.Clothing )
 		
 end
 	
@@ -125,6 +126,7 @@ function CAKE.HandleClothing( ply, model, type )
 		end
 		ply.Clothing[ type ]:Spawn()
 		
+		
 end
 	
 local function SpawnClothingHook( ply )
@@ -146,6 +148,7 @@ local function SpawnClothingHook( ply )
 					CAKE.RemoveAllGear( ply )
 					CAKE.RestoreGear( ply )
 					CAKE.SendConsole( ply, "Gear Restored" )
+					datastream.StreamToClients( ply, "recieveclothing",  ply.Clothing )
 				else
 					ply:SetNWBool( "specialmodel", true )
 					ply:SetNWString( "model", tostring( special ) )
@@ -190,7 +193,6 @@ local function ccSetClothing( ply, cmd, args )
 	CAKE.SetCharField( ply, "clothing", body )
 	CAKE.SetCharField( ply, "helmet", helmet )
 	datastream.StreamToClients( ply, "recieveclothing",  ply.Clothing )
-	
 
 end
 concommand.Add( "rp_setclothing", ccSetClothing );

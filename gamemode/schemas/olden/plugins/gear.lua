@@ -139,9 +139,11 @@ local function ccSetGear( ply, cmd, args )
 		scale = CAKE.ItemData[ item ].Scale or Vector( 1, 1, 1 )
 	end
 	
+	
 	CAKE.RemoveGear( ply, bone )
 	CAKE.HandleGear( ply, item, bone, offset, angle, scale )
 	CAKE.SaveGear( ply )
+	datastream.StreamToClients( ply, "recievegear",  ply.Gear )
 
 end
 concommand.Add( "rp_setgear", ccSetGear )
@@ -154,6 +156,7 @@ local function ccRemoveGear( ply, cmd, args )
 		CAKE.RemoveAllGear( ply )
 	end
 	CAKE.SaveGear( ply )
+	datastream.StreamToClients( ply, "recievegear",  ply.Gear )
 
 end
 concommand.Add( "rp_removegear", ccRemoveGear )
@@ -199,6 +202,7 @@ local function ccEditGear( ply, cmd, args )
 	ply.Gear[ bone ][ "entity" ]:SetDTBool( 1, visible )
 	
 	CAKE.SaveGear( ply )
+	datastream.StreamToClients( ply, "recievegear",  ply.Gear )
 
 end
 concommand.Add( "rp_editgear", ccEditGear )
@@ -235,7 +239,6 @@ function CAKE.SaveGear( ply )
 	end
 	
 	CAKE.SetCharField( ply, "gear", tbl )
-	datastream.StreamToClients( ply, "recievegear",  ply.Gear )
 	
 	PrintTable( CAKE.GetCharField( ply, "gear" ) )
 	

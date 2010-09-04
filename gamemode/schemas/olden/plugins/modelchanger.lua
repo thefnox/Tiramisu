@@ -20,8 +20,10 @@ function ccChangeModel( ply, cmd, args )
 				end
 			else
 				CAKE.SetCharField( ply, "model", mdl )
-				CAKE.SetClothing( "none", "none", "none")
+				CAKE.SetClothing( ply, "none", "none", "none")
 			end
+			ply:SetNWBool( "specialmodel", false )
+			CAKE.SetCharField( ply, "specialmodel", "none" )
 		else
 			ply:RemoveClothing()
 			ply:SetModel( mdl )
@@ -33,8 +35,9 @@ function ccChangeModel( ply, cmd, args )
 			if part > 0 then
 				CAKE.HandleClothing( ply, mdl, part )
 			else
-				CAKE.SetClothing( mdl, mdl, mdl)
+				CAKE.SetClothing( ply, mdl, mdl, mdl)
 			end
+			ply:SetNWBool( "specialmodel", false )
 		else
 			ply:RemoveClothing()
 			ply:SetModel( mdl )

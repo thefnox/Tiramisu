@@ -1,4 +1,7 @@
 CurrencyTable = {}
+CAKE.MenuTabs = {}
+CAKE.ActiveTab = nil
+CAKE.MenuOpen = false
 
 function AddCurrency( ply, handle, id, encoded, decoded )
 	local currencydata = {}
@@ -372,6 +375,82 @@ function InitHUDMenu()
 	end*/
 end
 
+function CAKE.RegisterMenuTab( name, func, closefunc ) --The third argument is the function used for closing your panel.
+	print( "Registering Menu Tab " .. name )
+	CAKE.MenuTabs[ name ] = {}
+	CAKE.MenuTabs[ name ][ "function" ] = func or function() end
+	CAKE.MenuTabs[ name ][ "closefunc" ] = closefunc or function() end
+end
+
+function CAKE.CloseTabs()
+	if CAKE.ActiveTab then
+		CAKE.MenuTabs[ CAKE.ActiveTab ][ "closefunc" ]()
+		CAKE.ActiveTab = nil
+	end
+end
+
+function CAKE.SetActiveTab( name )
+	CAKE.CloseTabs()
+	CAKE.MenuTabs[ name ][ "function" ]()
+	CAKE.ActiveTab = name
+end
+
+function CreatePlayerMenu()
+	
+	if TabPanel then
+		TabPanel:Remove();
+		TabPanel = nil
+	else
+		CAKE.MenuOpen = true
+		TabPanel = vgui.Create("DFrame");
+		TabPanel:SetSize( 220, 600 )
+		TabPanel:SetPos( 10, 10 )
+		TabPanel:SetTitle( "" )
+		TabPanel:SetDraggable( false ) -- Draggable by mouse?
+		TabPanel:ShowCloseButton( false ) -- Show the close button?
+		TabPanel:ParentToHUD()
+		function TabPanel:Paint()
+		end
+		TabList = vgui.Create( "DPanelList", TabPanel )
+		TabList:SetPos( 0,25 )
+		TabList:SetSize( 210, 567 )
+		TabList:SetSpacing( 2 ) -- Spacing between items
+		TabList:SetPadding( 10 )
+		TabList:EnableHorizontal( false ) -- Only vertical items
+		TabList:EnableVerticalScrollbar( false ) -- Allow scrollbar if you exceed the Y axis
+		function TabList:Paint()
+		end
+		for k, v in pairs( CAKE.MenuTabs ) do
+			local label = vgui.Create( "DLabel" )
+			label:SetFont("HUDNumber1")
+			label:SetText( k )
+			label:SetSize( 200, 40 )
+			label:SetTextColor( Color( 0, 0, 0 ) )
+			label.OnMousePressed = function()
+				CAKE.SetActiveTab(k)
+			end
+			TabList:AddItem( label )
+		end
+		local closelabel = vgui.Create( "DLabel" )
+		closelabel:SetFont("HUDNumber1")
+		closelabel:SetText( "Close Menu" )
+		closelabel:SetSize( 200, 65 )
+		closelabel:SetTextColor( Color( 0, 0, 0 ) )
+		closelabel.OnMousePressed = function()
+			CAKE.CloseTabs()
+			TabPanel:Remove();
+			TabPanel = nil;
+			CAKE.MenuOpen = false
+		end
+		TabList:AddItem( closelabel )
+		TabPanel:MakePopup()
+		
+	end
+	
+end
+usermessage.Hook("playermenu", CreatePlayerMenu);
+
+--[[
 function CreatePlayerMenu()
 	if(PlayerMenu) then
 		PlayerMenu:Remove();
@@ -1126,7 +1205,7 @@ function CreatePlayerMenu()
 	Options:AddItem( HeadbobCheck )
 	
 	local colormixer = vgui.Create( "DColorMixer");
-	colormixer:SetColor( Color( 0, 0, 255, 100 ) )
+	colormixer:SetColor( Color( 0, 0, 255, 255 ) )
 	colormixer:SetSize( 200, 200 )
 	
 	local OOCColor = vgui.Create( "DLabel" )
@@ -1163,4 +1242,4 @@ function CreatePlayerMenu()
 	PropertySheet:AddSheet( "Groups", BizPanel, "gui/silkicons/group", false, false, "Armies, corporations and businesses.");
 	PropertySheet:AddSheet( "Options", Options,  "gui/silkicons/application_view_detail", false, false, "Set additional options");
 end
-usermessage.Hook("playermenu", CreatePlayerMenu);
+usermessage.Hook("playermenu", CreatePlayerMenu);]]--

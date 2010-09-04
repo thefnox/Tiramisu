@@ -164,7 +164,7 @@ function GM:HUDPaint( )
 	
 end
 
-local function DrawRagdollsAndShit()
+local function DrawWhiteScreen()
 	if LocalPlayer():GetNWInt("deathmode", 0 ) == 1 then
 		local matWhite = CreateMaterial( "iWhite", "UnlitGeneric", {
 			[ "$basetexture" ] = "lights/white"
@@ -181,8 +181,32 @@ local function DrawRagdollsAndShit()
 			end
 		end
 	end
+	if CAKE.MenuOpen then
+		local matWhite = CreateMaterial( "iWhite", "UnlitGeneric", {
+			[ "$basetexture" ] = "lights/white"
+		} )
+		render.SetMaterial( matWhite )
+		render.DrawScreenQuad()
+		render.ClearDepth()
+		if CAKE.Gear then
+			for k, v in pairs( CAKE.Gear ) do
+				if ValidEntity( v["entity"] ) then
+					v["entity"]:DrawModel()
+					v["entity"]:DrawShadow()
+				end
+			end
+		end
+		if CAKE.ClothingTbl then
+			for k, v in pairs( CAKE.ClothingTbl ) do
+				if ValidEntity( v ) then
+					v:DrawModel()
+					v:DrawShadow()
+				end
+			end
+		end
+	end
 end
-hook.Add( "PostDrawOpaqueRenderables", "DrawRagdollsAndShit", DrawRagdollsAndShit )
+hook.Add( "PostDrawOpaqueRenderables", "DrawWhiteScreen", DrawWhiteScreen )
 
 local function EditGear( handler, id, encoded, decoded )
 

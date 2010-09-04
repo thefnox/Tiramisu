@@ -189,24 +189,7 @@ Surface goblins are the most commonly found. Often located in either grasslands 
  ]]
 Race[ "Goblin" ][ "models" ] = {}
 Race[ "Goblin" ][ "models" ][ "male" ] = {
-		            "models/humans/group01/male_01.mdl",
-              "models/humans/group01/male_02.mdl",
-              "models/humans/group01/male_03.mdl",
-              "models/humans/group01/male_04.mdl",
-			  "models/humans/group01/male_05.mdl",
-              "models/humans/group01/male_06.mdl",
-              "models/humans/group01/male_07.mdl",
-              "models/humans/group01/male_08.mdl",
-              "models/humans/group01/male_09.mdl",
-              "models/humans/group02/male_01.mdl",
-              "models/humans/group02/male_02.mdl",
-              "models/humans/group02/male_03.mdl",
-              "models/humans/group02/male_04.mdl",
-			   "models/humans/group02/male_05.mdl",
-              "models/humans/group02/male_06.mdl",
-              "models/humans/group02/male_07.mdl",
-              "models/humans/group02/male_08.mdl",
-              "models/humans/group02/male_09.mdl"
+		    "models/goblin/goblin.mdl",
 	      }
 Race[ "Goblin" ][ "models" ][ "female" ] = {
 			  "models/Humans/Group01/Female_01.mdl",
