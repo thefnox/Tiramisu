@@ -260,6 +260,8 @@ function GM:PlayerSpawn( ply )
 	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] );
 	CAKE.CallHook( "PlayerSpawn", ply )
 	CAKE.CallTeamHook( "PlayerSpawn", ply ); -- Change player speeds perhaps?
+	umsg.Start( "closeplayermenu", ply );
+	umsg.End( )
 	
 end
 

@@ -33,6 +33,7 @@ function GM:PlayerGiveSWEP( ply )
 	
 end
 
+local menuopen = false
 -- This is the F1 menu
 function GM:ShowHelp( ply )
 
@@ -47,9 +48,15 @@ function GM:ShowHelp( ply )
 		umsg.End( );
 		
 	end
-
-	umsg.Start( "playermenu", ply );
-	umsg.End( )
+	
+	if menuopen then
+		umsg.Start( "closeplayermenu", ply );
+		umsg.End( )
+	else
+		umsg.Start( "openplayermenu", ply );
+		umsg.End( )
+	end
+	menuopen = !menuopen
 	
 end
 
