@@ -60,9 +60,9 @@ local function OpenCharacter()
 			Options:AddOption("Select Character", function() 
 				LocalPlayer():ConCommand("rp_selectchar " .. n);
 				LocalPlayer().MyModel = ""
-			
 				PlayerMenu:Remove();
 				PlayerMenu = nil;
+				CAKE.MenuOpen = false
 			end )
 			Options:AddOption("Delete Character", function() 
 				LocalPlayer():ConCommand("rp_confirmremoval " .. n);

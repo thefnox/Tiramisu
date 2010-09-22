@@ -51,6 +51,9 @@ include( "sql_main.lua" ); --MySQL handling
 include( "spawnpoints.lua" ) -- Handling spawn points.
 include( "stashes.lua" ) -- Stashes
 include( "resources.lua" ) -- Automatic resource handling
+include( "boneanimlib.lua" )
+include( "sh_boneanimlib.lua" )
+include( "lua_animations.lua" )
 --include( "sv_usermessages.lua" )
 
 CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ); -- Load the schema and plugins, this is NOT initializing.
@@ -184,6 +187,8 @@ function GM:PlayerLoadout(ply)
 end
 
 function GM:PlayerSpawn( ply )
+
+	ply:ConCommand( "cl_cmdrate 100" )
 	
 	if( !ply:IsCharLoaded() ) then
 		return; -- Player data isn't loaded. This is an initial spawn.
@@ -232,8 +237,7 @@ function GM:PlayerSpawn( ply )
 	ply:ChangeMaxArmor(0 - ply:MaxArmor());
 	ply:ChangeMaxWalkSpeed(CAKE.ConVars[ "WalkSpeed" ] - ply:MaxWalkSpeed());
 	ply:ChangeMaxRunSpeed(CAKE.ConVars[ "RunSpeed" ] - ply:MaxRunSpeed());
-	ply:SetPoseParameter("move_yaw", 0 )
-	MakeUnAim( ply )
+	ply:SetAiming( false )
 	
 	ply:RefreshExtraInventory( )
 	
@@ -245,6 +249,7 @@ function GM:PlayerSpawn( ply )
 		local rankname = CAKE.GetRankPermission( name, rank, "formalname" )
 		local type = CAKE.GetGroupField( name, "Type" )
 		local founder = CAKE.GetGroupField( name, "Founder" )
+		local image = CAKE.GetGroupField( name, "Image" )
 		local rankpermissions = CAKE.GetRankPermissions( name, rank )
 		datastream.StreamToClients( ply, "recievemygroup", {
 			[ "Name" ]		= name,
@@ -252,7 +257,8 @@ function GM:PlayerSpawn( ply )
 			[ "Founder" ]	= founder,
 			[ "Rank" ]		= rankname,
 			[ "RankPermissions" ] = rankpermissions,
-			[ "Inventory" ]	= {}
+			[ "Inventory" ]	= {},
+			[ "Image" ] = image
 		})
 	end
 	
@@ -261,6 +267,8 @@ function GM:PlayerSpawn( ply )
 	CAKE.CallHook( "PlayerSpawn", ply )
 	CAKE.CallTeamHook( "PlayerSpawn", ply ); -- Change player speeds perhaps?
 	umsg.Start( "closeplayermenu", ply );
+	umsg.End( )
+	umsg.Start( "CreateRadio", ply );
 	umsg.End( )
 	
 end

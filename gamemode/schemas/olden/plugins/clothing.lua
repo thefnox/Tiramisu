@@ -3,37 +3,6 @@ PLUGIN.Author = "Big Bang"; -- Author of the plugin
 PLUGIN.Description = "Enables you to wear fucking clothes :D"; -- The description or purpose of the plugin
 
 
---This list is taken from PAC, thanks to the PAC development team.
-local BoneList, EditorBone = {
-	["pelvis"			] = "ValveBiped.Bip01_Pelvis"		,
-	["spine 1"			] = "ValveBiped.Bip01_Spine"		,
-	["spine 2"			] = "ValveBiped.Bip01_Spine1"		,
-	["spine 3"			] = "ValveBiped.Bip01_Spine2"		,
-	["spine 4"			] = "ValveBiped.Bip01_Spine4"		,
-	["neck"				] = "ValveBiped.Bip01_Neck1"		,
-	["head"				] = "ValveBiped.Bip01_Head1"		,
-	["right clavicle"	] = "ValveBiped.Bip01_R_Clavicle"	,
-	["right upper arm"	] = "ValveBiped.Bip01_R_UpperArm"	,
-	["right forearm"	] = "ValveBiped.Bip01_R_Forearm"	,
-	["right hand"		] = "ValveBiped.Bip01_R_Hand"		,
-	["left clavicle"	] = "ValveBiped.Bip01_L_Clavicle"	,
-	["left upper arm"	] = "ValveBiped.Bip01_L_UpperArm"	,
-	["left forearm"		] = "ValveBiped.Bip01_L_Forearm"	,
-	["left hand"		] = "ValveBiped.Bip01_L_Hand"		,
-	["right thigh"		] = "ValveBiped.Bip01_R_Thigh"		,
-	["right calf"		] = "ValveBiped.Bip01_R_Calf"		,
-	["right foot"		] = "ValveBiped.Bip01_R_Foot"		,
-	["right toe"		] = "ValveBiped.Bip01_R_Toe0"		,
-	["left thigh"		] = "ValveBiped.Bip01_L_Thigh"		,
-	["left calf"		] = "ValveBiped.Bip01_L_Calf"		,
-	["left foot"		] = "ValveBiped.Bip01_L_Foot"		,
-	["left toe"			] = "ValveBiped.Bip01_L_Toe0"		
-}
-
-local function BoneTranslate( bone )
-	return BoneList[string.lower(bone)]
-end
-
 local function PlayerDeath( Victim, Inflictor, Attacker )
 
 		if( Victim.Clothing ) then
@@ -141,7 +110,7 @@ local function SpawnClothingHook( ply )
 					ply:SetNWBool( "specialmodel", false )
 					CAKE.SetClothing( ply, clothes, helmet, gloves )
 					if clothes != "none" then
-						ply:SetNWString( "model", clothes )
+						ply:SetNWString( "model", helmet )
 					else
 						ply:SetNWString( "model", CAKE.GetCharField( ply, "model" ) )
 					end
@@ -155,6 +124,9 @@ local function SpawnClothingHook( ply )
 					ply:SetModel( tostring( special ) )
 				end
 			end)
+		timer.Create( ply:SteamID() .. "sendclothes", 1, 0, function()
+			datastream.StreamToClients( ply, "recieveclothing",  ply.Clothing )
+		end)
 	end
 end
 hook.Add( "PlayerSetModel", "OldenSpawnClothing", SpawnClothingHook )

@@ -9,6 +9,34 @@ CAKE.Chairs = {
 		}
 }
 
+function CAKE.EditChair( mdl, tbl )
+	if CAKE.Chairs then
+		for k, v in pairs( CAKE.Chairs ) do
+			if k == mdl then
+				CAKE.Chairs[ mdl ] = tbl
+			end
+		end
+	end
+end
+
+function CAKE.SaveChairs()
+	PrintTable( CAKE.Chairs )
+	local keys = glon.encode(CAKE.Chairs);
+	file.Write( CAKE.Name .. "/chairs.txt", keys )
+end
+
+function CAKE.LoadChairs()
+	if file.Exists( CAKE.Name .. "/chairs.txt" ) then
+		CAKE.Chairs = glon.decode(file.Read( CAKE.Name .. "/chairs.txt" ))
+	end
+	PrintTable( CAKE.Chairs )
+end
+
+local function LoadChairs()
+	CAKE.LoadChairs()
+end
+hook.Add( "InitPostEntity", "TiramisuLoadChairs", LoadChairs )
+
 function CAKE.IsChair( ent )
 	if ent:GetClass() == "prop_physics" or ent:GetClass() == "prop_static" then
 		for k, v in pairs( CAKE.Chairs ) do
@@ -39,30 +67,31 @@ local function ccSitDown( ply, cmd, args )
 		if !ent.PeopleSitting then
 			ent.PeopleSitting = {}
 		end
-		tbl = CAKE.Chairs[ string.lower( ent:GetModel() ) ]
+		tbl = CAKE.Chairs[ string.lower( ent:GetModel() ) ] 
 		sitnum = #tbl
 		for i=1, sitnum do
 			if !ent.PeopleSitting[ i ] then
 				ent.PeopleSitting[ i ] = ply
 				ply.SitSpot = i
 				hassit = true
-				newposition, newangles = LocalToWorld( CAKE.Chairs[ ent:GetModel() ][i]["pos"],CAKE.Chairs[ ent:GetModel() ][i]["angles"], ent:GetPos(), ent:GetAngles() )
-				ply:SetPos(newposition)
-				ply:SetAngles(newangles)
+				ply:SetNWBool( "sittingchair", true )
+				ply:SetParent( ent )
+				ply:Freeze( true )
+				ply:SetLocalPos(CAKE.Chairs[ ent:GetModel() ][i]["pos"])
+				ply:SetLocalAngles(CAKE.Chairs[ ent:GetModel() ][i]["angles"])
 			end
 		end
 		if hassit then
-			ply:SetNWBool( "sittingchair", true )
-			ply:Freeze( true )
-			ply:SetParent( ent )
 			CAKE.SendChat( ply, "Use !stand to get back on your feet." )
 		else
 			CAKE.SendChat( ply, "No room to sit here." )
 		end
 	else
-		ply:SetNWBool( "sittingground", true )
-		ply:Freeze( true )
-		CAKE.SendChat( ply, "Use !stand to get back on your feet." )
+		if ply:OnGround() then
+			ply:SetNWBool( "sittingground", true )
+			ply:Freeze( true )
+			CAKE.SendChat( ply, "Use !stand to get back on your feet." )
+		end
 	end
 	
 end
@@ -83,28 +112,61 @@ concommand.Add( "rp_stand", ccStandUp )
 
 local function ccEditSit( ply, cmd, args )
 	
+	local mdl = ""
+	local seat = 1
 	local vec = Vector( 0, 0, 0 )
 	local ang = Angle( 0, 0, 0 )
+	local tbl = {}
 	
-	if ply:GetNWBool( "sittingchair", false ) then
-		if args[1] and args[1] == "none" then
-			local exp = string.Explode( ",", args[1] )
-			vec = Vector( tonumber( exp[1] ), tonumber( exp[2] ), tonumber( exp[3] ) )
+	if args[1] then
+		mdl = string.lower( args[1] )
+	end
+	if args[2] and args[2] != "none" then
+		seat = tonumber( args[2] )
+	end
+	if args[3] and args[3] != "none" then
+		local sep = string.Explode( ",", args[3] )
+		vec = Vector( tonumber(sep[1]),tonumber(sep[2]),tonumber(sep[3]) )
+	else
+		if CAKE.Chairs and CAKE.Chairs[ mdl ] and CAKE.Chairs[ mdl ][ seat ] then
+			vec = CAKE.Chairs[ mdl ][ seat ][ "pos" ]
 		end
-		if args[2] and args[2] == "none" then
-			local exp = string.Explode( ",", args[2] )
-			ang = Angle( tonumber( exp[1] ), tonumber( exp[2]), tonumber( exp[3]) )
+	end
+	if args[4] and args[4] != "none" then
+		local sep = string.Explode( ",", args[4] )
+		ang = Angle( tonumber(sep[1]),tonumber(sep[2]),tonumber(sep[3]) )
+	else
+		if CAKE.Chairs and CAKE.Chairs[ mdl ] and CAKE.Chairs[ mdl ][ seat ] then
+			ang = CAKE.Chairs[ mdl ][ seat ][ "angles" ]
 		end
-		umsg.Start( "editsit", ply )
-			umsg.Vector( vec )
-			umsg.Angle( ang )
-		umsg.End()
 	end
 	
+	tbl = {
+		["pos"] = vec,
+		["angles"] = ang
+	}
+	
+	if CAKE.Chairs and CAKE.Chairs[ mdl ] and CAKE.Chairs[ mdl ] then
+		CAKE.Chairs[ mdl ][ seat ] = tbl
+	end
+	
+	CAKE.SaveChairs()
+	
 end
-concommand.Add( "rp_editsit", ccEditSit )
+
+local function ccCreateSit( ply, cmd, args )
+	
+	local mdl = string.lower( args[1] )
+	if CAKE.Chairs and !CAKE.Chairs[ mdl ] then
+		CAKE.Chairs[ mdl ] = {}
+		CAKE.Chairs[ mdl ][ 1 ] = { ["pos"] = Vector( 0, 0, 0 ), ["angles"] = Vector( 0, 0, 0 ) }
+	end
+	
+	CAKE.SaveChairs()
+	
+end
 
 function PLUGIN.Init()
-
-	
+	CAKE.AdminCommand( "createchair", ccCreateSit, "Add a chair", true, true, 2 );
+	CAKE.AdminCommand( "editchair", ccEditSit, "Edit a chair's coordinates", true, true, 2 );
 end

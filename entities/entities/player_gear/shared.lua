@@ -17,4 +17,5 @@ function ENT:SetupDataTables()
 	self:DTVar("Vector", 1, "offset");
 	self:DTVar("Vector", 2, "scale");
 	self:DTVar("Bool", 1, "visible");
+	self:DTVar("Bool", 2, "bonemerge");
 end

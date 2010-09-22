@@ -1,6 +1,6 @@
 CLPLUGIN.Name = "Charcreation Menu"
-CLPLUGIN.Author = "Matt/Ryaga"
---Yep, 650 lines of character creation, clientside. Beat that, Tacoscript 2
+CLPLUGIN.Author = "FNox/Ryaga"
+--Yep, 1000 lines of character creation, clientside. Beat that, Tacoscript 2
 
 local function ErrorMessage( msg )
 	Derma_Message(msg, "Error!", "OK")
@@ -135,17 +135,15 @@ Race[ "Dragonborn" ][ "models" ][ "female" ] = {
               "models/Humans/Group02/Female_07.mdl"
 	      }
 		  
-Race[ "Vampire" ] = {}
-Race[ "Vampire" ][ "desc" ] = [[ The Vampires are not a true ‘race’ in the classical sense. As nearly any race of mortal beings can become a vampire, their height, build, and appearance can vary wildly. There are, however, universal traits that all vampires have upon acquiring the ‘gift’. After a mortal has been turned, they acquire a vibrant, glowing redness in their eyes, and grow specialized fangs developed specifically for the draining of blood. In humans, most vampires acquire a paleness of flesh. Vampires do not need to breathe; vampires cannot die from heart failure or organ loss; they are immune to all diseases and poisons; they have an enhanced rate of healing. Vampires have heighted senses in all regards at night, and can sense dark auras with ease. Most Vampires have a basic resistance to normal spells. And finally, Vampires can move with a greater dexterity than most mortal species, and acquire great strength, in the case of humans, having the strength of three men. 
+Race[ "Aasimar" ] = {}
+Race[ "Aasimar" ][ "desc" ] = [[ Proud, fair skinned and tall, the Aasimar are a race with a somewhat curious background. One of the two races that are known to be Planetouched, the others being the Tieflings, Aasimar are native to planes of law and order. They have holy blood somewhere in their ancestry, but should not be confused with half-celestials, as the celestial heritage is far back in the character's ancestry (at least 1/8th). While some claim to have descended directly from the Gods, it is more likely that one of their ancestors was a Celestial, and not a God. However, most of them cannot trace their heritage back to a specific celestial being.
 
-However, these powers come at a cost. Vampires are infertile, completely incapable of having children in the traditional sense. Vampires experience a constant hunger for blood,  and the feeding is a necessity; too long without food drives the vampire into a vicious, nightmarish animal state known as The Hunger, when they will self-destructively seek the blood of the closest being. Vampires can still die from bloodloss, and though their healing is increased, so is their rate of bleeding. Vampire’s enhanced senses cause them intense irritation during the day, tormented by the noise and intense sunlight. Vampires can also only endure direct sunlight for a matter of two hours, before their blood literally evaporates. And finally, items made of Lucium, Silver, Orium(‘Black Silver’) and items that have been consecrated in the name of a God of Light will burn and sear the flesh of any Vampire, leaving lasting scarring. Weapons made of these materials will slice through Vampiric skin like butter, leaving devastating wounds nearly impossible to heal.
+There is no difference between Aasimar hailing from Human, Elven or other lineage, it is the touch of the divine that makes them what they are, regardless of their other ancestry.
 
-Vampires are the servant of Shar, and receive their dark power from her; thus, if they do not pay tribute to her, they run the risk of being hunted down by Shar’s deadly non-vampiric servants.
-
-Vampires can only be propagated through an act known as the Siring, committed by another Vampire.
+Most Aasimar have a Human ancestry, a relative few have an Elvish ancestry. Aasimar have no lands to call their own. They are welcome in most places, but can also be unwanted in others. Having no home or lands to call their own, Aasimar travel the lands and are not likely to settle down in a particular location. They’re usually traveling paladins or clerics, looking to fight evil where they can. Those who are not devout followers of a Deity, tend to become traveling bards.
  ]]
-Race[ "Vampire" ][ "models" ] = {}
-Race[ "Vampire" ][ "models" ][ "male" ] = {
+Race[ "Aasimar" ][ "models" ] = {}
+Race[ "Aasimar" ][ "models" ][ "male" ] = {
 		            "models/humans/group01/male_01.mdl",
               "models/humans/group01/male_02.mdl",
               "models/humans/group01/male_03.mdl",
@@ -165,7 +163,7 @@ Race[ "Vampire" ][ "models" ][ "male" ] = {
               "models/humans/group02/male_08.mdl",
               "models/humans/group02/male_09.mdl"
 	      }
-Race[ "Vampire" ][ "models" ][ "female" ] = {
+Race[ "Aasimar" ][ "models" ][ "female" ] = {
 			  "models/Humans/Group01/Female_01.mdl",
               "models/Humans/Group01/Female_02.mdl",
               "models/Humans/Group01/Female_03.mdl",
@@ -368,6 +366,45 @@ Race[ "Kazuth"  ][ "models" ][ "male" ] = {
               "models/humans/group02/male_09.mdl"
 	      }
 Race[ "Kazuth"  ][ "models" ][ "female" ] = {
+			  "models/Humans/Group01/Female_01.mdl",
+              "models/Humans/Group01/Female_02.mdl",
+              "models/Humans/Group01/Female_03.mdl",
+              "models/Humans/Group01/Female_04.mdl",
+              "models/Humans/Group01/Female_06.mdl",
+              "models/Humans/Group01/Female_07.mdl",
+              "models/Humans/Group02/Female_01.mdl",
+              "models/Humans/Group02/Female_02.mdl",
+              "models/Humans/Group02/Female_03.mdl",
+              "models/Humans/Group02/Female_04.mdl",
+              "models/Humans/Group02/Female_06.mdl",
+              "models/Humans/Group02/Female_07.mdl"
+	      }
+		  
+Race[ "Other" ] = {}
+Race[ "Other"  ][ "desc" ] = [[ A race that doesn't fit the description of those listed here. Please specify which on your title.
+]]
+Race[ "Other"  ][ "models" ] = {}
+Race[ "Other"  ][ "models" ][ "male" ] = {
+		            "models/humans/group01/male_01.mdl",
+              "models/humans/group01/male_02.mdl",
+              "models/humans/group01/male_03.mdl",
+              "models/humans/group01/male_04.mdl",
+			  "models/humans/group01/male_05.mdl",
+              "models/humans/group01/male_06.mdl",
+              "models/humans/group01/male_07.mdl",
+              "models/humans/group01/male_08.mdl",
+              "models/humans/group01/male_09.mdl",
+              "models/humans/group02/male_01.mdl",
+              "models/humans/group02/male_02.mdl",
+              "models/humans/group02/male_03.mdl",
+              "models/humans/group02/male_04.mdl",
+			   "models/humans/group02/male_05.mdl",
+              "models/humans/group02/male_06.mdl",
+              "models/humans/group02/male_07.mdl",
+              "models/humans/group02/male_08.mdl",
+              "models/humans/group02/male_09.mdl"
+	      }
+Race[ "Other"  ][ "models" ][ "female" ] = {
 			  "models/Humans/Group01/Female_01.mdl",
               "models/Humans/Group01/Female_02.mdl",
               "models/Humans/Group01/Female_03.mdl",

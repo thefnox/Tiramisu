@@ -39,6 +39,11 @@ local function OpenOptions()
 	HeadbobCheck:SetConVar( "rp_headbob" ) -- ConCommand must be a 1 or 0 value
 	Options:AddItem( HeadbobCheck )
 	
+	local WhiteCheck = vgui.Create( "DCheckBoxLabel" )
+	WhiteCheck:SetText( "Toggle menu's white screen" )
+	WhiteCheck:SetConVar( "rp_whitescreen" ) -- ConCommand must be a 1 or 0 value
+	Options:AddItem( WhiteCheck )
+	
 	local colormixer = vgui.Create( "DColorMixer");
 	colormixer:SetColor( Color( 0, 0, 255, 255 ) )
 	colormixer:SetSize( 200, 200 )

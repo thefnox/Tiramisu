@@ -87,7 +87,7 @@ end
 -- Set Title
 function ccSetTitle( ply, cmd, args )
 
-	local title = args[ 1 ];
+	local title = table.concat( args, " " )
 	
 	if( string.len( title ) > 63 ) then
 	
@@ -106,7 +106,7 @@ concommand.Add( "rp_title", ccSetTitle );
 
 function ccSetTitle2( ply, cmd, args )
 
-	local title = args[ 1 ];
+	local title = table.concat( args, " " )
 	
 	if( string.len( title ) > 63 ) then
 	
@@ -126,7 +126,7 @@ concommand.Add( "rp_title2", ccSetTitle2 );
 -- Change IC Name
 function ccChangeName( ply, cmd, args )
 
-	local name = args[ 1 ];
+	local name = table.concat( args, " " )
 	CAKE.SetCharField(ply, "name", name );
 	ply:SetNWString("name", name);
 	
@@ -336,9 +336,17 @@ function ccPickupItem( ply, cmd, args )
 				end
 			end
 			if( string.match( item.Class, "weapon" ) ) then
+				if !table.HasValue( CAKE.GetCharField( ply, "weapons" ), item.Class) then
+					local weapons = CAKE.GetCharField( ply, "weapons" )
+					table.insert( weapons, item.Class )
+					CAKE.SetCharField( ply, "weapons", weapons )
+				end
 				ply:Give( item.Class )
 				CAKE.HandleGear( ply, item.Class )
 				CAKE.SaveGear( ply )
+			end
+			if string.match( item.Class, "zipties" ) then
+				ply:Give( item.Class )
 			end
 			item:Pickup( ply );
 			ply:GiveItem( item.Class );
@@ -480,3 +488,26 @@ local function ccCodeItem( ply, cmd, args )
 	
 end
 concommand.Add( "rp_codeitem", ccCodeItem )
+
+local function ccKnockOut( ply, cmd, args )
+
+	CAKE.UnconciousMode( ply )
+	
+end
+concommand.Add( "rp_passout", ccKnockOut )
+
+local function ccArrest( ply, cmd, args )
+
+	local trace = ply:GetEyeTrace( )
+	if trace.StartPos:Distance( trace.HitPos ) < 150 then
+		if ply:HasItem( "zipties" ) then
+			if trace.Entity:IsPlayer() then
+				CAKE.ArrestPlayer( ply, trace.Entity )
+			elseif trace.Entity.ply:IsPlayer() then
+				CAKE.ArrestPlayer( ply, trace.Entity.ply )
+			end
+		end
+	end
+	
+end
+concommand.Add( "rp_arrest", ccArrest )

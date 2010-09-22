@@ -94,10 +94,7 @@ usermessage.Hook( "ReceiveChar", ReceiveChar );
 
 local function CharacterCreatePanel( )
 
-	CreatePlayerMenu( )
-	PlayerMenu:ShowCloseButton( false )
-	PropertySheet:SetActiveTab( PropertySheet.Items[ 2 ].Tab );
-	PropertySheet.SetActiveTab = function( ) end;
+	CAKE.SetActiveTab( "Characters" )
 	InitHUDMenu()
 	
 end

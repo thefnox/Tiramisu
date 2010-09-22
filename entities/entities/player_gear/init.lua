@@ -9,8 +9,21 @@ include( 'shared.lua' )
 ---------------------------------------------------------*/
 function ENT:Initialize()
 
-	// Set engine effects
-	
-	self.Entity:SetMoveType( MOVETYPE_NONE )
+	if self:GetDTBool( 2 ) then
+		self.Entity:AddEffects( EF_BONEMERGE | EF_BONEMERGE_FASTCULL )
+	end
+	self.Entity:AddEffects( EF_PARENT_ANIMATES )
+	self:SetSolid(SOLID_NONE)
+	self:SetNotSolid(true)
+	self:SetMoveType(MOVETYPE_NONE)
+	self:SetCollisionBounds( Vector(0, 0, 0), Vector(0, 0, 0) )
+
+end
+
+function ENT:OnTakeDamage()
+
+end
+
+function ENT:PhysicsCollide()
 
 end

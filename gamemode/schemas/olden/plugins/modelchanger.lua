@@ -45,6 +45,8 @@ function ccChangeModel( ply, cmd, args )
 		end
 	end
 	
+	datastream.StreamToClients( ply, "recieveclothing",  ply.Clothing )
+	
 end
 concommand.Add( "rp_changemodel", ccChangeModel );
 

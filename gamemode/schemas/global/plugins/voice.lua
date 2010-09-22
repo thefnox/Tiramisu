@@ -18,7 +18,7 @@ function ccVoice( ply, cmd, args ) -- People near you will hear the voice
 	local voice = CAKE.Voices[ id ];
 	local team = ply:Team( );
 	
-	if( table.HasValue( CAKE.Teams[ team ][ "sound_groups" ], voice.soundgroup ) ) then
+	if( CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "soundgroup" ) and CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "soundgroup" ) == voice.soundgroup ) then
 		
 		local path = voice.path;
 		
@@ -59,7 +59,7 @@ function ccListVoice( ply, cmd, args ) -- LIST DA FUKKEN VOICES
 	
 	for _, voice in pairs(CAKE.Voices) do
 
-		if(table.HasValue(CAKE.Teams[ply:Team()]["sound_groups"], voice.soundgroup)) then
+		if( CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "soundgroup" ) and CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "soundgroup" ) == voice.soundgroup ) then
 		
 			CAKE.SendConsole( ply, _ .. " - " .. voice.line .. " - " .. voice.path );
 			

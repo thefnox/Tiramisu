@@ -4,7 +4,7 @@ PLUGIN.Description = "Combine can drop rations."; -- The description or purpose 
 
 function RationDrop(ply, text)
 
-	if(CAKE.Teams[ply:Team()].iscombine == true) then
+	if(CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "iscombine" )) then
 	
 		CAKE.CreateItem( "ration", ply:CalcDrop( ), Angle( 0,0,0 ) );
 		

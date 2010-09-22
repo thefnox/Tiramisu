@@ -66,6 +66,18 @@ function ccDropItem( ply, cmd, args )
 						CAKE.SetCharField( ply, "weapons", weapons )
 					end
 				end
+				if string.match( v, "zipties" ) then
+					ply:StripWeapon( v )
+					if( table.HasValue( CAKE.GetCharField( ply, "weapons" ), v ) ) then
+						local weapons = CAKE.GetCharField( ply, "weapons" )
+						for k2, v2 in pairs( weapons ) do
+							if v2 == v then
+								table.remove( weapons, k2 )
+							end
+						end
+						CAKE.SetCharField( ply, "weapons", weapons )
+					end
+				end
 				CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ) );
 				ply:TakeItem( args[ 1 ] );
 				return;

@@ -37,7 +37,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-end
 
+end
 function SWEP:Think()
 end

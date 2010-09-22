@@ -7,10 +7,17 @@
 -- Useful functions for players.
 -------------------------------
 
-function CAKE.SendChat( ply, msg )
+function CAKE.SendChat( ply, msg, font )
+	
+	font = font or "ChatFont"
 	
 	if ply:IsPlayer() then
 		ply:PrintMessage( 3, msg );
+		umsg.Start( "tiramisuaddtochat", ply )
+			umsg.String( msg )
+			umsg.String( font )
+		umsg.End()
+		--CAKE.SendConsole( ply, msg )
 	else
 		print( msg )
 	end
@@ -88,6 +95,76 @@ function CAKE.DeathMode( ply )
 		ply:SetNWInt( "deathmode", 0 )
 		ply:SetViewEntity( ply );
 
+	
+	end)
+	
+end
+
+function CAKE.UnconciousMode( ply )
+	
+	if ValidEntity( ply.unconciousrag ) then
+		ply.unconciousrag:Remove()
+		ply.unconciousrag = nil
+	end
+	
+	CAKE.DayLog( "script.txt", "Starting unconcious mode for " .. ply:SteamID( ) );
+	local mdl = ply:GetModel( )
+	
+	local rag = ents.Create( "prop_ragdoll" )
+	rag:SetModel( mdl )
+	rag:SetPos( ply:GetPos( ) )
+	rag:SetAngles( ply:GetAngles( ) + Angle( 0, 90, 0 ) )
+	rag.ply = ply;
+	rag:Spawn( )
+	
+	if( ply.Clothing ) then
+		for k, v in pairs( ply.Clothing ) do
+			if( ValidEntity( v ) ) then
+				v:SetParent( rag )
+				v:Initialize()
+			end
+		end
+	end
+	
+	if( ply.Gear ) then
+		for k, v in pairs( ply.Gear ) do
+			if( ValidEntity( v[ "entity" ] ) ) then
+				v[ "entity" ]:SetParent( rag )
+				v[ "entity" ]:SetDTInt( 1, rag:LookupBone( CAKE.BoneShorttoFull( k ) ) )
+				v[ "entity" ]:Initialize()
+			end
+		end
+	end
+	
+	rag.clothing = ply.Clothing
+	rag.gear = ply.Gear
+	ply.Clothing = nil
+	ply.Gear = nil
+	
+	datastream.StreamToClients( ply, "RecieveUnconciousRagdoll", { ["ragdoll"] = rag, ["clothing"] = rag.clothing } )
+	
+	ply.unconciousrag = rag;
+	
+	ply:SetNWInt( "unconciousmode", 1 )
+	
+	ply.unconcioustime = 0;
+	ply.nextsecond = CurTime( ) + 1;
+	
+	ply:Lock()
+	
+	timer.Create( ply:SteamID() .. "unconcioustimer", 1, 19, function()
+		ply:SetNWInt( "unconciousmoderemaining", ply:GetNWInt( "unconciousmoderemaining", 0 ) + 1 );
+	end)
+	
+	timer.Simple( 20, function()
+	
+		ply:SetNWInt( "unconciousmode", 0 )
+		ply:SetNWInt( "unconciousmoderemaining", 0 )
+		ply:SetViewEntity( ply );
+		ply:UnLock()
+		CAKE.RestoreClothing( ply )
+		datastream.StreamToClients( ply, "RecieveUnconciousRagdoll", { ["ragdoll"] = false } )
+		rag:Remove()
 	
 	end)
 	
@@ -175,6 +252,30 @@ function meta:GiveItem( class )
 	table.insert( inv, class );
 	CAKE.SetCharField( self, "inventory", inv);
 	CAKE.CalculateEncumberment( self )
+	if string.match( class, "weapon" ) then
+		if !table.HasValue( CAKE.GetCharField( self, "inventory" ), class ) then
+			if !table.HasValue( CAKE.GetCharField( self, "weapons" ), class) then
+				local weapons = CAKE.GetCharField( self, "weapons" )
+				table.insert( weapons, class )
+				CAKE.SetCharField( self, "weapons", weapons )
+			end
+			self:Give( class )
+			CAKE.HandleGear( self, class )
+			CAKE.SaveGear( self )
+		end 
+	end
+	
+	if string.match( class, "zipties" ) then
+		if !table.HasValue( CAKE.GetCharField( self, "inventory" ), class ) then
+			if !table.HasValue( CAKE.GetCharField( self, "weapons" ), class) then
+				local weapons = CAKE.GetCharField( self, "weapons" )
+				table.insert( weapons, class )
+				CAKE.SetCharField( self, "weapons", weapons )
+			end
+			self:Give( class )
+		end
+	end
+	
 	self:RefreshInventory( );
 
 end
@@ -246,6 +347,10 @@ function meta:RefreshBusiness( )
 end
 
 function meta:ItemHasFlag( item, flag )
+	
+	if !CAKE.ItemData[ item ] then
+		return false
+	end
 
 	if !CAKE.ItemData[ item ].Flags then
 		CAKE.ItemData[ item ].Flags = {}

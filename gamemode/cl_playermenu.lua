@@ -2,6 +2,10 @@ CurrencyTable = {}
 CAKE.MenuTabs = {}
 CAKE.ActiveTab = nil
 CAKE.MenuOpen = false
+CAKE.MenuFont = "Base 02"
+
+surface.CreateFont( CAKE.MenuFont, 48, 800, true, false, "BaseTitle" )
+surface.CreateFont( CAKE.MenuFont, 32, 800, true, false, "BaseOptions" )
 
 function AddCurrency( ply, handle, id, encoded, decoded )
 	local currencydata = {}
@@ -38,6 +42,7 @@ local function RecieveMyGroup( handler, id, encoded, decoded )
 	CAKE.MyGroup.Rank = decoded.Rank or ""
 	CAKE.MyGroup.RankPermissions = decoded.RankPermissions or {}
 	CAKE.MyGroup.Inventory = decoded.Inventory or {}
+	CAKE.MyGroup.Image = decoded.Image or ""
 
 end
 datastream.Hook("recievemygroup", RecieveMyGroup )
@@ -184,13 +189,14 @@ function CAKE.SetActiveTab( name )
 	CAKE.CloseTabs()
 	CAKE.MenuTabs[ name ][ "function" ]()
 	CAKE.ActiveTab = name
+	CAKE.MenuOpen = true
 end
 
 function CreatePlayerMenu()
 	
 		CAKE.MenuOpen = true
 		TabPanel = vgui.Create("DFrame");
-		TabPanel:SetSize( 220, 600 )
+		TabPanel:SetSize( 270, 600 )
 		TabPanel:SetPos( 10, 10 )
 		TabPanel:SetTitle( "" )
 		TabPanel:SetDraggable( false ) -- Draggable by mouse?
@@ -200,7 +206,7 @@ function CreatePlayerMenu()
 		end
 		TabList = vgui.Create( "DPanelList", TabPanel )
 		TabList:SetPos( 0,25 )
-		TabList:SetSize( 210, 567 )
+		TabList:SetSize( 260, 567 )
 		TabList:SetSpacing( 2 ) -- Spacing between items
 		TabList:SetPadding( 10 )
 		TabList:EnableHorizontal( false ) -- Only vertical items
@@ -208,44 +214,138 @@ function CreatePlayerMenu()
 		function TabList:Paint()
 		end
 		local MainMenu = vgui.Create( "DLabel" )
-		MainMenu:SetFont("HUDNumber5")
-		MainMenu:SetText( "MAIN MENU" )
-		MainMenu:SetSize( 200, 50 )
-		MainMenu:SetTextColor( Color( 255, 0, 0 ) )
+		MainMenu:SetFont("BaseTitle")
+		MainMenu:SetText( "Main Menu" )
+		MainMenu:SetSize( 250, 50 )
+		MainMenu:SetTextColor( Color( 220, 0, 0 ) )
+		MainMenu:SetExpensiveShadow( 2, Color( 255, 255, 255, 255 ) )
 		TabList:AddItem( MainMenu )
 		for k, v in pairs( CAKE.MenuTabs ) do
 			local label = vgui.Create( "DLabel" )
-			label:SetFont("Trebuchet24")
-			label:SetText( string.upper( k ) )
-			label:SetSize( 200, 20 )
+			label:SetFont("BaseOptions")
+			label:SetText( k )
+			label:SetSize( 250, 30 )
 			label:SetTextColor( Color( 0, 0, 0 ) )
 			label.OnMousePressed = function()
 				CAKE.SetActiveTab(k)
 			end
+			label:SetExpensiveShadow( 1, Color( 255, 255, 255, 255 ) )
 			TabList:AddItem( label )
 		end
 		local closelabel = vgui.Create( "DLabel" )
-		closelabel:SetFont("Trebuchet24")
-		closelabel:SetText( string.upper( "Close Menu" ))
-		closelabel:SetSize( 200, 65 )
+		closelabel:SetFont("BaseOptions")
+		closelabel:SetText( "Close Menu" )
+		closelabel:SetSize( 250, 65 )
+		closelabel:SetExpensiveShadow( 1, Color( 255, 255, 255, 255 ) )
 		closelabel:SetTextColor( Color( 0, 0, 0 ) )
 		closelabel.OnMousePressed = function()
-			CAKE.CloseTabs()
-			TabPanel:Remove();
-			TabPanel = nil;
-			CAKE.MenuOpen = false
+			ClosePlayerMenu()
 		end
 		TabList:AddItem( closelabel )
 		TabPanel:MakePopup()
+		
+		VitalsMenu = vgui.Create( "DFrame" )
+		VitalsMenu:SetSize( 340, 230 )
+		VitalsMenu:SetTitle( "" )
+		VitalsMenu:SetVisible( true )
+		VitalsMenu:SetDraggable( false )
+		VitalsMenu:ShowCloseButton( false )
+		VitalsMenu:SetDeleteOnClose( true )
+		VitalsMenu:SetPos( ScrW() - 350, 310 )
+		function VitalsMenu:Paint()
+		end
+
+		local PlayerInfo = vgui.Create( "DPanelList", VitalsMenu )
+		PlayerInfo:SetSize( 340, 200 )
+		PlayerInfo:SetPos( 0, 23 )
+		PlayerInfo:SetPadding(10);
+		PlayerInfo:SetSpacing(10);
+		PlayerInfo:EnableHorizontal(false);
+		function PlayerInfo:Paint()
+		end
+
+		local icdata = vgui.Create( "DForm" );
+		icdata:SetPadding(4);
+		icdata:SetName(LocalPlayer():Nick() or "");
+
+		local FullData = vgui.Create("DPanelList");
+		FullData:SetSize(0, 84);
+		FullData:SetPadding(10);
+
+		local DataList = vgui.Create("DPanelList");
+		DataList:SetSize(0, 64);
+
+		local spawnicon = vgui.Create( "SpawnIcon");
+		spawnicon:SetModel(LocalPlayer():GetNWString( "model", LocalPlayer():GetModel()) );
+		spawnicon:SetSize( 64, 64 );
+		DataList:AddItem(spawnicon);
+
+		local DataList2 = vgui.Create( "DPanelList" )
+
+		local label2 = vgui.Create("DLabel");
+		label2:SetText("Title: " .. LocalPlayer():GetNWString("title", ""));
+		DataList2:AddItem(label2);
+
+		local label3 = vgui.Create("DLabel");
+		label3:SetText("Title 2: " .. LocalPlayer():GetNWString("title2", ""));
+		DataList2:AddItem(label3);
+
+		local label4 = vgui.Create("DLabel");
+		label4:SetText( CurrencyTable.name .. ": " .. LocalPlayer():GetNWString("money", "0" ));
+		DataList2:AddItem(label4);
+
+		local Divider = vgui.Create("DHorizontalDivider");
+		Divider:SetLeft(spawnicon);
+		Divider:SetRight(DataList2);
+		Divider:SetLeftWidth(64);
+		Divider:SetHeight(64);
+
+		DataList:AddItem(spawnicon);
+		DataList:AddItem(DataList2);
+		DataList:AddItem(Divider);
+
+		FullData:AddItem(DataList)
+
+		icdata:AddItem(FullData)
+
+		local vitals = vgui.Create( "DForm" );
+		vitals:SetPadding(4);
+		vitals:SetName("Vital Signs");
+
+		local VitalData = vgui.Create("DPanelList");
+		VitalData:SetAutoSize(true)
+		VitalData:SetPadding(10);
+		vitals:AddItem(VitalData);
+
+		local healthstatus = ""
+		local hp = LocalPlayer():Health();
+
+		if(!LocalPlayer():Alive()) then healthstatus = "Dead";
+		elseif(hp > 95) then healthstatus = "Healthy";
+		elseif(hp > 50 and hp < 95) then healthstatus = "OK";
+		elseif(hp > 30 and hp < 50) then healthstatus = "Near Death";
+		elseif(hp > 1 and hp < 30) then healthstatus = "Death Imminent"; end
+
+		local health = vgui.Create("DLabel");
+		health:SetText("Vitals: " .. healthstatus);
+		VitalData:AddItem(health);
+
+		PlayerInfo:AddItem(icdata)
+		PlayerInfo:AddItem(vitals)
+
 	
 end
 usermessage.Hook("openplayermenu", CreatePlayerMenu);
 
 function ClosePlayerMenu()
 	if TabPanel then
+		if VitalsMenu then
+			VitalsMenu:Remove();
+			VitalsMenu = nil
+		end
 		TabPanel:Remove();
 		TabPanel = nil
-		CAKE.MenuOpen = false
 	end
+	CAKE.MenuOpen = false
 end
 usermessage.Hook("closeplayermenu", ClosePlayerMenu);

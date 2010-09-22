@@ -42,7 +42,8 @@ function CAKE.BoneFulltoShort( bone )
 end
 
 function CAKE.HandleGear( ply, item, bone, offset, angle, scale, skin )
-
+	
+	if CAKE.ItemData[ item ] then
 		local bone = bone or CAKE.ItemData[ item ].Bone or "head"
 		
 		if !ply.Gear then
@@ -59,6 +60,10 @@ function CAKE.HandleGear( ply, item, bone, offset, angle, scale, skin )
 		local angle = angle or CAKE.ItemData[ item ].OffsetAngle or Angle( 0, 0, 0 )
 		local scale = scale or CAKE.ItemData[ item ].Scale or Vector( 1, 1, 1 )
 		local skin = skin or CAKE.ItemData[ item ].Skin or 0
+		local bonemerge = true
+		if CAKE.ItemData[ item ].WeaponType then
+			bonemerge = false
+		end
 		
 		ply.Gear[ bone ][ "entity" ] = ents.Create( "player_gear" )
 		ply.Gear[ bone ][ "entity" ]:SetModel( model )
@@ -71,13 +76,15 @@ function CAKE.HandleGear( ply, item, bone, offset, angle, scale, skin )
 		ply.Gear[ bone ][ "entity" ]:SetDTVector( 1, offset )
 		ply.Gear[ bone ][ "entity" ]:SetDTVector( 2, scale )
 		ply.Gear[ bone ][ "entity" ]:SetDTBool( 1, true )
+		ply.Gear[ bone ][ "entity" ]:SetDTBool( 2, bonemerge )
 		if ValidEntity( ply.Gear[ bone ][ "entity" ]:GetPhysicsObject( ) ) then
 			ply.Gear[ bone ][ "entity" ]:GetPhysicsObject( ):EnableCollisions( false )
 		end
 		ply.Gear[ bone ][ "entity" ]:Spawn()
 		ply.Gear[ bone ][ "entity" ]:SetSkin( skin )
 		ply.Gear[ bone ][ "item" ] = item
-		
+	end
+	
 end
 	
 function CAKE.RemoveGear( ply, bone )
@@ -168,6 +175,7 @@ local function ccEditGear( ply, cmd, args )
 	local angle
 	local scale
 	local visible
+	local skin
 	
 	if args[2] and args[2] != "none" then
 		local exp = string.Explode( ",", args[2] )
@@ -190,16 +198,23 @@ local function ccEditGear( ply, cmd, args )
 		scale = ply.Gear[ bone ][ "entity" ]:GetDTVector( 2 )
 	end
 	
-	if args[5] then
+	if args[5] and args[5] != "none" then
 		visible = util.tobool( args[5] )
 	else
 		visible = ply.Gear[ bone ][ "entity" ]:GetDTBool( 1 )
+	end
+	
+	if args[6] and args[6] != "none" then
+		skin = math.Clamp( tonumber( args[6] ), 0, ply.Gear[ bone ][ "entity" ]:SkinCount() )
+	else
+		skin = ply.Gear[ bone ][ "entity" ]:GetSkin()
 	end
 	
 	ply.Gear[ bone ][ "entity" ]:SetDTVector( 1, offset )
 	ply.Gear[ bone ][ "entity" ]:SetDTVector( 2, scale )
 	ply.Gear[ bone ][ "entity" ]:SetDTAngle( 1, angle )
 	ply.Gear[ bone ][ "entity" ]:SetDTBool( 1, visible )
+	ply.Gear[ bone ][ "entity" ]:SetSkin( skin )
 	
 	CAKE.SaveGear( ply )
 	datastream.StreamToClients( ply, "recievegear",  ply.Gear )
@@ -216,10 +231,12 @@ function meta:HideActiveWeapon()
 		local class = wep:GetClass()
 		if self.Gear then
 			for k, v in pairs( self.Gear ) do
-				if v[ "item" ] == class and v[ "entity" ]:GetParent() == self then
-					v[ "entity" ]:SetDTBool( 1, false )
-				else
-					v[ "entity" ]:SetDTBool( 1, true)
+				if ValidEntity( v[ "entity" ] ) then
+					if v[ "item" ] == class and v[ "entity" ]:GetParent() == self then
+						v[ "entity" ]:SetDTBool( 1, false )
+					else
+						v[ "entity" ]:SetDTBool( 1, true)
+					end
 				end
 			end
 		end
@@ -235,12 +252,12 @@ function CAKE.SaveGear( ply )
 		v[ "offset" ] = v[ "entity" ]:GetDTVector( 1 )
 		v[ "angle" ] = v[ "entity" ]:GetDTAngle( 1 )
 		v[ "scale" ] = v[ "entity" ]:GetDTVector( 2 )
+		v[ "skin" ] = v[ "entity" ]:GetSkin()
 		v[ "entity" ] = nil
 	end
 	
 	CAKE.SetCharField( ply, "gear", tbl )
 	
-	PrintTable( CAKE.GetCharField( ply, "gear" ) )
 	
 end
 
@@ -248,14 +265,25 @@ function CAKE.RestoreGear( ply )
 	
 	if ply:IsCharLoaded() then
 		local tbl = CAKE.GetCharField( ply, "gear" )
-		PrintTable( tbl )
 		for k, v in pairs( tbl ) do
-			CAKE.HandleGear( ply, v[ "item" ], k, v[ "offset" ], v[ "angle" ], v[ "scale" ] )
+			CAKE.HandleGear( ply, v[ "item" ], k, v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )
 		end
 		datastream.StreamToClients( ply, "recievegear",  ply.Gear )
 	end
 	
+	timer.Create( ply:SteamID() .. "sendgear", 1, 0, function()
+		datastream.StreamToClients( ply, "recievegear",  ply.Gear )
+	end)
+	
 end
+
+local function ccEditGearScreen( ply, cmd, args )
+	
+	umsg.Start( "TiramisuEditGear", ply )
+	umsg.End()
+
+end
+concommand.Add( "rp_editgearscreen", ccEditGearScreen )
 
 function PLUGIN.Init()
 	

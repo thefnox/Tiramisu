@@ -46,27 +46,27 @@ function meta:SaveAmmo()
 	
 	local tbl = {}
 	if( self:GetNWString( "model", "" ) != "" ) then
-	tbl[ "AR2" ] = self:GetAmmoCount( "AR2" )
-	tbl[ "AlyxGun" ] = self:GetAmmoCount( "AlyxGun" )
-	tbl[ "Pistol" ] = self:GetAmmoCount( "Pistol" )
-	tbl[ "SMG1" ] = self:GetAmmoCount( "SMG1" )
-	tbl[ "357" ] = self:GetAmmoCount( "357" )
-	tbl[ "XBowBolt" ] = self:GetAmmoCount( "XBowBolt" )
-	tbl[ "Buckshot" ] = self:GetAmmoCount( "Buckshot" )
+	tbl[ "AR2" ] = 120
+	tbl[ "AlyxGun" ] = 120
+	tbl[ "Pistol" ] = 120
+	tbl[ "SMG1" ] = 120
+	tbl[ "357" ] = 120
+	tbl[ "XBowBolt" ] = 120
+	tbl[ "Buckshot" ] = 120
 	tbl[ "RPG_Round" ] = self:GetAmmoCount( "RPG_Round" )
 	tbl[ "SMG1_Grenade" ] = self:GetAmmoCount( "SMG1_Grenade" )
-	tbl[ "SniperRound" ] = self:GetAmmoCount( "SniperRound" )
-	tbl[ "SniperPenetratedRound" ] = self:GetAmmoCount( "SniperPenetratedRound" )
+	tbl[ "SniperRound" ] = 120
+	tbl[ "SniperPenetratedRound" ] = 120
 	tbl[ "Grenade" ] = self:GetAmmoCount( "Grenade" )
 	tbl[ "Thumper" ] = self:GetAmmoCount( "Thumper" )
 	tbl[ "Gravity" ] = self:GetAmmoCount( "Gravity" )
 	tbl[ "Battery" ] = self:GetAmmoCount( "Battery" )
-	tbl[ "GaussEnergy" ] = self:GetAmmoCount( "GaussEnergy" )
-	tbl[ "CombineCannon" ] = self:GetAmmoCount( "CombineCannon" )
-	tbl[ "AirboatGun" ] = self:GetAmmoCount( "AirboatGun" )
-	tbl[ "StriderMinigun" ] = self:GetAmmoCount( "StriderMinigun" )
-	tbl[ "HelicopterGun" ] = self:GetAmmoCount( "HelicopterGun" )
-	tbl[ "AR2AltFire" ] = self:GetAmmoCount( "AR2AltFire" )
+	tbl[ "GaussEnergy" ] = 120
+	tbl[ "CombineCannon" ] = 120
+	tbl[ "AirboatGun" ] = 120
+	tbl[ "StriderMinigun" ] = 120
+	tbl[ "HelicopterGun" ] = 120
+	tbl[ "AR2AltFire" ] = 120
 	tbl[ "slam" ] = self:GetAmmoCount( "slam" )
 	CAKE.SetCharField( self, "ammo", tbl )
 	end
@@ -76,7 +76,7 @@ end
 function meta:RestoreAmmo()
 
 	for k, v in pairs( CAKE.GetCharField( self, "ammo" ) ) do
-		self:GiveAmmo( v, k )
+		self:GiveAmmo( v, k, false )
 	end
 
 end
@@ -108,19 +108,9 @@ local function WeaponsLoadout( ply )
 				end
 				ply:RemoveAllAmmo( )
 				ply:RestoreAmmo()
-				if ply.GetLoadout then
-					local group = CAKE.GetCharField( ply, "group" )
-					local rank = CAKE.GetCharField( ply, "grouprank" )
-					ply.GetLoadout = false
-					if CAKE.GetGroupFlag( group, "loadouts" ) then
-						for k, v in pairs( CAKE.GetRankPermission( group, rank, "loadout" ) ) do
-							if !ply:HasItem( v ) then
-								ply:GiveItem( v )
-								if string.match( v, "weapon" ) then
-									ply:Give( v )
-								end
-							end
-						end
+				for k, v in pairs( CAKE.GetCharField( ply, "inventory" ) ) do
+					if string.match( v, "weapon" ) then 
+					ply:TakeItem( v )
 					end
 				end
 			end
@@ -136,6 +126,26 @@ local function WeaponsLoadout( ply )
 			ply:RemoveAllAmmo( )
 			CAKE.SetCharField( ply, "weapons", {} )
 			CAKE.SetCharField( ply, "ammo", {} )
+		end
+		
+		local group = CAKE.GetCharField( ply, "group" )
+		local rank = CAKE.GetCharField( ply, "grouprank" )
+		
+		if CAKE.GetGroupFlag( group, "loadouts" ) then
+			for k, v in pairs( CAKE.GetRankPermission( group, rank, "loadout" ) ) do
+				if !ply:HasItem( v ) then
+					ply:GiveItem( v )
+					if string.match( v, "weapon" ) then
+						ply:Give( v )
+					end
+				end
+				if string.match( v, "zipties" ) then
+					ply:Give( v )
+					if !ply:HasItem( v ) then
+						ply:GiveItem( v )
+					end
+				end
+			end
 		end
 	end
 

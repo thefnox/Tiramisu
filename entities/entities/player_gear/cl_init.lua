@@ -3,13 +3,24 @@ include('shared.lua')
 
 function ENT:Draw()
 
-	if self.Entity:GetDTBool(1) then
-		self.Entity:DrawModel()
-		self.Entity:DrawShadow( true )
-	else
-		self.Entity:DrawShadow( false )
+	if !self.Entity:GetDTBool(1) then
+		return
 	end
 
+	if self.Entity:GetParent() == LocalPlayer() and GetViewEntity() == LocalPlayer() and !CAKE.MenuOpen then
+		if !CAKE.UseCalcView:GetBool() then
+			return
+		end
+		if !CAKE.Thirdperson:GetBool() then
+			if !CAKE.RenderBody:GetBool() then
+				return
+			end
+		end
+	end
+	
+	self.Entity:DrawModel()
+	self.Entity:DrawShadow( true )
+	
 end
 
 function ENT:Think()

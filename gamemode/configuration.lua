@@ -26,6 +26,6 @@ CAKE.ConVars[ "Default_Flags" ] = {  }; -- What flags can the character select w
 CAKE.ConVars[ "Default_Inventory" ] = {  }; -- What inventory do characters start out with when they are first made. This cannot be setconvar'd
 CAKE.ConVars[ "Default_Weapons" ] = {  }; -- What inventory do characters start out with when they are first made. This cannot be setconvar'd
 CAKE.ConVars[ "Default_Ammo" ] = {  };
-CAKE.ConVars[ "Schema" ] = "olden"; -- What folder is schema data being loaded from?
+CAKE.ConVars[ "Schema" ] = "hl2rp"; -- What folder is schema data being loaded from?
 
 CAKE.ConVars[ "CakeVersion" ] = "1.0.4"; -- Don't change this plzkthx. This is for LuaBanana's usage only.

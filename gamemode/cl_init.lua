@@ -23,6 +23,9 @@ CAKE.RenderBody = CreateClientConVar( "rp_renderbody", 1, true, true )
 CAKE.FirstPersonForward = CreateClientConVar( "rp_firstpersonforward", 0, true, true )
 CAKE.FirstPersonUp = CreateClientConVar( "rp_firstpersonup", 7, true, true )
 CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true )
+CAKE.UseWhiteScreen = CreateClientConVar( "rp_whitescreen", 1, true, true )
+CAKE.UseCalcView = CreateClientConVar( "rp_useview", 1, true, true )
+CAKE.UseCustomChat = CreateClientConVar( "rp_customchat", 1, true, true )
 CAKE.ViewRagdoll = false
 
 CAKE.Clothing = "none"
@@ -46,7 +49,11 @@ include( "cl_skin.lua" );
 include( "cl_charactercreate.lua" );
 include( "cl_playermenu.lua" );
 --include( "cl_usermessages.lua" )
+include( "cl_boneanimlib.lua" )
+include( "sh_boneanimlib.lua" )
 include( "animations.lua" )
+include( "lua_animations.lua" )
+include( "achat.lua" )
 
 CAKE.Loaded = true;
 
@@ -56,8 +63,6 @@ function GM:Initialize( )
 	CAKE.Running = true;
 
 	self.BaseClass:Initialize( );
-	
-	
 
 end
 
@@ -77,6 +82,16 @@ function GM:ForceDermaSkin()
 	return CAKE.Skin
 	
 end
+
+local function AddToChat( um )
+	local string = um:ReadString()
+	local font = um:ReadString()
+	if aChat and aChat.AddChatLine then
+		aChat.AddChatLine( "<color=135,209,255,255><font=" .. font .. ">" .. string .. "</font></color>" )
+	end
+	--chat.AddText(string)
+end
+usermessage.Hook( "tiramisuaddtochat", AddToChat )
 
 local function vectortocolor( vector, alpha )
 	local breakablevector = string.Explode( " ", tostring( vector ) )
@@ -274,7 +289,17 @@ usermessage.Hook( "GetPlayerInfo", message_GetPlayerInfo );
 function RunConcommand( um ) --Simple fix to garry's fuckup.
 	
 	local cmd = um:ReadString()
-	LocalPlayer():ConCommand( cmd )
+	local exp = string.Explode( " ", cmd )
+	cmd = exp[1]
+	local args = ""
+	table.remove( exp, 1 )
+	if #exp > 1 then
+		args = table.concat( exp, " " )
+	else
+		args = exp[1] or ""
+	end
+	
+	RunConsoleCommand( cmd, args )
 	
 end
 usermessage.Hook( "runconcommand", RunConcommand )

@@ -41,78 +41,18 @@ end
 -- When fieldtype is 1, it adds it to the player table.
 -- When it is 2, it adds it to the character table.function CAKE.AddDataField( fieldtype, fieldname, default )
 function CAKE.AddDataField( fieldtype, fieldname, default )
-	local mysqltype = ""
+
 	local delay = 1
 	
 	if( fieldtype == 1 ) then
 	
 		CAKE.DayLog( "script.txt", "Adding player data field " .. fieldname .. " with default value of " .. tostring( default ) );
 		CAKE.PlayerDataFields[ fieldname ] = CAKE.ReferenceFix(default);
-		if( CAKE.MySQLSelfBuild and CAKE.UseMySQL ) then
-		
-			if( type( default ) == "number" or "integer" or "float" or "int" ) then
-				mysqltype = "INT(11)"		
-			end
-			
-			if( type( default ) == "table" ) then
-		
-				mysqltype = "TEXT" 
-				
-			end
-			
-			if( type( default ) == "string" ) then
-			
-					mysqltype = "VARCHAR(64)"
-		
-			end
-			
-			timer.Simple( CAKE.MySQLAutoBuildDelay, MySQLQuery, "ALTER TABLE ti_users ADD COLUMN " .. mysql.escape( CAKE.DB, fieldname ) .. " " .. mysqltype )
-		end
-		
-		if( CAKE.UseMySQL and fieldname ~= "characters" ) then
-		
-			if( type( default ) == "table" ) then
-				default = table.concat( default, "," )
-			end
-		
-			if( type( default ) == "string" ) then
-				default = "'" .. default .. "'"
-			end
-			
-			if( default == "" ) then
-				default = "' '"
-			end
-			
-			--This is so we don't have to call a for loop every time we want to fetch all the columns and all the values in a single string.
-			table.insert( CAKE.MySQLPlayerColumns, "'" .. tostring( fieldname ) .. "'" )
-			table.insert( CAKE.MySQLDefaultPlayerValues, tostring( default ) )
-			
-		end
 		
 	elseif( fieldtype == 2 ) then
 	
 		CAKE.DayLog( "script.txt", "Adding character data field " .. fieldname .. " with default value of " .. tostring( default ) );
 		CAKE.CharacterDataFields[ fieldname ] = CAKE.ReferenceFix(default);
-		if( CAKE.MySQLSelfBuild and CAKE.UseMySQL ) then
-			if( type( default ) == "number" or "integer" or "float" or "int" ) then
-				mysqltype = "INT(11)"		
-			end
-			
-			if( type( default ) == "table" ) then
-		
-				mysqltype = "TEXT" 
-				
-			end	
-			
-			
-			if( type( default ) == "string" ) then
-			
-				mysqltype = "VARCHAR(64)"
-		
-			end
-			
-			timer.Simple( CAKE.MySQLAutoBuildDelay , MySQLQuery, "ALTER TABLE ti_chars ADD COLUMN " .. mysql.escape( CAKE.DB, fieldname ) .. " " .. mysqltype )
-		end
 		
 		if( type( default ) == "table" ) then
 			default = table.concat( default, "," )
@@ -122,11 +62,8 @@ function CAKE.AddDataField( fieldtype, fieldname, default )
 			default = "'" .. default .. "'"
 		end
 		
-			table.insert( CAKE.MySQLCharColumns, tostring( fieldname ) )
-			table.insert( CAKE.MySQLDefaultCharValues, tostring( default ) )
-		
 	end
-	CAKE.MySQLAutoBuildDelay  = CAKE.MySQLAutoBuildDelay  + 1
+
 end
 
 function CAKE.HasSavedData( ply )
@@ -148,9 +85,6 @@ function CAKE.LoadPlayerDataFile( ply )
 	
 	if( CAKE.HasSavedData( ply ) ) then	
 	
-		if( CAKE.UseMySQL ) then
-			CAKE.LoadMySQLPlayerData( ply )
-		end
 	
 		CAKE.CallHook( "LoadPlayerDataFile", ply );
 		
@@ -249,11 +183,6 @@ function CAKE.LoadPlayerDataFile( ply )
 		end
 		
 		-- We won't make a character, obviously. That is done later.
-		
-		if( CAKE.UseMySQL ) then
-			CAKE.CreateMySQLPlayerData( ply )
-		end
-		
 		CAKE.SavePlayerData(ply);
 		
 		-- Technically, we didn't load it, but the data is now there.
@@ -286,7 +215,6 @@ end
 function CAKE.SetPlayerField( ply, fieldname, data )
 
 	local SteamID = CAKE.FormatSteamID( ply:SteamID() );
-	if !CAKE.UseMySQL then
 		-- Check to see if this is a valid field
 		if( CAKE.PlayerDataFields[ fieldname ] ) then
 		
@@ -299,19 +227,6 @@ function CAKE.SetPlayerField( ply, fieldname, data )
 		
 		end
 		
-	else
-	
-		if( CAKE.PlayerDataFields[ fieldname ] ) then
-			gdatabase.ThreadedQuery( "UPDATE `ti_users` SET `" .. fieldname .. "` = '" .. gdatabase.CleanString( CAKE.DB, data ) .. "' WHERE `steamid` = '" .. SteamID .. "'", CAKE.DB )
-			CAKE.PlayerData[ SteamID ][ fieldname ] = data;
-			CAKE.SavePlayerData(ply);
-		
-		else
-		
-			return "";
-		
-		end
-	end
 	
 end
 	
@@ -319,7 +234,6 @@ function CAKE.GetPlayerField( ply, fieldname )
 
 	local SteamID = CAKE.FormatSteamID( ply:SteamID() );
 	
-	if( !CAKE.UseMySQL ) then
 		-- Check to see if this is a valid field
 		if( CAKE.PlayerDataFields[ fieldname ] ) then
 		
@@ -330,26 +244,11 @@ function CAKE.GetPlayerField( ply, fieldname )
 			return "";
 		
 		end
-	else
-		if( CAKE.PlayerDataFields[ fieldname ] ) then
-		local field = gdatabase.ThreadedQuery( "SELECT " .. fieldname .. " FROM ti_users WHERE 'steamid' = '" .. SteamID .. "'", CAKE.DB )
-	
-			return CAKE.NilFix( field , "");
-		 
-		else
-	
-			return "";
-		
-		end
-	
-	end
 end
 
 function CAKE.SetCharField( ply, fieldname, data )
 
 	local SteamID = CAKE.FormatSteamID( ply:SteamID() );
-	
-	if !CAKE.UseMySQL then
 		-- Check to see if this is a valid field
 		if( CAKE.CharacterDataFields[ fieldname ] ) then
 	
@@ -361,24 +260,11 @@ function CAKE.SetCharField( ply, fieldname, data )
 			return "";
 		
 		end
-	else
-		if( CAKE.CharacterDataFields[ fieldname ] ) then
 		
-			gdatabase.ThreadedQuery( "UPDATE `ti_chars` SET `" .. fieldname .. "` = '" .. gdatabase.CleanString( CAKE.DB, data ) .. "' WHERE `steamid` = '" .. SteamID .. "' AND `name` = '" .. gdatabase.CleanString( CAKE.DB, ply:GetNWString( "name" ) ) .. "'", CAKE.DB )
-			CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ] = data;
-			CAKE.SavePlayerData(ply);
-			
-		else
-		
-			return "";
-			
-		end
-	end
 end
 	
 function CAKE.GetCharField( ply, fieldname )
 	
-	if ( !CAKE.UseMySQL ) then
 		-- Check to see if this is a valid field
 		if( CAKE.CharacterDataFields[ fieldname ] ) then
 	
@@ -389,28 +275,12 @@ function CAKE.GetCharField( ply, fieldname )
 			return "";
 		
 		end
-	else
-		if( CAKE.CharacterDataFields[ fieldname ] ) then
-		local field = gdatabase.ThreadedQuery( "SELECT " .. fieldname .. " FROM ti_chars WHERE 'steamid' = '" .. SteamID .. "'", CAKE.DB )
-	
-			return CAKE.NilFix( field , CAKE.CharacterDataFields[ fieldname ]);
-		 
-		else
-	
-			return "";
-		
-		end
-	end
+
 end
 
 function CAKE.SavePlayerData( ply )
-	if CAKE.UseMySQL then
-		CAKE.SaveMySQLPlayerData( ply )
-		CAKE.SaveMySQLCharData( ply, ply:GetNWString( "uid" ) )
-	else
 		local keys = glon.encode(CAKE.PlayerData[CAKE.FormatSteamID( ply:SteamID() )]);
 		file.Write( CAKE.Name .. "/PlayerData/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatSteamID( ply:SteamID() ) .. ".txt" , keys);
-	end
 end
 
 function CAKE.RemoveCharacter( ply, id )

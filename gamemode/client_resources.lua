@@ -30,3 +30,7 @@ AddResource( "lua", "player_shared.lua"); -- Shared player functions
 AddResource( "lua", "animations.lua"); -- Shared player functions
 AddResource( "lua", "cl_usermessages.lua")
 AddResource( "lua", "cl_skin.lua")
+AddResource( "lua", "cl_boneanimlib.lua")
+AddResource( "lua", "sh_boneanimlib.lua")
+AddResource( "lua", "achat.lua")
+AddResource( "lua", "lua_animations.lua")

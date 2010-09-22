@@ -93,7 +93,7 @@ function GM:PlayerSpawnRagdoll(ply, mdl)
 
 	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
 	
-	if(CAKE.GetPlayerField(ply, "tooltrust") <= 1 ) then
+	if( tonumber( CAKE.GetPlayerField(ply, "tooltrust") ) <= 1 ) then
 	
 		CAKE.SendChat(ply, "You are not allowed to spawn anything!");
 		return false;
@@ -333,7 +333,7 @@ function PLUGIN.Init()
 	CAKE.ConVars[ "RagdollLimit" ] = 1;
 	CAKE.ConVars[ "VehicleLimit" ] = 0;
 	CAKE.ConVars[ "EffectLimit" ] = 1;
-	CAKE.ConVars[ "Default_Tooltrust" ] = "0"; -- Are players allowed to have the toolgun when they first start.
+	CAKE.ConVars[ "Default_Tooltrust" ] = 0; -- Are players allowed to have the toolgun when they first start.
 	
 	CAKE.AddDataField( 1, "tooltrust", CAKE.ConVars[ "Default_Tooltrust" ] ); -- Is the player allowed to have the toolgun
 	

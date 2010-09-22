@@ -5,60 +5,10 @@ SCHEMA.Base = "global";
 
 function SCHEMA.SetUp( )
 	
-	local team = CAKE.HL2Team();
+	local team = CAKE.HL2DefoTeam()
+	
+	CAKE.AddTeam(CAKE.HL2DefoTeam());
 
-	-- name, color, model_path, default_model, partial_model, weapons, flag_key, door_groups, radio_groups, sound_groups, item_groups, salary, public, business, broadcast
-	
-	-- Item Groups
-	-- Groceries: 1
-	-- Black Market: 2
-	-- Medical: 3
-	-- Rebel Market: 4
-	-- Combine Market: 5
-	-- Monk Market: 6
-	
-	-- Humans: 1
-	-- Combine: 2
-	-- Vortigaunt: 3
-	
-	-- Door Groups
-	-- Combine: 1
-	
-	-- Radio Groups
-	-- Combine: 1
-	-- Rebel: 2
-	
-	
-	
-	
-	-- Citizens
-	CAKE.AddTeam( CAKE.HL2Team( ) ); -- Citizen
-	CAKE.AddTeam( CAKE.HL2Team( "Grocery Store Owner", nil, nil, nil, nil, nil, "grocery", nil, nil, nil, { 1 }, nil, true, true, nil) ); -- Grocery Store Owner
-	CAKE.AddTeam( CAKE.HL2Team( "Black Market Dealer", nil, nil, nil, nil, nil, "bm", nil, nil, nil, { 2 }, nil, false, true, false) ); -- Black Market
-	CAKE.AddTeam( CAKE.HL2Team( "Medical Specialist", nil, nil, nil, nil, nil, "doctor", nil, nil, nil, { 3 }, nil, true, true, nil) ); -- Doctor
-	CAKE.AddTeam( CAKE.HL2Team( "Monk", Color( 255, 0, 0, 255 ), "models/monk.mdl", true, false, nil, "monk", nil, nil, nil, nil, nil, true, true, false, nil) );
-	
-	-- Rebellion
-	CAKE.AddTeam( CAKE.HL2Team( "Refugee", Color(255, 166, 0, 255), "models/humans/group02/", true, true, nil, "refugee", nil, { 2 }, nil, { 4 }, nil, true, true, nil) ); -- Refugee
-	CAKE.AddTeam( CAKE.HL2Team( "Railroad Rebel", Color(255, 166, 0, 255), "models/alyx.mdl", true, false, nil, "railroad", nil, { 2 }, nil, { 4 }, nil, false, true, nil) ); -- Railroad Rebel
-	CAKE.AddTeam( CAKE.HL2Team( "Resistance", Color(255, 166, 0, 255), "models/humans/group03/", true, true, nil, "rebel", nil, { 2 }, nil, { 4 }, nil, false, true, nil) ); -- Rebel
-	CAKE.AddTeam( CAKE.HL2Team( "Resistance Station Leader", Color(255, 166, 0, 255), "models/odessa.mdl", true, false, nil, "rsl", nil, { 2 }, nil, { 4 }, nil, false, true, nil) ); -- Rebel Station Leader (Odessa)
-	CAKE.AddTeam( CAKE.HL2Team( "Resistance Medic", Color(255, 166, 0, 255), "models/humans/group03m/", true, true, nil, "rebelmedic", nil, { 2 }, nil, { 4 }, nil, false, true, nil) ); -- Rebel Medic
-	CAKE.AddTeam( CAKE.HL2Team( "Resistance Vortigaunt", Color(255, 166, 0, 255), "models/vortigaunt.mdl", true, false, nil, "vortigaunt", nil, { 2 }, {3}, { 4 }, nil, false, true, nil) ); -- Rebel Vortigaunt
-	CAKE.AddTeam( CAKE.HL2Team( "Resistance Scientist", Color(255, 166, 0, 255), "models/kleiner.mdl", true, false, nil, "rebelscientist", nil, { 2 }, nil, { 4 }, nil, false, true, nil) ); -- Rebel Scientist
-	CAKE.AddTeam( CAKE.HL2Team( "Resistance Leader", Color(255, 166, 0, 255), "models/eli.mdl", true, false, nil, "rebelleader", nil, { 2 }, nil, { 4 }, nil, false, true, nil) ); -- Rebel Leader (Eli)
-	
-	-- Combine
-	CAKE.AddTeam( CAKE.HL2Team( "Stalker", Color(0, 0, 200, 255), "models/stalker.mdl", true, false, {}, "stalker", {1}, {1}, nil, {5}, 0, false, true, false) ); -- Stalker
-	CAKE.AddTeam( CAKE.HL2Team( "Civil Protection Trainee", Color(0, 0, 200, 255), "models/barney.mdl", true, false, {"weapon_stunstick"}, "cpt", {1}, {1}, {2}, {5}, 30, false, true, false) ); -- Civil Protection Trainee
-	CAKE.AddTeam( CAKE.HL2Team( "Civil Protection", Color(0, 0, 200, 255), "models/police.mdl", true, false, {"weapon_stunstick", "weapon_pistol"}, "cp", {1}, {1}, {2}, {5}, 50, false, true, true) ); -- Civil Protection
-	CAKE.AddTeam( CAKE.HL2Team( "Nova Prospekt Soldier", Color(0, 0, 200, 255), "models/combine_soldier_prisonguard.mdl", true, false, {"weapon_ar2"}, "nps", {1}, {1}, {2}, {5}, 100, false, true, true) ); -- Nova Prospekt Soldier
-	CAKE.AddTeam( CAKE.HL2Team( "Overwatch Soldier", Color(0, 0, 200, 255), "models/combine_soldier.mdl", true, false, {"weapon_ar2"}, "ow", {1}, {1}, {2}, {5}, 100, false, true, true) ); -- Overwatch Soldier
-	CAKE.AddTeam( CAKE.HL2Team( "Overwatch Super Soldier", Color(0, 0, 200, 255), "models/combine_super_soldier.mdl", true, false, {"weapon_ar2", "weapon_grenade", "weapon_rpg"}, "ows", {1}, {1}, {2}, {5}, 50, false, true, true) ); -- Overwatch Super Soldier
-	CAKE.AddTeam( CAKE.HL2Team( "City Administrator", Color(0, 0, 200, 255), "models/breen.mdl", true, false, {"weapon_357"}, "ca", {1}, {1}, {2}, {5}, 200, false, true, true) ); -- City Administrator
-	
-
-	
 	-- Selectable models on character creation
 	-- Bogus models were needed because the shitty derma doesn't wanna scroll unless it has a certain amount of models.
 	CAKE.AddModels({
@@ -77,4 +27,276 @@ function SCHEMA.SetUp( )
               "models/humans/group01/female_06.mdl",
               "models/humans/group01/female_07.mdl"
 	});			  
+	
+	CAKE.HL2RPFaction( "CCA Vice Squadron",
+	"CCA",
+	{ 	["mp1"] = { [ "formalname" ] = "Metropolice Unit 1", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_vice", "weapon_mad_usp_match", "helmet_vice", "weapon_mad_mp7", "weapon_zipties" }, [ "level" ] = 1 },
+		["mp2"] = { [ "formalname" ] = "Metropolice Unit 2", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_vice", "weapon_mad_usp_match", "helmet_vice", "weapon_mad_mp7", "weapon_zipties" }, [ "level" ] = 2 },
+		["mp3"] = { [ "formalname" ] = "Metropolice Unit 3", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_vice", "weapon_mad_usp_match", "helmet_vice", "weapon_mad_mp7", "weapon_zipties" }, [ "level" ] = 3 },
+		["mp4"] = { [ "formalname" ] = "Metropolice Unit 4", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_vice", "weapon_mad_usp_match", "helmet_vice", "weapon_mad_mp7", "weapon_zipties" }, [ "level" ] = 4 },
+		["to"] = { [ "formalname" ] = "Team Officer", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_vice", "weapon_mad_usp_match", "helmet_vice", "weapon_mad_mp7", "weapon_zipties" }, [ "level" ] = 5, ["caninvite"] = true },
+		["cmd"] = { [ "formalname" ] = "Commander", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_vice", "weapon_mad_usp_match", "helmet_vice", "weapon_mad_mp7", "weapon_zipties" }, [ "level" ] = 6, ["caninvite"] = true, ["canpromote"] = true  },
+		["divl"] = { [ "formalname" ] = "Division Leader", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_vice", "weapon_mad_usp_match", "helmet_vice", "weapon_mad_mp7", "weapon_zipties" }, [ "level" ] = 7, ["caninvite"] = true, ["canpromote"] = true  }
+	},
+	{
+		[ "soundgroup" ] = 2,
+		[ "canbroadcast" ] = true,
+		[ "loadouts" ] = true,
+		[ "doorgroup" ] = true,
+		[ "primaryrank" ] = "mp1",
+		[ "radiocolor" ] = Color( 100, 100, 100 ),
+		[ "iscombine" ] = true,
+		[ "radiogroup" ] = 1
+	},
+	1,
+	2,
+	"hl2rp/combinearmbandvice",
+	{ 	"cca",
+		"faction",
+		"police",
+		"combine"
+	})
+	
+	CAKE.HL2RPFaction( "CCA Shield Squadron",
+	"CCA",
+	{ 	["mp1"] = { [ "formalname" ] = "Metropolice Unit 1", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_shield", "weapon_mad_usp_match", "helmet_shield", "weapon_mad_mp7", "weapon_zipties" }, [ "level" ] = 1 },
+		["mp2"] = { [ "formalname" ] = "Metropolice Unit 2", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_shield", "weapon_mad_usp_match", "helmet_shield", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 2 },
+		["mp3"] = { [ "formalname" ] = "Metropolice Unit 3", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_shield", "weapon_mad_usp_match", "helmet_shield", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 3 },
+		["mp4"] = { [ "formalname" ] = "Metropolice Unit 4", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_shield", "weapon_mad_usp_match", "helmet_shield", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 4 },
+		["to"] = { [ "formalname" ] = "Team Officer", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_shield", "weapon_mad_usp_match", "helmet_shield", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 5, ["caninvite"] = true },
+		["cmd"] = { [ "formalname" ] = "Commander", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_shield", "weapon_mad_usp_match", "helmet_shield", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 6, ["caninvite"] = true, ["canpromote"] = true  },
+		["divl"] = { [ "formalname" ] = "Division Leader", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_shield", "weapon_mad_usp_match", "helmet_shield", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 7, ["caninvite"] = true, ["canpromote"] = true  }
+	},
+	{
+		[ "soundgroup" ] = 2,
+		[ "canbroadcast" ] = true,
+		[ "loadouts" ] = true,
+		[ "doorgroup" ] = true,
+		[ "primaryrank" ] = "mp1",
+		[ "radiocolor" ] = Color( 200, 255, 200 ),
+		[ "iscombine" ] = true,
+		[ "radiogroup" ] = 1
+	},
+	1,
+	2,
+	"hl2rp/combinearmbandshield",
+	{ 	"cca",
+		"faction",
+		"police",
+		"combine"
+	})
+	
+	CAKE.HL2RPFaction( "CCA Ignis Squadron",
+	"CCA",
+	{ 	["mp1"] = { [ "formalname" ] = "Metropolice Unit 1", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_ignis", "weapon_mad_usp_match", "helmet_ignis", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 1 },
+		["mp2"] = { [ "formalname" ] = "Metropolice Unit 2", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_ignis", "weapon_mad_usp_match", "helmet_ignis", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 2 },
+		["mp3"] = { [ "formalname" ] = "Metropolice Unit 3", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_ignis", "weapon_mad_usp_match", "helmet_ignis", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 3 },
+		["mp4"] = { [ "formalname" ] = "Metropolice Unit 4", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_ignis", "weapon_mad_usp_match", "helmet_ignis", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 4 },
+		["to"] = { [ "formalname" ] = "Team Officer", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_ignis", "weapon_mad_usp_match", "helmet_ignis", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 5, ["caninvite"] = true },
+		["cmd"] = { [ "formalname" ] = "Commander", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_ignis", "weapon_mad_usp_match", "helmet_ignis", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 6, ["caninvite"] = true, ["canpromote"] = true  },
+		["divl"] = { [ "formalname" ] = "Division Leader", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_ignis", "weapon_mad_usp_match", "helmet_ignis", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 7, ["caninvite"] = true, ["canpromote"] = true  }
+	},
+	{
+		[ "soundgroup" ] = 2,
+		[ "canbroadcast" ] = true,
+		[ "loadouts" ] = true,
+		[ "doorgroup" ] = true,
+		[ "primaryrank" ] = "mp1",
+		[ "radiocolor" ] = Color( 120, 70, 0 ),
+		[ "iscombine" ] = true,
+		[ "radiogroup" ] = 1
+	},
+	1,
+	2,
+	"hl2rp/combinearmbandignis",
+	{ 	"cca",
+		"faction",
+		"police",
+		"combine"
+	})
+	
+	CAKE.HL2RPFaction( "CCA Viktor Squadron",
+	"CCA",
+	{ 	["mp1"] = { [ "formalname" ] = "Metropolice Unit 1", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_viktor", "weapon_mad_usp_match", "helmet_viktor", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 1 },
+		["mp2"] = { [ "formalname" ] = "Metropolice Unit 2", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_viktor", "weapon_mad_usp_match", "helmet_viktor", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 2 },
+		["mp3"] = { [ "formalname" ] = "Metropolice Unit 3", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_viktor", "weapon_mad_usp_match", "helmet_viktor", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 3 },
+		["mp4"] = { [ "formalname" ] = "Metropolice Unit 4", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_viktor", "weapon_mad_usp_match", "helmet_viktor", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 4 },
+		["to"] = { [ "formalname" ] = "Team Officer", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_viktor", "weapon_mad_usp_match", "helmet_viktor", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 5, ["caninvite"] = true },
+		["cmd"] = { [ "formalname" ] = "Commander", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_viktor", "weapon_mad_usp_match", "helmet_viktor", "weapon_mad_mp7", "weapon_zipties"  }, [ "level" ] = 6, ["caninvite"] = true, ["canpromote"] = true  },
+		["divl"] = { [ "formalname" ] = "Division Leader", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_viktor", "weapon_mad_usp_match", "helmet_viktor", "weapon_mad_mp7" , "weapon_zipties" }, [ "level" ] = 7, ["caninvite"] = true, ["canpromote"] = true  }
+	},
+	{
+		[ "soundgroup" ] = 2,
+		[ "canbroadcast" ] = true,
+		[ "loadouts" ] = true,
+		[ "doorgroup" ] = true,
+		[ "primaryrank" ] = "mp1",
+		[ "radiocolor" ] = Color( 255, 255, 255 ),
+		[ "iscombine" ] = true,
+		[ "radiogroup" ] = 1
+	},
+	1,
+	2,
+	"hl2rp/combinearmbandviktor",
+	{ 	"cca",
+		"faction",
+		"police",
+		"combine"
+	})
+	
+	CAKE.HL2RPFaction( "CCA Legion Squadron",
+	"CCA",
+	{ 	["mp1"] = { [ "formalname" ] = "Metropolice Unit 1", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_legion", "weapon_mad_usp_match", "helmet_legion", "weapon_mad_mp7", "weapon_zipties" }, [ "level" ] = 1 },
+		["mp2"] = { [ "formalname" ] = "Metropolice Unit 2", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_legion", "weapon_mad_usp_match", "helmet_legion", "weapon_mad_mp7", "weapon_zipties" }, [ "level" ] = 2 },
+		["mp3"] = { [ "formalname" ] = "Metropolice Unit 3", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_legion", "weapon_mad_usp_match", "helmet_legion", "weapon_mad_mp7", "weapon_zipties" }, [ "level" ] = 3 },
+		["mp4"] = { [ "formalname" ] = "Metropolice Unit 4", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_legion", "weapon_mad_usp_match", "helmet_legion", "weapon_mad_mp7", "weapon_zipties" }, [ "level" ] = 4 },
+		["to"] = { [ "formalname" ] = "Team Officer", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_legion", "weapon_mad_usp_match", "helmet_legion", "weapon_mad_mp7", "weapon_zipties" }, [ "level" ] = 5, ["caninvite"] = true },
+		["cmd"] = { [ "formalname" ] = "Commander", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_legion", "weapon_mad_usp_match", "helmet_legion", "weapon_mad_mp7", "weapon_zipties" }, [ "level" ] = 6, ["caninvite"] = true, ["canpromote"] = true  },
+		["divl"] = { [ "formalname" ] = "Division Leader", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_legion", "weapon_mad_usp_match", "helmet_legion", "weapon_mad_mp7", "weapon_zipties" }, [ "level" ] = 7, ["caninvite"] = true, ["canpromote"] = true  }
+	},
+	{
+		[ "soundgroup" ] = 2,
+		[ "canbroadcast" ] = true,
+		[ "loadouts" ] = true,
+		[ "doorgroup" ] = true,
+		[ "primaryrank" ] = "mp1",
+		[ "radiocolor" ] = Color( 20, 255, 20 ),
+		[ "iscombine" ] = true,
+		[ "radiogroup" ] = 1
+	},
+	1,
+	2,
+	"hl2rp/combinearmbandlegion",
+	{ 	"cca",
+		"faction",
+		"police",
+		"combine"
+	})
+	
+	CAKE.HL2RPFaction( "Sector 28 Supreme Command",
+	"CCA",
+	{ 
+		["seql"] = { [ "formalname" ] = "Sector Leader", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_elite", "weapon_mad_usp_match", "helmet_elite", "weapon_mad_mp7", "weapon_zipties" }, [ "level" ] = 7, ["caninvite"] = true, ["canpromote"] = true  }
+	},
+	{
+		[ "soundgroup" ] = 2,
+		[ "canbroadcast" ] = true,
+		[ "loadouts" ] = true,
+		[ "doorgroup" ] = true,
+		[ "primaryrank" ] = "seql",
+		[ "radiocolor" ] = Color( 200, 20, 20 ),
+		[ "iscombine" ] = true,
+		[ "radiogroup" ] = 1
+	},
+	1,
+	2,
+	"hl2rp/secbadge",
+	{ 	"cca",
+		"faction",
+		"police",
+		"combine"
+	})
+	
+	CAKE.HL2RPFaction( "Recruit Squad",
+	"CCA",
+	{ 
+		["recruit"] = { [ "formalname" ] = "Recruit", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_mad_usp_match", "weapon_zipties" }, [ "level" ] = 1  },
+		["trainer"] = { [ "formalname" ] = "Recruit Trainer", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_mad_usp_match", "helmet_police", "weapon_mad_mp7", "weapon_zipties" }, [ "level" ] = 2, ["caninvite"] = true, ["canpromote"] = true  }
+	},
+	{
+		[ "soundgroup" ] = 2,
+		[ "canbroadcast" ] = true,
+		[ "loadouts" ] = true,
+		[ "doorgroup" ] = true,
+		[ "primaryrank" ] = "recruit",
+		[ "radiocolor" ] = Color( 200, 100, 200 ),
+		[ "iscombine" ] = true,
+		[ "radiogroup" ] = 1
+	},
+	1,
+	2,
+	"hl2rp/combinearmbandrecruit",
+	{ 	"cca",
+		"faction",
+		"police",
+		"combine"
+	})
+	
+	CAKE.HL2RPFaction( "Overwatch",
+	"CCA",
+	{ 	
+		["soldier"] = { [ "formalname" ] = "Overwatch Unit", [ "loadout" ] = { "weapon_mad_knife", "clothing_soldier", "weapon_mad_usp_match", "helmet_soldier", "weapon_mad_ar2", "weapon_mad_grenade", "weapon_zipties" }, [ "level" ] = 1  },
+		["elite"] = { [ "formalname" ] = "Overwatch Elite", [ "loadout" ] = { "weapon_mad_knife", "clothing_elite", "weapon_mad_usp_match", "helmet_elite", "weapon_mad_ar2", "weapon_mad_grenade", "weapon_zipties" }, [ "level" ] = 2, ["caninvite"] = true, ["canpromote"] = true  }
+	},
+	{
+		[ "soundgroup" ] = 2,
+		[ "canbroadcast" ] = true,
+		[ "loadouts" ] = true,
+		[ "doorgroup" ] = true,
+		[ "primaryrank" ] = "soldier",
+		[ "radiocolor" ] = Color( 80, 0, 120 ),
+		[ "iscombine" ] = true,
+		[ "radiogroup" ] = 1
+	},
+	1,
+	2,
+	"hl2rp/overwatch",
+	{ 	"cca",
+		"faction",
+		"police",
+		"combine"
+	})
+	
+	CAKE.HL2RPFaction( "Lambda Rebellion",
+	"Unknown",
+	{ 	
+		["rebel"] = { [ "formalname" ] = "Lambda Rebel", [ "loadout" ] = { "clothing_combat" }, [ "level" ] = 1  },
+		["blackmarket"] = { [ "formalname" ] = "Blackmarket dealer", [ "loadout" ] = { "clothing_combat" }, [ "level" ] = 1, ["canbuy"] = true, ["buygroups"] = { 1, 2, 3 }  },
+		["leader"] = { [ "formalname" ] = "Rebellion Leader", [ "loadout" ] = { "weapon_mad_knife", "clothing_combat", "weapon_zipties" }, [ "level" ] = 2, ["caninvite"] = true, ["canpromote"] = true  }
+	},
+	{
+		[ "soundgroup" ] = 1,
+		[ "canbroadcast" ] = false,
+		[ "loadouts" ] = true,
+		[ "doorgroup" ] = true,
+		[ "primaryrank" ] = "rebel",
+		[ "radiocolor" ] = Color( 255, 255, 255 ),
+		[ "iscombine" ] = false,
+		[ "radiogroup" ] = 2
+	},
+	2,
+	2,
+	"hl2rp/lambda",
+	{ 	"rebel",
+		"faction",
+		"rebels",
+		"rebellion"
+	})
+	
+	CAKE.HL2RPFaction( "Civil Workers Union",
+	"Unknown",
+	{ 	
+		["worker"] = { [ "formalname" ] = "CWU Worker", [ "loadout" ] = { }, [ "level" ] = 1  },
+		["salesman"] = { [ "formalname" ] = "CWU Salesman", [ "loadout" ] = { }, [ "level" ] = 1, ["canbuy"] = true, ["buygroups"] = { 1, 3 }  },
+		["leader"] = { [ "formalname" ] = "CWU Leader", [ "loadout" ] = { }, [ "level" ] = 2, ["caninvite"] = true, ["canpromote"] = true  }
+	},
+	{
+		[ "soundgroup" ] = 1,
+		[ "canbroadcast" ] = false,
+		[ "loadouts" ] = true,
+		[ "doorgroup" ] = true,
+		[ "primaryrank" ] = "worker",
+		[ "radiocolor" ] = Color( 255, 255, 255 ),
+		[ "iscombine" ] = false,
+		[ "radiogroup" ] = 1
+	},
+	2,
+	2,
+	"hl2rp/cwu",
+	{ 	"civil",
+		"workers",
+		"union",
+		"cwu"
+	})
+	
 end

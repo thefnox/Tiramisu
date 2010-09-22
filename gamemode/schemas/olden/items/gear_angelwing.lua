@@ -8,6 +8,7 @@ ITEM.ItemGroup = 1;
 ITEM.Offset = Vector( 0,0,0 )
 ITEM.OffsetAngle = Angle( 0,0,0 )
 ITEM.Bone = "chest"
+ITEM.Weight = 0
 
 function ITEM:Drop(ply)
 

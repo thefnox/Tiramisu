@@ -2,6 +2,16 @@ PLUGIN.Name = "Chat Commands"; -- What is the plugin name
 PLUGIN.Author = "LuaBanana"; -- Author of the plugin
 PLUGIN.Description = "A set of default chat commands"; -- The description or purpose of the plugin
 
+function CAKE.AddRadioLine( ply, text, color )
+	umsg.Start( "AddRadioLine", ply )
+		umsg.String( text )
+		umsg.Short( color.r )
+		umsg.Short( color.b )
+		umsg.Short( color.g )
+	umsg.End()
+	CAKE.SendConsole( ply, text )
+end
+
 function Broadcast( ply, text )
 
 	-- Check to see if the player's team allows broadcasting
@@ -125,8 +135,15 @@ function Radio( ply, text )
 	if(group != 0) then
 		for k2, v2 in pairs(player.GetAll()) do
 			if(CAKE.Teams[v2:Team()] != nil) then
-				if( CAKE.GetCharField( v2, "group" ) == group ) then
-					CAKE.SendChat(v2, "[RADIO] " .. ply:Nick() .. ": " .. text);
+				if( CAKE.GetCharField( v2, "group" ) == group or CAKE.GetGroupFlag( CAKE.GetCharField( v2, "group" ), "radiogroup" ) == CAKE.GetGroupFlag( group, "radiogroup" ) ) then
+					/*
+					if v2 != ply then
+						CAKE.AddRadioLine( v2, "[RADIO] " .. ply:Nick() .. ": " .. text, CAKE.GetGroupFlag( group, "radiocolor" ) or Color( 255, 255, 255 ) );
+					else
+						CAKE.AddRadioLine( v2, "[RADIO] " .. ply:Nick() .. ": " .. text, Color( 255, 0, 0 ) );
+						
+					end*/
+					CAKE.AddRadioLine( v2, "[RADIO] " .. ply:Nick() .. ": " .. text, CAKE.GetGroupFlag( group, "radiocolor" ) or Color( 255, 255, 255 ) );
 					table.insert(heardit, v2);
 				end
 			end
@@ -169,6 +186,26 @@ function Title2( ply, text )
 	return "";
 end
 
+function Yell( ply, text )
+	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "YellRange" ] )
+	for k, v in pairs( players ) do
+		if v:IsPlayer() then
+			CAKE.SendChat( v, "[Y]" .. ply:Nick() .. ": " .. text, "Trebuchet24" )
+		end
+	end
+	return "";
+end
+
+function Whisper( ply, text )
+	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "WhisperRange" ] )
+	for k, v in pairs( players ) do
+		if v:IsPlayer() then
+			CAKE.SendChat( v, "[W]" ..  ply:Nick() .. ": " .. text, "DefaultSmallDropShadow" )
+		end
+	end
+	return "";
+end
+
 
 function PLUGIN.Init( ) -- We run this in init, because this is called after the entire gamemode has been loaded.
 
@@ -187,15 +224,17 @@ function PLUGIN.Init( ) -- We run this in init, because this is called after the
 	CAKE.SimpleChatCommand( "/me", CAKE.ConVars[ "MeRange" ], "*** $1 $3" ); -- Me chat
 	CAKE.SimpleChatCommand( "/it", CAKE.ConVars[ "MeRange" ], "*** $3" ); -- It chat
 	CAKE.SimpleChatCommand( "/anon", CAKE.ConVars[ "MeRange" ], "???: $3" ); -- It chat
-	CAKE.SimpleChatCommand( "/y", CAKE.ConVars[ "YellRange" ], "$1 [YELL]: $3" ); -- Yell chat
-	CAKE.SimpleChatCommand( "/w", CAKE.ConVars[ "WhisperRange" ], "$1 [WHISPER]: $3" ); -- Whisper chat
+	--CAKE.SimpleChatCommand( "/y", CAKE.ConVars[ "YellRange" ], "<font=DefaultLarge>$1 [YELL]: $3</font>" ); -- Yell chat
+	--CAKE.SimpleChatCommand( "/w", CAKE.ConVars[ "WhisperRange" ], "<font=DefaultSmall>$1 [WHISPER]: $3</font>" ); -- Whisper chat
 	CAKE.SimpleChatCommand( ".//", CAKE.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3" ); -- Local OOC Chat
 	CAKE.SimpleChatCommand( "[[", CAKE.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3" ); -- Local OOC Chat
 
 	CAKE.ChatCommand( "/ad", Advertise );
+	CAKE.ChatCommand( "/y", Yell);
+	CAKE.ChatCommand( "/w", Whisper);
 	CAKE.ChatCommand( "/event", Event );	-- Advertisements
 	CAKE.ChatCommand( "/bc", Broadcast ); -- Broadcast
-	CAKE.ChatCommand( "/radio", Radio ); -- Radio
+	CAKE.ChatCommand( "/r", Radio ); -- Radio
 	CAKE.ChatCommand( "/removehelmet", RemoveHelmet );
 	CAKE.ChatCommand( "/pm", PersonalMessage );
 	CAKE.ChatCommand( "/title", Title );

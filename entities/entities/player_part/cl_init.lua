@@ -3,20 +3,28 @@ include('shared.lua')
 
 function ENT:Draw()
 
-	if !CAKE.Thirdperson:GetBool() and self.Entity:GetDTInt( 1 ) == 2 then
-		if self.Entity:GetParent() == LocalPlayer() and CAKE.RenderBody:GetBool() then
+	if self.Entity:GetParent() == LocalPlayer() and GetViewEntity() == LocalPlayer() and !CAKE.MenuOpen then
+		if !CAKE.UseCalcView:GetBool() then
 			return
 		end
+		if !CAKE.Thirdperson:GetBool() then
+			if !CAKE.RenderBody:GetBool() then
+				return
+			else
+				if self.Entity:GetDTInt( 1 ) == 2 then
+					return
+				end
+			end
+		end
+	end
+	
+	if self.Entity:GetParent():IsPlayer() then 
+		self.Entity:SetEyeTarget( self.Entity:GetParent():GetEyeTrace().HitPos )
 	end
 	
 	self.Entity:RemoveEffects(EF_ITEM_BLINK)
 	self.Entity:DrawModel()
 	self.Entity:DrawShadow( true )
-	
-	if self.Entity:GetParent():IsPlayer() then
-		local trace = self.Entity:GetParent():GetEyeTrace( )
-		self.Entity:SetEyeTarget( trace.HitPos )
-	end
 	
 end
 

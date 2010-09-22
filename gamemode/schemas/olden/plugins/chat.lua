@@ -22,12 +22,22 @@ function CAKE.OOCAdd( ply, text )
 			text = string.sub( text, 3 )
 		end
 		
+		
 		umsg.Start("AddOOCLine")
 			umsg.String( tostring( text ) )
 			umsg.String( tostring( playername ) )
 			umsg.Vector( Vector( color.r, color.b, color.g ) )
 			umsg.Float( color.a )
 		umsg.End()
+		
+		/*
+		datastream.StreamToClients( player.GetAll( ), "AddOOCLine", {
+			[ "text" ] = tostring( text ),
+			[ "playername" ] = tostring( playername ),
+			[ "color" ] = color
+		});
+		*/
+		
 		ply.LastOOC = CurTime();
 		
 	else

@@ -192,7 +192,7 @@ function CAKE.CalculateEncumberment( ply )
 		ply:SetRunSpeed( CAKE.ConVars[ "RunSpeed" ] - 105)
 		
 	else
-		if ply.DamageProtection.Weight != "heavy" or ply.DamageProtection.Weight != "superheavy" then
+		if ply.DamageProtection and ( ply.DamageProtection.Weight != "heavy" or ply.DamageProtection.Weight != "superheavy" ) then
 			ply:SetWalkSpeed( CAKE.ConVars[ "WalkSpeed" ] )
 			ply:SetRunSpeed( CAKE.ConVars[ "RunSpeed" ] )
 		end
@@ -227,7 +227,7 @@ concommand.Add( "rp_dropextra", ccTransferfromExtraInventory )
 
 function PLUGIN.Init()
 	
-	CAKE.AddDataField( 2, "cargo", 10 );
+	CAKE.AddDataField( 2, "cargo", 40 );
 	CAKE.AddDataField( 2, "extracargo", 0 );
 	CAKE.AddDataField( 2, "extrainventory", {} );
 	
