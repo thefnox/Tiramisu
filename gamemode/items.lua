@@ -1,9 +1,5 @@
 CAKE.ItemData = {  };
 
-function CAKE.CodeItem( name, tbl )
-	CAKE.WriteItem( name, tbl )
-end
-
 function CAKE.LoadItem( schema, filename )
 
 	local path = "schemas/" .. schema .. "/items/" .. filename;

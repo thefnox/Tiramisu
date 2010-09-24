@@ -48,11 +48,9 @@ include( "cl_binds.lua" );
 include( "cl_skin.lua" );
 include( "cl_charactercreate.lua" );
 include( "cl_playermenu.lua" );
---include( "cl_usermessages.lua" )
-include( "cl_boneanimlib.lua" )
-include( "sh_boneanimlib.lua" )
+include( "boneanimlib/cl_boneanimlib.lua" )
+include( "boneanimlib/sh_boneanimlib.lua" )
 include( "animations.lua" )
-include( "lua_animations.lua" )
 include( "achat.lua" )
 
 CAKE.Loaded = true;
@@ -93,6 +91,8 @@ local function AddToChat( um )
 end
 usermessage.Hook( "tiramisuaddtochat", AddToChat )
 
+/*
+
 local function vectortocolor( vector, alpha )
 	local breakablevector = string.Explode( " ", tostring( vector ) )
 	local red = tonumber( breakablevector[1] )
@@ -101,7 +101,7 @@ local function vectortocolor( vector, alpha )
 	return Color( red, blue, green, alpha );
 end
 
-function message_AddOOCline( um )
+local function message_AddOOCline( um )
 	local text = um:ReadString()
 	local playername = um:ReadString()
 	local breakablevector = string.Explode( " ", tostring( um:ReadVector() ) )
@@ -112,7 +112,7 @@ function message_AddOOCline( um )
 	chat.AddText( Color(255,255,255,255), "[OOC]", color, playername, Color(255,255,255,255), " :", Color(255,255,255,255), text )
 	--chat.AddText( text )
 end
-usermessage.Hook( "AddOOCLine", message_AddOOCline);
+usermessage.Hook( "AddOOCLine", message_AddOOCline);*/
 
 function ConfirmCharRemove( um )
 	local name = um:ReadString()

@@ -133,23 +133,7 @@ function CAKE.SaveGroupData( name )
 	
 	if CAKE.Groups[ name ] then
 		local str = ""
-		/*
-		for k, v in ipairs( CAKE.Groups[ name ] ) do
-			if type( v ) == "table" then
-				if #v == 0 then
-					str = str .. "GROUP." .. tostring( k ) .. " = { }\n"
-				else
-					str = str .. "GROUP." .. tostring( k ) .. " = { " .. table.concat( v, ",") .. " }\n"
-				end
-			elseif type( v ) == "string" then
-				str = str .. "GROUP." .. tostring( k ) .. " = \"" .. tostring( v ) .. "\"\n"
-			else
-				str = str .. "GROUP." .. tostring( k ) .. " = " .. tostring( v ) .. "\n"
-			end
-		end*/
 		str = glon.encode( CAKE.Groups[ name ] )
-		
-		--print( str )
 		file.Write( CAKE.Name .. "/GroupData/" .. CAKE.ConVars[ "Schema" ] .. "/" .. name .. ".txt" , str);
 	end
 
@@ -360,3 +344,31 @@ local function ccPromote( ply, cmd, args )
 	
 end
 concommand.Add( "rp_promote", ccPromote )
+
+local function GroupSpawnHook( ply )
+
+	if ply:IsCharLoaded() then
+		if CAKE.GetCharField( ply, "group" ) == "None" or CAKE.GetCharField( ply, "group" ) == "none" then
+			datastream.StreamToClients( ply, "recievemygroup", {} )
+		else
+			local name = CAKE.GetCharField( ply, "group" )
+			local rank = CAKE.GetCharField( ply, "grouprank" )
+			local rankname = CAKE.GetRankPermission( name, rank, "formalname" )
+			local type = CAKE.GetGroupField( name, "Type" )
+			local founder = CAKE.GetGroupField( name, "Founder" )
+			local image = CAKE.GetGroupField( name, "Image" )
+			local rankpermissions = CAKE.GetRankPermissions( name, rank )
+			datastream.StreamToClients( ply, "recievemygroup", {
+				[ "Name" ]		= name,
+				[ "Type" ]		= type,
+				[ "Founder" ]	= founder,
+				[ "Rank" ]		= rankname,
+				[ "RankPermissions" ] = rankpermissions,
+				[ "Inventory" ]	= {},
+				[ "Image" ] = image
+			})
+		end
+	end
+
+end
+hook.Add( "PlayerSpawn", "TiramisuGroupSpawnHook", GroupSpawnHook )

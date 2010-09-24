@@ -48,13 +48,9 @@ include( "client_resources.lua" ); -- Sends files to the client
 include( "animations.lua" ); -- Animations
 include( "doors.lua" ); -- Doors
 include( "sql_main.lua" ); --MySQL handling
-include( "spawnpoints.lua" ) -- Handling spawn points.
-include( "stashes.lua" ) -- Stashes
 include( "resources.lua" ) -- Automatic resource handling
-include( "boneanimlib.lua" )
+include( "boneanimlib/boneanimlib.lua" )
 include( "sh_boneanimlib.lua" )
-include( "lua_animations.lua" )
---include( "sv_usermessages.lua" )
 
 CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ); -- Load the schema and plugins, this is NOT initializing.
 
@@ -134,9 +130,18 @@ function GM:PlayerInitialSpawn( ply )
 	ply:ChangeMaxWalkSpeed(CAKE.ConVars[ "WalkSpeed" ]);
 	ply:ChangeMaxRunSpeed(CAKE.ConVars[ "RunSpeed" ]);
 	
+	/*
 	-- Check if they are admins
-	if( table.HasValue( SuperAdmins, ply:SteamID( ) ) ) then ply:SetUserGroup( "superadmin" ); end
-	if( table.HasValue( Admins, ply:SteamID( ) ) ) then ply:SetUserGroup( "admin" ); end
+	if( ply:IsUserGroup("admin") )	then
+		--ply:SetUserGroup( "superadmin" );
+		CAKE.SetPlayerField( ply, "adrank", "Administrator" )
+	end
+	
+	if( ply:IsUserGroup("superadmin") ) then
+		--ply:SetUserGroup( "admin" );
+		CAKE.SetPlayerField( ply, "adrank", "Super Administrator" )
+	end
+	*/
 	
 	-- Send them all the teams
 	CAKE.InitTeams( ply );
@@ -155,8 +160,6 @@ function GM:PlayerLoadout(ply)
 
 	CAKE.CallHook( "PlayerLoadout", ply );
 	if(ply:GetNWInt("charactercreate") != 1) then
-	
-		-- if(ply:IsAdmin() or ply:IsSuperAdmin()) then ply:Give("gmod_tool"); end
 		
 		if(CAKE.Teams[ply:Team()] != nil) then
 		
@@ -174,21 +177,9 @@ function GM:PlayerLoadout(ply)
 		
 	end
 	
-	if ply.RecieveFactionLoadout then
-		local ranks = CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "ranks" )
-		local loadout = ranks[ CAKE.GetCharField( ply, "grouprank" ) ][ "loadout" ]
-		for k, v in pairs( loadout ) do
-			if !ply:HasItem( v ) then
-				ply:GiveItem( v )
-			end
-		end
-	end
-	
 end
 
 function GM:PlayerSpawn( ply )
-
-	ply:ConCommand( "cl_cmdrate 100" )
 	
 	if( !ply:IsCharLoaded() ) then
 		return; -- Player data isn't loaded. This is an initial spawn.
@@ -196,12 +187,9 @@ function GM:PlayerSpawn( ply )
 	
 	CAKE.SavePlayerData( ply )
 	
-	datastream.StreamToClients( ply, "RecieveViewRagdoll", { ["ragdoll"] = false } )
+	datastream.StreamToClients( ply, "RecieveViewRagdoll", { ["ragdoll"] = false } ) --This is to reset the player's view back to their character after they die.
 	
-	ply.DamageProtection = {}
 	ply:StripWeapons( );
-	
-	CAKE.SpawnPointHandle( ply )
 	
 	if( ply:GetNWInt( "deathmode" ) == 1 ) then
 	
@@ -214,22 +202,8 @@ function GM:PlayerSpawn( ply )
 		ply:SetViewEntity( ply );
 	end
 	
-	if !timer.IsTimer( ply:SteamID() .. "rechargetimer" ) then
-		timer.Create( ply:SteamID() .. "rechargetimer", 1, 0, function()
-			if ValidEntity( ply ) and ply:Health() < 61 then
-				ply:SetHealth( ply:Health() + 1 )
-			end
-		end )
-	else
-		timer.Start( ply:SteamID() .. "rechargetimer" )
-	end
-	
 	timer.Create( ply:SteamID() .. "savetimer", 10, 0, function()
 		CAKE.SavePlayerData( ply )
-	end)
-	
-	timer.Create( ply:SteamID() .. "gunchecktimer", 0.1, 0, function()
-		ply:HideActiveWeapon()
 	end)
 	
 	-- Reset all the variables
@@ -241,34 +215,11 @@ function GM:PlayerSpawn( ply )
 	
 	ply:RefreshExtraInventory( )
 	
-	if CAKE.GetCharField( ply, "group" ) == "None" or CAKE.GetCharField( ply, "group" ) == "none" then
-		datastream.StreamToClients( ply, "recievemygroup", {} )
-	else
-		local name = CAKE.GetCharField( ply, "group" )
-		local rank = CAKE.GetCharField( ply, "grouprank" )
-		local rankname = CAKE.GetRankPermission( name, rank, "formalname" )
-		local type = CAKE.GetGroupField( name, "Type" )
-		local founder = CAKE.GetGroupField( name, "Founder" )
-		local image = CAKE.GetGroupField( name, "Image" )
-		local rankpermissions = CAKE.GetRankPermissions( name, rank )
-		datastream.StreamToClients( ply, "recievemygroup", {
-			[ "Name" ]		= name,
-			[ "Type" ]		= type,
-			[ "Founder" ]	= founder,
-			[ "Rank" ]		= rankname,
-			[ "RankPermissions" ] = rankpermissions,
-			[ "Inventory" ]	= {},
-			[ "Image" ] = image
-		})
-	end
-	
 	self.BaseClass:PlayerSpawn( ply )
 	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] );
 	CAKE.CallHook( "PlayerSpawn", ply )
 	CAKE.CallTeamHook( "PlayerSpawn", ply ); -- Change player speeds perhaps?
 	umsg.Start( "closeplayermenu", ply );
-	umsg.End( )
-	umsg.Start( "CreateRadio", ply );
 	umsg.End( )
 	
 end
@@ -281,17 +232,13 @@ function GM:PlayerSetModel(ply)
 				local m = ""
 				if( CAKE.GetCharField( ply, "gender" ) == "Female" ) then
 					m = "models/Gustavio/femaleanimtree.mdl"
-					--m = "models/alyx.mdl"
 					ply:SetNWString( "gender", "Female" )
 				else
 					m = "models/Gustavio/maleanimtree.mdl"
-					--m = "models/barney.mdl"
 					ply:SetNWString( "gender", "Male" )
 				end
 				
 				ply:SetModel( m );
-				--ply:SetMaterial( "null" )
-				--ply:SetRenderMode( RENDERMODE_NORMAL )
 				CAKE.CallHook( "PlayerSetModel", ply, m);
 		else
 			
@@ -335,7 +282,7 @@ function GM:PlayerDeathThink(ply)
 			ply:SetNWInt("deathmoderemaining", 60 - ply.deathtime);
 			
 		else
-			if ply.CheatedDeath then
+			if ply.CheatedDeath then --If the player used !acceptdeath then just spawn him normally
 				ply:Spawn();
 			else
 				ply:Spawn();

@@ -6,15 +6,7 @@
 -- charactercreate.lua
 -- Contains the character creation concommands.
 -------------------------------	
-	
-function CAKE.LoadClPlugin( schema, filename )
 
-	local path = "schemas/" .. schema .. "/clplugin/" .. filename;
-	print( path )
-	AddResource("lua", path)
-	
-end
-	
 -- Set Model
 function ccSetModel( ply, cmd, args )
 

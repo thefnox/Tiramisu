@@ -230,141 +230,533 @@ RegisterLuaAnimation('sleep', {
 	Type = TYPE_SEQUENCE
 })
 
-RegisterLuaAnimation('punch', {
+RegisterLuaAnimation('punchstance', {
 	FrameData = {
 		{
 			BoneInfo = {
 				['ValveBiped.Bip01_L_Forearm'] = {
-					RU = -70,
-					RR = 42
-				},
-				['ValveBiped.Bip01_R_UpperArm'] = {
-					RR = 13
+					RU = -131,
+					RR = 18,
+					RF = 47
 				},
 				['ValveBiped.Bip01_Head1'] = {
-					RU = 13,
-					RR = -19,
-					RF = -38
+					RU = 8,
+					RR = -5,
+					RF = -27
 				},
-				['ValveBiped.Bip01_L_Thigh'] = {
+				['ValveBiped.Bip01_R_Hand'] = {
 					RU = -35,
-					RR = -13,
-					RF = 18
+					RR = 15
 				},
-				['ValveBiped.Bip01_L_UpperArm'] = {
-					RU = 17,
-					RR = 8,
-					RF = -2
+				['ValveBiped.Bip01_R_Clavicle'] = {
+					RR = 19
 				},
 				['ValveBiped.Bip01_L_Hand'] = {
-					RU = -21,
-					RR = 1,
-					RF = -92
-				},
-				['ValveBiped.Bip01_Pelvis'] = {
-					RR = 52
-				},
-				['ValveBiped.Bip01_L_Clavicle'] = {
-					RR = -33
+					RF = -23
 				},
 				['ValveBiped.Bip01_R_Forearm'] = {
-					RU = -120,
-					RR = 51
+					RU = -114,
+					RR = 50,
+					RF = 70
 				},
-				['ValveBiped.Bip01_L_Calf'] = {
-					RU = 58
+				['ValveBiped.Bip01_L_Thigh'] = {
+					RU = -2,
+					RR = -11,
+					RF = 9
 				},
-				['ValveBiped.Bip01_R_Foot'] = {
-					RU = 7,
-					RR = 11,
-					RF = 20
+				['ValveBiped.Bip01_L_UpperArm'] = {
+					RR = -19
 				},
-				['ValveBiped.Bip01_L_Foot'] = {
-					RU = 35,
-					RR = 30,
-					RF = 74
+				['ValveBiped.Bip01_Pelvis'] = {
+					RR = 30
 				},
 				['ValveBiped.Bip01_R_Calf'] = {
-					RU = 21
-				},
-				['ValveBiped.Bip01_L_Toe0'] = {
-					RU = -58
+					RU = 29
 				},
 				['ValveBiped.Bip01_R_Thigh'] = {
-					RR = 25,
-					RF = 72
+					RU = -14,
+					RR = 13,
+					RF = 39
 				}
 			},
-			FrameRate = 100
+			FrameRate = 10
 		},
 		{
 			BoneInfo = {
 				['ValveBiped.Bip01_L_Forearm'] = {
-					RU = -70,
-					RR = 42
-				},
-				['ValveBiped.Bip01_R_UpperArm'] = {
-					RR = 13
-				},
-				['ValveBiped.Bip01_Pelvis'] = {
-					RR = 52
-				},
-				['ValveBiped.Bip01_L_Thigh'] = {
-					RU = -35,
-					RR = -13,
-					RF = 18
-				},
-				['ValveBiped.Bip01_L_UpperArm'] = {
-					RU = 17,
-					RR = 8,
-					RF = -2
-				},
-				['ValveBiped.Bip01_L_Hand'] = {
-					RU = -21,
-					RR = 1,
-					RF = -92
+					RU = -131,
+					RR = 18,
+					RF = 47
 				},
 				['ValveBiped.Bip01_Head1'] = {
-					RU = 13,
-					RR = -19,
-					RF = -38
+					RU = 8,
+					RR = -5,
+					RF = -27
 				},
-				['ValveBiped.Bip01_L_Clavicle'] = {
-					RR = -33
+				['ValveBiped.Bip01_R_Hand'] = {
+					RU = -35,
+					RR = 15
+				},
+				['ValveBiped.Bip01_R_Clavicle'] = {
+					RR = 19
+				},
+				['ValveBiped.Bip01_L_Hand'] = {
+					RF = -23
 				},
 				['ValveBiped.Bip01_R_Forearm'] = {
-					RU = -120,
-					RR = 51
+					RU = -114,
+					RR = 50,
+					RF = 70
 				},
-				['ValveBiped.Bip01_L_Calf'] = {
-					RU = 58
-				},
-				['ValveBiped.Bip01_R_Foot'] = {
-					RU = 7,
-					RR = 11,
-					RF = 20
-				},
-				['ValveBiped.Bip01_L_Foot'] = {
-					RU = 35,
-					RR = 30,
-					RF = 74
+				['ValveBiped.Bip01_L_Thigh'] = {
+					RU = -2,
+					RR = -11,
+					RF = 9
 				},
 				['ValveBiped.Bip01_R_Calf'] = {
-					RU = 21
+					RU = 29
 				},
-				['ValveBiped.Bip01_L_Toe0'] = {
-					RU = -58
+				['ValveBiped.Bip01_Pelvis'] = {
+					RR = 30
+				},
+				['ValveBiped.Bip01_L_UpperArm'] = {
+					RR = -19
 				},
 				['ValveBiped.Bip01_R_Thigh'] = {
-					RR = 25,
-					RF = 72
+					RU = -14,
+					RR = 13,
+					RF = 39
+				}
+			},
+			FrameRate = 10
+		}
+	},
+	RestartFrame = 2,
+	StartFrame = 1,
+	Type = TYPE_SEQUENCE
+})
+
+RegisterLuaAnimation('punchanim', {
+	FrameData = {
+		{
+			BoneInfo = {
+				['ValveBiped.Bip01_Neck1'] = {
+				},
+				['ValveBiped.Bip01_L_Forearm'] = {
+					RU = -131,
+					RR = 18,
+					RF = 47
+				},
+				['ValveBiped.Bip01_R_UpperArm'] = {
+				},
+				['ValveBiped.Bip01_Head1'] = {
+					RU = 8,
+					RR = -5,
+					RF = -27
+				},
+				['ValveBiped.Bip01_R_Hand'] = {
+					RU = -35,
+					RR = 15
+				},
+				['ValveBiped.Bip01_R_Clavicle'] = {
+					RR = 19
+				},
+				['ValveBiped.Bip01_L_Hand'] = {
+					RF = -23
+				},
+				['ValveBiped.Bip01_L_UpperArm'] = {
+					RR = -19
+				},
+				['ValveBiped.Bip01_L_Clavicle'] = {
+				},
+				['ValveBiped.Bip01_Spine1'] = {
+				},
+				['ValveBiped.Bip01_Pelvis'] = {
+					RR = 30
+				},
+				['ValveBiped.Bip01_R_Calf'] = {
+					RU = 29
+				},
+				['ValveBiped.Bip01_L_Thigh'] = {
+					RU = -2,
+					RR = -11,
+					RF = 9
+				},
+				['ValveBiped.Bip01_Spine'] = {
+				},
+				['ValveBiped.Bip01_R_Forearm'] = {
+					RU = -114,
+					RR = 50,
+					RF = 70
+				},
+				['ValveBiped.Bip01_R_Thigh'] = {
+					RU = -14,
+					RR = 13,
+					RF = 39
+				}
+			},
+			FrameRate = 60
+		},
+		{
+			BoneInfo = {
+				['ValveBiped.Bip01_Neck1'] = {
+					RF = -1
+				},
+				['ValveBiped.Bip01_L_Forearm'] = {
+					RU = 2,
+					RR = -9,
+					RF = 47
+				},
+				['ValveBiped.Bip01_R_UpperArm'] = {
+					RR = -14,
+					RF = -1
+				},
+				['ValveBiped.Bip01_Head1'] = {
+					RU = 8,
+					RR = -1,
+					RF = 12
+				},
+				['ValveBiped.Bip01_R_Hand'] = {
+					RU = -35,
+					RR = 49,
+					RF = 98
+				},
+				['ValveBiped.Bip01_R_Clavicle'] = {
+					RR = -1
+				},
+				['ValveBiped.Bip01_L_Hand'] = {
+					RU = 3,
+					RF = -9
+				},
+				['ValveBiped.Bip01_R_Calf'] = {
+					RU = 29
+				},
+				['ValveBiped.Bip01_L_Clavicle'] = {
+					RR = -5
+				},
+				['ValveBiped.Bip01_Spine1'] = {
+					RF = -35
+				},
+				['ValveBiped.Bip01_Pelvis'] = {
+					RR = -9
+				},
+				['ValveBiped.Bip01_L_UpperArm'] = {
+					RU = -73,
+					RR = -19
+				},
+				['ValveBiped.Bip01_L_Thigh'] = {
+					RU = -2,
+					RR = -11,
+					RF = 9
+				},
+				['ValveBiped.Bip01_Spine'] = {
+					RF = -20
+				},
+				['ValveBiped.Bip01_R_Forearm'] = {
+					RU = -58,
+					RR = 6,
+					RF = -18
+				},
+				['ValveBiped.Bip01_R_Thigh'] = {
+					RU = -14,
+					RR = 13,
+					RF = 39
+				}
+			},
+			FrameRate = 10
+		},
+		{
+			BoneInfo = {
+				['ValveBiped.Bip01_Neck1'] = {
+				},
+				['ValveBiped.Bip01_L_Forearm'] = {
+					RU = -131,
+					RR = 18,
+					RF = 47
+				},
+				['ValveBiped.Bip01_R_UpperArm'] = {
+				},
+				['ValveBiped.Bip01_Head1'] = {
+					RU = 8,
+					RR = -5,
+					RF = -27
+				},
+				['ValveBiped.Bip01_R_Hand'] = {
+					RU = -35,
+					RR = 15
+				},
+				['ValveBiped.Bip01_R_Clavicle'] = {
+					RR = 19
+				},
+				['ValveBiped.Bip01_L_Hand'] = {
+					RF = -23
+				},
+				['ValveBiped.Bip01_R_Forearm'] = {
+					RU = -114,
+					RR = 50,
+					RF = 70
+				},
+				['ValveBiped.Bip01_L_Clavicle'] = {
+					RR = -26
+				},
+				['ValveBiped.Bip01_Spine1'] = {
+				},
+				['ValveBiped.Bip01_Spine'] = {
+				},
+				['ValveBiped.Bip01_L_Thigh'] = {
+					RU = -2,
+					RR = -11,
+					RF = 9
+				},
+				['ValveBiped.Bip01_R_Calf'] = {
+					RU = 29
+				},
+				['ValveBiped.Bip01_Pelvis'] = {
+					RR = 30
+				},
+				['ValveBiped.Bip01_L_UpperArm'] = {
+					RR = -19
+				},
+				['ValveBiped.Bip01_R_Thigh'] = {
+					RU = -14,
+					RR = 13,
+					RF = 39
+				}
+			},
+			FrameRate = 1.5
+		}
+	},
+	RestartFrame = 2,
+	StartFrame = 1,
+	Type = TYPE_SEQUENCE
+})
+
+RegisterLuaAnimation('boxstance', {
+	FrameData = {
+		{
+			BoneInfo = {
+				['ValveBiped.Bip01_L_Forearm'] = {
+					RU = -100,
+					RR = -35
+				},
+				['ValveBiped.Bip01_R_UpperArm'] = {
+					RU = -58,
+					RR = 7,
+					RF = 10
+				},
+				['ValveBiped.Bip01_L_Foot'] = {
+					RU = -7,
+					RF = -9
+				},
+				['ValveBiped.Bip01_R_Clavicle'] = {
+					RR = -7
+				},
+				['ValveBiped.Bip01_L_Thigh'] = {
+					RR = -9,
+					RF = -5
+				},
+				['ValveBiped.Bip01_R_Calf'] = {
+					RU = 14
+				},
+				['ValveBiped.Bip01_L_Clavicle'] = {
+					RR = -7
+				},
+				['ValveBiped.Bip01_R_Forearm'] = {
+					RU = -100,
+					RR = 7
+				},
+				['ValveBiped.Bip01_L_Calf'] = {
+					RU = 11,
+					RF = -6
+				},
+				['ValveBiped.Bip01_R_Foot'] = {
+					RF = 6
+				},
+				['ValveBiped.Bip01_Spine'] = {
+					RU = 12
+				},
+				['ValveBiped.Bip01_L_UpperArm'] = {
+					RU = -58,
+					RR = 7,
+					RF = 10
+				},
+				['ValveBiped.Bip01_Spine1'] = {
+				},
+				['ValveBiped.Bip01_R_Thigh'] = {
+					RU = -14,
+					RR = 6,
+					RF = 10
+				}
+			},
+			FrameRate = 30
+		},
+		{
+			BoneInfo = {
+				['ValveBiped.Bip01_Spine'] = {
+					RU = 13,
+					RF = 1
+				},
+				['ValveBiped.Bip01_R_UpperArm'] = {
+					RU = -58,
+					RR = 7,
+					RF = 10
+				},
+				['ValveBiped.Bip01_L_Thigh'] = {
+					RR = -9,
+					RF = -5
+				},
+				['ValveBiped.Bip01_R_Clavicle'] = {
+					RR = -7
+				},
+				['ValveBiped.Bip01_Spine1'] = {
+					RU = -4
+				},
+				['ValveBiped.Bip01_L_Forearm'] = {
+					RU = -100,
+					RR = -35
+				},
+				['ValveBiped.Bip01_L_Clavicle'] = {
+					RR = -7
+				},
+				['ValveBiped.Bip01_R_Forearm'] = {
+					RU = -100,
+					RR = 7
+				},
+				['ValveBiped.Bip01_L_Calf'] = {
+					RU = 11,
+					RF = -6
+				},
+				['ValveBiped.Bip01_R_Foot'] = {
+					RF = 6
+				},
+				['ValveBiped.Bip01_L_Foot'] = {
+					RU = -7,
+					RF = -9
+				},
+				['ValveBiped.Bip01_L_UpperArm'] = {
+					RU = -58,
+					RR = 7,
+					RF = 10
+				},
+				['ValveBiped.Bip01_R_Calf'] = {
+					RU = 14
+				},
+				['ValveBiped.Bip01_R_Thigh'] = {
+					RU = -14,
+					RR = 6,
+					RF = 10
+				}
+			},
+			FrameRate = 1
+		},
+		{
+			BoneInfo = {
+				['ValveBiped.Bip01_L_Forearm'] = {
+					RU = -100,
+					RR = -35
+				},
+				['ValveBiped.Bip01_R_UpperArm'] = {
+					RU = -58,
+					RR = 7,
+					RF = 10
+				},
+				['ValveBiped.Bip01_L_Thigh'] = {
+					RR = -9,
+					RF = -5
+				},
+				['ValveBiped.Bip01_R_Clavicle'] = {
+					RR = -7
+				},
+				['ValveBiped.Bip01_R_Forearm'] = {
+					RU = -100,
+					RR = 7
+				},
+				['ValveBiped.Bip01_R_Calf'] = {
+					RU = 14
+				},
+				['ValveBiped.Bip01_L_Clavicle'] = {
+					RR = -7
+				},
+				['ValveBiped.Bip01_Spine1'] = {
+					RU = -2
+				},
+				['ValveBiped.Bip01_L_Calf'] = {
+					RU = 11,
+					RF = -6
+				},
+				['ValveBiped.Bip01_R_Foot'] = {
+					RF = 6
+				},
+				['ValveBiped.Bip01_L_UpperArm'] = {
+					RU = -58,
+					RR = 7,
+					RF = 10
+				},
+				['ValveBiped.Bip01_L_Foot'] = {
+					RU = -7,
+					RF = -9
+				},
+				['ValveBiped.Bip01_Spine'] = {
+					RU = 14,
+					RF = 1
+				},
+				['ValveBiped.Bip01_R_Thigh'] = {
+					RU = -14,
+					RR = 6,
+					RF = 10
 				}
 			},
 			FrameRate = 1
 		}
 	},
 	RestartFrame = 2,
+	StartFrame = 1,
 	Type = TYPE_SEQUENCE
+})
+
+RegisterLuaAnimation('punchgesture', {
+	FrameData = {
+		{
+			BoneInfo = {
+				['ValveBiped.Bip01_L_UpperArm'] = {
+				},
+				['ValveBiped.Bip01_L_Forearm'] = {
+				},
+				['ValveBiped.Bip01_Spine1'] = {
+				}
+			},
+			FrameRate = 10
+		},
+		{
+			BoneInfo = {
+				['ValveBiped.Bip01_L_UpperArm'] = {
+					RU = -91,
+					RR = 14,
+					RF = 9
+				},
+				['ValveBiped.Bip01_L_Forearm'] = {
+					RU = 136,
+					RR = 29
+				},
+				['ValveBiped.Bip01_Spine1'] = {
+					RF = -23
+				}
+			},
+			FrameRate = 5
+		},
+		{
+			BoneInfo = {
+				['ValveBiped.Bip01_L_UpperArm'] = {
+				},
+				['ValveBiped.Bip01_L_Forearm'] = {
+				},
+				['ValveBiped.Bip01_Spine1'] = {
+				}
+			},
+			FrameRate = 5
+		}
+	},
+	Type = TYPE_GESTURE
 })
 /* EXAMPLES!
 

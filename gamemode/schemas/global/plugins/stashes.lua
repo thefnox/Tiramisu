@@ -1,3 +1,7 @@
+PLUGIN.Name = "Item Stashes"; -- What is the plugin name
+PLUGIN.Author = "Ryaga"; -- Author of the plugin
+PLUGIN.Description = "Allows you to place random caches of items around your map"; -- The description or purpose of the plugin
+
 CAKE.StashPoints = {}
 CAKE.StashItems = {}
 CAKE.StashItems.Roll = {}
@@ -75,6 +79,8 @@ function CAKE.InitStashes()
 	
 end
 
-CAKE.AddStashItem("fake","Common") -- DO NOT REMOVE THIS LINE OR THE LINES FOLLOWING.
-CAKE.AddStashItem("fake","Uncommon") -- THESE ARE SO THAT THE STASH SYSTEM DOES NOT ERROR IF THERE IS NOTHING IN THAT RARITY RANGE.
-CAKE.AddStashItem("fake","Rare") -- THE SCRIPT WILL NOT FUNCTION PROPERLY.
+function PLUGIN.Init()
+	CAKE.AddStashItem("fake","Common") -- DO NOT REMOVE THIS LINE OR THE LINES FOLLOWING.
+	CAKE.AddStashItem("fake","Uncommon") -- THESE ARE SO THAT THE STASH SYSTEM DOES NOT ERROR IF THERE IS NOTHING IN THAT RARITY RANGE.
+	CAKE.AddStashItem("fake","Rare") -- THE SCRIPT WILL NOT FUNCTION PROPERLY.
+end

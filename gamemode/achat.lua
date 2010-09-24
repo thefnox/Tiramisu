@@ -23,9 +23,9 @@ if( CLIENT ) then
 		aChat.Defaults = {
 			BorderCol = Color(255,255,255,255);
 			InnerCol = Color(0,0,0,255);
-			Font = "ChatFont";
+			Font = "TabLarge";
 			}
-		aChat.Font = "ChatFont";
+		aChat.Font = "TabLarge";
 		aChat.AddedLines = {}
 		
 		function aChat:Load()

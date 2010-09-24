@@ -26,7 +26,6 @@ if SERVER then
 
 	--Weapons that are never aimed
 	NeverAimed = {
-		"hands"
 	}
 
 	function meta:SetAiming( bool )
@@ -79,7 +78,7 @@ Anims.Male[ "default" ] = {
         [ "walk" ] = "&switch:models/Gustavio/barneyanimtree.mdl;ACT_WALK",
         [ "run" ] = "ACT_RUN",
         [ "jump" ] = "ACT_JUMP",
-        [ "land" ] = "ACT_LAND",
+        [ "land" ] = "&switch:models/Gustavio/barneyanimtree.mdl;ACT_LAND",
         [ "fly" ] = "ACT_GLIDE",
         [ "sit" ] = "ACT_BUSY_SIT_CHAIR",
         [ "sitground" ] = "ACT_BUSY_SIT_GROUND",
@@ -218,12 +217,13 @@ Anims.Male[ "melee" ] = {
                 [ "aimwalk" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_WALK_CROUCH"
                 },
         [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_IDLE_ANGRY_MELEE",
-				--["idle"] = "&lua:punch;",
+                --[ "idle" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_IDLE_ANGRY_MELEE",
+				["idle"] = "&lua:boxstance;",
                 [ "walk" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_WALK_ANGRY",
                 [ "run" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_RUN"
         },
-		["fire"] = "ACT_MELEE_ATTACK_SWING_GESTURE"
+		--["fire"] = "ACT_MELEE_ATTACK_SWING_GESTURE"
+		["fire"] = "&lua:boxgesturer;"
 }
 
 Anims.Male[ "grenade" ] = {
@@ -589,11 +589,12 @@ local function DetectHoldType( act ) --This is just a function used to group up 
 end
 
 function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles everything about how sequences run, the framerate, boneparameters, everything.
+
 	local eye = ply:EyeAngles()
 	if !ply:GetNWBool( "sittingchair", false ) then
 		ply:SetLocalAngles( eye )
+		ply:SetEyeTarget( ply:EyePos( ) )
 	end
-	ply:SetEyeTarget( ply:EyePos( ) )
 
 	if CLIENT then
 		if !ply:GetNWBool( "sittingchair", false ) then
@@ -609,7 +610,7 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 	else
 		ply:SetPoseParameter("move_yaw", 0 )
 	end
-	--This huge set of boneparameters are all set to 0 to avoid having the engine setting them to something else, thus resulting in  awkwardly twisted models
+	--This set of boneparameters are all set to 0 to avoid having the engine setting them to something else, thus resulting in  awkwardly twisted models
 	ply:SetPoseParameter("aim_yaw", 0 )
 	ply:SetPoseParameter("body_yaw", 0 )
 	ply:SetPoseParameter("spine_yaw", 0 )
@@ -791,10 +792,10 @@ function GM:CalcMainActivity( ply, velocity )
         ply.CalcIdeal = ACT_IDLE
         ply.CalcSeqOverride = -1
         
-        if self:HandlePlayerDriving( ply ) or
+        if self:HandleExtraActivities( ply ) or self:HandlePlayerDriving( ply ) or
                 self:HandlePlayerJumping( ply ) or
                 self:HandlePlayerDucking( ply, velocity ) or
-                self:HandlePlayerSwimming( ply ) or self:HandleExtraActivities( ply ) then
+                self:HandlePlayerSwimming( ply ) then
 			--We do nothing, I guess, lol.
 		else
             local len2d = velocity:Length2D()
@@ -845,7 +846,7 @@ function GM:DoAnimationEvent( ply, event, data ) -- This is for gestures.
 								ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "fire" ] )
 						end
 					else
-						local exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
+						local exp = string.Explode( ";", string.gsub( Anims[ ply:GetGender() ][ holdtype ][ "fire" ], "&", "" ) )
 						local exp2 = string.Explode( ":", exp[1] )
 						local sequence = exp2[2]
 						if CLIENT then

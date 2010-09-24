@@ -86,13 +86,13 @@ timer.Simple( 1, function()
 					if( ply:GetNWBool( "aiming", false ) ) then
 						local tracedata = {}
 						tracedata.start = pos
-						tracedata.endpos = pos - ( angles:Forward()*50 ) - ( angles:Right()* 20 )
+						tracedata.endpos = pos - ( angles:Forward()*50 ) - ( angles:Right()* 25 )
 						tracedata.filter = ply
 						local trace = util.TraceLine(tracedata)
 						if trace.HitWorld then
 							pos = trace.HitPos
 						else
-							pos = pos - ( angles:Forward()*50 ) - ( angles:Right()* 20 )
+							pos = pos - ( angles:Forward()*50 ) - ( angles:Right()* 25 )
 						end
 						return GAMEMODE:CalcView(ply, pos , angles ,fov)
 					

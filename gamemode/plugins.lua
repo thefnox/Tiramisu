@@ -40,6 +40,14 @@ function CAKE.ReRoute( )
 	
 end
 
+function CAKE.LoadClPlugin( schema, filename )
+
+	local path = "schemas/" .. schema .. "/clplugin/" .. filename;
+	AddResource("lua", path)
+	
+end
+	
+
 function CAKE.InitPlugins( )
 
 	for _, PLUGIN in pairs( CAKE.Plugins ) do

@@ -277,13 +277,12 @@ function CAKE.RestoreGear( ply )
 	
 end
 
-local function ccEditGearScreen( ply, cmd, args )
-	
-	umsg.Start( "TiramisuEditGear", ply )
-	umsg.End()
-
+local function GearSpawnHook( ply )
+	timer.Create( ply:SteamID() .. "gunchecktimer", 0.1, 0, function() --Please not, this solution is horrid, but there are no other hooks for this.
+		ply:HideActiveWeapon()
+	end)
 end
-concommand.Add( "rp_editgearscreen", ccEditGearScreen )
+hook.Add( "PlayerSpawn", "TiramisuGearSpawnHook", GearSpawnHook )
 
 function PLUGIN.Init()
 	

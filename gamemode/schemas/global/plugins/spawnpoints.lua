@@ -1,3 +1,7 @@
+PLUGIN.Name = "Group Spawnpoints"; -- What is the plugin name
+PLUGIN.Author = "Ryaga"; -- Author of the plugin
+PLUGIN.Description = "Allows you to change the spawnpoints of certain groups"; -- The description or purpose of the plugin
+
 CAKE.SpawnPoints = {}
 
 function CAKE.AddSpawn(pos, ang, plyteam)
@@ -37,7 +41,6 @@ function CAKE.ClearSpawns()
 end
 
 function CAKE.SaveSpawns()
-		PrintTable(CAKE.SpawnPoints)
 		local gloncomspawns = glon.encode(CAKE.SpawnPoints)
 		file.Write( CAKE.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt" , gloncomspawns)
 end
@@ -66,10 +69,16 @@ function CAKE.InitSpawns()
 	if(file.Exists(CAKE.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt")) then
 	
 		local keydspawntable = file.Read(CAKE.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt")
-		print(keydspawntable)
 		CAKE.SpawnPoints = glon.decode(keydspawntable)
-		PrintTable(CAKE.SpawnPoints)
 		
 	end
 	
+end
+
+local function SpawnpointHook( ply )
+	CAKE.SpawnPointHandle( ply )
+end
+hook.Add( "PlayerSpawn", "TiramisuSpawnpointHook", SpawnpointHook )
+
+function PLUGIN.Init()
 end

@@ -192,7 +192,7 @@ function CAKE.SetActiveTab( name )
 	CAKE.MenuOpen = true
 end
 
-function CreatePlayerMenu()
+function CreatePlayerMenu( um )
 	
 		CAKE.MenuOpen = true
 		TabPanel = vgui.Create("DFrame");
@@ -337,7 +337,7 @@ function CreatePlayerMenu()
 end
 usermessage.Hook("openplayermenu", CreatePlayerMenu);
 
-function ClosePlayerMenu()
+function ClosePlayerMenu( um )
 	if TabPanel then
 		if VitalsMenu then
 			VitalsMenu:Remove();
