@@ -30,7 +30,7 @@ function EditGear()
 	local itemlist
 	
 	EditPanel = vgui.Create( "DFrame" ) -- Creates the frame itself
-	EditPanel:SetPos( ScrW() - 210,50 ) -- Position on the players screen
+	EditPanel:SetPos( ScrW() - 310,50 ) -- Position on the players screen
 	EditPanel:SetSize( 300, 300 ) -- Size of the frame
 	EditPanel:SetTitle( "Edit your gear" ) -- Title of the frame
 	EditPanel:SetVisible( true )
@@ -231,10 +231,6 @@ function EditGear()
 		RunConsoleCommand( "rp_editgear", bone, "none", "0,0,0" )
 	end
 	AngList:AddItem( resetbutton )
-	
-	local setbutton = vgui.Create( "DButton" )
-	setbutton:SetText( "Set Angles" )
-	AngList:AddItem( setbutton )
 
 	PropertySheet:AddSheet( "Angles", AngList, "gui/silkicons/application_view_detail", false, false, "Edit gear's angles");
 
@@ -281,10 +277,6 @@ function EditGear()
 		RunConsoleCommand( "rp_editgear", bone, "none", "none", "1,1,1" )
 	end
 	ScaleList:AddItem( resetbutton )
-	
-	local setbutton = vgui.Create( "DButton" )
-	setbutton:SetText( "Set Coordinates" )
-	ScaleList:AddItem( setbutton )
 
 	PropertySheet:AddSheet( "Scale", ScaleList, "gui/silkicons/magnifier", false, false, "Edit gear's scale");
 	

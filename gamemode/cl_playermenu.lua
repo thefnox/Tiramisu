@@ -2,7 +2,7 @@ CurrencyTable = {}
 CAKE.MenuTabs = {}
 CAKE.ActiveTab = nil
 CAKE.MenuOpen = false
-CAKE.MenuFont = "Base 02"
+CAKE.MenuFont = "Benegraphic"
 
 surface.CreateFont( CAKE.MenuFont, 48, 800, true, false, "BaseTitle" )
 surface.CreateFont( CAKE.MenuFont, 32, 800, true, false, "BaseOptions" )

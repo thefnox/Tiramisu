@@ -16,7 +16,7 @@ GM.Name = "Tiramisu";
 CAKE = {  };
 CAKE.Running = false;
 CAKE.Loaded = false;
-CAKE.Skin = "void"
+CAKE.Skin = "default"
 
 CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 0, true, true )
 CAKE.RenderBody = CreateClientConVar( "rp_renderbody", 1, true, true )
@@ -87,32 +87,8 @@ local function AddToChat( um )
 	if aChat and aChat.AddChatLine then
 		aChat.AddChatLine( "<color=135,209,255,255><font=" .. font .. ">" .. string .. "</font></color>" )
 	end
-	--chat.AddText(string)
 end
 usermessage.Hook( "tiramisuaddtochat", AddToChat )
-
-/*
-
-local function vectortocolor( vector, alpha )
-	local breakablevector = string.Explode( " ", tostring( vector ) )
-	local red = tonumber( breakablevector[1] )
-	local blue = tonumber( breakablevector[2] )
-	local green = tonumber( breakablevector[3] )
-	return Color( red, blue, green, alpha );
-end
-
-local function message_AddOOCline( um )
-	local text = um:ReadString()
-	local playername = um:ReadString()
-	local breakablevector = string.Explode( " ", tostring( um:ReadVector() ) )
-	local red = tonumber( breakablevector[1] )
-	local blue = tonumber( breakablevector[2] )
-	local green = tonumber( breakablevector[3] )
-	local color = Color( red, blue, green, um:ReadFloat() )
-	chat.AddText( Color(255,255,255,255), "[OOC]", color, playername, Color(255,255,255,255), " :", Color(255,255,255,255), text )
-	--chat.AddText( text )
-end
-usermessage.Hook( "AddOOCLine", message_AddOOCline);*/
 
 function ConfirmCharRemove( um )
 	local name = um:ReadString()
