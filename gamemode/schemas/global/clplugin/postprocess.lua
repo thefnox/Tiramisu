@@ -55,7 +55,7 @@ local function DrawWhiteScreen()
 				end
 			end
 		else
-			if CAKE.MenuOpen and LocalPlayer():GetNWInt("unconciousmode", 0 ) == 0 then
+			if CAKE.MenuOpen and CAKE.ActiveTab != "Character Editor" and LocalPlayer():GetNWInt("unconciousmode", 0 ) == 0 then
 				local matWhite = CreateMaterial( "white", "UnlitGeneric", {
 					[ "$basetexture" ] = "lights/white"
 				} )
@@ -87,9 +87,11 @@ local function DrawWhiteScreen()
 				if ValidEntity( CAKE.ViewRagdoll ) then
 					CAKE.ViewRagdoll:DrawModel()
 					CAKE.ViewRagdoll:DrawShadow()
-					for k, v in pairs (CAKE.ViewRagdoll.Clothing) do
-						v:DrawModel()
-						v:DrawShadow()
+					if CAKE.ViewRagdoll.Clothing then
+						for k, v in pairs (CAKE.ViewRagdoll.Clothing) do
+							v:DrawModel()
+							v:DrawShadow()
+						end
 					end
 				end
 			end
@@ -97,3 +99,24 @@ local function DrawWhiteScreen()
 	end
 end
 hook.Add( "PostDrawOpaqueRenderables", "DrawWhiteScreen", DrawWhiteScreen )
+
+hook.Add( "RenderScreenspaceEffects", "Tiramisu: Turn Off PostProcess", function()
+	
+	if CAKE.MenuOpen then
+		local tab = {}
+		tab[ "$pp_colour_addr" ] = 0
+		tab[ "$pp_colour_addg" ] = 0
+		tab[ "$pp_colour_addb" ] = 0
+		tab[ "$pp_colour_brightness" ] = 0
+		tab[ "$pp_colour_contrast" ] = 1
+		tab[ "$pp_colour_colour" ] = 1
+		tab[ "$pp_colour_mulr" ] = 0
+		tab[ "$pp_colour_mulg" ] = 0
+		tab[ "$pp_colour_mulb" ] = 0
+		DrawColorModify( tab )
+		DrawBloom( 0, 0, 5, 5, 14, 1, 1, 1, 1 )
+		DrawSharpen( 0, 1)
+		DrawMotionBlur( 0.4, 0, 0 )
+	end
+ 
+end)

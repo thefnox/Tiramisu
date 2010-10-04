@@ -8,8 +8,6 @@ function CAKE.LoadCurrency( schema, filename )
 	
 	include( path );
 	
-	PrintTable( CURRENCY )
-	
 	CAKE.CurrencyData[ CURRENCY.Name ] = CURRENCY;
 	
 end

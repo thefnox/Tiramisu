@@ -50,7 +50,7 @@ include( "doors.lua" ); -- Doors
 include( "sql_main.lua" ); --MySQL handling
 include( "resources.lua" ) -- Automatic resource handling
 include( "boneanimlib/boneanimlib.lua" )
-include( "sh_boneanimlib.lua" )
+include( "boneanimlib/sh_boneanimlib.lua" )
 
 CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ); -- Load the schema and plugins, this is NOT initializing.
 
@@ -88,7 +88,9 @@ end
 
 -- Player Initial Spawn
 function GM:PlayerInitialSpawn( ply )
-
+	
+	CAKE.SpawnPointHandle(ply)
+	
 	-- Call the hook before we start initializing the player
 	CAKE.CallHook( "Player_Preload", ply );
 	
@@ -180,9 +182,24 @@ function GM:PlayerLoadout(ply)
 end
 
 function GM:PlayerSpawn( ply )
-	
+
 	if( !ply:IsCharLoaded() ) then
 		return; -- Player data isn't loaded. This is an initial spawn.
+	end
+
+	CAKE.SpawnPointHandle(ply)
+
+	umsg.Start( "closeplayermenu", ply );
+	umsg.End( )
+	
+	if( ply:IsUserGroup("admin") )	then
+		--ply:SetUserGroup( "superadmin" );
+		CAKE.SetPlayerField( ply, "adrank", "Administrator" )
+	end
+	
+	if( ply:IsUserGroup("superadmin") ) then
+		--ply:SetUserGroup( "admin" );
+		CAKE.SetPlayerField( ply, "adrank", "Super Administrator" )
 	end
 	
 	CAKE.SavePlayerData( ply )
@@ -219,8 +236,7 @@ function GM:PlayerSpawn( ply )
 	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] );
 	CAKE.CallHook( "PlayerSpawn", ply )
 	CAKE.CallTeamHook( "PlayerSpawn", ply ); -- Change player speeds perhaps?
-	umsg.Start( "closeplayermenu", ply );
-	umsg.End( )
+	
 	
 end
 

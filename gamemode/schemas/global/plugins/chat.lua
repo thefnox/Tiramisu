@@ -300,7 +300,7 @@ function Yell( ply, text )
 	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "YellRange" ] )
 	for k, v in pairs( players ) do
 		if v:IsPlayer() then
-			CAKE.SendChat( v, "[Y]" .. ply:Nick() .. ": " .. text, "Trebuchet24" )
+			CAKE.SendChat( v, "[YELL]" .. ply:Nick() .. ": " .. text, "Trebuchet24" )
 		end
 	end
 	return "";
@@ -310,7 +310,7 @@ function Whisper( ply, text )
 	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "WhisperRange" ] )
 	for k, v in pairs( players ) do
 		if v:IsPlayer() then
-			CAKE.SendChat( v, "[W]" ..  ply:Nick() .. ": " .. text, "DefaultSmallDropShadow" )
+			CAKE.SendChat( v, "[WHISPER]" ..  ply:Nick() .. ": " .. text, "DefaultSmallDropShadow" )
 		end
 	end
 	return "";

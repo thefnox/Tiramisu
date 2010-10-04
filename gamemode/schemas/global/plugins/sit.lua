@@ -4,8 +4,14 @@ PLUGIN.Description = "Handles the process of putting your ass on top of somethin
 
 CAKE.Chairs = {
 	[ "models/props_c17/furniturecouch001a.mdl" ] = {
-			{ ["pos"] = Vector( 0, 0, 0 ), ["angles"] = Vector( 0, 0, 0 ) },
-			{ ["pos"] = Vector( 0, 0, 0 ), ["angles"] = Vector( 0, 0, 0 ) }
+			{ ["pos"] = Vector( 23, 14, -18 ), ["angles"] = Angle( 0, 0, 0 ) },
+			{ ["pos"] = Vector( 23, -14, -18 ), ["angles"] = Angle( 0, 0, 0 ) }
+		},
+	[ "models/props_c17/furniturechair001a.mdl" ] = {
+			{ ["pos"] = Vector(18, 0, -20 ), ["angles"] = Angle( 0.000, 0.000, 0) }
+		},
+	[ "models/props_c17/chair_stool01a.mdl" ] = {
+			{ ["pos"] = Vector(18.0000, 0.0000, 17.0000 ), ["angles"] = Angle( 0.000, 0.000, 0.000) }
 		}
 }
 
@@ -49,6 +55,9 @@ function CAKE.IsChair( ent )
 	return false
 end
 
+local newpos
+local newang
+
 local function ccSitDown( ply, cmd, args )
 	local trace = ply:GetEyeTrace( )
 	local ent = trace.Entity
@@ -73,12 +82,19 @@ local function ccSitDown( ply, cmd, args )
 			if !ent.PeopleSitting[ i ] then
 				ent.PeopleSitting[ i ] = ply
 				ply.SitSpot = i
+				print( tostring( i ))
 				hassit = true
-				ply:SetNWBool( "sittingchair", true )
-				ply:SetParent( ent )
 				ply:Freeze( true )
+				ply:SetParent( ent )
 				ply:SetLocalPos(CAKE.Chairs[ ent:GetModel() ][i]["pos"])
 				ply:SetLocalAngles(CAKE.Chairs[ ent:GetModel() ][i]["angles"])
+				ply:SnapEyeAngles( ply:GetLocalAngles() )
+				print( tostring( ply:GetPos() ) .. tostring( ply:GetAngles() ) )
+				ply:SetNWBool( "sittingchair", true )
+				break
+				--ply.Clothing[1]:SetParent( ent )
+				--ply.Clothing[1]:SetLocalPos(CAKE.Chairs[ ent:GetModel() ][i]["pos"])
+				--ply.Clothing[1]:SetLocalAngles(CAKE.Chairs[ ent:GetModel() ][i]["angles"])
 			end
 		end
 		if hassit then
@@ -90,6 +106,7 @@ local function ccSitDown( ply, cmd, args )
 		if ply:OnGround() then
 			ply:SetNWBool( "sittingground", true )
 			ply:Freeze( true )
+			--ply.Clothing[1]:SetParent( ply )
 			CAKE.SendChat( ply, "Use !stand to get back on your feet." )
 		end
 	end
@@ -98,6 +115,7 @@ end
 concommand.Add( "rp_sit", ccSitDown )
 
 local function ccStandUp( ply, cmd, args )
+	ply:Freeze( false )
 	if ply:GetNWBool( "sittingchair", false ) then
 		ply:GetParent().PeopleSitting[ ply.SitSpot ] = nil
 		ply:SetNWBool( "sittingchair", false )
@@ -105,8 +123,7 @@ local function ccStandUp( ply, cmd, args )
 		ply:SetNWBool( "sittingground", false )
 	end
 	ply:SetParent()
-	ply:SetPos( ply:GetPos() + Vector( 0, 0, 10 )  )
-	ply:Freeze( false )
+	ply:SetPos( ply:GetPos() + Vector( 0, 0, 30 )  )
 end
 concommand.Add( "rp_stand", ccStandUp )
 

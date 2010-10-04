@@ -157,7 +157,7 @@ function ccFinishCreate( ply, cmd, args )
 		
 		ply:ConCommand( "fadein" );
 		
-		datastream.StreamToClients( ply, "EnterGearEdit", {} )
+		--datastream.StreamToClients( ply, "EnterGearEdit", {} )
 		
 		CAKE.CallHook( "CharacterCreation_Finished", ply, ply:GetNWString( "uid" ) );
 		

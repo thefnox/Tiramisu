@@ -33,7 +33,6 @@ function GM:PlayerGiveSWEP( ply )
 	
 end
 
-CAKE.MenuOpen = false
 -- This is the F1 menu
 function GM:ShowHelp( ply )
 
@@ -49,14 +48,8 @@ function GM:ShowHelp( ply )
 		
 	end
 	
-	if CAKE.MenuOpen then
-		umsg.Start( "closeplayermenu", ply );
-		umsg.End( )
-	else
-		umsg.Start( "openplayermenu", ply );
-		umsg.End( )
-	end
-	CAKE.MenuOpen = !CAKE.MenuOpen
+	umsg.Start( "openplayermenu", ply );
+	umsg.End( )
 	
 end
 
@@ -511,3 +504,48 @@ local function ccArrest( ply, cmd, args )
 	
 end
 concommand.Add( "rp_arrest", ccArrest )
+
+function ccRoll( ply, cmd, args )
+
+	local Min = args[1];
+	local Max = args[2];
+
+		if( tonumber(args[1]) == nil and tonumber(args[2]) == nil ) then
+	
+			Min = 1;
+			Max = 100;
+		
+		end
+
+		if( tonumber(args[2]) == nil and tonumber(args[1]) != nil) then
+
+			Min = 1;
+			Max = args[1];
+		
+		end
+	
+		if( tonumber(args[1]) != nil and tonumber(args[2]) != nil) then
+		
+			if(tonumber(args[1]) > tonumber(args[2]) )  then
+
+			Min = args[2];
+			Max = args[1];
+		
+			end
+		
+		end
+	
+	local roll = math.random( Min , Max );
+	
+		for k, v in pairs( player.GetAll( ) ) do
+		
+			if( v:EyePos():Distance( ply:EyePos() ) <= 300 ) then
+			
+				CAKE.SendChat( v, "[Roll] " .. ply:Nick() .. " rolled a " .. roll .. " out of " .. Min .. "-" .. Max .. ".");
+			
+			end
+		
+		end
+	
+end
+concommand.Add("rp_roll", ccRoll);

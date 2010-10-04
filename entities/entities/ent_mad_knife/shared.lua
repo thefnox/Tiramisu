@@ -1,6 +1,0 @@
-ENT.Type 			= "anim"
-ENT.PrintName		= "Knife"
-ENT.Author			= "Worshipper"
-ENT.Contact			= "Josephcadieux@hotmail.com"
-ENT.Purpose			= ""
-ENT.Instructions		= ""

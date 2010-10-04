@@ -27,7 +27,7 @@ end
 function CAKE.SendConsole( ply, msg )
 
 	if ply:IsPlayer() then
-		ply:PrintMessage( 2, msg ); -- At least I THINK it is 2..
+		ply:PrintMessage( 2, msg );
 	else
 		print( msg )
 	end
@@ -102,6 +102,8 @@ end
 
 function CAKE.UnconciousMode( ply )
 	
+	ply:GodEnable()
+	
 	if ValidEntity( ply.unconciousrag ) then
 		ply.unconciousrag:Remove()
 		ply.unconciousrag = nil
@@ -163,10 +165,9 @@ function CAKE.UnconciousMode( ply )
 		ply:SetViewEntity( ply );
 		ply:UnLock()
 		CAKE.RestoreClothing( ply )
+		ply:GodDisable()
 		datastream.StreamToClients( ply, "RecieveUnconciousRagdoll", { ["ragdoll"] = false } )
-		rag:Remove()
-	
-	end)
+		rag:Remove()end)
 	
 end
 
@@ -177,7 +178,6 @@ function ccGetCharInfo( ply, cmd, args )
 	local gender = CAKE.GetCharField( target, "gender" )
 	local description = CAKE.GetCharField( target, "description" )
 	local age = CAKE.GetCharField( target, "age" )
-	local alignment = CAKE.GetCharField( target, "alignment" )
 	umsg.Start("GetPlayerInfo", ply)
 		umsg.Entity( target )
 		umsg.String( birthplace )
@@ -186,15 +186,18 @@ function ccGetCharInfo( ply, cmd, args )
 		umsg.String( age )
 		umsg.String( alignment )
 	umsg.End()
+	
 end
 concommand.Add( "rp_getcharinfo", ccGetCharInfo )
 
 local meta = FindMetaTable( "Player" );
 
 function meta:ConCommand( cmd ) --Rewriting this due to Garry fucking it up.
-		umsg.Start( "runconcommand", self )
-			umsg.String( cmd )
-		umsg.End()
+	umsg.Start( "runconcommand", self )
+		umsg.String( cmd ) 
+		--Yeah it just sends the command as a string which is then ran clientside. 2 usermessages sent, all because of
+		--A REALLY REALLY not well thought fix.
+	umsg.End()
 end
 
 function meta:MaxHealth( )
@@ -263,17 +266,6 @@ function meta:GiveItem( class )
 			CAKE.HandleGear( self, class )
 			CAKE.SaveGear( self )
 		end 
-	end
-	
-	if string.match( class, "zipties" ) then
-		if !table.HasValue( CAKE.GetCharField( self, "inventory" ), class ) then
-			if !table.HasValue( CAKE.GetCharField( self, "weapons" ), class) then
-				local weapons = CAKE.GetCharField( self, "weapons" )
-				table.insert( weapons, class )
-				CAKE.SetCharField( self, "weapons", weapons )
-			end
-			self:Give( class )
-		end
 	end
 	
 	self:RefreshInventory( );

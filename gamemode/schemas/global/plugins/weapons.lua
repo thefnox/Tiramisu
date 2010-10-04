@@ -131,22 +131,19 @@ local function WeaponsLoadout( ply )
 		local group = CAKE.GetCharField( ply, "group" )
 		local rank = CAKE.GetCharField( ply, "grouprank" )
 		
-		if CAKE.GetGroupFlag( group, "loadouts" ) then
-			for k, v in pairs( CAKE.GetRankPermission( group, rank, "loadout" ) ) do
-				if !ply:HasItem( v ) then
-					ply:GiveItem( v )
-					if string.match( v, "weapon" ) then
-						ply:Give( v )
-					end
-				end
-				if string.match( v, "zipties" ) then
-					ply:Give( v )
+		timer.Simple( 1, function()
+			if CAKE.GetGroupFlag( group, "loadouts" ) then
+				for k, v in pairs( CAKE.GetRankPermission( group, rank, "loadout" ) ) do
 					if !ply:HasItem( v ) then
 						ply:GiveItem( v )
+						if string.match( v, "weapon" ) then
+							ply:Give( v )
+						end
+						CAKE.HandleGear( ply, v )
 					end
 				end
 			end
-		end
+		end)
 	end
 
 end

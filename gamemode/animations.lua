@@ -81,6 +81,7 @@ Anims.Male[ "default" ] = {
         [ "land" ] = "&switch:models/Gustavio/barneyanimtree.mdl;ACT_LAND",
         [ "fly" ] = "ACT_GLIDE",
         [ "sit" ] = "ACT_BUSY_SIT_CHAIR",
+		[ "swim" ] = "ACT_GLIDE",
         [ "sitground" ] = "ACT_BUSY_SIT_GROUND",
         [ "flinch" ] = {
                 ["explosion"] = "ACT_GESTURE_FLINCH_BLAST"
@@ -217,13 +218,11 @@ Anims.Male[ "melee" ] = {
                 [ "aimwalk" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_WALK_CROUCH"
                 },
         [ "aim" ] = {
-                --[ "idle" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_IDLE_ANGRY_MELEE",
-				["idle"] = "&lua:boxstance;",
+                [ "idle" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_IDLE_ANGRY_MELEE",
                 [ "walk" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_WALK_ANGRY",
                 [ "run" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_RUN"
         },
-		--["fire"] = "ACT_MELEE_ATTACK_SWING_GESTURE"
-		["fire"] = "&lua:boxgesturer;"
+		["fire"] = "ACT_MELEE_ATTACK_SWING_GESTURE"
 }
 
 Anims.Male[ "grenade" ] = {
@@ -275,6 +274,7 @@ Anims.Female[ "default" ] = {
         [ "land" ] = "ACT_LAND",
         [ "fly" ] = "ACT_GLIDE",
         [ "sit" ] = "ACT_BUSY_SIT_CHAIR",
+		[ "swim" ] = "ACT_GLIDE",
         [ "sitground" ] = "ACT_BUSY_SIT_GROUND",
         [ "flinch" ] = {
                 ["explosion"] = "ACT_GESTURE_FLINCH_BLAST"
@@ -481,7 +481,6 @@ local function HandleLuaAnimation( ply, animation )
 		if !ply.InLuaSequence then
 			ply.InLuaSequence = true
 			ply:SetLuaAnimation( animation )
-			print( animation )
 		end
 	end
 	
@@ -521,16 +520,17 @@ local function HandleSequence( ply, seq ) --Internal function to handle differen
 			return tonumber( exp[2] )
 		end
 	else
-		
-		if ( ply:GetModel() != "models/Gustavio/femaleanimtree.mdl" or ply:GetModel() != "models/Gustavio/maleanimtree.mdl" ) then
-			if !ply:GetNWBool( "specialmodel", false ) then
-				if( ply:GetGender() == "Female" ) then
-					ply:SetModel( "models/Gustavio/femaleanimtree.mdl" )
+		if !ply:GetNWBool( "specialmodel", false ) then
+			if ( ply:GetModel() != "models/Gustavio/femaleanimtree.mdl" or ply:GetModel() != "models/Gustavio/maleanimtree.mdl" ) then
+				if !ply:GetNWBool( "specialmodel", false ) then
+					if( ply:GetGender() == "Female" ) then
+						ply:SetModel( "models/Gustavio/femaleanimtree.mdl" )
+					else
+						ply:SetModel( "models/Gustavio/maleanimtree.mdl" )
+					end
 				else
-					ply:SetModel( "models/Gustavio/maleanimtree.mdl" )
+					ply:SetModel( "models/Gustavio/maleanimtree.mdl" );
 				end
-			else
-				ply:SetModel( "models/Gustavio/maleanimtree.mdl" );
 			end
 		end
 	end
@@ -710,7 +710,7 @@ end
 function GM:HandlePlayerSwimming( ply ) --Handles swimming.
 
         if ply:WaterLevel() >= 2 then
-				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "fly" ] )
+				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "swim" ] )
 				return true
 		end
         
@@ -801,17 +801,17 @@ function GM:CalcMainActivity( ply, velocity )
             local len2d = velocity:Length2D()
 				
 			if ply:GetNWBool( "aiming", false ) then
-				if len2d > 180 then
+				if len2d > 130 then
 					ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
-				elseif len2d > 0.5 then
+				elseif len2d > 0.1 then
 					ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "aim" ][ "walk" ] )
 				else
 					ply.CalcIdeal  = HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "aim" ][ "idle" ] )
 				end
 			else
-				if len2d > 180 then
+				if len2d > 130 then
 					ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
-				elseif len2d > 0.5 then
+				elseif len2d > 0.1 then
 					ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "walk" ] )
 				else
 					ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "idle" ] )
