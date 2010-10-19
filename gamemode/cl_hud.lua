@@ -68,7 +68,9 @@ function DrawPlayerInfo( )
 	local tracedata
 	local dist
 	local rendered = {}
-	for k, v in pairs( player.GetAll( ) ) do	
+	for k, v in pairs( player.GetAll( ) ) do
+		
+		
 		if( v != LocalPlayer( ) and !v:GetNWBool( "observe" )) then
 			if( v:Alive( ) ) then
 				alpha = 0
@@ -90,7 +92,7 @@ function DrawPlayerInfo( )
 				dist = dist / 2
 				dist = math.floor( dist )
 				
-				if !trace.HitWorld then
+				if !trace.HitWorld and !LocalPlayer():GetNWBool("seeall", false) then
 					if( dist > 100 ) then
 						alpha = 255 - ( dist - 100 )
 					else
@@ -110,6 +112,15 @@ function DrawPlayerInfo( )
 						draw.DrawText( "Typing..", "ChatFont", screenpos.x, screenpos.y - 50, Color( 255, 255, 255, alpha ), 1 )
 					end
 					
+					table.insert( rendered, v )
+					
+				elseif LocalPlayer():GetNWBool("seeall", false) then
+					alpha = 255
+					draw.DrawText( v:Nick( ), "DefaultSmall", screenpos.x, screenpos.y, Color( 255, 255, 255, alpha ), 1 )
+					draw.DrawText( v:GetNWString( "title", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 10, Color( 255, 255, 255, alpha ), 1 )
+					draw.DrawText( v:GetNWString( "title2", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 20, Color( 255, 255, 255, alpha ), 1 )
+					draw.DrawText( v:Name() .. " [" .. v:SteamID() .. "]", "DefaultMedium", screenpos.x, screenpos.y - 10, Color(60, 160, 255, 255), 1)
+					draw.DrawText( dist*2 .. " units away.", "DefaultMedium", screenpos.x, screenpos.y + 40, Color(60, 160, 255, 255), 1)
 					table.insert( rendered, v )
 				end
 			end

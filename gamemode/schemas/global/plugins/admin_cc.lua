@@ -272,6 +272,14 @@ function Admin_SetConVar( ply, cmd, args )
 	
 end
 
+function Admin_SetOOCDelay( ply, cmd, args )
+
+	CAKE.ConVars[ args[ 1 ] ] = tostring(args[ 1 ]);
+	CAKE.SendChat( ply, "OOC Delay set to " .. tostring(args[ 1 ]) );
+	CAKE.CallHook( "SetConVar", ply, "OOCDelay", args[ 1 ] );
+	
+end
+
 function Admin_ListVars( ply, cmd, args )
 
 	CAKE.SendChat( ply, "---List of CakeScript ConVars---" );
@@ -342,10 +350,20 @@ end
 
 function Admin_SetRank( ply, cmd, args)
 
-	if #args != 2 then CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin setrank \"name\" \"rank\" )") return end
+	if #args != 2 then
+		if ValidEntity( ply ) and ply:IsPlayer() then
+			CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin setrank \"name\" \"rank\" )")
+		end
+		return
+	end
 	
 	args[1] = CAKE.FindPlayer(args[1])
-	if !args[1] then CAKE.SendChat(ply, "Target not found!") return end
+	if !args[1] then
+		if ValidEntity( ply ) and ply:IsPlayer() then
+			CAKE.SendChat(ply, "Target not found!")
+		end
+		return
+	end
 	
 	if !CAKE.AdminRanks[args[2]] then CAKE.SendChat(ply, "Invalid rank!") else
 		CAKE.SetPlayerField( args[1], "adrank", args[2])
@@ -400,7 +418,7 @@ end
 function Admin_SetMoney( ply, cmd, args )
 
 	local target = CAKE.FindPlayer(args[1])
-	CAKE.SetCharField( target, "money", args[2] )
+	CAKE.SetCharField( target, "money", tonumber( args[2] ) )
 		
 end
 
@@ -472,6 +490,87 @@ function Admin_ListItems( ply, cmd, args )
 
 end
 	
+function Admin_SeeAll( ply, cmd, args )
+
+		if(ply:GetNWBool("seeall") == false or ply:GetNWBool("seeall") == nil) then
+		
+		ply:SetNWBool("seeall", true);
+		CAKE.SendChat( ply , "Now showing all players.")
+		
+		else
+		
+		ply:SetNWBool("seeall", false);
+		CAKE.SendChat( ply , "No longer showing all players.")
+		
+		end
+		
+end
+
+
+function Admin_Bring( ply, cmd, args )
+	
+		local target = CAKE.FindPlayer( args[1] )
+		
+		if( target != nil and target:IsValid() and target:IsPlayer() ) then
+		
+			target:SetPos( ply:CalcDrop() + Vector( 0, 0, 6 ) );			
+			CAKE.SendChat( ply, "Bringing " .. target:Nick() .. "." );
+			CAKE.SendChat( target, "You are being brought to " .. ply:Nick() .. "." );
+			
+		else
+		
+			CAKE.SendChat( ply , "Cannot find target!");
+			
+		end
+	
+end
+
+
+function Admin_GoTo( ply, cmd, args )
+	
+		local target = CAKE.FindPlayer( args[1] )
+		
+		if( target != nil and target:IsValid() and target:IsPlayer() ) then
+		
+			ply:SetPos( target:CalcDrop() + Vector( 0, 0, 6 ) );
+			CAKE.SendChat( ply, "Teleporting to " .. target:Nick() .. ".");
+			CAKE.SendChat( target, ply:Nick() .. " is teleporting to you." );
+			
+		else
+		
+			CAKE.SendChat( ply , "Cannot find target!");
+			
+		end
+	
+end
+	
+
+function Admin_Slay( ply, cmd, args )
+
+		local target = CAKE.FindPlayer( args[1] )
+		
+		if( target != nil and target:IsValid( ) and target:IsPlayer( ) ) then -- Target found, is player
+		
+			target:Kill();
+			CAKE.SendChat( ply:Nick() .. "has slayed you. =)");
+			CAKE.SendChat( ply, "You have slayed " .. target:Nick() .. ".");
+			
+		elseif( pl == nil) then -- Target was not found
+		
+			CAKE.SendChat( ply , "Cannot find target!");
+			
+			return "";
+			
+		elseif( pl == "err") then -- More than one player of the same name
+		
+			CAKE.SendChat( ply , "Multiple targets selected!");
+			
+			return "";
+			
+		end
+		
+end
+	
 -- Let's make some ADMIN COMMANDS!
 function PLUGIN.Init( )
 
@@ -484,6 +583,7 @@ function PLUGIN.Init( )
 	
 	CAKE.AdminCommand( "help", Admin_Help, "List of all admin commands", true, true, 1 );
 	CAKE.AdminCommand( "listitems", Admin_ListItems, "List of all items", true, true, 1 );
+	CAKE.AdminCommand( "oocdelay", Admin_SetOOCDelay, "Sets the OOC delay", true, true, 1 );
 	CAKE.AdminCommand( "observe", Admin_Observe, "Enter observe mode", true, true, 1 );
 	CAKE.AdminCommand( "noclip", Admin_Noclip, "Enter admin noclip mode", true, true, 1 );
 	CAKE.AdminCommand( "kick", Admin_Kick, "Kick someone on the server", true, true, 2 );
@@ -502,6 +602,10 @@ function PLUGIN.Init( )
 	CAKE.AdminCommand( "setmoney", Admin_SetMoney, "Set the money of another player", true, true, 4 )
 	CAKE.AdminCommand( "addspawn", Admin_AddSpawn, "Add a new spawn point.", true, true, 4 )
 	CAKE.AdminCommand( "addstash", Admin_AddStash, "Add a new stash point.", true, true, 4 )
+	CAKE.AdminCommand( "seeall", Admin_SeeAll, "Toggles see-all mode", true, true, 3 );
+	CAKE.AdminCommand( "bring", Admin_Bring, "Brings a player to you", true, true, 3);
+	CAKE.AdminCommand( "goto", Admin_GoTo, "Takes you to a player", true, true, 3 );
+	CAKE.AdminCommand( "slay", Admin_Slay, "Kills a player", true, true, 3 );
 	
 end
 

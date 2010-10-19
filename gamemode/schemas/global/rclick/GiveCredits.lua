@@ -23,7 +23,7 @@ function RCLICK.Click(target,ply)
 		Credits:SetWide(150);
 		Credits:SetText(CurrencyTable.abr .." to Give");
 		Credits:SetMin( 0 );
-		Credits:SetMax( tonumber(LocalPlayer():GetNWString("money")) );
+		Credits:SetMax( tonumber(LocalPlayer():GetNWInt("money")) );
 		Credits:SetDecimals( 0 );
 						
 		local Give = vgui.Create( "DButton", CreditPanel );
@@ -31,7 +31,7 @@ function RCLICK.Click(target,ply)
 		Give:SetPos( 25, 125 );
 		Give:SetSize( 150, 25 );
 		Give.DoClick = function()
-			LocalPlayer():ConCommand("rp_givemoney " .. target:EntIndex() .. " " .. Credits:GetValue());
+			LocalPlayer():ConCommand("rp_givemoney " .. target:EntIndex() .. " " .. math.floor( Credits:GetValue() ));
 			CreditPanel:Remove();
 			CreditPanel = nil;
 			end

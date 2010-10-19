@@ -199,7 +199,9 @@ function CAKE.ResendCharData( ply ) -- Network all of the player's character dat
 		if( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ] == nil ) then
 			return;
 		end
-	
+		
+		--What the hell? Who coded this?
+		/*
 		for fieldname, data in pairs( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ] ) do
 		
 			if( type( data ) != "table" ) then
@@ -209,7 +211,12 @@ function CAKE.ResendCharData( ply ) -- Network all of the player's character dat
 			end
 
 		end
-	
+		*/
+		--When there's just a small set of variables we gotta send as NWVars
+		ply:SetNWString( "name", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "name" ] or "" )
+		ply:SetNWString( "title", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "title" ] or "" )
+		ply:SetNWString( "title2", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "title2" ] or "" )
+		ply:SetNWInt( "money", tonumber( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "money" ] ) or 0 )
 end
 
 function CAKE.SetPlayerField( ply, fieldname, data )
@@ -279,8 +286,10 @@ function CAKE.GetCharField( ply, fieldname )
 end
 
 function CAKE.SavePlayerData( ply )
+	if ValidEntity( ply ) then
 		local keys = glon.encode(CAKE.PlayerData[CAKE.FormatSteamID( ply:SteamID() )]);
 		file.Write( CAKE.Name .. "/PlayerData/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatSteamID( ply:SteamID() ) .. ".txt" , keys);
+	end
 end
 
 function CAKE.RemoveCharacter( ply, id )

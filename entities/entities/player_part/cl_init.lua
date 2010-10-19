@@ -1,5 +1,6 @@
 include('shared.lua')
 
+local lolpos
 
 function ENT:Draw()
 
@@ -22,6 +23,13 @@ function ENT:Draw()
 		self.Entity:SetEyeTarget( self.Entity:GetParent():GetEyeTrace().HitPos )
 	end
 	
+	--Oh my is this lag compensation?
+	if !lolpos then
+		lolpos = self.Entity:GetParent():GetPos()
+	end
+	lolpos = LerpVector( 0.1, lolpos, self.Entity:GetParent():GetPos() )
+	self.Entity:SetPos( lolpos )
+	self.Entity:SetAngles( self.Entity:GetParent():GetAngles() )
 	self.Entity:RemoveEffects(EF_ITEM_BLINK)
 	self.Entity:DrawModel()
 	self.Entity:DrawShadow( true )

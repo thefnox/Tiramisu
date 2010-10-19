@@ -15,11 +15,11 @@ CAKE.AdminRanks = {  }
 
 function CAKE.AnnounceAction( ply, action )
 
-	local s = "[ ADMIN ] " .. ply:Nick( ) .. " " .. action;
+	local s = "[ ADMIN ] " .. ply:Name( ) .. " " .. action;
 
 	for k, v in pairs( player.GetAll( ) ) do
 
-		v:ChatPrint( s );
+		CAKE.SendChat( v, s )
 		
 	end
 

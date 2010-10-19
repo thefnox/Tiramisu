@@ -7,7 +7,13 @@ function ENT:Initialize()
 	self:SetSolid(SOLID_NONE)
 	self:SetNotSolid(true)
 	self:SetMoveType(MOVETYPE_NONE)
+	self:SetCollisionGroup( COLLISION_GROUP_PUSHAWAY )
 	self:SetCollisionBounds( Vector(0, 0, 0), Vector(0, 0, 0) )
+	local phy = self:GetPhysicsObject()
+	if phy:IsValid() then
+		phy:AddGameFlag(PLAYER_HELD)
+	end
+
 end
 
 function ENT:OnTakeDamage()

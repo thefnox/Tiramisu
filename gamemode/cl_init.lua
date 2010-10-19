@@ -19,13 +19,12 @@ CAKE.Loaded = false;
 CAKE.Skin = "default"
 
 CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 0, true, true )
-CAKE.RenderBody = CreateClientConVar( "rp_renderbody", 1, true, true )
+CAKE.RenderBody = CreateClientConVar( "rp_renderbody", 0, true, true )
 CAKE.FirstPersonForward = CreateClientConVar( "rp_firstpersonforward", 0, true, true )
 CAKE.FirstPersonUp = CreateClientConVar( "rp_firstpersonup", 7, true, true )
 CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true )
 CAKE.UseWhiteScreen = CreateClientConVar( "rp_whitescreen", 1, true, true )
-CAKE.UseCalcView = CreateClientConVar( "rp_useview", 1, true, true )
-CAKE.UseCustomChat = CreateClientConVar( "rp_customchat", 1, true, true )
+CAKE.UseCalcView = CreateClientConVar( "rp_useview", 0, true, true )
 CAKE.ViewRagdoll = false
 
 CAKE.Clothing = "none"
@@ -45,13 +44,11 @@ include( "shared.lua" );
 include( "player_shared.lua" );
 include( "cl_hud.lua" );
 include( "cl_binds.lua" );
-include( "cl_skin.lua" );
 include( "cl_charactercreate.lua" );
 include( "cl_playermenu.lua" );
 include( "boneanimlib/cl_boneanimlib.lua" )
 include( "boneanimlib/sh_boneanimlib.lua" )
 include( "animations.lua" )
-include( "achat.lua" )
 
 CAKE.Loaded = true;
 

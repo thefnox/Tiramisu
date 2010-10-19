@@ -5,10 +5,10 @@ function CLPLUGIN.Init()
 	
 end
 
-local camHeight = 60
-local pressedPos = {}
+local pressvec = Vector( 0,0,0 )
 local newpos = Vector( 0, 0, 0 )
-local RotateAngles = Angle(0,0,0)
+local rotateangles = Angle(0,0,0)
+local tracedata = {}
 
 local function RecieveViewRagdoll( handler, id, encoded, decoded )
 	CAKE.ViewRagdoll = decoded.ragdoll
@@ -28,7 +28,7 @@ datastream.Hook( "RecieveUnconciousRagdoll", RecieveUnconciousRagdoll )
 
 local function AlwaysDrawLocalPlayer()
 
-	if CAKE.MenuOpen then
+	if CAKE.MenuOpen or LocalPlayer():GetNWBool( "sittingchair", false ) or LocalPlayer():GetNWBool( "sittingground", false ) then
 		return true
 	end
 	
@@ -52,9 +52,31 @@ hook.Add("ShouldDrawLocalPlayer","AlwaysDrawLocalPlayer", AlwaysDrawLocalPlayer)
 local shutrenderbody = false
 local shutthirdperson = false
 local headpos, headang
+local oripos
+local target
+local trace
 
-timer.Simple( 1, function()
-	local function Thirdperson(ply, pos, angles, fov)
+local function Thirdperson(ply, pos, angles, fov)
+	if ply:GetNWBool( "sittingchair", false ) or ply:GetNWBool( "sittingground", false ) then
+		tracedata.start = pos
+		tracedata.endpos = ply:GetForward()*100
+		tracedata.filter = ply
+		trace = util.TraceLine(tracedata)
+		if trace.HitWorld then
+			newpos = trace.HitPos
+		else
+			newpos = ply:GetForward()*100
+		end
+		
+		newpos = ply:GetForward()*100	
+		target = ply:GetPos()+Vector(0,0,60)
+				
+		newpos:Rotate(rotateangles)
+		pos=target+newpos
+		return GAMEMODE:CalcView(ply, pos , (target-pos):Angle() ,fov)
+		
+	end
+	
 		if !CAKE.MenuOpen then
 			if CAKE.UseCalcView:GetBool() then
 				if( ValidEntity( ply:GetActiveWeapon() ) and ply:GetActiveWeapon():GetDTBool( 1 ) ) then
@@ -84,36 +106,37 @@ timer.Simple( 1, function()
 					end
 					
 					if( ply:GetNWBool( "aiming", false ) ) then
-						local tracedata = {}
-						tracedata.start = pos
-						tracedata.endpos = pos - ( angles:Forward()*50 ) - ( angles:Right()* 25 )
-						tracedata.filter = ply
-						local trace = util.TraceLine(tracedata)
-						if trace.HitWorld then
-							pos = trace.HitPos
-						else
-							pos = pos - ( angles:Forward()*50 ) - ( angles:Right()* 25 )
-						end
-						return GAMEMODE:CalcView(ply, pos , angles ,fov)
+                    tracedata.start = pos
+                    tracedata.endpos = pos - ( angles:Forward()*50 ) - ( angles:Right()* 30 )
+                    tracedata.filter = ply
+                    trace = util.TraceLine(tracedata)
+                    oldpos = newpos
+                    if trace.HitWorld then
+						newpos = LerpVector( 0.5, oldpos, trace.HitPos )
+                    else
+						newpos = LerpVector( 0.5, oldpos, pos - ( angles:Forward()*50 ) - ( angles:Right()* 30 ) )
+                    end
 					
-					else
-				
-						local tracedata = {}
+					return GAMEMODE:CalcView(ply, newpos , angles ,fov)
+					
+				else
 						tracedata.start = pos
 						tracedata.endpos = pos - ( angles:Forward()*100 )
 						tracedata.filter = ply
-						local trace = util.TraceLine(tracedata)
+						oldpos = newpos
+						trace = util.TraceLine(tracedata)
 						if trace.HitWorld then
-							pos = trace.HitPos
+							newpos = LerpVector( 0.5, oldpos, trace.HitPos )
 						else
-							pos = pos - ( angles:Forward()*100 )
+							newpos = LerpVector( 0.5, oldpos, pos - ( angles:Forward()*100 ) )
 						end
 				
-						return GAMEMODE:CalcView(ply, pos , angles ,fov)
+						return GAMEMODE:CalcView(ply, newpos , angles ,fov)
 				
 					end
 					
 				elseif !CAKE.Thirdperson:GetBool() then
+				
 					if CAKE.Headbob:GetBool() and !ValidEntity( CAKE.ViewRagdoll ) then
 						headpos, headang = LocalPlayer():GetBonePosition( LocalPlayer():LookupBone( "ValveBiped.Bip01_Head1" ) )
 					elseif ValidEntity( CAKE.ViewRagdoll ) then
@@ -121,58 +144,53 @@ timer.Simple( 1, function()
 					else
 						headpos, headang = pos, angles
 					end
-					pos = headpos + ( angles:Up()*CAKE.FirstPersonUp:GetFloat() ) + ( angles:Forward()*CAKE.FirstPersonForward:GetFloat() )
-					return GAMEMODE:CalcView(ply, pos , angles ,fov)
+					newpos = headpos + ( angles:Up()*CAKE.FirstPersonUp:GetFloat() ) + ( angles:Forward()*CAKE.FirstPersonForward:GetFloat() )
+					return GAMEMODE:CalcView(ply, newpos , angles ,fov)
 				
 				end
 			end
 		else
-				/*
-					local t = {}
-					local vec = ply:GetForward()*25 + ply:GetUp()*10
-					
-					local camTarget = ply:GetPos()+Vector(0,0,camHeight)
-					
-					vec:Rotate(RotateAngles)
-					t.origin=camTarget+vec
-					t.angles=(camTarget-t.origin):Angle()
-					return t
-				*/
-				local t = {}
-				local vec = ply:GetForward()*100
+				tracedata.start = pos
+				tracedata.endpos = ply:GetForward()*100
+				tracedata.filter = ply
+				trace = util.TraceLine(tracedata)
+				if trace.HitWorld then
+					newpos = trace.HitPos
+				else
+					newpos = ply:GetForward()*100
+				end
 				
-				local camTarget = ply:GetPos()+Vector(0,0,60)
+				newpos = ply:GetForward()*100
 				
-				vec:Rotate(RotateAngles)
-				t.origin=camTarget+vec
-				t.angles=(camTarget-t.origin):Angle()
-				return GAMEMODE:CalcView(ply, t.origin , t.angles ,fov)
+				target = ply:GetPos()+Vector(0,0,60)
+				
+				newpos:Rotate(rotateangles)
+				pos=target+newpos
+				return GAMEMODE:CalcView(ply, pos , (target-pos):Angle() ,fov)
 		end
-		
-		return GAMEMODE:CalcView(ply, pos , angles ,fov)
-	end
-		
-	hook.Add("CalcView", "OldenThirdperson", Thirdperson)
-end)
-
-local function MousePos()
-	if CAKE.MenuOpen then
+	
+	return GAMEMODE:CalcView(ply, pos , angles ,fov)
+end
+	
+hook.Add("CalcView", "OldenThirdperson", Thirdperson)
+	
+hook.Add("Think","TiramisuMouseCalc", function()
+	if CAKE.MenuOpen or LocalPlayer():GetNWBool( "sittingchair", false ) or LocalPlayer():GetNWBool( "sittingground", false ) then
 		if !input.IsMouseDown(MOUSE_RIGHT) and middleDown then 
 			middleDown = false
 		elseif input.IsMouseDown(MOUSE_RIGHT) and !middleDown then
 			middleDown = true 
-			pressedPos[1] = gui.MouseX()
-			pressedPos[2] = gui.MouseY()
+			pressvec.x = gui.MouseX()
+			pressvec.y  = gui.MouseY()
 			
 		elseif input.IsMouseDown(MOUSE_RIGHT) and middleDown then
-			local movex = ( gui.MouseX()-pressedPos[1] ) * 0.7
-			RotateAngles.y = RotateAngles.y + movex
+			local movex = ( gui.MouseX()-pressvec.x )
+			rotateangles.y = rotateangles.y + movex
 			
-			local movey = (gui.MouseY()-pressedPos[2])
-			RotateAngles.p = RotateAngles.p + movey
+			local movey = (gui.MouseY()-pressvec.y)
+			rotateangles.p = rotateangles.p + movey
 
-			gui.SetMousePos(pressedPos[1],pressedPos[2])
+			gui.SetMousePos(pressvec.x,pressvec.y)
 		end
 	end
-end
-hook.Add("Think","TiramisuMouseCalc",MousePos)
+end)

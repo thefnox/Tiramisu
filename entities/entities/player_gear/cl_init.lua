@@ -1,6 +1,8 @@
 
 include('shared.lua')
 
+local lolpos
+
 function ENT:Draw()
 
 	if !self.Entity:GetDTBool(1) then
@@ -14,9 +16,20 @@ function ENT:Draw()
 		if !CAKE.Thirdperson:GetBool() then
 			if !CAKE.RenderBody:GetBool() then
 				return
+			else
+				if self.Entity:GetDTInt(1) == self.Entity:GetDTEntity( 1 ):LookupBone("ValveBiped.Bip01_Head1") then
+					return
+				end
 			end
 		end
 	end
+	
+	if !lolpos then
+		lolpos = self.Entity:GetParent():GetPos()
+	end
+	lolpos = LerpVector( 0.1, lolpos, self.Entity:GetParent():GetPos() )
+	self.Entity:SetPos( lolpos )
+	self.Entity:SetAngles( self.Entity:GetParent():GetAngles() )
 	
 	self.Entity:DrawModel()
 	self.Entity:DrawShadow( true )

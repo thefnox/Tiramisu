@@ -49,7 +49,7 @@ function CAKE.ChatCommand( prefix, callback )
 	
 end
 
-function GM:PlayerSay( ply, text, toall )
+hook.Add( "PlayerSay", "TiramisuChatHandling", function( ply, text, toall )
 
 	CAKE.DayLog("chat.txt", ply:SteamID() .. ": " .. text); -- we be spyins.
 	CAKE.CallHook("PlayerSay", ply, text, toall);
@@ -141,6 +141,4 @@ function GM:PlayerSay( ply, text, toall )
 		
 	end
 	
-end
-		
-		
+end)	

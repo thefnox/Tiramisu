@@ -17,6 +17,10 @@ function ENT:Initialize()
 	self:SetNotSolid(true)
 	self:SetMoveType(MOVETYPE_NONE)
 	self:SetCollisionBounds( Vector(0, 0, 0), Vector(0, 0, 0) )
+	local phy = self:GetPhysicsObject()
+	if phy:IsValid() then
+		phy:AddGameFlag(PLAYER_HELD)
+	end
 
 end
 

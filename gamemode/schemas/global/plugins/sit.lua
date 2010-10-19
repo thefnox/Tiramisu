@@ -4,8 +4,24 @@ PLUGIN.Description = "Handles the process of putting your ass on top of somethin
 
 CAKE.Chairs = {
 	[ "models/props_c17/furniturecouch001a.mdl" ] = {
-			{ ["pos"] = Vector( 0, 0, 0 ), ["angles"] = Vector( 0, 0, 0 ) },
-			{ ["pos"] = Vector( 0, 0, 0 ), ["angles"] = Vector( 0, 0, 0 ) }
+			{ ["pos"] = Vector( 23, 14, -18 ), ["angles"] = Angle( 0, 0, 0 ) },
+			{ ["pos"] = Vector( 23, -14, -18 ), ["angles"] = Angle( 0, 0, 0 ) }
+		},
+	[ "models/props_c17/furniturecouch002a.mdl" ] = {
+			{ ["pos"] = Vector( 23, 14, -18 ), ["angles"] = Angle( 0, 0, 0 ) },
+			{ ["pos"] = Vector( 23, -14, -18 ), ["angles"] = Angle( 0, 0, 0 ) }
+		},
+	[ "models/props_c17/furniturechair001a.mdl" ] = {
+			{ ["pos"] = Vector(18, 0, -20 ), ["angles"] = Angle( 0.000, 0.000, 0) }
+		},
+	[ "models/props_c17/furniture_chair01a.mdl" ] = {
+			{ ["pos"] = Vector(18, 0, -20 ), ["angles"] = Angle( 0.000, 0.000, 0) }
+		},
+	[ "models/props_c17/furniture_chair03a.mdl" ] = {
+			{ ["pos"] = Vector(18, 0, -20 ), ["angles"] = Angle( 0.000, 0.000, 0) }
+		},
+	[ "models/props_c17/chair_stool01a.mdl" ] = {
+			{ ["pos"] = Vector(18.0000, 0.0000, 17.0000 ), ["angles"] = Angle( 0.000, 0.000, 0.000) }
 		}
 }
 
@@ -49,8 +65,13 @@ function CAKE.IsChair( ent )
 	return false
 end
 
+local newpos
+local newang
+
 local function ccSitDown( ply, cmd, args )
+
 	local trace = ply:GetEyeTrace( )
+	local distance = ply:GetPos():Distance( trace.HitPos )
 	local ent = trace.Entity
 	local sitnum
 	local sitpos
@@ -59,11 +80,7 @@ local function ccSitDown( ply, cmd, args )
 	local newposition, newangles
 	local tbl
 	
-	if  ValidEntity( ent ) then
-		print( ent:GetClass() )
-	end
-	
-	if ValidEntity( ent ) and CAKE.IsChair( ent ) and !ply:GetNWBool( "sittingchair", false ) and !ply:GetNWBool( "sittingground", false ) then		
+	if ValidEntity( ent ) and CAKE.IsChair( ent ) and !ply:GetNWBool( "sittingchair", false ) and !ply:GetNWBool( "sittingground", false ) and distance < 180 then		
 		if !ent.PeopleSitting then
 			ent.PeopleSitting = {}
 		end
@@ -73,23 +90,37 @@ local function ccSitDown( ply, cmd, args )
 			if !ent.PeopleSitting[ i ] then
 				ent.PeopleSitting[ i ] = ply
 				ply.SitSpot = i
+				print( tostring( i ))
 				hassit = true
-				ply:SetNWBool( "sittingchair", true )
-				ply:SetParent( ent )
 				ply:Freeze( true )
+				ply:SetParent( ent )
 				ply:SetLocalPos(CAKE.Chairs[ ent:GetModel() ][i]["pos"])
 				ply:SetLocalAngles(CAKE.Chairs[ ent:GetModel() ][i]["angles"])
+				ply:SnapEyeAngles( ply:GetLocalAngles() )
+				print( tostring( ply:GetPos() ) .. tostring( ply:GetAngles() ) )
+				ply:SetNWBool( "sittingchair", true )
+				break
+				--ply.Clothing[1]:SetParent( ent )
+				--ply.Clothing[1]:SetLocalPos(CAKE.Chairs[ ent:GetModel() ][i]["pos"])
+				--ply.Clothing[1]:SetLocalAngles(CAKE.Chairs[ ent:GetModel() ][i]["angles"])
 			end
 		end
 		if hassit then
+			umsg.Start( "ToggleMouseOnSit", ply )
+				umsg.Bool( true )
+			umsg.End()
 			CAKE.SendChat( ply, "Use !stand to get back on your feet." )
 		else
 			CAKE.SendChat( ply, "No room to sit here." )
 		end
 	else
 		if ply:OnGround() then
+			umsg.Start( "ToggleMouseOnSit", ply )
+				umsg.Bool( true )
+			umsg.End()
 			ply:SetNWBool( "sittingground", true )
 			ply:Freeze( true )
+			--ply.Clothing[1]:SetParent( ply )
 			CAKE.SendChat( ply, "Use !stand to get back on your feet." )
 		end
 	end
@@ -97,16 +128,27 @@ local function ccSitDown( ply, cmd, args )
 end
 concommand.Add( "rp_sit", ccSitDown )
 
-local function ccStandUp( ply, cmd, args )
-	if ply:GetNWBool( "sittingchair", false ) then
-		ply:GetParent().PeopleSitting[ ply.SitSpot ] = nil
-		ply:SetNWBool( "sittingchair", false )
-	elseif ply:GetNWBool( "sittingground", false ) then
-		ply:SetNWBool( "sittingground", false )
+function CAKE.StandUp( ply )
+	if ply:GetNWBool( "sittingchair", false ) or ply:GetNWBool( "sittingground", false ) then
+		ply:Freeze( false )
+		if ply:GetNWBool( "sittingchair", false ) then
+			if ply:GetParent() and ply:GetParent().PeopleSitting then
+				ply:GetParent().PeopleSitting[ ply.SitSpot ] = nil
+			end
+			ply:SetNWBool( "sittingchair", false )
+		elseif ply:GetNWBool( "sittingground", false ) then
+			ply:SetNWBool( "sittingground", false )
+		end
+		umsg.Start( "ToggleMouseOnSit", ply )
+			umsg.Bool( false )
+		umsg.End()
+		ply:SetParent()
+		ply:SetPos( ply:GetPos() + Vector( 0, 0, 30 )  )
 	end
-	ply:SetParent()
-	ply:SetPos( ply:GetPos() + Vector( 0, 0, 10 )  )
-	ply:Freeze( false )
+end
+
+local function ccStandUp( ply, cmd, args )
+	CAKE.StandUp( ply )
 end
 concommand.Add( "rp_stand", ccStandUp )
 
@@ -165,6 +207,14 @@ local function ccCreateSit( ply, cmd, args )
 	CAKE.SaveChairs()
 	
 end
+
+hook.Add( "PlayerSpawn", "TiramisuStandOnSpawn", function( ply )
+
+	if ply:IsCharLoaded() then
+		CAKE.StandUp( ply )
+	end
+
+end)
 
 function PLUGIN.Init()
 	CAKE.AdminCommand( "createchair", ccCreateSit, "Add a chair", true, true, 2 );

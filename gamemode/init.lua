@@ -50,7 +50,7 @@ include( "doors.lua" ); -- Doors
 include( "sql_main.lua" ); --MySQL handling
 include( "resources.lua" ) -- Automatic resource handling
 include( "boneanimlib/boneanimlib.lua" )
-include( "sh_boneanimlib.lua" )
+include( "boneanimlib/sh_boneanimlib.lua" )
 
 CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ); -- Load the schema and plugins, this is NOT initializing.
 
@@ -88,7 +88,9 @@ end
 
 -- Player Initial Spawn
 function GM:PlayerInitialSpawn( ply )
-
+	
+	CAKE.SpawnPointHandle(ply)
+	
 	-- Call the hook before we start initializing the player
 	CAKE.CallHook( "Player_Preload", ply );
 	
@@ -180,9 +182,22 @@ function GM:PlayerLoadout(ply)
 end
 
 function GM:PlayerSpawn( ply )
-	
+
 	if( !ply:IsCharLoaded() ) then
 		return; -- Player data isn't loaded. This is an initial spawn.
+	end
+
+	CAKE.SpawnPointHandle(ply)
+
+	umsg.Start( "closeplayermenu", ply );
+	umsg.End( )
+	
+	if( ply:IsUserGroup("admin") )	then
+		CAKE.SetPlayerField( ply, "adrank", "Administrator" )
+	end
+	
+	if( ply:IsUserGroup("superadmin") ) then
+		CAKE.SetPlayerField( ply, "adrank", "Super Administrator" )
 	end
 	
 	CAKE.SavePlayerData( ply )
@@ -219,8 +234,7 @@ function GM:PlayerSpawn( ply )
 	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] );
 	CAKE.CallHook( "PlayerSpawn", ply )
 	CAKE.CallTeamHook( "PlayerSpawn", ply ); -- Change player speeds perhaps?
-	umsg.Start( "closeplayermenu", ply );
-	umsg.End( )
+	
 	
 end
 
@@ -261,7 +275,8 @@ hook.Add( "PlayerDisconnected", "CAKE.PlayerDisconnect", FunkyPlayerDisconnect )
 
 
 function GM:PlayerDeath(ply)
-
+	
+	CAKE.StandUp( ply )
 	CAKE.DeathMode(ply);
 	CAKE.CallHook("PlayerDeath", ply);
 	CAKE.CallTeamHook("PlayerDeath", ply);
@@ -271,17 +286,18 @@ end
 function GM:PlayerDeathThink(ply)
 
 	ply.nextsecond = CAKE.NilFix(ply.nextsecond, CurTime())
-	ply.deathtime = CAKE.NilFix(ply.deathtime, 60);
+	ply.deathtime = CAKE.NilFix(ply.deathtime, CAKE.ConVars[ "Respawn_Timer" ]);
 	
 	if(CurTime() > ply.nextsecond) then
 	
-		if(ply.deathtime < 59) then
+		if(ply.deathtime < CAKE.ConVars[ "Respawn_Timer" ]) then
 		
 			ply.deathtime = ply.deathtime + 1;
 			ply.nextsecond = CurTime() + 1;
-			ply:SetNWInt("deathmoderemaining", 60 - ply.deathtime);
+			ply:SetNWInt("deathmoderemaining", CAKE.ConVars[ "Respawn_Timer" ] - ply.deathtime);
 			
 		else
+			/*
 			if ply.CheatedDeath then --If the player used !acceptdeath then just spawn him normally
 				ply:Spawn();
 			else
@@ -290,7 +306,9 @@ function GM:PlayerDeathThink(ply)
 				ply:SetHealth( 10 )
 				ply.deathrag:Remove()
 				ply.deathrag = nil
-			end
+			end*/
+			CAKE.StandUp( ply )
+			ply:Spawn()
 			ply.deathtime = nil;
 			ply.nextsecond = nil;
 			ply:SetNWInt("deathmode", 0);

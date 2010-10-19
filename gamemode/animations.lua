@@ -2,9 +2,10 @@
 --Credits to Azuisleet ( Original hook ), Entoros( Holdtype thing -- Which is no more, since garry added that in :/ ), and well, me, Big Bang/F-Nox ( everything else )
 
 local meta = _R["Player"]
+local model
 function meta:GetGender()
 
-	local model = string.lower( self:GetModel() )
+	model = string.lower( self:GetModel() )
 	if table.HasValue( Anims.Female[ "models" ], string.lower( model ) ) or self:GetNWString( "gender", "Male" ) == "Female" then
 		return "Female"
 	end
@@ -27,9 +28,10 @@ if SERVER then
 	--Weapons that are never aimed
 	NeverAimed = {
 	}
-
+	
+	local wep
 	function meta:SetAiming( bool )
-		local wep = self:GetActiveWeapon()
+		wep = self:GetActiveWeapon()
 		if self:GetNWBool( "arrested", false ) then
 			bool = false
 		end
@@ -56,6 +58,21 @@ if SERVER then
 	concommand.Add( "rp_toggleholster", HolsterToggle );
 	concommand.Add( "toggleholster", HolsterToggle );
 	
+	hook.Add( "PlayerSpawn", "BeginAimTimer", function( ply )
+		timer.Create( ply:SteamID() .. "TiramisuAimTimer", 0.1, 0, function()
+			if ValidEntity( ply ) then
+				if ply.TiramisuLastWeapon and ValidEntity( ply:GetActiveWeapon() ) and ply:GetActiveWeapon():GetClass() != ply.TiramisuLastWeapon then
+					ply:SetAiming( false )
+					ply.TiramisuLastWeapon = ply:GetActiveWeapon():GetClass()
+				else
+					if ValidEntity( ply:GetActiveWeapon() ) then
+						ply.TiramisuLastWeapon = ply:GetActiveWeapon():GetClass()
+					end
+				end
+			end
+		end)
+	end)
+	
 end
 
 function meta:GetAiming()
@@ -81,6 +98,7 @@ Anims.Male[ "default" ] = {
         [ "land" ] = "&switch:models/Gustavio/barneyanimtree.mdl;ACT_LAND",
         [ "fly" ] = "ACT_GLIDE",
         [ "sit" ] = "ACT_BUSY_SIT_CHAIR",
+		[ "swim" ] = "ACT_GLIDE",
         [ "sitground" ] = "ACT_BUSY_SIT_GROUND",
         [ "flinch" ] = {
                 ["explosion"] = "ACT_GESTURE_FLINCH_BLAST"
@@ -98,7 +116,7 @@ Anims.Male[ "default" ] = {
         }
 }
 Anims.Male[ "pistol" ] = {
-        [ "idle" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_IDLE_PISTOL",
+        [ "idle" ] = "ACT_IDLE",
         [ "walk" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_WALK_PISTOL",
         [ "run" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_RUN_PISTOL",
         [ "crouch" ] = {
@@ -217,13 +235,11 @@ Anims.Male[ "melee" ] = {
                 [ "aimwalk" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_WALK_CROUCH"
                 },
         [ "aim" ] = {
-                --[ "idle" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_IDLE_ANGRY_MELEE",
-				["idle"] = "&lua:boxstance;",
+                [ "idle" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_IDLE_ANGRY_MELEE",
                 [ "walk" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_WALK_ANGRY",
                 [ "run" ] = "&switch:models/Gustavio/metroanimtree.mdl;ACT_RUN"
         },
-		--["fire"] = "ACT_MELEE_ATTACK_SWING_GESTURE"
-		["fire"] = "&lua:boxgesturer;"
+		["fire"] = "ACT_MELEE_ATTACK_SWING_GESTURE"
 }
 
 Anims.Male[ "grenade" ] = {
@@ -275,6 +291,7 @@ Anims.Female[ "default" ] = {
         [ "land" ] = "ACT_LAND",
         [ "fly" ] = "ACT_GLIDE",
         [ "sit" ] = "ACT_BUSY_SIT_CHAIR",
+		[ "swim" ] = "ACT_GLIDE",
         [ "sitground" ] = "ACT_BUSY_SIT_GROUND",
         [ "flinch" ] = {
                 ["explosion"] = "ACT_GESTURE_FLINCH_BLAST"
@@ -475,27 +492,61 @@ local function FindName( actnum ) --Finds the enumeration name based on it's num
 	return "ACT_IDLE";
 end	
 
-local function HandleLuaAnimation( ply, animation )
+function HandleLuaAnimation( ply, animation )
 	
 	if CLIENT then
 		if !ply.InLuaSequence then
 			ply.InLuaSequence = true
 			ply:SetLuaAnimation( animation )
-			print( animation )
 		end
 	end
 	
 end
 
+local exp
+local exp2
+local model
+local sequence
+local skeletonanim
+
 local function HandleSequence( ply, seq ) --Internal function to handle different sequence types.
 	
 	if string.match( seq, "&" ) then
+	
+		if string.match( seq, "sequence" ) then
+			exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
+			exp2 = string.Explode( ":", exp[1] )
+			model = exp2[2]
+			if !model then
+				if( ply:GetGender() == "Female" ) then
+					model = "models/Gustavio/femaleanimtree.mdl"
+				else
+					model = "models/Gustavio/maleanimtree.mdl"
+				end
+			end
+			if( string.lower( ply:GetModel() ) != string.lower( model ) and !ply:GetNWBool( "specialmodel", false ) ) then
+				ply:SetModel( model )
+			end
+			timer.Simple( 0, function()
+				if string.match( string.lower( exp2[2] ), "g_" ) or string.match( string.lower( exp2[2] ), "gesture" ) then
+					ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( string.gsub( exp2[2], ";", "" ) ) )
+				else
+					ply:SetSequence( ply:LookupSequence( string.gsub( exp2[2], ";", "" ) ) )
+				end
+			end)
+			return ply:LookupSequence( string.gsub( exp2[2], ";", "" ) )
+		elseif string.match( seq, "number" ) then
+			exp = string.Explode( ":", string.gsub( seq, "&", "" ) )
+			return tonumber( FindName(exp[2]) )
+		end
+		
 		if string.match( seq, "lua" ) then
-			local exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
-			local exp2 = string.Explode( ":", exp[1] )
-			local sequence = exp2[2]
+			exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
+			exp2 = string.Explode( ":", exp[1] )
+			sequence = exp2[2]
+			skeletonanim = exp[2] or "ACT_DIERAGDOLL"
 			HandleLuaAnimation( ply, sequence )
-			return ACT_DIERAGDOLL
+			return FindEnumeration( skeletonanim )
 		else
 			if ply.InLuaSequence then
 				if CLIENT then
@@ -504,33 +555,30 @@ local function HandleSequence( ply, seq ) --Internal function to handle differen
 				ply.InLuaSequence = false
 			end
 		end
+		
 		if string.match( seq, "switch" ) then --Internal handler used to switch skeletons.
-			local exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
-			local exp2 = string.Explode( ":", exp[1] )
-			local model = exp2[2]
+			exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
+			exp2 = string.Explode( ":", exp[1] )
+			model = exp2[2]
 			seq = exp[2]
 			if( string.lower( ply:GetModel() ) != string.lower( model ) and !ply:GetNWBool( "specialmodel", false ) ) then
 				ply:SetModel( model )
-				return FindEnumeration( seq )
 			end
-		elseif string.match( seq, "sequence" ) then
-			local exp = string.Explode( ":", string.gsub( seq, "&", "" ) ) --This two don't work very well yet
-			return ply:LookupSequence( exp[2] )
-		elseif string.match( seq, "number" ) then
-			local exp = string.Explode( ":", string.gsub( seq, "&", "" ) )
-			return tonumber( exp[2] )
+			return FindEnumeration( seq )
 		end
-	else
 		
-		if ( ply:GetModel() != "models/Gustavio/femaleanimtree.mdl" or ply:GetModel() != "models/Gustavio/maleanimtree.mdl" ) then
-			if !ply:GetNWBool( "specialmodel", false ) then
-				if( ply:GetGender() == "Female" ) then
-					ply:SetModel( "models/Gustavio/femaleanimtree.mdl" )
+	else
+		if !ply:GetNWBool( "specialmodel", false ) then
+			if ( ply:GetModel() != "models/Gustavio/femaleanimtree.mdl" or ply:GetModel() != "models/Gustavio/maleanimtree.mdl" ) then
+				if !ply:GetNWBool( "specialmodel", false ) then
+					if( ply:GetGender() == "Female" ) then
+						ply:SetModel( "models/Gustavio/femaleanimtree.mdl" )
+					else
+						ply:SetModel( "models/Gustavio/maleanimtree.mdl" )
+					end
 				else
-					ply:SetModel( "models/Gustavio/maleanimtree.mdl" )
+					ply:SetModel( "models/Gustavio/maleanimtree.mdl" );
 				end
-			else
-				ply:SetModel( "models/Gustavio/maleanimtree.mdl" );
 			end
 		end
 	end
@@ -588,9 +636,14 @@ local function DetectHoldType( act ) --This is just a function used to group up 
 	
 end
 
+local eye
+local estyaw
+local myaw
+local len2d
+local rate
 function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles everything about how sequences run, the framerate, boneparameters, everything.
 
-	local eye = ply:EyeAngles()
+	eye = ply:EyeAngles()
 	if !ply:GetNWBool( "sittingchair", false ) then
 		ply:SetLocalAngles( eye )
 		ply:SetEyeTarget( ply:EyePos( ) )
@@ -602,8 +655,8 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 		end
 	end
 	
-	local estyaw = math.Clamp( math.atan2(velocity.y, velocity.x) * 180 / 3.141592, -180, 180 )
-	local myaw = math.NormalizeAngle(math.NormalizeAngle(eye.y) - estyaw)
+	estyaw = math.Clamp( math.atan2(velocity.y, velocity.x) * 180 / 3.141592, -180, 180 )
+	myaw = math.NormalizeAngle(math.NormalizeAngle(eye.y) - estyaw)
 
 	if !ply:GetNWBool( "sittingchair", false ) then
 		ply:SetPoseParameter("move_yaw", myaw * -1 )
@@ -616,8 +669,8 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 	ply:SetPoseParameter("spine_yaw", 0 )
 	ply:SetPoseParameter("head_roll", 0 )
 	
-	local len2d = velocity:Length2D() --Velocity in the x and y axis
-	local rate = 1.0
+	len2d = velocity:Length2D() --Velocity in the x and y axis
+	rate = 1.0
 	
 	if len2d > 0.5 then
 			rate =  ( ( len2d * 0.8 ) / maxseqgroundspeed )
@@ -627,6 +680,8 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 	ply:SetPlaybackRate( rate )
 	
 end
+
+local holdtype
 
 function GM:HandlePlayerJumping( ply ) --Handles jumping
 
@@ -680,20 +735,20 @@ end
  
 function GM:HandlePlayerDucking( ply, velocity ) --Handles crouching
 
-		local holdtype = "default"
+		holdtype = "default"
 		if( ValidEntity(  ply:GetActiveWeapon() ) ) then
 			holdtype = DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
 		end
         if ply:Crouching() then
 			if ply:GetNWBool( "aiming", false ) then
-                local len2d = velocity:Length2D() -- the velocity on the x and y axis.
+                len2d = velocity:Length2D() -- the velocity on the x and y axis.
                 if len2d > 0.5 then
                         ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "crouch" ][ "aimwalk" ] )
                 else
                         ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype][ "crouch" ][ "aimidle" ] )
                 end
 			else
-				local len2d = velocity:Length2D()
+				len2d = velocity:Length2D()
                 
                 if len2d > 0.5 then
 						ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "crouch" ][ "walk" ] )
@@ -710,20 +765,22 @@ end
 function GM:HandlePlayerSwimming( ply ) --Handles swimming.
 
         if ply:WaterLevel() >= 2 then
-				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "fly" ] )
+				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "swim" ] )
 				return true
 		end
         
         return false
 end
- 
+
+local vehicle
+local class
 function GM:HandlePlayerDriving( ply ) --Handles sequences while in vehicles.
  
         if ply:InVehicle() then
-			local vehicle = ply:GetVehicle()
-            local class = vehicle:GetClass()
+			vehicle = ply:GetVehicle()
+            class = vehicle:GetClass()
 			if ( class == "prop_vehicle_prisoner_pod" and vehicle:GetModel() == "models/vehicles/prisoner_pod_inner.mdl" ) then
-					ply.CalcIdeal = ACT_IDLE
+					ply.CalcIdeal = HandleSequence( ply, "ACT_IDLE" )
             else
 					ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "sit" ] )
             end
@@ -738,18 +795,18 @@ function GM:HandleExtraActivities( ply ) --Drop in here everything additional yo
 
 		if ply:GetNWBool( "sittingchair", false ) then
 			if !ply.IsSittingDamn then
-				ply.CalcIdeal = ACT_BUSY_SIT_CHAIR_ENTRY
+				ply.CalcIdeal = HandleSequence( ply, "ACT_BUSY_SIT_CHAIR_ENTRY" )
 				timer.Simple( 1.5, function()
 					ply.IsSittingDamn = true
 				end)
 				return true
 			else
-				ply.CalcIdeal = ACT_BUSY_SIT_CHAIR
+				ply.CalcIdeal = HandleSequence( ply, "ACT_BUSY_SIT_CHAIR" )
 				return true
 			end
 		else
 			if ply.IsSittingDamn then
-				ply.CalcIdeal = ACT_BUSY_SIT_CHAIR_EXIT
+				ply.CalcIdeal = HandleSequence( ply, "ACT_BUSY_SIT_CHAIR_EXIT" )
 				timer.Simple( 0.8, function()
 					ply.IsSittingDamn = false
 				end)
@@ -759,18 +816,18 @@ function GM:HandleExtraActivities( ply ) --Drop in here everything additional yo
 		
 		if ply:GetNWBool( "sittingground", false ) then
 			if !ply.IsSittingGround then
-				ply.CalcIdeal = ACT_BUSY_SIT_GROUND_ENTRY
+				ply.CalcIdeal = HandleSequence( ply, "ACT_BUSY_SIT_GROUND_ENTRY" )
 				timer.Simple( 2, function()
 					ply.IsSittingGround = true
 				end)
 				return true
 			else
-				ply.CalcIdeal = ACT_BUSY_SIT_GROUND
+				ply.CalcIdeal = HandleSequence( ply, "ACT_BUSY_SIT_GROUND" )
 				return true
 			end
 		else
 			if ply.IsSittingGround then
-				ply.CalcIdeal = ACT_BUSY_SIT_GROUND_EXIT
+				ply.CalcIdeal = HandleSequence( ply, "ACT_BUSY_SIT_GROUND_EXIT" )
 				timer.Simple( 1.4, function()
 					ply.IsSittingGround = false
 				end)
@@ -785,11 +842,11 @@ end
 function GM:CalcMainActivity( ply, velocity )
 		--This is the hook used to handle sequences, if you need to add additional activities you should check the hook above.
 		--By a general rule you don't have to touch this hook at all.
-		local holdtype = "default"
+		holdtype = "default"
 		if( ValidEntity(  ply:GetActiveWeapon() ) ) then
 			holdtype = DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
 		end
-        ply.CalcIdeal = ACT_IDLE
+        ply.CalcIdeal = HandleSequence( ply, "ACT_IDLE" )
         ply.CalcSeqOverride = -1
         
         if self:HandleExtraActivities( ply ) or self:HandlePlayerDriving( ply ) or
@@ -798,20 +855,20 @@ function GM:CalcMainActivity( ply, velocity )
                 self:HandlePlayerSwimming( ply ) then
 			--We do nothing, I guess, lol.
 		else
-            local len2d = velocity:Length2D()
+            len2d = velocity:Length2D()
 				
 			if ply:GetNWBool( "aiming", false ) then
-				if len2d > 180 then
+				if len2d > 135 then
 					ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
-				elseif len2d > 0.5 then
+				elseif len2d > 0.1 then
 					ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "aim" ][ "walk" ] )
 				else
 					ply.CalcIdeal  = HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "aim" ][ "idle" ] )
 				end
 			else
-				if len2d > 180 then
+				if len2d > 135 then
 					ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
-				elseif len2d > 0.5 then
+				elseif len2d > 0.1 then
 					ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "walk" ] )
 				else
 					ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "idle" ] )
@@ -832,7 +889,7 @@ end
  
 function GM:DoAnimationEvent( ply, event, data ) -- This is for gestures.
 
-		local holdtype = "default"
+		holdtype = "default"
 		if( ValidEntity(  ply:GetActiveWeapon() ) ) then
 			holdtype = DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
 		end
@@ -846,9 +903,9 @@ function GM:DoAnimationEvent( ply, event, data ) -- This is for gestures.
 								ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "fire" ] )
 						end
 					else
-						local exp = string.Explode( ";", string.gsub( Anims[ ply:GetGender() ][ holdtype ][ "fire" ], "&", "" ) )
-						local exp2 = string.Explode( ":", exp[1] )
-						local sequence = exp2[2]
+						exp = string.Explode( ";", string.gsub( Anims[ ply:GetGender() ][ holdtype ][ "fire" ], "&", "" ) )
+						exp2 = string.Explode( ":", exp[1] )
+						sequence = exp2[2]
 						if CLIENT then
 							ply:SetLuaAnimation( sequence )
 						end

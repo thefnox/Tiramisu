@@ -27,7 +27,7 @@ end
 function CAKE.SendConsole( ply, msg )
 
 	if ply:IsPlayer() then
-		ply:PrintMessage( 2, msg ); -- At least I THINK it is 2..
+		ply:PrintMessage( 2, msg );
 	else
 		print( msg )
 	end
@@ -86,11 +86,12 @@ function CAKE.DeathMode( ply )
 	ply.deathrag = rag;
 	
 	ply:SetNWInt( "deathmode", 1 )
+	ply:SetNWInt("deathmoderemaining", CAKE.ConVars[ "Respawn_Timer" ] )
 	
 	ply.deathtime = 0;
 	ply.nextsecond = CurTime( ) + 1;
 	
-	timer.Simple( 60, function()
+	timer.Simple( CAKE.ConVars[ "Respawn_Timer" ], function()
 	
 		ply:SetNWInt( "deathmode", 0 )
 		ply:SetViewEntity( ply );
@@ -101,6 +102,8 @@ function CAKE.DeathMode( ply )
 end
 
 function CAKE.UnconciousMode( ply )
+	
+	ply:GodEnable()
 	
 	if ValidEntity( ply.unconciousrag ) then
 		ply.unconciousrag:Remove()
@@ -163,10 +166,9 @@ function CAKE.UnconciousMode( ply )
 		ply:SetViewEntity( ply );
 		ply:UnLock()
 		CAKE.RestoreClothing( ply )
+		ply:GodDisable()
 		datastream.StreamToClients( ply, "RecieveUnconciousRagdoll", { ["ragdoll"] = false } )
-		rag:Remove()
-	
-	end)
+		rag:Remove()end)
 	
 end
 
@@ -177,7 +179,6 @@ function ccGetCharInfo( ply, cmd, args )
 	local gender = CAKE.GetCharField( target, "gender" )
 	local description = CAKE.GetCharField( target, "description" )
 	local age = CAKE.GetCharField( target, "age" )
-	local alignment = CAKE.GetCharField( target, "alignment" )
 	umsg.Start("GetPlayerInfo", ply)
 		umsg.Entity( target )
 		umsg.String( birthplace )
@@ -186,15 +187,18 @@ function ccGetCharInfo( ply, cmd, args )
 		umsg.String( age )
 		umsg.String( alignment )
 	umsg.End()
+	
 end
 concommand.Add( "rp_getcharinfo", ccGetCharInfo )
 
 local meta = FindMetaTable( "Player" );
 
 function meta:ConCommand( cmd ) --Rewriting this due to Garry fucking it up.
-		umsg.Start( "runconcommand", self )
-			umsg.String( cmd )
-		umsg.End()
+	umsg.Start( "runconcommand", self )
+		umsg.String( cmd ) 
+		--Yeah it just sends the command as a string which is then ran clientside. 2 usermessages sent, all because of
+		--A REALLY REALLY not well thought fix.
+	umsg.End()
 end
 
 function meta:MaxHealth( )
@@ -263,17 +267,6 @@ function meta:GiveItem( class )
 			CAKE.HandleGear( self, class )
 			CAKE.SaveGear( self )
 		end 
-	end
-	
-	if string.match( class, "zipties" ) then
-		if !table.HasValue( CAKE.GetCharField( self, "inventory" ), class ) then
-			if !table.HasValue( CAKE.GetCharField( self, "weapons" ), class) then
-				local weapons = CAKE.GetCharField( self, "weapons" )
-				table.insert( weapons, class )
-				CAKE.SetCharField( self, "weapons", weapons )
-			end
-			self:Give( class )
-		end
 	end
 	
 	self:RefreshInventory( );
@@ -432,9 +425,9 @@ function CAKE.ChangeMoney( ply, amount ) -- Modify someone's money amount.
 	CAKE.SetCharField( ply, "money", CAKE.GetCharField( ply, "money" ) + amount );
 	if CAKE.GetCharField( ply, "money" ) < 0 then -- An actual negative number block
 		CAKE.SetCharField( ply, "money", 0 );
-		ply:SetNWString("money", "0" )
+		ply:SetNWInt("money", 0 )
 	else
-		ply:SetNWString("money", CAKE.GetCharField( ply, "money" ));
+		ply:SetNWInt("money", tonumber( CAKE.GetCharField( ply, "money" ) ));
 	end
 
 end

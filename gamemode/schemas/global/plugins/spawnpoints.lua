@@ -1,6 +1,6 @@
-PLUGIN.Name = "Group Spawnpoints"; -- What is the plugin name
-PLUGIN.Author = "Ryaga"; -- Author of the plugin
-PLUGIN.Description = "Allows you to change the spawnpoints of certain groups"; -- The description or purpose of the plugin
+PLUGIN.Name = "Sitting"; -- What is the plugin name
+PLUGIN.Author = "Ryaga/BadassMC"; -- Author of the plugin
+PLUGIN.Description = "Handles the process of putting your ass on top of something"; -- The description or purpose of the plugin
 
 CAKE.SpawnPoints = {}
 
@@ -57,7 +57,7 @@ function CAKE.SpawnPointHandle(ply)
 				return
 			end
 		end
-			spawn = CAKE.SpawnPoints[math.random(1,#CAKE.SpawnPoints)]
+			spawn = table.Random( CAKE.SpawnPoints )
 			ply:SetPos(spawn.pos)
 			ply:SetEyeAngles(spawn.ang)
 	end
@@ -74,11 +74,6 @@ function CAKE.InitSpawns()
 	end
 	
 end
-
-local function SpawnpointHook( ply )
-	CAKE.SpawnPointHandle( ply )
-end
-hook.Add( "PlayerSpawn", "TiramisuSpawnpointHook", SpawnpointHook )
 
 function PLUGIN.Init()
 end

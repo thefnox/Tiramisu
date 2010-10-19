@@ -15,10 +15,41 @@ function AddResource( res_type, path )
 		AddCSLuaFile( path );
 		CAKE.DayLog( "script.txt", "Added clientside lua file '" .. path .. "'" )
 		
+	else
+	
+		resource.AddFile( path )
+		CAKE.DayLog( "script.txt", "Added file '" .. path .. "'" )
+		
 	end
+	
+	print( "Adding Resource: " .. path .. " (" .. res_type .. ")" )
 	
 end
 
+local function AddContentFolder( filepath )
+
+	print( "Adding 'content' folder to resource list" )
+
+	filepath = filepath or "gamemodes/" .. CAKE.Name .. "/content/*"
+	local exp
+	local list = file.Find( filepath, true )
+	for k, v in pairs( list ) do
+		if !file.IsDir( v, true ) then
+			exp = string.Explode( ".", v )
+			AddResource( exp[2] or "file", v )
+		else
+			AddContentFolder( filepath .. "*" )
+		end
+	end
+
+end
+/*
+hook.Add( "Initialize", "TiramisuAddContent", function()
+	
+	AddContentFolder()
+
+end)
+*/
 -- LUA Files
 AddResource( "lua", "shared.lua" ); -- Shared Functions
 AddResource( "lua", "cl_binds.lua" ); -- Binds
@@ -30,7 +61,7 @@ AddResource( "lua", "player_shared.lua"); -- Shared player functions
 AddResource( "lua", "animations.lua"); -- Shared player functions
 AddResource( "lua", "cl_usermessages.lua")
 AddResource( "lua", "cl_skin.lua")
-AddResource( "lua", "cl_boneanimlib.lua")
-AddResource( "lua", "sh_boneanimlib.lua")
+AddResource( "lua", "boneanimlib/cl_boneanimlib.lua")
+AddResource( "lua", "boneanimlib/sh_boneanimlib.lua")
 AddResource( "lua", "achat.lua")
 AddResource( "lua", "lua_animations.lua")

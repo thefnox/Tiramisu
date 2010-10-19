@@ -2,7 +2,7 @@ CurrencyTable = {}
 CAKE.MenuTabs = {}
 CAKE.ActiveTab = nil
 CAKE.MenuOpen = false
-CAKE.MenuFont = "Benegraphic"
+CAKE.MenuFont = "Base 02"
 
 surface.CreateFont( CAKE.MenuFont, 48, 800, true, false, "BaseTitle" )
 surface.CreateFont( CAKE.MenuFont, 32, 800, true, false, "BaseOptions" )
@@ -193,6 +193,11 @@ function CAKE.SetActiveTab( name )
 end
 
 function CreatePlayerMenu( um )
+		
+		if CAKE.MenuOpen then
+			ClosePlayerMenu()
+			return
+		end
 	
 		CAKE.MenuOpen = true
 		TabPanel = vgui.Create("DFrame");
@@ -338,6 +343,8 @@ end
 usermessage.Hook("openplayermenu", CreatePlayerMenu);
 
 function ClosePlayerMenu( um )
+
+	CAKE.CloseTabs()
 	if TabPanel then
 		if VitalsMenu then
 			VitalsMenu:Remove();

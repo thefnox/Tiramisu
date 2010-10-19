@@ -14,7 +14,6 @@ step = 0
 function AddCharCreates(schema)
 
 		local list = file.FindInLua( "tiramisu/gamemode/schemas/" .. schema .. "/clplugin/*.lua" )	
-		PrintTable(list)
 		for k,v in pairs( list ) do
 			local path = "tiramisu/gamemode/schemas/" .. schema .. "/clplugin/" .. v
 			CLPLUGIN = { }
@@ -32,7 +31,6 @@ function CAKE.AddStep( passedfunc )
 	end
 	
 	CAKE.Steps[#CAKE.Steps+1] = passedfunc
-	print(CAKE.Steps[steps])
 
 end
 
