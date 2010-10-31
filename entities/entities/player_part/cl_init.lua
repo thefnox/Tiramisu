@@ -4,7 +4,7 @@ local lolpos
 
 function ENT:Draw()
 
-	if self.Entity:GetParent() == LocalPlayer() and GetViewEntity() == LocalPlayer() and !CAKE.MenuOpen then
+	if self.Entity:GetParent() == LocalPlayer() and GetViewEntity() == LocalPlayer() and !CAKE.MenuOpen and !LocalPlayer():GetNWBool( "sittingground" ) and !LocalPlayer():GetNWBool( "sittingchair" ) then
 		if !CAKE.UseCalcView:GetBool() then
 			return
 		end

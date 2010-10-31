@@ -92,10 +92,10 @@ Anims.Male[ "models" ] = {
 }
 Anims.Male[ "default" ] = { 
         [ "idle" ] = "ACT_IDLE",
-        [ "walk" ] = "&switch:models/Gustavio/barneyanimtree.mdl;ACT_WALK",
+        [ "walk" ] = "ACT_WALK",
         [ "run" ] = "ACT_RUN",
         [ "jump" ] = "ACT_JUMP",
-        [ "land" ] = "&switch:models/Gustavio/barneyanimtree.mdl;ACT_LAND",
+        [ "land" ] = "ACT_LAND",
         [ "fly" ] = "ACT_GLIDE",
         [ "sit" ] = "ACT_BUSY_SIT_CHAIR",
 		[ "swim" ] = "ACT_GLIDE",
@@ -285,7 +285,7 @@ Anims.Female[ "models" ] = {
 }
 Anims.Female[ "default" ] = { 
         [ "idle" ] = "ACT_IDLE",
-        [ "walk" ] = "&switch:models/Gustavio/alyxanimtree.mdl;ACT_WALK",
+        [ "walk" ] = "ACT_WALK",
         [ "run" ] = "ACT_RUN",
         [ "jump" ] = "ACT_JUMP",
         [ "land" ] = "ACT_LAND",
@@ -508,81 +508,83 @@ local exp2
 local model
 local sequence
 local skeletonanim
+local gender
 
 local function HandleSequence( ply, seq ) --Internal function to handle different sequence types.
+
+	if !ply.SpecialModel then
+		ply.SpecialModel = ply:GetNWBool( "specialmodel", false )
+	end
 	
-	if string.match( seq, "&" ) then
+	if !ply.Sequence then
+		ply.Sequence = "none"
+	end
 	
-		if string.match( seq, "sequence" ) then
-			exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
-			exp2 = string.Explode( ":", exp[1] )
-			model = exp2[2]
-			if !model then
-				if( ply:GetGender() == "Female" ) then
-					model = "models/Gustavio/femaleanimtree.mdl"
-				else
-					model = "models/Gustavio/maleanimtree.mdl"
-				end
-			end
-			if( string.lower( ply:GetModel() ) != string.lower( model ) and !ply:GetNWBool( "specialmodel", false ) ) then
-				ply:SetModel( model )
-			end
-			timer.Simple( 0, function()
-				if string.match( string.lower( exp2[2] ), "g_" ) or string.match( string.lower( exp2[2] ), "gesture" ) then
-					ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( string.gsub( exp2[2], ";", "" ) ) )
-				else
-					ply:SetSequence( ply:LookupSequence( string.gsub( exp2[2], ";", "" ) ) )
+	if !string.match( seq, "&" ) then
+		if !ply.SpecialModel then
+			timer.Simple( 0.2, function()
+				if ( string.lower( ply:GetModel() ) != "models/gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl" ) then
+					print( "Changing model to " .. "models/Gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl LOL!" )
+					ply:SetModel( "models/Gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl" )
 				end
 			end)
-			return ply:LookupSequence( string.gsub( exp2[2], ";", "" ) )
-		elseif string.match( seq, "number" ) then
-			exp = string.Explode( ":", string.gsub( seq, "&", "" ) )
-			return tonumber( FindName(exp[2]) )
 		end
-		
-		if string.match( seq, "lua" ) then
-			exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
-			exp2 = string.Explode( ":", exp[1] )
-			sequence = exp2[2]
-			skeletonanim = exp[2] or "ACT_DIERAGDOLL"
-			HandleLuaAnimation( ply, sequence )
-			return FindEnumeration( skeletonanim )
-		else
-			if ply.InLuaSequence then
-				if CLIENT then
-					ply:StopAllLuaAnimations()
-				end
-				ply.InLuaSequence = false
-			end
-		end
-		
-		if string.match( seq, "switch" ) then --Internal handler used to switch skeletons.
-			exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
-			exp2 = string.Explode( ":", exp[1] )
-			model = exp2[2]
-			seq = exp[2]
-			if( string.lower( ply:GetModel() ) != string.lower( model ) and !ply:GetNWBool( "specialmodel", false ) ) then
-				ply:SetModel( model )
-			end
-			return FindEnumeration( seq )
-		end
-		
 	else
-		if !ply:GetNWBool( "specialmodel", false ) then
-			if ( ply:GetModel() != "models/Gustavio/femaleanimtree.mdl" or ply:GetModel() != "models/Gustavio/maleanimtree.mdl" ) then
-				if !ply:GetNWBool( "specialmodel", false ) then
-					if( ply:GetGender() == "Female" ) then
-						ply:SetModel( "models/Gustavio/femaleanimtree.mdl" )
-					else
-						ply:SetModel( "models/Gustavio/maleanimtree.mdl" )
-					end
-				else
-					ply:SetModel( "models/Gustavio/maleanimtree.mdl" );
+		if ply.Sequence != seq then
+			ply.Sequence = seq
+			if string.match( seq, "sequence" ) then
+				exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
+				exp2 = string.Explode( ":", exp[1] )
+				model = exp2[2]
+				if !model then
+					model = "models/Gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl"
 				end
+				if( string.lower( ply:GetModel() ) != string.lower( model ) and !ply.SpecialModel ) then
+					print( "Changing model to " .. model )
+					ply:SetModel( model )
+				end
+				timer.Simple( 0, function()
+					if string.match( string.lower( exp2[2] ), "g_" ) or string.match( string.lower( exp2[2] ), "gesture" ) then
+						ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( string.gsub( exp2[2], ";", "" ) ) )
+					else
+						ply:SetSequence( ply:LookupSequence( string.gsub( exp2[2], ";", "" ) ) )
+					end
+				end)
+				return ply:LookupSequence( string.gsub( exp2[2], ";", "" ) )
+			elseif string.match( seq, "number" ) then
+				exp = string.Explode( ":", string.gsub( seq, "&", "" ) )
+				return tonumber( FindName(exp[2]) )
+			end
+			
+			if string.match( seq, "lua" ) then
+				exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
+				exp2 = string.Explode( ":", exp[1] )
+				sequence = exp2[2]
+				skeletonanim = exp[2] or "ACT_DIERAGDOLL"
+				HandleLuaAnimation( ply, sequence )
+				return FindEnumeration( skeletonanim )
+			else
+				if ply.InLuaSequence then
+					if CLIENT then
+						ply:StopAllLuaAnimations()
+					end
+					ply.InLuaSequence = false
+				end
+			end
+			
+			if string.match( seq, "switch" ) then --Internal handler used to switch skeletons.
+				exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
+				exp2 = string.Explode( ":", exp[1] )
+				model = exp2[2]
+				seq = exp[2]
+				if( string.lower( ply:GetModel() ) != string.lower( model ) and !ply.SpecialModel ) then
+					print( "Changing model to " .. model )
+					ply:SetModel( model )
+				end
+				return FindEnumeration( seq )
 			end
 		end
 	end
-	
 	
 	return FindEnumeration( seq )
 	
@@ -846,7 +848,7 @@ function GM:CalcMainActivity( ply, velocity )
 		if( ValidEntity(  ply:GetActiveWeapon() ) ) then
 			holdtype = DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
 		end
-        ply.CalcIdeal = HandleSequence( ply, "ACT_IDLE" )
+        ply.CalcIdeal = false
         ply.CalcSeqOverride = -1
         
         if self:HandleExtraActivities( ply ) or self:HandlePlayerDriving( ply ) or
@@ -874,9 +876,12 @@ function GM:CalcMainActivity( ply, velocity )
 					ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "idle" ] )
 				end
 			end
-
-
         end
+		
+		if !ply.CalcIdeal then
+			ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "idle" ] )
+		end
+		
         return ply.CalcIdeal, ply.CalcSeqOverride
 end		
         
@@ -900,6 +905,7 @@ function GM:DoAnimationEvent( ply, event, data ) -- This is for gestures.
 						if( string.match( Anims[ ply:GetGender() ][ holdtype ][ "fire" ], "GESTURE" ) ) then
 								ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, FindEnumeration(  Anims[ ply:GetGender() ][ holdtype ][ "fire" ] ) ) -- Not a sequence, so I don't use HandleSequence here.
 						else
+							print( "ass fuck" )
 								ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "fire" ] )
 						end
 					else
@@ -921,6 +927,7 @@ function GM:DoAnimationEvent( ply, event, data ) -- This is for gestures.
 						if( string.match( Anims[ ply:GetGender() ][ holdtype ][ "reload" ], "GESTURE" ) ) then
 								ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, FindEnumeration(  Anims[ ply:GetGender() ][ holdtype ][ "reload" ] ) )
 						else
+							print( "shit dick" )
 								ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "reload" ] )
 						end	
 				else

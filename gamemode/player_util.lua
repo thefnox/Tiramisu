@@ -168,7 +168,10 @@ function CAKE.UnconciousMode( ply )
 		CAKE.RestoreClothing( ply )
 		ply:GodDisable()
 		datastream.StreamToClients( ply, "RecieveUnconciousRagdoll", { ["ragdoll"] = false } )
-		rag:Remove()end)
+		if rag then
+			rag:Remove()
+		end
+	end)
 	
 end
 
@@ -322,7 +325,7 @@ function meta:RefreshBusiness( )
 	local canBuy = CAKE.GetRankPermission( group, rank, "canbuy" )
 	
 	if canBuy then
-		local buygroups = CAKE.GetRankPermission( group, rank, "buygroups" )
+		local buygroups = CAKE.GetRankPermission( group, rank, "buygroups" ) or {}
 		for k, v in pairs( CAKE.ItemData ) do
 			if v.Purchaseable then
 				if table.HasValue( buygroups, v.ItemGroup ) then
