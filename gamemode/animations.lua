@@ -5,8 +5,8 @@ local meta = _R["Player"]
 local model
 function meta:GetGender()
 
-	model = string.lower( self:GetModel() )
-	if table.HasValue( Anims.Female[ "models" ], string.lower( model ) ) or self:GetNWString( "gender", "Male" ) == "Female" then
+	model = self:GetModel()
+	if table.HasValue( Anims.Female[ "models" ], model ) or self:GetNWString( "gender", "Male" ) == "Female" then
 		return "Female"
 	end
 	
@@ -88,31 +88,33 @@ meta = nil
 Anims = {}
 Anims.Male = {}
 Anims.Male[ "models" ] = {
-	"models/Gustavio/maleanimtree.mdl"
+	"models/Gustavio/maleanimtree.mdl",
+	"models/Gustavio/combineanimtree.mdl",
+	"models/Gustavio/metroanimtree.mdl"
 }
 Anims.Male[ "default" ] = { 
-        [ "idle" ] = "ACT_IDLE",
-        [ "walk" ] = "ACT_WALK",
-        [ "run" ] = "ACT_RUN",
-        [ "jump" ] = "ACT_JUMP",
-        [ "land" ] = "ACT_LAND",
-        [ "fly" ] = "ACT_GLIDE",
-        [ "sit" ] = "ACT_BUSY_SIT_CHAIR",
-		[ "swim" ] = "ACT_GLIDE",
-        [ "sitground" ] = "ACT_BUSY_SIT_GROUND",
+        [ "idle" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_IDLE",
+        [ "walk" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_WALK",
+        [ "run" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_RUN",
+        [ "jump" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_JUMP",
+        [ "land" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_LAND",
+        [ "fly" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_GLIDE",
+        [ "sit" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_BUSY_SIT_CHAIR",
+		[ "swim" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_GLIDE",
+        [ "sitground" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_BUSY_SIT_GROUND",
         [ "flinch" ] = {
-                ["explosion"] = "ACT_GESTURE_FLINCH_BLAST"
+                ["explosion"] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_GESTURE_FLINCH_BLAST"
                 },
 		[ "crouch" ] = {
-				[ "idle" ] = "ACT_COVER_LOW",
-				[ "walk" ] = "ACT_WALK_CROUCH",
-				[ "aimidle" ] = "ACT_RANGE_AIM_SMG1_LOW",
-				[ "aimwalk" ] = "ACT_WALK_CROUCH_AIM_RIFLE"
+				[ "idle" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_COVER_LOW",
+				[ "walk" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_WALK_CROUCH",
+				[ "aimidle" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+				[ "aimwalk" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
 		},
 		[ "aim" ] = {
-                [ "idle" ] = "ACT_IDLE_AIM_RIFLE_STIMULATED",
-                [ "walk" ] = "ACT_WALK_AIM_RIFLE_STIMULATED",
-                [ "run" ] = "ACT_RUN_AIM_RIFLE_STIMULATED"
+                [ "idle" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
+                [ "walk" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+                [ "run" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
         }
 }
 Anims.Male[ "pistol" ] = {
@@ -134,19 +136,19 @@ Anims.Male[ "pistol" ] = {
         [ "reload" ] = "ACT_GESTURE_RELOAD_PISTOL"
 }
 Anims.Male[ "ar2" ] = {
-        [ "idle" ] = "ACT_IDLE_SMG1_RELAXED",
-        [ "walk" ] = "ACT_WALK_RIFLE_RELAXED",
-        [ "run" ] = "ACT_RUN_RIFLE_RELAXED",
+        [ "idle" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_IDLE_SMG1_RELAXED",
+        [ "walk" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_WALK_RIFLE_RELAXED",
+        [ "run" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_RUN_RIFLE_RELAXED",
         [ "crouch" ] = {
-                [ "idle" ] = "ACT_COVER_LOW",
-                [ "walk" ] = "ACT_WALK_CROUCH_RIFLE",
-                [ "aimidle" ] = "ACT_RANGE_AIM_SMG1_LOW",
-                [ "aimwalk" ] = "ACT_WALK_CROUCH_AIM_RIFLE"
+                [ "idle" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_COVER_LOW",
+                [ "walk" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_WALK_CROUCH_RIFLE",
+                [ "aimidle" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+                [ "aimwalk" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
                 },
         [ "aim" ] = {
-                [ "idle" ] = "ACT_IDLE_AIM_RIFLE_STIMULATED",
-                [ "walk" ] = "ACT_WALK_AIM_RIFLE_STIMULATED",
-                [ "run" ] = "ACT_RUN_AIM_RIFLE_STIMULATED"
+                [ "idle" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
+                [ "walk" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+                [ "run" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
         },
 		["fire"] = "ACT_GESTURE_RANGE_ATTACK_SMG1"
 }
@@ -207,19 +209,19 @@ Anims.Male[ "crossbow" ] = {
 }
 
 Anims.Male[ "rpg" ] = {
-        [ "idle" ] = "ACT_IDLE_RPG",
-        [ "walk" ] = "ACT_WALK_RPG_RELAXED",
-        [ "run" ] = "ACT_RUN_RPG_RELAXED",
+        [ "idle" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_IDLE_RPG",
+        [ "walk" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_WALK_RPG_RELAXED",
+        [ "run" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_RUN_RPG_RELAXED",
         [ "crouch" ] = {
-                [ "idle" ] = "ACT_COVER_LOW_RPG",
-                [ "walk" ] = "ACT_WALK_CROUCH_RPG",
-                [ "aimidle" ] = "ACT_RANGE_AIM_SMG1_LOW",
-                [ "aimwalk" ] = "ACT_WALK_CROUCH_AIM_RIFLE"
+                [ "idle" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_COVER_LOW_RPG",
+                [ "walk" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_WALK_CROUCH_RPG",
+                [ "aimidle" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+                [ "aimwalk" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
                 },
         [ "aim" ] = {
-                [ "idle" ] = "ACT_IDLE_ANGRY_RPG",
-                [ "walk" ] = "ACT_WALK_AIM_RIFLE_STIMULATED",
-                [ "run" ] = "ACT_RUN_AIM_RIFLE_STIMULATED"
+                [ "idle" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_IDLE_ANGRY_RPG",
+                [ "walk" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+                [ "run" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
         },
 		["fire"] = "ACT_GESTURE_RANGE_ATTACK_SMG1"
 }
@@ -261,51 +263,52 @@ Anims.Male[ "grenade" ] = {
 }
 
 Anims.Male[ "slam" ] = {
-        [ "idle" ] = "ACT_IDLE",
-        [ "walk" ] = "ACT_WALK_SUITCASE",
-        [ "run" ] = "ACT_RUN",
+        [ "idle" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_IDLE",
+        [ "walk" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_WALK_SUITCASE",
+        [ "run" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_RUN",
         [ "crouch" ] = {
-                [ "idle" ] = "ACT_COVER_LOW",
-                [ "walk" ] = "ACT_WALK_CROUCH",
-                [ "aimidle" ] = "ACT_RANGE_AIM_SMG1_LOW",
-                [ "aimwalk" ] = "ACT_WALK_CROUCH_RPG"
+                [ "idle" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_COVER_LOW",
+                [ "walk" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_WALK_CROUCH",
+                [ "aimidle" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+                [ "aimwalk" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_WALK_CROUCH_RPG"
                 },
         [ "aim" ] = {
-                [ "idle" ] = "ACT_IDLE_PACKAGE",
-                [ "walk" ] = "ACT_WALK_PACKAGE",
-                [ "run" ] = "ACT_RUN"
+                [ "idle" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_IDLE_PACKAGE",
+                [ "walk" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_WALK_PACKAGE",
+                [ "run" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_RUN"
         },
-		["fire"] = "ACT_PICKUP_RACK"
+		["fire"] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_PICKUP_RACK"
 }
  
  
 Anims.Female = {}
 Anims.Female[ "models" ] = {
-	"models/Gustavio/femaleanimtree.mdl"
+	"models/Gustavio/femaleanimtree.mdl",
+	"models/Gustavio/alyxanimtree.mdl"
 }
 Anims.Female[ "default" ] = { 
-        [ "idle" ] = "ACT_IDLE",
-        [ "walk" ] = "ACT_WALK",
-        [ "run" ] = "ACT_RUN",
-        [ "jump" ] = "ACT_JUMP",
-        [ "land" ] = "ACT_LAND",
-        [ "fly" ] = "ACT_GLIDE",
-        [ "sit" ] = "ACT_BUSY_SIT_CHAIR",
-		[ "swim" ] = "ACT_GLIDE",
-        [ "sitground" ] = "ACT_BUSY_SIT_GROUND",
+        [ "idle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_IDLE",
+        [ "walk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK",
+        [ "run" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_RUN",
+        [ "jump" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_JUMP",
+        [ "land" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_LAND",
+        [ "fly" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_GLIDE",
+        [ "sit" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_BUSY_SIT_CHAIR",
+		[ "swim" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_GLIDE",
+        [ "sitground" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_BUSY_SIT_GROUND",
         [ "flinch" ] = {
-                ["explosion"] = "ACT_GESTURE_FLINCH_BLAST"
+                ["explosion"] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_GESTURE_FLINCH_BLAST"
                 },
 		[ "crouch" ] = {
-				[ "idle" ] = "ACT_COVER_LOW",
-				[ "walk" ] = "ACT_WALK_CROUCH",
-				[ "aimidle" ] = "ACT_RANGE_AIM_SMG1_LOW",
-				[ "aimwalk" ] = "ACT_WALK_CROUCH_AIM_RIFLE"
+				[ "idle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_COVER_LOW",
+				[ "walk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_CROUCH",
+				[ "aimidle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+				[ "aimwalk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
 		},
 		[ "aim" ] = {
-                [ "idle" ] = "ACT_IDLE_AIM_RIFLE_STIMULATED",
-                [ "walk" ] = "ACT_WALK_AIM_RIFLE_STIMULATED",
-                [ "run" ] = "ACT_RUN_AIM_RIFLE_STIMULATED"
+                [ "idle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
+                [ "walk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+                [ "run" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
         }
 }
 Anims.Female[ "pistol" ] = {
@@ -326,19 +329,19 @@ Anims.Female[ "pistol" ] = {
 		[ "fire" ] = "ACT_GESTURE_RANGE_ATTACK_PISTOL",
 }
 Anims.Female[ "ar2" ] = {
-        [ "idle" ] = "ACT_IDLE_SMG1_RELAXED",
-        [ "walk" ] = "ACT_WALK_RIFLE_RELAXED",
-        [ "run" ] = "ACT_RUN_RIFLE_RELAXED",
+        [ "idle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_IDLE_SMG1_RELAXED",
+        [ "walk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_RIFLE_RELAXED",
+        [ "run" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_RUN_RIFLE_RELAXED",
         [ "crouch" ] = {
-                [ "idle" ] = "ACT_COVER_LOW",
-                [ "walk" ] = "ACT_WALK_CROUCH_RIFLE",
-                [ "aimidle" ] = "ACT_RANGE_AIM_SMG1_LOW",
-                [ "aimwalk" ] = "ACT_WALK_CROUCH_AIM_RIFLE"
+                [ "idle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_COVER_LOW",
+                [ "walk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_CROUCH_RIFLE",
+                [ "aimidle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+                [ "aimwalk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
                 },
         [ "aim" ] = {
-                [ "idle" ] = "ACT_IDLE_AIM_RIFLE_STIMULATED",
-                [ "walk" ] = "ACT_WALK_AIM_RIFLE_STIMULATED",
-                [ "run" ] = "ACT_RUN_AIM_RIFLE_STIMULATED"
+                [ "idle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
+                [ "walk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+                [ "run" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
         },
 		["fire"] = "ACT_GESTURE_RANGE_ATTACK_SMG1"
 }
@@ -380,37 +383,37 @@ Anims.Female[ "shotgun" ] = {
 }
 
 Anims.Female[ "crossbow" ] = {
-        [ "idle" ] = "ACT_IDLE_SMG1_RELAXED",
-        [ "walk" ] = "ACT_WALK_RIFLE_RELAXED",
-        [ "run" ] = "ACT_RUN_RIFLE_RELAXED",
+        [ "idle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_IDLE_SMG1_RELAXED",
+        [ "walk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_RIFLE_RELAXED",
+        [ "run" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_RUN_RIFLE_RELAXED",
         [ "crouch" ] = {
-                [ "idle" ] = "ACT_COVER_LOW",
-                [ "walk" ] = "ACT_WALK_CROUCH_RIFLE",
-                [ "aimidle" ] = "ACT_RANGE_AIM_SMG1_LOW",
-                [ "aimwalk" ] = "ACT_WALK_CROUCH_AIM_RIFLE"
+                [ "idle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_COVER_LOW",
+                [ "walk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_CROUCH_RIFLE",
+                [ "aimidle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+                [ "aimwalk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
                 },
         [ "aim" ] = {
-                [ "idle" ] = "ACT_IDLE_AIM_RIFLE_STIMULATED",
-                [ "walk" ] = "ACT_WALK_AIM_RIFLE_STIMULATED",
-                [ "run" ] = "ACT_RUN_AIM_RIFLE_STIMULATED"
+                [ "idle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
+                [ "walk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+                [ "run" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
         },
 		["fire"] = "ACT_GESTURE_RANGE_ATTACK_SMG1"
 }
 
 Anims.Female[ "rpg" ] = {
-        [ "idle" ] = "ACT_IDLE_RPG",
-        [ "walk" ] = "ACT_WALK_RPG_RELAXED",
-        [ "run" ] = "ACT_RUN_RPG_RELAXED",
+        [ "idle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_IDLE_RPG",
+        [ "walk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_RPG_RELAXED",
+        [ "run" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_RUN_RPG_RELAXED",
         [ "crouch" ] = {
-                [ "idle" ] = "ACT_COVER_LOW_RPG",
-                [ "walk" ] = "ACT_WALK_CROUCH_RPG",
-                [ "aimidle" ] = "ACT_RANGE_AIM_SMG1_LOW",
-                [ "aimwalk" ] = "ACT_WALK_CROUCH_AIM_RIFLE"
+                [ "idle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_COVER_LOW_RPG",
+                [ "walk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_CROUCH_RPG",
+                [ "aimidle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+                [ "aimwalk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
                 },
         [ "aim" ] = {
-                [ "idle" ] = "ACT_IDLE_ANGRY_RPG",
-                [ "walk" ] = "ACT_WALK_AIM_RIFLE_STIMULATED",
-                [ "run" ] = "ACT_RUN_AIM_RIFLE_STIMULATED"
+                [ "idle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_IDLE_ANGRY_RPG",
+                [ "walk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+                [ "run" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
         },
 		["fire"] = "ACT_GESTURE_RANGE_ATTACK_SMG1"
 }
@@ -453,19 +456,19 @@ Anims.Female[ "grenade" ] = {
 
 
 Anims.Female[ "slam" ] = {
-        [ "idle" ] = "ACT_IDLE",
-        [ "walk" ] = "ACT_WALK_SUITCASE",
-        [ "run" ] = "ACT_RUN",
+        [ "idle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_IDLE",
+        [ "walk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_SUITCASE",
+        [ "run" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_RUN",
         [ "crouch" ] = {
-                [ "idle" ] = "ACT_COVER_LOW",
-                [ "walk" ] = "ACT_WALK_CROUCH",
-                [ "aimidle" ] = "ACT_RANGE_AIM_SMG1_LOW",
-                [ "aimwalk" ] = "ACT_WALK_CROUCH_RPG"
+                [ "idle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_COVER_LOW",
+                [ "walk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_CROUCH",
+                [ "aimidle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+                [ "aimwalk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_CROUCH_RPG"
                 },
         [ "aim" ] = {
-                [ "idle" ] = "ACT_IDLE_PACKAGE",
-                [ "walk" ] = "ACT_WALK_PACKAGE",
-                [ "run" ] = "ACT_RUN"
+                [ "idle" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_IDLE_PACKAGE",
+                [ "walk" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_WALK_PACKAGE",
+                [ "run" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_RUN"
         },
 		["fire"] = "ACT_PICKUP_RACK"
 }
@@ -511,7 +514,9 @@ local skeletonanim
 local gender
 
 local function HandleSequence( ply, seq ) --Internal function to handle different sequence types.
-
+	
+	print( ply:GetModel() )
+	
 	if !ply.SpecialModel then
 		ply.SpecialModel = ply:GetNWBool( "specialmodel", false )
 	end
@@ -520,17 +525,18 @@ local function HandleSequence( ply, seq ) --Internal function to handle differen
 		ply.Sequence = "none"
 	end
 	
-	if !string.match( seq, "&" ) then
-		if !ply.SpecialModel then
-			timer.Simple( 0.2, function()
-				if ( string.lower( ply:GetModel() ) != "models/gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl" ) then
-					print( "Changing model to " .. "models/Gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl LOL!" )
-					ply:SetModel( "models/Gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl" )
-				end
-			end)
-		end
-	else
-		if ply.Sequence != seq then
+	if ply.Sequence != seq then
+		if !string.match( seq, "&" ) then
+			/*
+			if !ply.SpecialModel and seq != "" then
+				timer.Simple( 0.2, function()
+					if string.lower( ply:GetModel() ) != "models/gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl" and !string.match( seq, "models" ) then
+						print( "Changing model to " .. "models/Gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl LOL!" )
+						ply:SetModel( "models/Gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl" )
+					end
+				end)
+			end*/
+		else
 			ply.Sequence = seq
 			if string.match( seq, "sequence" ) then
 				exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
@@ -539,12 +545,12 @@ local function HandleSequence( ply, seq ) --Internal function to handle differen
 				if !model then
 					model = "models/Gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl"
 				end
-				if( string.lower( ply:GetModel() ) != string.lower( model ) and !ply.SpecialModel ) then
+				if( ply:GetModel() != model and !ply.SpecialModel ) then
 					print( "Changing model to " .. model )
 					ply:SetModel( model )
 				end
 				timer.Simple( 0, function()
-					if string.match( string.lower( exp2[2] ), "g_" ) or string.match( string.lower( exp2[2] ), "gesture" ) then
+					if string.match( exp2[2], "g_" ) or string.match( exp2[2], "gesture" ) then
 						ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( string.gsub( exp2[2], ";", "" ) ) )
 					else
 						ply:SetSequence( ply:LookupSequence( string.gsub( exp2[2], ";", "" ) ) )
@@ -577,15 +583,17 @@ local function HandleSequence( ply, seq ) --Internal function to handle differen
 				exp2 = string.Explode( ":", exp[1] )
 				model = exp2[2]
 				seq = exp[2]
-				if( string.lower( ply:GetModel() ) != string.lower( model ) and !ply.SpecialModel ) then
+				if( ply:GetModel() != model and !ply.SpecialModel ) then
 					print( "Changing model to " .. model )
 					ply:SetModel( model )
 				end
+				print( tostring( FindEnumeration( seq ) ) )
 				return FindEnumeration( seq )
 			end
 		end
 	end
 	
+	print( tostring( FindEnumeration( seq ) ) )
 	return FindEnumeration( seq )
 	
 end
@@ -905,8 +913,7 @@ function GM:DoAnimationEvent( ply, event, data ) -- This is for gestures.
 						if( string.match( Anims[ ply:GetGender() ][ holdtype ][ "fire" ], "GESTURE" ) ) then
 								ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, FindEnumeration(  Anims[ ply:GetGender() ][ holdtype ][ "fire" ] ) ) -- Not a sequence, so I don't use HandleSequence here.
 						else
-							print( "ass fuck" )
-								ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "fire" ] )
+							ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "fire" ] )
 						end
 					else
 						exp = string.Explode( ";", string.gsub( Anims[ ply:GetGender() ][ holdtype ][ "fire" ], "&", "" ) )
@@ -927,8 +934,7 @@ function GM:DoAnimationEvent( ply, event, data ) -- This is for gestures.
 						if( string.match( Anims[ ply:GetGender() ][ holdtype ][ "reload" ], "GESTURE" ) ) then
 								ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, FindEnumeration(  Anims[ ply:GetGender() ][ holdtype ][ "reload" ] ) )
 						else
-							print( "shit dick" )
-								ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "reload" ] )
+							ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "reload" ] )
 						end	
 				else
                         ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_RELOAD_SMG1 )
