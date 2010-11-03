@@ -473,10 +473,14 @@ Anims.Female[ "slam" ] = {
 		["fire"] = "ACT_PICKUP_RACK"
 }
 
+local cachetable = {}
 local function FindEnumeration( actname ) --Finds the enumeration number based on it's name.
+
+	if cachetable[actname] then return cachetable[actname] end
 
 	for k, v in pairs ( _E ) do
 		if(  k == actname ) then
+			cachetable[actname] = v
 			return tonumber( v );
 		end
 	end
@@ -512,10 +516,15 @@ local model
 local sequence
 local skeletonanim
 local gender
+local lastseq
 
 local function HandleSequence( ply, seq ) --Internal function to handle different sequence types.
 	
-	print( ply:GetModel() )
+	--print( ply:GetModel() )
+		
+	if ply.Sequence == seq then
+		return FindEnumeration(lastseq)
+	end
 	
 	if !ply.SpecialModel then
 		ply.SpecialModel = ply:GetNWBool( "specialmodel", false )
@@ -526,12 +535,13 @@ local function HandleSequence( ply, seq ) --Internal function to handle differen
 	end
 	
 	if ply.Sequence != seq then
+		--print(ply.Sequence .. "GEGSJ")
 		if !string.match( seq, "&" ) then
 			/*
 			if !ply.SpecialModel and seq != "" then
 				timer.Simple( 0.2, function()
 					if string.lower( ply:GetModel() ) != "models/gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl" and !string.match( seq, "models" ) then
-						print( "Changing model to " .. "models/Gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl LOL!" )
+						--print( "Changing model to " .. "models/Gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl LOL!" )
 						ply:SetModel( "models/Gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl" )
 					end
 				end)
@@ -546,7 +556,7 @@ local function HandleSequence( ply, seq ) --Internal function to handle differen
 					model = "models/Gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl"
 				end
 				if( ply:GetModel() != model and !ply.SpecialModel ) then
-					print( "Changing model to " .. model )
+					--print( "Changing model to " .. model )
 					ply:SetModel( model )
 				end
 				timer.Simple( 0, function()
@@ -583,17 +593,22 @@ local function HandleSequence( ply, seq ) --Internal function to handle differen
 				exp2 = string.Explode( ":", exp[1] )
 				model = exp2[2]
 				seq = exp[2]
-				if( ply:GetModel() != model and !ply.SpecialModel ) then
-					print( "Changing model to " .. model )
+				if( ply:GetModel() != string.lower(model) and !ply.SpecialModel ) then
+					--print( "Switching model to " .. model )
+					--print(ply.SpecialModel)
+					--print(ply:GetModel())
 					ply:SetModel( model )
 				end
+				--print(seq)
 				print( tostring( FindEnumeration( seq ) ) )
+				lastseq = seq
 				return FindEnumeration( seq )
 			end
 		end
 	end
-	
-	print( tostring( FindEnumeration( seq ) ) )
+
+	--print( tostring( FindEnumeration( seq ) ) )
+	--print(seq)
 	return FindEnumeration( seq )
 	
 end
@@ -862,7 +877,8 @@ function GM:CalcMainActivity( ply, velocity )
         if self:HandleExtraActivities( ply ) or self:HandlePlayerDriving( ply ) or
                 self:HandlePlayerJumping( ply ) or
                 self:HandlePlayerDucking( ply, velocity ) or
-                self:HandlePlayerSwimming( ply ) then
+                self:HandlePlayerSwimming( ply ) 
+		then
 			--We do nothing, I guess, lol.
 		else
             len2d = velocity:Length2D()
