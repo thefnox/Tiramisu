@@ -24,7 +24,7 @@ CAKE.FirstPersonForward = CreateClientConVar( "rp_firstpersonforward", 0, true, 
 CAKE.FirstPersonUp = CreateClientConVar( "rp_firstpersonup", 7, true, true )
 CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true )
 CAKE.UseWhiteScreen = CreateClientConVar( "rp_whitescreen", 1, true, true )
-CAKE.UseCalcView = CreateClientConVar( "rp_useview", 0, true, true )
+CAKE.UseCalcView = CreateClientConVar( "rp_useview", 1, true, true )
 CAKE.ViewRagdoll = false
 
 CAKE.Clothing = "none"
