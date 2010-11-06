@@ -240,7 +240,6 @@ end
 
 
 function GM:PlayerSetModel(ply)
-	
 	if !ply:GetNWBool( "specialmodel", false ) then
 		if(ply:IsCharLoaded()) then
 				local m = ""

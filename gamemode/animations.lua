@@ -1,6 +1,6 @@
 --Hey hey hey! It's fucking NPC animations version three! This time with no Rick Dark shit.
 --Credits to Azuisleet ( Original hook ), Entoros( Holdtype thing -- Which is no more, since garry added that in :/ ), and well, me, Big Bang/F-Nox ( everything else )
-
+local needsrebuild = {}
 local meta = _R["Player"]
 local model
 function meta:GetGender()
@@ -517,11 +517,20 @@ local sequence
 local skeletonanim
 local gender
 local lastseq
+local bbp = function( self, numBones, numPhysBones )
+	if needsrebuild[ply] then
+		for k,v in pairs(bones[ply]) do
+			if not v == nil then
+				ply:SetBonePosition(k, v.pos, v.ang)
+			end
+		end
+		needsrebuild[ply] = false
+	end
+end
+
+local bones = {}
 
 local function HandleSequence( ply, seq ) --Internal function to handle different sequence types.
-	
-	--print( ply:GetModel() )
-		
 	if ply.Sequence == seq then
 		return FindEnumeration(lastseq)
 	end
@@ -556,7 +565,7 @@ local function HandleSequence( ply, seq ) --Internal function to handle differen
 					model = "models/Gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl"
 				end
 				if( ply:GetModel() != model and !ply.SpecialModel ) then
-					--print( "Changing model to " .. model )
+					print( "Changing model to " .. model )
 					ply:SetModel( model )
 				end
 				timer.Simple( 0, function()
@@ -594,13 +603,27 @@ local function HandleSequence( ply, seq ) --Internal function to handle differen
 				model = exp2[2]
 				seq = exp[2]
 				if( ply:GetModel() != string.lower(model) and !ply.SpecialModel ) then
-					--print( "Switching model to " .. model )
-					--print(ply.SpecialModel)
-					--print(ply:GetModel())
+					print(CLIENT)
+					print( "Switching model to " .. model )
+					if ClIENT then
+						for i = 0, ply:GetBoneCount()-1 do
+							print(ply:GetBoneName(i).. " testing this bone " ..i)
+							if ply:GetBoneName(i) != "__INVALIDBONE__" or ply:GetBonePosition(i) != nil then
+								if !bones[ply] then bones[ply] = {} end
+								bones[ply][i] = {}
+								bones[i].pos, bones[i].ang = ply:GetBonePosition(i)
+							end
+						end
+					end
 					ply:SetModel( model )
+					if CLIENT then 
+						needsrebuild[ply] = true
+						if ply.BuildBonePositions != bbp then
+							ply.BuildBonePositions = bbp
+						end
+					end
 				end
 				--print(seq)
-				print( tostring( FindEnumeration( seq ) ) )
 				lastseq = seq
 				return FindEnumeration( seq )
 			end

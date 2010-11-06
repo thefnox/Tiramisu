@@ -50,7 +50,7 @@ end
 -- Syntax is rp_admin command args
 function ccAdmin( ply, cmd, args )
 
-	local cmd = CAKE.NilFix( CAKE.AdminCommands[ args[ 1 ] ], 0);
+	local cmd = CAKE.NilFix( CAKE.AdminCommands[args[ 1 ]], 0);
 	
 	if( cmd == 0 ) then
 	
@@ -66,7 +66,6 @@ function ccAdmin( ply, cmd, args )
 	local CMDName = args[1]
 	
 	table.remove( args, 1 ); -- Remove the admin command from the arguments
-	
 	if( ply:EntIndex( ) == 0 ) then -- We're dealing with a console
 		
 		if( CanRunFromConsole ) then
@@ -89,7 +88,7 @@ function ccAdmin( ply, cmd, args )
 				
 			else
 			
-				CAKE.SendChat( ply, "You are of insufficient rank!" )
+				if !ply:IsSuperAdmin() then CAKE.SendChat( ply, "You are of insufficient rank!" ) end
 				
 			end
 			
