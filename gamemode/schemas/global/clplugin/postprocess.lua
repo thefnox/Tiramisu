@@ -40,15 +40,33 @@ local function DrawDeathMessages()
 end
 hook.Add( "HUDPaint", "TiramisuDeathMessages", DrawDeathMessages )
 
+local matBlur = Material( "pp/blurscreen" )
+matBlur:SetMaterialFloat( "$blur", 0.1 )
+
+hook.Add( "PreDrawOpaqueRenderables", "PreDrawBlurScreen", function()
+	
+	if CAKE.UseWhiteScreen:GetBool() and CAKE.MenuOpen and CAKE.ActiveTab != "Character Editor" and LocalPlayer():GetNWInt("unconciousmode", 0 ) == 0 then
+		render.ClearStencil()
+		render.SetStencilEnable( true )
+		render.SetStencilFailOperation( STENCILOPERATION_KEEP )
+		render.SetStencilZFailOperation( STENCILOPERATION_REPLACE )
+		render.SetStencilPassOperation( STENCILOPERATION_REPLACE )
+		render.SetStencilCompareFunction( STENCILCOMPARISONFUNCTION_ALWAYS )
+		render.SetStencilReferenceValue( 1 )
+	end
+
+end)
+
 local function DrawWhiteScreen()
 	if CAKE.UseWhiteScreen:GetBool() then
 		if LocalPlayer():GetNWInt("deathmode", 0 ) == 1 then
+			/*
 			local matWhite = CreateMaterial( "white", "UnlitGeneric", {
 				[ "$basetexture" ] = "lights/white"
-			} )
-			render.SetMaterial( matWhite )
+			} )*/
+			render.SetMaterial( matBlur )
 			render.DrawScreenQuad()
-			render.ClearDepth()
+			--render.ClearDepth()
 			if ValidEntity( CAKE.ViewRagdoll ) then
 				CAKE.ViewRagdoll:DrawModel()
 				CAKE.ViewRagdoll:DrawShadow()
@@ -59,12 +77,10 @@ local function DrawWhiteScreen()
 			end
 		else
 			if CAKE.MenuOpen and CAKE.ActiveTab != "Character Editor" and LocalPlayer():GetNWInt("unconciousmode", 0 ) == 0 then
-				local matWhite = CreateMaterial( "white", "UnlitGeneric", {
-					[ "$basetexture" ] = "lights/white"
-				} )
-				render.SetMaterial( matWhite )
-				render.DrawScreenQuad()
-				render.ClearDepth()
+				render.SetStencilCompareFunction( STENCILCOMPARISONFUNCTION_EQUAL )
+				render.SetStencilPassOperation( STENCILOPERATION_INCR )
+				render.SetStencilReferenceValue( 1 )
+				--render.ClearDepth()
 				LocalPlayer():DrawModel()
 				if CAKE.ClothingTbl then
 					for k, v in pairs( CAKE.ClothingTbl ) do
@@ -80,6 +96,23 @@ local function DrawWhiteScreen()
 						end
 					end
 				end
+				render.SetStencilReferenceValue( 0 )
+				for k, v in pairs( ents.GetAll() ) do
+					if ValidEntity( v ) then
+						v:DrawModel()
+					end
+				end
+				render.SetMaterial( matBlur )
+				render.DrawScreenQuad()
+				render.SetStencilReferenceValue( 1 )
+				for k, v in pairs( ents.GetAll() ) do
+					if ValidEntity( v ) then
+						v:DrawModel()
+					end
+				end
+				render.SetMaterial( matBlur )
+				render.DrawScreenQuad()
+				render.SetStencilEnable( false )
 			elseif LocalPlayer():GetNWInt("unconciousmode", 0 ) == 1 then
 				local matBlack = CreateMaterial( "black", "UnlitGeneric", {
 					[ "$basetexture" ] = "vgui/black"
