@@ -605,6 +605,7 @@ local function HandleSequence( ply, seq ) --Internal function to handle differen
 				if( ply:GetModel() != string.lower(model) and !ply.SpecialModel ) then
 					--print(CLIENT)
 					--print( "Switching model to " .. model )
+					/*
 					if CLIENT then
 						for i = 0, ply:GetBoneCount()-1 do
 							--print(ply:GetBoneName(i).. " testing this bone " ..i)
@@ -614,14 +615,15 @@ local function HandleSequence( ply, seq ) --Internal function to handle differen
 								bones[ply][i].pos, bones[ply][i].ang = ply:GetBonePosition(i)
 							end
 						end
-					end
+					end*/
 					ply:SetModel( model )
+					/*
 					if CLIENT then 
 						needsrebuild[ply] = true
 						if ply.BuildBonePositions != bbp then
 							ply.BuildBonePositions = bbp
 						end
-					end
+					end*/
 				end
 				--print(seq)
 				lastseq = seq
