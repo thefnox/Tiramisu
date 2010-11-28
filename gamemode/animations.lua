@@ -517,6 +517,8 @@ local sequence
 local skeletonanim
 local gender
 local lastseq
+local bones = {}
+
 local bbp = function( self, numBones, numPhysBones )
 	if needsrebuild[self] then
 		for k,v in pairs(bones[self]) do
@@ -527,8 +529,6 @@ local bbp = function( self, numBones, numPhysBones )
 		needsrebuild[self] = false
 	end
 end
-
-local bones = {}
 
 local function HandleSequence( ply, seq ) --Internal function to handle different sequence types.
 	if ply.Sequence == seq then
@@ -611,7 +611,7 @@ local function HandleSequence( ply, seq ) --Internal function to handle differen
 							if ply:GetBoneName(i) != "__INVALIDBONE__" or ply:GetBonePosition(i) != nil then
 								if !bones[ply] then bones[ply] = {} end
 								bones[ply][i] = {}
-								bones[i].pos, bones[i].ang = ply:GetBonePosition(i)
+								bones[ply][i].pos, bones[ply][i].ang = ply:GetBonePosition(i)
 							end
 						end
 					end
