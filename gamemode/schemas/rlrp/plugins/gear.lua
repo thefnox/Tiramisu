@@ -226,22 +226,23 @@ local meta = FindMetaTable( "Player" )
 
 function meta:HideActiveWeapon()
 	
-	local wep = self:GetActiveWeapon()
-	if ValidEntity( wep ) and !self:GetNWBool( "observe" ) then
-		local class = wep:GetClass()
-		if self.Gear then
-			for k, v in pairs( self.Gear ) do
-				if ValidEntity( v[ "entity" ] ) then
-					if v[ "item" ] == class and v[ "entity" ]:GetParent() == self then
-						v[ "entity" ]:SetDTBool( 1, false )
-					else
-						v[ "entity" ]:SetDTBool( 1, true)
+	if ValidEntity( ply ) then
+		local wep = self:GetActiveWeapon()
+		if !self:GetNWBool( "observe" ) then
+			local class = wep:GetClass()
+			if self.Gear then
+				for k, v in pairs( self.Gear ) do
+					if ValidEntity( v[ "entity" ] ) then
+						if v[ "item" ] == class and v[ "entity" ]:GetParent() == self then
+							v[ "entity" ]:SetDTBool( 1, false )
+						else
+							v[ "entity" ]:SetDTBool( 1, true)
+						end
 					end
 				end
 			end
 		end
 	end
-
 end
 
 function CAKE.SaveGear( ply )
@@ -278,11 +279,19 @@ function CAKE.RestoreGear( ply )
 end
 
 local function GearSpawnHook( ply )
-	timer.Create( ply:SteamID() .. "gunchecktimer", 0.1, 0, function() --Please not, this solution is horrid, but there are no other hooks for this.
-		ply:HideActiveWeapon()
+	timer.Create( ply:SteamID() .. "gunchecktimer", 0.1, 0, function( ply ) --Please don't use this, this solution is horrid, but there are no other hooks for this.
+		if ValidEntity( ply ) then
+			ply:HideActiveWeapon()
+		end
 	end)
 end
 hook.Add( "PlayerSpawn", "TiramisuGearSpawnHook", GearSpawnHook )
+
+hook.Add( "PlayerDisconnected", "TiramisuGearRemovalHook", function( ply )
+	if timer.IsTimer( ply:SteamID() .. "gunchecktimer" ) then
+		timer.Destroy( ply:SteamID() .. "gunchecktimer" )
+	end
+end)
 
 function PLUGIN.Init()
 	

@@ -18,13 +18,6 @@ function ENT:Draw()
 		end
 	end
 	
-	if !lolpos then
-		lolpos = self.Entity:GetParent():GetPos()
-	end
-	lolpos = LerpVector( 0.1, lolpos, self.Entity:GetParent():GetPos() )
-	self.Entity:SetPos( lolpos )
-	self.Entity:SetAngles( self.Entity:GetParent():GetAngles() )
-	
 	self.Entity:DrawModel()
 	self.Entity:DrawShadow( true )
 	

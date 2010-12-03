@@ -110,7 +110,7 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 					end
 					
 					angle = math.NormalizeAngle( v:GetAngles().y + 90 )
-					inverseangle = math.NormalizeAngle( angle * -1 )
+					inverseangle = math.NormalizeAngle( v:GetAngles().y - 90 )
 					--Why do I create two instances of cam.Start3d2d, you may ask.
 					--It's actually quite simple, one's angles are mirrored in comparison to the other
 					--Considering that 3d2d screens render only one way, this is the only way to effectively have text

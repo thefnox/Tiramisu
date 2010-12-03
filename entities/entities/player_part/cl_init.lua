@@ -24,7 +24,6 @@ function ENT:Draw()
 	if self.Entity:GetParent():IsPlayer() then 
 		self.Entity:SetEyeTarget( self.Entity:GetParent():GetEyeTrace().HitPos )
 	end
-	self.Entity:SetAngles( self.Entity:GetParent():GetAngles() )
 	self.Entity:RemoveEffects(EF_ITEM_BLINK)
 	self.Entity:DrawModel()
 	self.Entity:DrawShadow( true )
