@@ -596,11 +596,13 @@ local function HandleSequence( ply, seq ) --Internal function to handle differen
 				exp2 = string.Explode( ":", exp[1] )
 				model = exp2[2]
 				seq = exp[2]
-				if( ply:GetModel() != string.lower(model) and !ply.SpecialModel ) then
+				if( ply:GetModel() != string.lower(model) and !ply.SpecialModel and ply:GetNWBool( "charloaded", false )) then
 					--print( "Switching model to " .. model )
 					--print(ply.SpecialModel)
 					--print(ply:GetModel())
 					ply:SetModel( model )
+				elseif !ply:GetNWBool( "charloaded", false ) then
+					ply:SetModel( "models/kleiner.mdl" )
 				end
 				return FindEnumeration( seq )
 			end

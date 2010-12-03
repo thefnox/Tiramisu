@@ -9,7 +9,8 @@
 
 LocalPlayer( ).MyModel = "" -- Has to be blank for the initial value, so it will create a spawnicon in the first place.
 
-surface.CreateFont( "ChatFont", 22, 100, true, false, "PlInfoFont" );
+surface.CreateFont("TargetID", ScreenScale(72), 400, true, false, "TiramisuTitlesFont")
+surface.CreateFont("ChatFont", ScreenScale(72), 400, true, false, "TiramisuChatFont")
 
 local function DrawTime( )
 
@@ -67,6 +68,8 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 	local alpha
 	local tracedata
 	local dist
+	local angle
+	local inverseangle
 	local rendered = {}
 	for k, v in pairs( player.GetAll( ) ) do
 		
@@ -83,9 +86,9 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 				position = v:GetPos()
 				if v:GetBonePosition( v:LookupBone("ValveBiped.Bip01_Head1") ) then
 					position = v:GetBonePosition( v:LookupBone("ValveBiped.Bip01_Head1") )
-					position = Vector( position.x, position.y, position.z + 13 )
+					position = Vector( position.x, position.y, position.z + 18 )
 				else
-					position = Vector( position.x, position.y, position.z + 100 )
+					position = Vector( position.x, position.y, position.z + 115 )
 				end
 				--screenpos = position:ToScreen( )
 				screenpos = Vector( 0, 0, 0 )
@@ -105,12 +108,27 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 					elseif( alpha < 0 ) then
 						alpha = 0
 					end
-					cam.Start3D2D( position, Angle( 0, v:GetAngles().y , 90 ), 1 )
-						draw.DrawText( v:Nick( ), "DefaultSmall", screenpos.x, screenpos.y, Color( 255, 255, 255, alpha ), 1 )
-						draw.DrawText( v:GetNWString( "title", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 10, Color( 255, 255, 255, alpha ), 1 )
-						draw.DrawText( v:GetNWString( "title2", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 20, Color( 255, 255, 255, alpha ), 1 )
+					
+					angle = math.NormalizeAngle( v:GetAngles().y + 90 )
+					inverseangle = math.NormalizeAngle( angle * -1 )
+					--Why do I create two instances of cam.Start3d2d, you may ask.
+					--It's actually quite simple, one's angles are mirrored in comparison to the other
+					--Considering that 3d2d screens render only one way, this is the only way to effectively have text
+					--That can be seen equally from the front of a character as well as from the back.
+					cam.Start3D2D( position, Angle( 0, angle , 90 ), 0.03 )
+						draw.DrawText( v:Nick( ), "TiramisuTitlesFont", screenpos.x, screenpos.y, Color( 255, 255, 255, alpha ), 1 )
+						draw.DrawText( v:GetNWString( "title", "Connecting.." ), "TiramisuTitlesFont", screenpos.x, screenpos.y + 100, Color( 255, 255, 255, alpha ), 1 )
+						draw.DrawText( v:GetNWString( "title2", "Connecting.." ), "TiramisuTitlesFont", screenpos.x, screenpos.y + 200, Color( 255, 255, 255, alpha ), 1 )
 						if( v:GetNWInt( "chatopen" ) == 1 ) then
-							draw.DrawText( "Typing..", "ChatFont", screenpos.x, screenpos.y - 50, Color( 255, 255, 255, alpha ), 1 )
+							draw.DrawText( "Typing..", "TiramisuChatFont", screenpos.x, screenpos.y - 150, Color( 255, 255, 255, alpha ), 1 )
+						end
+					cam.End3D2D()
+					cam.Start3D2D( position, Angle( 0,inverseangle, 90 ), 0.03 )
+						draw.DrawText( v:Nick( ), "TiramisuTitlesFont", screenpos.x, screenpos.y, Color( 255, 255, 255, alpha ), 1 )
+						draw.DrawText( v:GetNWString( "title", "Connecting.." ), "TiramisuTitlesFont", screenpos.x, screenpos.y + 100, Color( 255, 255, 255, alpha ), 1 )
+						draw.DrawText( v:GetNWString( "title2", "Connecting.." ), "TiramisuTitlesFont", screenpos.x, screenpos.y + 200, Color( 255, 255, 255, alpha ), 1 )
+						if( v:GetNWInt( "chatopen" ) == 1 ) then
+							draw.DrawText( "Typing..", "TiramisuChatFont", screenpos.x, screenpos.y - 150, Color( 255, 255, 255, alpha ), 1 )
 						end
 					cam.End3D2D()
 						
@@ -118,12 +136,20 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 					
 				elseif LocalPlayer():GetNWBool("seeall", false) then
 					alpha = 255
-					cam.Start3D2D( position, Angle( 0, v:GetAngles().y , 90 ), 1 )
-						draw.DrawText( v:Nick( ), "DefaultSmall", screenpos.x, screenpos.y, Color( 255, 255, 255, alpha ), 1 )
-						draw.DrawText( v:GetNWString( "title", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 10, Color( 255, 255, 255, alpha ), 1 )
-						draw.DrawText( v:GetNWString( "title2", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 20, Color( 255, 255, 255, alpha ), 1 )
-						draw.DrawText( v:Name() .. " [" .. v:SteamID() .. "]", "DefaultMedium", screenpos.x, screenpos.y - 10, Color(60, 160, 255, 255), 1)
-						draw.DrawText( dist*2 .. " units away.", "DefaultMedium", screenpos.x, screenpos.y + 40, Color(60, 160, 255, 255), 1)
+					cam.Start3D2D( position, Angle( 0, angle , 90 ), 0.03 )
+						draw.DrawText( v:Nick( ), "TiramisuTitlesFont", screenpos.x, screenpos.y, Color( 255, 255, 255, alpha ), 1 )
+						draw.DrawText( v:GetNWString( "title", "Connecting.." ), "TiramisuTitlesFont", screenpos.x, screenpos.y + 100, Color( 255, 255, 255, alpha ), 1 )
+						draw.DrawText( v:GetNWString( "title2", "Connecting.." ), "TiramisuTitlesFont", screenpos.x, screenpos.y + 200, Color( 255, 255, 255, alpha ), 1 )
+						draw.DrawText( v:Name() .. " [" .. v:SteamID() .. "]", "TiramisuTitlesFont", screenpos.x, screenpos.y - 100, Color(60, 160, 255, 255), 1)
+						draw.DrawText( dist*2 .. " units away.", "TiramisuTitlesFont", screenpos.x, screenpos.y + 300, Color(60, 160, 255, 255), 1)
+						table.insert( rendered, v )
+					cam.End3D2D()
+					cam.Start3D2D( position, Angle( 0, inverseangle , 90 ), 0.03 )
+						draw.DrawText( v:Nick( ), "TiramisuTitlesFont", screenpos.x, screenpos.y, Color( 255, 255, 255, alpha ), 1 )
+						draw.DrawText( v:GetNWString( "title", "Connecting.." ), "TiramisuTitlesFont", screenpos.x, screenpos.y + 100, Color( 255, 255, 255, alpha ), 1 )
+						draw.DrawText( v:GetNWString( "title2", "Connecting.." ), "TiramisuTitlesFont", screenpos.x, screenpos.y + 200, Color( 255, 255, 255, alpha ), 1 )
+						draw.DrawText( v:Name() .. " [" .. v:SteamID() .. "]", "TiramisuTitlesFont", screenpos.x, screenpos.y - 100, Color(60, 160, 255, 255), 1)
+						draw.DrawText( dist*2 .. " units away.", "TiramisuTitlesFont", screenpos.x, screenpos.y + 300, Color(60, 160, 255, 255), 1)
 						table.insert( rendered, v )
 					cam.End3D2D()
 				end
@@ -143,15 +169,22 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 						position = Vector( position.x, position.y, position.z + 100 )
 					end
 					screenpos = position:ToScreen( )
-					cam.Start3D2D( position, Angle( 0, v:GetAngles().y , 90 ), 1 )
-						draw.DrawText( v:Nick( ), "DefaultSmall", screenpos.x, screenpos.y, Color( 255, 255, 255, 255 ), 1 )
-						draw.DrawText( v:GetNWString( "title", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 10, Color( 255, 255, 255, 255 ), 1 )
-						draw.DrawText( v:GetNWString( "title2", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 20, Color( 255, 255, 255, 255 ), 1 )
+					cam.Start3D2D( position, Angle( 0, angle , 90 ), 0.03 )
+						draw.DrawText( v:Nick( ), "TiramisuTitlesFont", screenpos.x, screenpos.y, Color( 255, 255, 255, 255 ), 1 )
+						draw.DrawText( v:GetNWString( "title", "Connecting.." ), "TiramisuTitlesFont", screenpos.x, screenpos.y + 100, Color( 255, 255, 255, 255 ), 1 )
+						draw.DrawText( v:GetNWString( "title2", "Connecting.." ), "TiramisuTitlesFont", screenpos.x, screenpos.y + 200, Color( 255, 255, 255, 255 ), 1 )
 						if( v:GetNWInt( "chatopen" ) == 1 ) then
-							draw.DrawText( "Typing..", "ChatFont", screenpos.x, screenpos.y - 50, Color( 255, 255, 255, 255 ), 1 )
+							draw.DrawText( "Typing..", "TiramisuChatFont", screenpos.x, screenpos.y - 150, Color( 255, 255, 255, 255 ), 1 )
 						end
 					cam.End3D2D()
-			
+					cam.Start3D2D( position, Angle( 0, inverseangle, 90 ), 0.03 )
+						draw.DrawText( v:Nick( ), "TiramisuTitlesFont", screenpos.x, screenpos.y, Color( 255, 255, 255, 255 ), 1 )
+						draw.DrawText( v:GetNWString( "title", "Connecting.." ), "TiramisuTitlesFont", screenpos.x, screenpos.y + 100, Color( 255, 255, 255, 255 ), 1 )
+						draw.DrawText( v:GetNWString( "title2", "Connecting.." ), "TiramisuTitlesFont", screenpos.x, screenpos.y + 200, Color( 255, 255, 255, 255 ), 1 )
+						if( v:GetNWInt( "chatopen" ) == 1 ) then
+							draw.DrawText( "Typing..", "TiramisuChatFont", screenpos.x, screenpos.y - 150, Color( 255, 255, 255, 255 ), 1 )
+						end
+					cam.End3D2D()
 			end
 		end
 	end
