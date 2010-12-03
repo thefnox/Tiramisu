@@ -14,13 +14,7 @@ function ENT:Draw()
 			return
 		end
 		if !CAKE.Thirdperson:GetBool() then
-			if !CAKE.RenderBody:GetBool() then
-				return
-			else
-				if self.Entity:GetDTInt(1) == self.Entity:GetDTEntity( 1 ):LookupBone("ValveBiped.Bip01_Head1") then
-					return
-				end
-			end
+			return
 		end
 	end
 	

@@ -9,26 +9,21 @@ function ENT:Draw()
 			return
 		end
 		if !CAKE.Thirdperson:GetBool() then
+			/*
 			if !CAKE.RenderBody:GetBool() then
 				return
 			else
-				if self.Entity:GetDTInt( 1 ) == 2 then
+				--if self.Entity:GetDTInt( 1 ) == 2 or  then
 					return
-				end
-			end
+				--end
+			end*/
+			return
 		end
 	end
 	
 	if self.Entity:GetParent():IsPlayer() then 
 		self.Entity:SetEyeTarget( self.Entity:GetParent():GetEyeTrace().HitPos )
 	end
-	
-	--Oh my is this lag compensation?
-	if !lolpos then
-		lolpos = self.Entity:GetParent():GetPos()
-	end
-	lolpos = LerpVector( 0.1, lolpos, self.Entity:GetParent():GetPos() )
-	self.Entity:SetPos( lolpos )
 	self.Entity:SetAngles( self.Entity:GetParent():GetAngles() )
 	self.Entity:RemoveEffects(EF_ITEM_BLINK)
 	self.Entity:DrawModel()
@@ -236,13 +231,21 @@ function ENT:BuildBonePositions( NumBones, NumPhysBones )
 	local index = 0
 	local inverse = false
 	local exceptions = {}
-	if self.Entity:GetDTInt( 1 ) == 1 then
+	if self.Entity:GetDTInt( 1 ) == 0 then
+		inverse = true
+	elseif self.Entity:GetDTInt( 1 ) == 1 then
 		exceptions = body
 		inverse = true
 	elseif self.Entity:GetDTInt( 1 ) == 2 then
 		exceptions = head
 	elseif self.Entity:GetDTInt( 1 ) == 3 then
 		exceptions = gloves
+	elseif self.Entity:GetDTInt( 1 ) == 4 then
+		exceptions = gloves
+		inverse = true
+	elseif self.Entity:GetDTInt( 1 ) == 5 then
+		exceptions = head
+		inverse = true
 	end
 	for k, v in pairs( exceptions ) do
 		index = self.Entity:LookupBone( v )
