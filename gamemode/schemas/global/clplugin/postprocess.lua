@@ -149,7 +149,7 @@ hook.Add( "RenderScreenspaceEffects", "Tiramisu: Turn Off PostProcess", function
 		tab[ "$pp_colour_mulr" ] = 0
 		tab[ "$pp_colour_mulg" ] = 0
 		tab[ "$pp_colour_mulb" ] = 0
-		DrawColorModify( tab )
+		--DrawColorModify( tab )
 		DrawBloom( 0, 0, 5, 5, 14, 1, 1, 1, 1 )
 		DrawSharpen( 0, 1)
 		DrawMotionBlur( 0.4, 0, 0 )

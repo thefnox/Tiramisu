@@ -29,10 +29,11 @@ local function OpenOptions()
 	ThirdpersonCheck:SetConVar( "rp_thirdperson" ) -- ConCommand must be a 1 or 0 value
 	Options:AddItem( ThirdpersonCheck )
 	
+	/*
 	local RenderbodyCheck = vgui.Create( "DCheckBoxLabel"  )
 	RenderbodyCheck:SetText( "Toggle rendering of your body in firstperson" )
 	RenderbodyCheck:SetConVar( "rp_renderbody" ) -- ConCommand must be a 1 or 0 value
-	Options:AddItem( RenderbodyCheck )
+	Options:AddItem( RenderbodyCheck )*/
 	
 	local HeadbobCheck = vgui.Create( "DCheckBoxLabel"  )
 	HeadbobCheck:SetText( "Toggle head bobbing" )

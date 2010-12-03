@@ -36,11 +36,7 @@ local function AlwaysDrawLocalPlayer()
 		return false
 	end
 
-	if !CAKE.Thirdperson:GetBool() then	
-		if CAKE.RenderBody:GetBool() then
-			return true
-		end
-	else
+	if CAKE.Thirdperson:GetBool() then	
 		return true
 	end
 	
@@ -55,6 +51,8 @@ local headpos, headang
 local oripos
 local target
 local trace
+local oldangle = Angle( 0, 0, 0 )
+local newangle = Angle( 0, 0, 0 )
 
 local function Thirdperson(ply, pos, angles, fov)
 	if ply:GetNWBool( "sittingchair", false ) or ply:GetNWBool( "sittingground", false ) then
@@ -112,9 +110,9 @@ local function Thirdperson(ply, pos, angles, fov)
                     trace = util.TraceLine(tracedata)
                     oldpos = newpos
                     if trace.HitWorld then
-						newpos = LerpVector( 0.5, oldpos, trace.HitPos )
+						newpos = LerpVector( 0.2, oldpos, trace.HitPos )
                     else
-						newpos = LerpVector( 0.5, oldpos, pos - ( angles:Forward()*50 ) - ( angles:Right()* 30 ) )
+						newpos = LerpVector( 0.2, oldpos, pos - ( angles:Forward()*50 ) - ( angles:Right()* 30 ) )
                     end
 					
 					return GAMEMODE:CalcView(ply, newpos , angles ,fov)
@@ -126,9 +124,9 @@ local function Thirdperson(ply, pos, angles, fov)
 						oldpos = newpos
 						trace = util.TraceLine(tracedata)
 						if trace.HitWorld then
-							newpos = LerpVector( 0.5, oldpos, trace.HitPos )
+							newpos = LerpVector( 0.2, oldpos, trace.HitPos )
 						else
-							newpos = LerpVector( 0.5, oldpos, pos - ( angles:Forward()*100 ) )
+							newpos = LerpVector( 0.2, oldpos, pos - ( angles:Forward()*100 ) )
 						end
 				
 						return GAMEMODE:CalcView(ply, newpos , angles ,fov)
@@ -150,7 +148,7 @@ local function Thirdperson(ply, pos, angles, fov)
 				end
 			end
 		else
-				tracedata.start = pos
+				tracedata.start = oldpos
 				tracedata.endpos = ply:GetForward()*100
 				tracedata.filter = ply
 				trace = util.TraceLine(tracedata)
@@ -165,8 +163,9 @@ local function Thirdperson(ply, pos, angles, fov)
 				target = ply:GetPos()+Vector(0,0,60)
 				
 				newpos:Rotate(rotateangles)
-				pos=target+newpos
-				return GAMEMODE:CalcView(ply, pos , (target-pos):Angle() ,fov)
+				newpos = target+newpos
+				newangle = (target-newpos):Angle()
+				return GAMEMODE:CalcView(ply, newpos , newangle ,fov)
 		end
 	
 	return GAMEMODE:CalcView(ply, pos , angles ,fov)

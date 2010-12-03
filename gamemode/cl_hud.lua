@@ -59,7 +59,7 @@ function GM:HUDShouldDraw( name )
 
 end
 
-function DrawPlayerInfo( )
+hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 	
 	local position
 	local screenpos
@@ -87,7 +87,8 @@ function DrawPlayerInfo( )
 				else
 					position = Vector( position.x, position.y, position.z + 100 )
 				end
-				screenpos = position:ToScreen( )
+				--screenpos = position:ToScreen( )
+				screenpos = Vector( 0, 0, 0 )
 				dist = position:Distance( LocalPlayer( ):GetPos( ) )
 				dist = dist / 2
 				dist = math.floor( dist )
@@ -104,24 +105,27 @@ function DrawPlayerInfo( )
 					elseif( alpha < 0 ) then
 						alpha = 0
 					end
-					draw.DrawText( v:Nick( ), "DefaultSmall", screenpos.x, screenpos.y, Color( 255, 255, 255, alpha ), 1 )
-					draw.DrawText( v:GetNWString( "title", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 10, Color( 255, 255, 255, alpha ), 1 )
-					draw.DrawText( v:GetNWString( "title2", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 20, Color( 255, 255, 255, alpha ), 1 )
-				
-					if( v:GetNWInt( "chatopen" ) == 1 ) then
-						draw.DrawText( "Typing..", "ChatFont", screenpos.x, screenpos.y - 50, Color( 255, 255, 255, alpha ), 1 )
-					end
-					
+					cam.Start3D2D( position, Angle( 0, v:GetAngles().y , 90 ), 1 )
+						draw.DrawText( v:Nick( ), "DefaultSmall", screenpos.x, screenpos.y, Color( 255, 255, 255, alpha ), 1 )
+						draw.DrawText( v:GetNWString( "title", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 10, Color( 255, 255, 255, alpha ), 1 )
+						draw.DrawText( v:GetNWString( "title2", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 20, Color( 255, 255, 255, alpha ), 1 )
+						if( v:GetNWInt( "chatopen" ) == 1 ) then
+							draw.DrawText( "Typing..", "ChatFont", screenpos.x, screenpos.y - 50, Color( 255, 255, 255, alpha ), 1 )
+						end
+					cam.End3D2D()
+						
 					table.insert( rendered, v )
 					
 				elseif LocalPlayer():GetNWBool("seeall", false) then
 					alpha = 255
-					draw.DrawText( v:Nick( ), "DefaultSmall", screenpos.x, screenpos.y, Color( 255, 255, 255, alpha ), 1 )
-					draw.DrawText( v:GetNWString( "title", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 10, Color( 255, 255, 255, alpha ), 1 )
-					draw.DrawText( v:GetNWString( "title2", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 20, Color( 255, 255, 255, alpha ), 1 )
-					draw.DrawText( v:Name() .. " [" .. v:SteamID() .. "]", "DefaultMedium", screenpos.x, screenpos.y - 10, Color(60, 160, 255, 255), 1)
-					draw.DrawText( dist*2 .. " units away.", "DefaultMedium", screenpos.x, screenpos.y + 40, Color(60, 160, 255, 255), 1)
-					table.insert( rendered, v )
+					cam.Start3D2D( position, Angle( 0, v:GetAngles().y , 90 ), 1 )
+						draw.DrawText( v:Nick( ), "DefaultSmall", screenpos.x, screenpos.y, Color( 255, 255, 255, alpha ), 1 )
+						draw.DrawText( v:GetNWString( "title", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 10, Color( 255, 255, 255, alpha ), 1 )
+						draw.DrawText( v:GetNWString( "title2", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 20, Color( 255, 255, 255, alpha ), 1 )
+						draw.DrawText( v:Name() .. " [" .. v:SteamID() .. "]", "DefaultMedium", screenpos.x, screenpos.y - 10, Color(60, 160, 255, 255), 1)
+						draw.DrawText( dist*2 .. " units away.", "DefaultMedium", screenpos.x, screenpos.y + 40, Color(60, 160, 255, 255), 1)
+						table.insert( rendered, v )
+					cam.End3D2D()
 				end
 			end
 		end
@@ -139,24 +143,25 @@ function DrawPlayerInfo( )
 						position = Vector( position.x, position.y, position.z + 100 )
 					end
 					screenpos = position:ToScreen( )
-					draw.DrawText( v:Nick( ), "DefaultSmall", screenpos.x, screenpos.y, Color( 255, 255, 255, 255 ), 1 )
-					draw.DrawText( v:GetNWString( "title", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 10, Color( 255, 255, 255, 255 ), 1 )
-					draw.DrawText( v:GetNWString( "title2", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 20, Color( 255, 255, 255, 255 ), 1 )
-				
-					if( v:GetNWInt( "chatopen" ) == 1 ) then
-						draw.DrawText( "Typing..", "ChatFont", screenpos.x, screenpos.y - 50, Color( 255, 255, 255, 255 ), 1 )
-					end
+					cam.Start3D2D( position, Angle( 0, v:GetAngles().y , 90 ), 1 )
+						draw.DrawText( v:Nick( ), "DefaultSmall", screenpos.x, screenpos.y, Color( 255, 255, 255, 255 ), 1 )
+						draw.DrawText( v:GetNWString( "title", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 10, Color( 255, 255, 255, 255 ), 1 )
+						draw.DrawText( v:GetNWString( "title2", "Connecting.." ), "DefaultSmall", screenpos.x, screenpos.y + 20, Color( 255, 255, 255, 255 ), 1 )
+						if( v:GetNWInt( "chatopen" ) == 1 ) then
+							draw.DrawText( "Typing..", "ChatFont", screenpos.x, screenpos.y - 50, Color( 255, 255, 255, 255 ), 1 )
+						end
+					cam.End3D2D()
 			
 			end
 		end
 	end
 	
-end
+end)
 
 function GM:HUDPaint( )
 	
 	--DrawTime( );
-	DrawPlayerInfo( );
+	--DrawPlayerInfo( );
 	DrawTargetInfo( );
 	
 end

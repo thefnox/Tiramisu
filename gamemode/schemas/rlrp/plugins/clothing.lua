@@ -51,9 +51,25 @@ function CAKE.SetClothing( ply, body, helmet, glove )
 	
 	ply:SetNWString( "model", helmet )
 	
-	CAKE.HandleClothing( ply, body , 1 )
-	CAKE.HandleClothing( ply, helmet or body, 2 )
-	CAKE.HandleClothing( ply, glove or body, 3 )
+	helmet = helmet or body
+	glove = glove or body
+	
+	if body == helmet or body == glove then
+		if body == helmet and body != glove then --If the same model is used for the head but not for the hands
+			CAKE.HandleClothing( ply, body , 4 )
+			CAKE.HandleClothing( ply, glove, 3 )
+		elseif body != helmet and body == glove then
+			CAKE.HandleClothing( ply, body , 5 )
+			CAKE.HandleClothing( ply, helmet, 2 )
+		elseif body == helmet and body == glove then
+			CAKE.HandleClothing( ply, body , 0 )
+		end
+	else
+		CAKE.HandleClothing( ply, body , 1 )
+		CAKE.HandleClothing( ply, helmet, 2 )
+		CAKE.HandleClothing( ply, glove, 3 )
+	end
+	
 	CAKE.CalculateEncumberment( ply )
 	datastream.StreamToClients( ply, "recieveclothing",  ply.Clothing )
 		

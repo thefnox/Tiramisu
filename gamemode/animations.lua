@@ -1,6 +1,6 @@
 --Hey hey hey! It's fucking NPC animations version three! This time with no Rick Dark shit.
 --Credits to Azuisleet ( Original hook ), Entoros( Holdtype thing -- Which is no more, since garry added that in :/ ), and well, me, Big Bang/F-Nox ( everything else )
-local needsrebuild = {}
+
 local meta = _R["Player"]
 local model
 function meta:GetGender()
@@ -29,9 +29,8 @@ if SERVER then
 	NeverAimed = {
 	}
 	
-	local wep
 	function meta:SetAiming( bool )
-		wep = self:GetActiveWeapon()
+		local wep = self:GetActiveWeapon()
 		if self:GetNWBool( "arrested", false ) then
 			bool = false
 		end
@@ -94,6 +93,7 @@ Anims.Male[ "models" ] = {
 }
 Anims.Male[ "default" ] = { 
         [ "idle" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_IDLE",
+		--[ "idle" ] = "&sequence:LineIdle01;models/Gustavio/maleanimtree.mdl",
         [ "walk" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_WALK",
         [ "run" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_RUN",
         [ "jump" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_JUMP",
@@ -473,14 +473,14 @@ Anims.Female[ "slam" ] = {
 		["fire"] = "ACT_PICKUP_RACK"
 }
 
-local cachetable = {}
+--local cachetable = {}
 local function FindEnumeration( actname ) --Finds the enumeration number based on it's name.
 
-	if cachetable[actname] then return cachetable[actname] end
+	--if cachetable[actname] then return cachetable[actname] end
 
 	for k, v in pairs ( _E ) do
 		if(  k == actname ) then
-			cachetable[actname] = v
+			--cachetable[actname] = v
 			return tonumber( v );
 		end
 	end
@@ -499,7 +499,7 @@ local function FindName( actnum ) --Finds the enumeration name based on it's num
 	return "ACT_IDLE";
 end	
 
-function HandleLuaAnimation( ply, animation )
+local function HandleLuaAnimation( ply, animation )
 	
 	if CLIENT then
 		if !ply.InLuaSequence then
@@ -510,40 +510,34 @@ function HandleLuaAnimation( ply, animation )
 	
 end
 
-local exp
-local exp2
-local model
-local sequence
-local skeletonanim
-local gender
-local lastseq
-local bones = {}
-
-local bbp = function( self, numBones, numPhysBones )
-	if needsrebuild[self] then
-		for k,v in pairs(bones[self]) do
-			if not v == nil then
-				self:SetBonePosition(k, v.pos, v.ang)
-			end
-		end
-		needsrebuild[self] = false
-	end
-end
-
 local function HandleSequence( ply, seq ) --Internal function to handle different sequence types.
+	
+	--print( seq )
+	
+	local exp
+	local exp2
+	local model
+	local sequence
+	local skeletonanim
+	local gender
+	local lastseq
+	--print( ply:GetModel() )
+	
+	/*
 	if ply.Sequence == seq then
 		return FindEnumeration(lastseq)
-	end
+	end*/
 	
 	if !ply.SpecialModel then
 		ply.SpecialModel = ply:GetNWBool( "specialmodel", false )
 	end
 	
+
 	if !ply.Sequence then
 		ply.Sequence = "none"
 	end
 	
-	if ply.Sequence != seq then
+	--if ply.Sequence != seq then
 		--print(ply.Sequence .. "GEGSJ")
 		if !string.match( seq, "&" ) then
 			/*
@@ -603,34 +597,15 @@ local function HandleSequence( ply, seq ) --Internal function to handle differen
 				model = exp2[2]
 				seq = exp[2]
 				if( ply:GetModel() != string.lower(model) and !ply.SpecialModel ) then
-					--print(CLIENT)
 					--print( "Switching model to " .. model )
-					/*
-					if CLIENT then
-						for i = 0, ply:GetBoneCount()-1 do
-							--print(ply:GetBoneName(i).. " testing this bone " ..i)
-							if ply:GetBoneName(i) != "__INVALIDBONE__" or ply:GetBonePosition(i) != nil then
-								if !bones[ply] then bones[ply] = {} end
-								bones[ply][i] = {}
-								bones[ply][i].pos, bones[ply][i].ang = ply:GetBonePosition(i)
-							end
-						end
-					end*/
+					--print(ply.SpecialModel)
+					--print(ply:GetModel())
 					ply:SetModel( model )
-					/*
-					if CLIENT then 
-						needsrebuild[ply] = true
-						if ply.BuildBonePositions != bbp then
-							ply.BuildBonePositions = bbp
-						end
-					end*/
 				end
-				--print(seq)
-				lastseq = seq
 				return FindEnumeration( seq )
 			end
 		end
-	end
+	--end
 
 	--print( tostring( FindEnumeration( seq ) ) )
 	--print(seq)
@@ -686,13 +661,13 @@ local function DetectHoldType( act ) --This is just a function used to group up 
 	
 end
 
-local eye
-local estyaw
-local myaw
-local len2d
-local rate
 function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles everything about how sequences run, the framerate, boneparameters, everything.
-
+	
+	local eye
+	local estyaw
+	local myaw
+	local len2d
+	local rate
 	eye = ply:EyeAngles()
 	if !ply:GetNWBool( "sittingchair", false ) then
 		ply:SetLocalAngles( eye )
@@ -731,11 +706,9 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 	
 end
 
-local holdtype
-
 function GM:HandlePlayerJumping( ply ) --Handles jumping
 
-        
+        local holdtype
         --If we're not on the ground, then play the gliding animation.
         if !ply.Jumping and !ply:OnGround() and !ply:GetNWBool( "sittingchair", false ) then
                 ply.Jumping = true
@@ -785,7 +758,7 @@ end
  
 function GM:HandlePlayerDucking( ply, velocity ) --Handles crouching
 
-		holdtype = "default"
+		local holdtype = "default"
 		if( ValidEntity(  ply:GetActiveWeapon() ) ) then
 			holdtype = DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
 		end
@@ -822,9 +795,10 @@ function GM:HandlePlayerSwimming( ply ) --Handles swimming.
         return false
 end
 
-local vehicle
-local class
 function GM:HandlePlayerDriving( ply ) --Handles sequences while in vehicles.
+
+	local vehicle
+	local class
  
         if ply:InVehicle() then
 			vehicle = ply:GetVehicle()
@@ -892,11 +866,11 @@ end
 function GM:CalcMainActivity( ply, velocity )
 		--This is the hook used to handle sequences, if you need to add additional activities you should check the hook above.
 		--By a general rule you don't have to touch this hook at all.
-		holdtype = "default"
+		local holdtype = "default"
 		if( ValidEntity(  ply:GetActiveWeapon() ) ) then
 			holdtype = DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
 		end
-        ply.CalcIdeal = false
+        ply.CalcIdeal = ACT_IDLE
         ply.CalcSeqOverride = -1
         
         if self:HandleExtraActivities( ply ) or self:HandlePlayerDriving( ply ) or
@@ -927,9 +901,7 @@ function GM:CalcMainActivity( ply, velocity )
 			end
         end
 		
-		if !ply.CalcIdeal then
-			ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "idle" ] )
-		end
+		--print( tostring( ply.CalcIdeal ) )
 		
         return ply.CalcIdeal, ply.CalcSeqOverride
 end		
@@ -975,7 +947,7 @@ function GM:DoAnimationEvent( ply, event, data ) -- This is for gestures.
 						if( string.match( Anims[ ply:GetGender() ][ holdtype ][ "reload" ], "GESTURE" ) ) then
 								ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, FindEnumeration(  Anims[ ply:GetGender() ][ holdtype ][ "reload" ] ) )
 						else
-							ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "reload" ] )
+							--ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "reload" ] )
 						end	
 				else
                         ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_RELOAD_SMG1 )
