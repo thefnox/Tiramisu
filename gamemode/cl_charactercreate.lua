@@ -40,6 +40,10 @@ function CAKE.NextStep()
 	step = step + 1
 end
 
+function CAKE.ResetStep()
+	step = 1
+end
+
 TeamTable = {};
 
 function SetUpTeam(data)

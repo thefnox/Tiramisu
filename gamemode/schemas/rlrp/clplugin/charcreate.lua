@@ -45,12 +45,12 @@ local Description = "Set your description"
 function firststep()
 		      
 	      Step2 = vgui.Create( "DFrame" )
-	      Step2:SetPos( ScrW() / 2 - 320, ScrH() / 2 - 240 )
 	      Step2:SetSize( 700, 450 )
+		  Step2:SetPos( ScrW() / 2 - Step2:GetWide() / 2, ScrH() / 2 - Step2:GetTall() / 2 )
 	      Step2:SetTitle( "Step 2" )
 	      Step2:SetVisible( true )
 	      Step2:SetDraggable( true )
-	      Step2:ShowCloseButton( false )
+	      Step2:ShowCloseButton( true )
 	      Step2:MakePopup()
 
 	      Step2Panel = vgui.Create( "DPanel", Step2 )
@@ -261,12 +261,12 @@ function secondstep()
 	      demmodels = table.Copy( models[ string.lower( Gender ) ] )
 	      
 	      Step3 = vgui.Create( "DFrame" )
-	      Step3:SetPos( ScrW() / 2 - 320, ScrH() / 2 - 400 )
 	      Step3:SetSize( 615, 700 )
+		  Step3:SetPos( ScrW() / 2 - Step3:GetWide() / 2, ScrH() / 2 - Step3:GetTall() / 2 )
 	      Step3:SetTitle( "Step 3" )
 	      Step3:SetVisible( true )
 	      Step3:SetDraggable( true )
-	      Step3:ShowCloseButton( false )
+	      Step3:ShowCloseButton( true )
 	      Step3:MakePopup()
 	      
 	      ModelWindow = vgui.Create( "DPanel", Step3 )
@@ -385,7 +385,7 @@ function secondstep()
 	      GoBackButton:SetText( "Go back to previous step" )
 	      GoBackButton:SetPos( 75, 660 )
 	      GoBackButton.DoClick = function( btn )
-		      secondstep()
+		      firststep()
 		      Step3:Remove();
 		      Step3 = nil;
 	      end
@@ -412,7 +412,7 @@ function secondstep()
 		      LocalPlayer():ConCommand("rp_setdescription \"" .. tostring( Description ) .. "\"" )
 		      LocalPlayer().MyModel = ""
 		      LocalPlayer():ConCommand("rp_finishcreate");
-		      
+		      CAKE.ResetStep()
 		      Step3:Remove();
 		      Step3 = nil;
 		      
