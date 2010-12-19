@@ -2,174 +2,178 @@ CurrencyTable = {}
 CAKE.MenuTabs = {}
 CAKE.ActiveTab = nil
 CAKE.MenuOpen = false
+CAKE.DisplayMenu = false
 CAKE.MenuFont = "Base 02"
 
 surface.CreateFont( CAKE.MenuFont, 48, 800, true, false, "BaseTitle" )
 surface.CreateFont( CAKE.MenuFont, 32, 800, true, false, "BaseOptions" )
 
-function AddCurrency( ply, handle, id, encoded, decoded )
-	local currencydata = {}
-	currencydata.name = encoded.name
-	currencydata.centenials = encoded.centenials
-	currencydata.slang = encoded.slang
-	currencydata.abr   = encoded.abr
-	CurrencyTable = currencydata
-end
-datastream.Hook( "addcurrency", AddCurrency )
+CAKE.Button3d2d = {}
 
-Schemas = {}
-
-function AddSchema(data)
-	local schema = data:ReadString()
-	AddRclicks(schema)
-	AddCharCreates(schema)
-end
-usermessage.Hook("addschema", AddSchema)
-/*
-		[ "Name" ]		= name,
-		[ "Type" ]		= data:ReadString(),
-		[ "Founder" ]	= data:ReadString(),
-		[ "Rank" ]		= data:ReadString(),
-		[ "RankPermissions" ] = string.Explode( ",", data:ReadString() ),
-		[ "Inventory" ]	= {}
-*/
-
-local function RecieveMyGroup( handler, id, encoded, decoded )
-	
-	CAKE.MyGroup.Name = decoded.Name or false
-	CAKE.MyGroup.Type = decoded.Type or ""
-	CAKE.MyGroup.Founder = decoded.Founder or ""
-	CAKE.MyGroup.Rank = decoded.Rank or ""
-	CAKE.MyGroup.RankPermissions = decoded.RankPermissions or {}
-	CAKE.MyGroup.Inventory = decoded.Inventory or {}
-	CAKE.MyGroup.Image = decoded.Image or ""
-
-end
-datastream.Hook("recievemygroup", RecieveMyGroup )
-
-
-RclickTable = {}
-
-function AddRclicks(schema)
-		local list = file.FindInLua( "tiramisu/gamemode/schemas/" .. schema .. "/rclick/*.lua" )	
-		for k,v in pairs( list ) do
-			local path = "tiramisu/gamemode/schemas/" .. schema .. "/rclick/" .. v
-			RCLICK = { }
-			include( path )
-			table.insert(RclickTable, RCLICK);
+local function CalcModelUsed( x, y )
+	local i, f
+	local j, k
+	x = math.Clamp( math.Round( x / 25 ), 1, 120 )
+	y = math.Clamp( math.Round( y / 25 ), 1, 120 )
+	y = y * 0.25
+	x = x * 0.25
+	if y > x then
+		i, f = math.modf( x )
+		if f == "0" then
+			f = ""
 		end
-end
-
-
-InventoryTable = {}
-
-function AddItem(data)
-	local itemdata = {}
-	itemdata.Name = data:ReadString();
-	itemdata.Class = data:ReadString();
-	itemdata.Description = data:ReadString();
-	itemdata.Model = data:ReadString();
-	itemdata.Weight = data:ReadShort();
-	
-	table.insert(InventoryTable, itemdata);
-end
-usermessage.Hook("addinventory", AddItem);
-
-function ClearItems()
-	
-	InventoryTable = {}
-	
-end
-usermessage.Hook("clearinventory", ClearItems);
-
-BusinessTable = {};
-
-function AddBusinessItem(data)
-	local itemdata = {}
-	itemdata.Name = data:ReadString();
-	itemdata.Class = data:ReadString();
-	itemdata.Description = data:ReadString();
-	itemdata.Model = data:ReadString();
-	itemdata.Price = data:ReadLong();
-	
-	--print( itemdata.Class )
-	
-	table.insert(BusinessTable, itemdata);
-end
-usermessage.Hook("addbusiness", AddBusinessItem);
-
-MyGroupInventory = {}
-
-function AddMyGroupItem(data)
-	local itemdata = {}
-	itemdata.Name = data:ReadString();
-	itemdata.Class = data:ReadString();
-	itemdata.Description = data:ReadString();
-	itemdata.Model = data:ReadString();
-	itemdata.Price = data:ReadLong();
-	
-	
-	table.insert(MyGroupInventory, itemdata);
-end
-usermessage.Hook("addmygroupitem", AddMyGroupItem);
-
-function ClearBusinessItems()
-	
-	BusinessTable = {}
-	
-end
-usermessage.Hook("clearbusiness", ClearBusinessItems);
-
-function RecieveGroupInvite( um )
-	local group = um:ReadString()
-	local promoter = um:ReadString()
-	Derma_Query("You have recieved an invitation from " .. promoter .. " to join: " .. group, "Group Invite",
-				"Accept", function() RunConsoleCommand("rp_acceptinvite", group, promoter ) end,
-				"Decline", function() print( "You have declined a group invite" ) end)
-
-end
-usermessage.Hook("recievegroupinvite", RecieveGroupInvite);
-
-function RecieveGroupPromotion( um )
-	local rank = um:ReadString()
-	local promoter = um:ReadString()
-	Derma_Query("You have recieved an promotion from " .. promoter .. " to rank: " .. rank, "Congratulations!",
-				"Accept", function() RunConsoleCommand("rp_acceptinvite", group, promoter ) end)
-end
-usermessage.Hook("recievegrouppromotion", RecieveGroupPromotion);
-
-function InitHiddenButton()
-	HiddenButton = vgui.Create("DButton") -- HOLY SHIT WHAT A HACKY METHOD FO SHO
-	HiddenButton:SetSize(ScrW(), ScrH());
-	HiddenButton:SetText("");
-	HiddenButton:SetDrawBackground(false);
-	HiddenButton:SetDrawBorder(false);
-	HiddenButton.DoRightClick = function()
-		local Vect = gui.ScreenToVector(gui.MouseX(), gui.MouseY());
-		local tracedata = {};
-		tracedata.start = LocalPlayer():GetShootPos();
-		tracedata.endpos = LocalPlayer():GetShootPos() + (Vect * 100);
-		tracedata.filter = LocalPlayer();
-		local trace = util.TraceLine(tracedata);
-		
-		if(trace.HitNonWorld) then
-			local target = trace.Entity;
-			
-			local ContextMenu = DermaMenu()
-			
-				for k,v in pairs (RclickTable) do
-					if v.Condition(target) then ContextMenu:AddOption(v.Name, function() v.Click(target, LocalPlayer()) end) end
-				end
-				
-			ContextMenu:Open();
+		j, k = math.modf( y )
+		if k == "0" then
+			k = ""
 		end
+		return "models/hunter/plates/plate" .. tostring( i ) .. tostring( f * 100 ) .. "x" .. tostring( j ) .. tostring( k * 100 ) .. ".mdl", false
+	elseif x > y then
+		i, f = math.modf( x )
+		j, k = math.modf( y )
+		if f == "0" then
+			f = ""
+		end
+		if k == "0" then
+			k = ""
+		end
+		return "models/hunter/plates/plate" .. tostring( j ) .. tostring( k * 100 ) .. "x" .. tostring( i ) .. tostring( f * 100 ) .. ".mdl", true
+	elseif x == y then
+		i, f = math.modf( x )
+		if f == "0" then
+			f = ""
+		end
+		return "models/hunter/plates/plate" .. tostring( i ) .. tostring( f * 100 ) .. "x" .. tostring( i ) .. tostring( f * 100 ) .. ".mdl", false
 	end
 end
 
+function CAKE.Create3d2dButton( pos, angle, x, y, func )
+	
+	local modelused, turnaround = CalcModelUsed( x, y )
+	local ent = ClientsideModel(modelused, RENDERGROUP_TRANSLUCENT)
+	ent.ClickFunction = func
+	ent.IsA3d2dButton = true
+	ent:SetPos( pos )
+	if turnaround then
+		ent:SetAngles( Angle( math.NormalizeAngle( angle.p + 90 ), angle.y, angle.r ) )
+	else
+		ent:SetAngles( angle )
+	end
+	table.insert( CAKE.Button3d2d, ent )
+	/*
+	
+	--local ent = ClientsideModel("models/props_junk/wood_crate001a.mdl", RENDERGROUP_TRANSLUCENT)
+	local ent = ents.Create( "cl_3d2d_clickcontroller" )
+	ent:SetModel( "models/props_junk/wood_crate001a.mdl" )
+	ent.BoundaryX = x
+	ent.BoundaryY = y
+	ent:InitializeAsClientEntity( )
+	--ent:SetNoDraw( true )
+	ent:SetPos( pos )
+	print( tostring( pos ) )
+	ent:SetAngles( angle )
+	ent.ClickFunction = func
+	ent.IsA3d2dButton = true
+	
+	table.insert( CAKE.Button3d2d, ent )*/
+	
+	return ent
 
-function InitHUDMenu()
-	InitHiddenButton();
 end
+
+function CAKE.DestroyAllButtons()
+	
+	for k, v in pairs( CAKE.Button3d2d ) do
+		if ValidEntity( v ) then
+			v:Remove()
+		end
+	end
+	
+	CAKE.Button3d2d = {}
+	
+end
+
+local localpos = Vector( 0, 0, 0 )
+local localang = Angle( 0, 0, 0 )
+local lastpos = 0
+local w, h
+local postable = {}
+local tabpositions = {}
+local ent
+local runonce = false
+
+hook.Add( "Think", "Tiramisu3DButtons", function( )
+	
+	if CAKE.MenuOpen and !runonce then
+		runonce = true
+		for k, v in pairs( CAKE.MenuTabs ) do
+			lastpos = lastpos + 55
+			tabpositions[ k ] = lastpos
+		end
+		localang = Angle( 0, math.NormalizeAngle( LocalPlayer():GetAngles().y + 90 ) , 90 )
+		localpos = LocalPlayer():GetPos() + Vector( 0, 100, 0 ) + Vector( 300 * 0.13, 0, 0 )
+		for k, v in pairs( tabpositions ) do
+			ent = CAKE.Create3d2dButton( localpos + Vector( 0, 0 , v * 0.2 ), localang, 75, 25, function()
+				CAKE.SetActiveTab(k)
+			end)
+			ent.Name = k
+		end
+		timer.Simple( 0.3, function()
+			CAKE.DisplayMenu = true
+		end)
+	elseif !CAKE.MenuOpen and runonce then
+		CAKE.DestroyAllButtons()
+		runonce = false
+		lastpos = 0
+	end
+	
+end)
+
+local angle
+local angle2
+
+hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DMenu", function( )
+	if CAKE.DisplayMenu then
+		angle = Angle( 0, math.NormalizeAngle( LocalPlayer():GetAngles().y + 90 ) , 90 )
+		angle2 = Angle( 0, math.NormalizeAngle( LocalPlayer():GetAngles().y + 65 ) , 90 )
+		cam.Start3D2D( LocalPlayer():GetPos() + Vector( 0, 0, 100 ) - angle:Up( ) * 2.5, angle, 0.13 )
+			surface.SetFont( "BaseTitle" )
+			w , h = surface.GetTextSize( "Main Menu" )
+			surface.SetDrawColor( 10, 255, 10, 70) --Blue
+			surface.DrawRect(( w + 10 ) / -2 , 0, w + 10, h )
+		cam.End3D2D()
+		cam.Start3D2D( LocalPlayer():GetPos() + Vector( 0, 0, 100 ), angle, 0.13 )
+			surface.SetFont( "BaseTitle" )
+			w , h = surface.GetTextSize( "Main Menu" )
+			draw.DrawText( "Main Menu", "BaseTitle", 0, 0, Color( 255, 255, 255, 255 ), 1 )
+		cam.End3D2D()
+		cam.Start3D2D( LocalPlayer():GetPos() + Vector( 0, 0, 100 ) - angle2:Up( ) * 2.5, angle2, 0.13 )
+			surface.SetFont( "BaseTitle" )
+			for k, v in pairs( CAKE.MenuTabs ) do
+				if !postable[ k ] then
+					postable[ k ] = 0
+				end
+				postable[ k ] = Lerp( 0.1, postable[ k ], tabpositions[ k ])
+				w , h = surface.GetTextSize( k )
+				surface.SetDrawColor( 255, 10, 10, 70) --Red
+				surface.DrawRect( (( w + 10 ) / -2 ) + 300 , postable[ k ], w + 10, h )
+			end
+		cam.End3D2D()
+		cam.Start3D2D( LocalPlayer():GetPos() + Vector( 0, 0, 100 ), angle2, 0.13 )
+			surface.SetFont( "BaseTitle" )
+			for k, v in pairs( CAKE.MenuTabs ) do
+				if !postable[ k ] then
+					postable[ k ] = 0
+				end
+				postable[ k ] = Lerp( 0.1, postable[ k ], tabpositions[ k ])
+				w , h = surface.GetTextSize( k )
+				surface.SetDrawColor( 255, 10, 10, 70) --Red
+				draw.DrawText( k, "BaseTitle", 300, postable[ k ], Color( 255, 255, 255, 255 ), 1 )
+			end
+		cam.End3D2D()
+	else
+		postable = {}
+	end
+end)
 
 function CAKE.RegisterMenuTab( name, func, closefunc ) --The third argument is the function used for closing your panel.
 	print( "Registering Menu Tab " .. name )
@@ -200,6 +204,12 @@ function CreatePlayerMenu( um )
 		end
 	
 		CAKE.MenuOpen = true
+		
+		gui.EnableScreenClicker( true )
+		InitHUDMenu()
+		HiddenButton:SetVisible( true )
+		
+		/*
 		TabPanel = vgui.Create("DFrame");
 		TabPanel:SetSize( 270, 600 )
 		TabPanel:SetPos( 10, 10 )
@@ -337,7 +347,8 @@ function CreatePlayerMenu( um )
 
 		PlayerInfo:AddItem(icdata)
 		PlayerInfo:AddItem(vitals)
-
+		
+		*/
 	
 end
 usermessage.Hook("openplayermenu", CreatePlayerMenu);
@@ -353,6 +364,11 @@ function ClosePlayerMenu( um )
 		TabPanel:Remove();
 		TabPanel = nil
 	end
+	gui.EnableScreenClicker( false )
+	HiddenButton:SetVisible( false )
+	CAKE.DestroyAllButtons()
+	CAKE.DisplayMenu = false
 	CAKE.MenuOpen = false
+	
 end
 usermessage.Hook("closeplayermenu", ClosePlayerMenu);

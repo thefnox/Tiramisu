@@ -14,7 +14,11 @@ surface.CreateFont("ChatFont", ScreenScale(72), 400, true, false, "TiramisuChatF
 
 local function DrawTime( )
 
-	draw.DrawText( GetGlobalString( "time" ), "PlInfoFont", 10, 10, Color( 255,255,255,255 ), 0 );
+	if GetGlobalString( "time" ) != "Loading.." then
+		draw.DrawText( CAKE.FindDayName() .. ", " .. GetGlobalString( "time" ) , "PlInfoFont", 10, 10, Color( 255,255,255,255 ), 0 );
+	else
+		draw.DrawText( GetGlobalString( "time" ), "PlInfoFont", 10, 10, Color( 255,255,255,255 ), 0 );
+	end
 	
 end
 
@@ -190,6 +194,59 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 	end
 	
 end)
+
+
+function InitHiddenButton()
+	HiddenButton = vgui.Create("DButton") -- HOLY SHIT WHAT A HACKY METHOD FO SHO
+	HiddenButton:SetSize(ScrW(), ScrH());
+	HiddenButton:SetText("");
+	HiddenButton:SetDrawBackground(false);
+	HiddenButton:SetDrawBorder(false);
+	HiddenButton.DoClick = function()
+		local Vect = gui.ScreenToVector(gui.MouseX(), gui.MouseY());
+		local tracedata = {};
+		tracedata.start = LocalPlayer():GetShootPos();
+		tracedata.endpos = LocalPlayer():GetShootPos() + (Vect * 100);
+		tracedata.filter = LocalPlayer();
+		local trace = util.TraceLine(tracedata);
+		
+		if(trace.HitNonWorld) then
+			local target = trace.Entity
+			print( target.Name )
+			if target.IsA3d2dButton then
+				target:ClickFunction()
+			end
+		end
+	end
+	HiddenButton.DoRightClick = function()
+		local Vect = gui.ScreenToVector(gui.MouseX(), gui.MouseY());
+		local tracedata = {};
+		tracedata.start = LocalPlayer():GetShootPos();
+		tracedata.endpos = LocalPlayer():GetShootPos() + (Vect * 100);
+		tracedata.filter = LocalPlayer();
+		local trace = util.TraceLine(tracedata);
+		
+		if(trace.HitNonWorld) then
+			local target = trace.Entity;
+			
+			local ContextMenu = DermaMenu()
+				if target.IsA3d2dButton then
+					print( target.Name )
+					target:ClickFunction()
+				end
+			
+				for k,v in pairs (RclickTable) do
+					if v.Condition(target) then ContextMenu:AddOption(v.Name, function() v.Click(target, LocalPlayer()) end) end
+				end
+				
+			ContextMenu:Open();
+		end
+	end
+end
+
+function InitHUDMenu()
+	InitHiddenButton();
+end
 
 function GM:HUDPaint( )
 	

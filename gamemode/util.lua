@@ -52,7 +52,7 @@ end
 
 function CAKE.InitTime() -- Load the time from a text file or default value, this occurs on gamemode initialization.
 
-	local clumpedtime = "1 1 2012 1"
+	local clumpedtime = "1 1 2011 1"
 	
 	if(file.Exists(CAKE.Name .. "/time.txt")) then
 	
@@ -60,7 +60,7 @@ function CAKE.InitTime() -- Load the time from a text file or default value, thi
 		
 	else
 	
-		file.Write(CAKE.Name .. "/time.txt", "1 1 2012 1")
+		file.Write(CAKE.Name .. "/time.txt", "1 1 2011 1")
 		
 	end
 	

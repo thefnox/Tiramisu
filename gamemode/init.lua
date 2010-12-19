@@ -34,7 +34,6 @@ include( "player_util.lua" ); -- Player functions
 include( "admin.lua" ); -- Admin functions
 include( "admin_cc.lua" ); -- Admin commands
 include( "chat.lua" ); -- Chat Commands
-include( "daynight.lua" ); -- Day/Night and Cloc
 include( "concmd.lua" ); -- Concommands
 include( "util.lua" ); -- Functions
 include( "charactercreate.lua" ); -- Character Creation functions

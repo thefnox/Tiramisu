@@ -29,9 +29,11 @@ local function TiramisuPostProcess()
 		blurmultiply = 1 - perc
 		tab[ "$pp_colour_colour" ] = perc
 	end
+	/*
 	if CAKE.MenuOpen then
 		tab[ "$pp_colour_colour" ] = 0
 	end
+	*/
 	DrawColorModify( tab )
 	DrawBloom( 0.34, bloommultiply, 5, 5, 14, 1, 1, 1, 1 )
 	DrawSharpen( blurmultiply, 1)

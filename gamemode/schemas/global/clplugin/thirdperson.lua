@@ -9,6 +9,7 @@ local pressvec = Vector( 0,0,0 )
 local newpos = Vector( 0, 0, 0 )
 local rotateangles = Angle(0,0,0)
 local tracedata = {}
+local exitingrotatemode = false
 
 local function RecieveViewRagdoll( handler, id, encoded, decoded )
 	CAKE.ViewRagdoll = decoded.ragdoll
@@ -148,17 +149,16 @@ local function Thirdperson(ply, pos, angles, fov)
 				end
 			end
 		else
-				tracedata.start = oldpos
-				tracedata.endpos = ply:GetForward()*100
+			if middleDown then
+				tracedata.start = newpos
+				tracedata.endpos = Angle( 0, ply:GetAngles().y, 0 ):Forward()*100
 				tracedata.filter = ply
 				trace = util.TraceLine(tracedata)
 				if trace.HitWorld then
 					newpos = trace.HitPos
 				else
-					newpos = ply:GetForward()*100
+					newpos = Angle( 0, ply:GetAngles().y, 0 ):Forward()*100
 				end
-				
-				newpos = ply:GetForward()*100
 				
 				target = ply:GetPos()+Vector(0,0,60)
 				
@@ -166,6 +166,13 @@ local function Thirdperson(ply, pos, angles, fov)
 				newpos = target+newpos
 				newangle = (target-newpos):Angle()
 				return GAMEMODE:CalcView(ply, newpos , newangle ,fov)
+			else
+				target = Angle( 0, ply:GetAngles().y, 0 ):Forward()*100
+				target:Rotate( Angle( 0, 0, 0 ) )
+				newpos = LerpVector( 0.2, newpos, ply:GetPos()+Vector(0,0,60) + target )	
+				angles = Angle( 0, math.NormalizeAngle( angles.y + 180 ), angles.r )
+				return GAMEMODE:CalcView(ply, newpos , angles ,fov)
+			end
 		end
 	
 	return GAMEMODE:CalcView(ply, pos , angles ,fov)
@@ -175,7 +182,7 @@ hook.Add("CalcView", "OldenThirdperson", Thirdperson)
 	
 hook.Add("Think","TiramisuMouseCalc", function()
 	if CAKE.MenuOpen or LocalPlayer():GetNWBool( "sittingchair", false ) or LocalPlayer():GetNWBool( "sittingground", false ) then
-		if !input.IsMouseDown(MOUSE_RIGHT) and middleDown then 
+		if !input.IsMouseDown(MOUSE_RIGHT) and middleDown then
 			middleDown = false
 		elseif input.IsMouseDown(MOUSE_RIGHT) and !middleDown then
 			middleDown = true 
@@ -187,7 +194,7 @@ hook.Add("Think","TiramisuMouseCalc", function()
 			rotateangles.y = rotateangles.y + movex
 			
 			local movey = (gui.MouseY()-pressvec.y)
-			rotateangles.p = rotateangles.p + movey
+			--rotateangles.p = rotateangles.p + movey
 
 			gui.SetMousePos(pressvec.x,pressvec.y)
 		end

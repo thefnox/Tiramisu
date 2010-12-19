@@ -57,6 +57,7 @@ hook.Add( "PreDrawOpaqueRenderables", "PreDrawBlurScreen", function()
 
 end)
 
+local lastpos = 0
 local function DrawWhiteScreen()
 	if CAKE.UseWhiteScreen:GetBool() then
 		if LocalPlayer():GetNWInt("deathmode", 0 ) == 1 then
@@ -96,6 +97,20 @@ local function DrawWhiteScreen()
 						end
 					end
 				end
+				/*
+				cam.Start3D2D( LocalPlayer():GetPos() + Vector( 0, 0, 100 ), Angle( 0, math.NormalizeAngle( LocalPlayer():GetAngles().y + 60 ) , 90 ), 0.1 )
+					surface.SetDrawColor( 255, 10, 10, 120) --Red
+					surface.DrawRect(0 , 0, 120, 50 )
+					draw.DrawText( "Main Menu", "BaseTitle", 0, 0, Color( 255, 255, 255, 255 ), 1 )
+					for k, v in pairs( CAKE.MenuTabs ) do
+						lastpos = lastpos + 55
+						surface.SetFont( "BaseTitle" )
+						surface.SetDrawColor( 255, 10, 10, 120) --Red
+						surface.DrawRect(0 , lastpos, surface.GetTextSize( k ) )
+						draw.DrawText( k, "BaseTitle", 0, lastpos, Color( 255, 255, 255, 255 ), 1 )
+					end
+				cam.End3D2D()
+				lastpos = 0*/
 				render.SetStencilReferenceValue( 0 )
 				for k, v in pairs( ents.GetAll() ) do
 					if ValidEntity( v ) then
@@ -139,6 +154,7 @@ hook.Add( "PostDrawOpaqueRenderables", "DrawWhiteScreen", DrawWhiteScreen )
 hook.Add( "RenderScreenspaceEffects", "Tiramisu: Turn Off PostProcess", function()
 	
 	if CAKE.MenuOpen then
+		/*
 		local tab = {}
 		tab[ "$pp_colour_addr" ] = 0
 		tab[ "$pp_colour_addg" ] = 0
@@ -149,7 +165,7 @@ hook.Add( "RenderScreenspaceEffects", "Tiramisu: Turn Off PostProcess", function
 		tab[ "$pp_colour_mulr" ] = 0
 		tab[ "$pp_colour_mulg" ] = 0
 		tab[ "$pp_colour_mulb" ] = 0
-		--DrawColorModify( tab )
+		--DrawColorModify( tab )*/
 		DrawBloom( 0, 0, 5, 5, 14, 1, 1, 1, 1 )
 		DrawSharpen( 0, 1)
 		DrawMotionBlur( 0.4, 0, 0 )

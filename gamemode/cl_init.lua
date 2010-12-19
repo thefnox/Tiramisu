@@ -285,3 +285,134 @@ function RemoveChar( um )
 	
 end
 usermessage.Hook( "RemoveChar", RemoveChar );
+
+function AddCurrency( ply, handle, id, encoded, decoded )
+	local currencydata = {}
+	currencydata.name = encoded.name
+	currencydata.centenials = encoded.centenials
+	currencydata.slang = encoded.slang
+	currencydata.abr   = encoded.abr
+	CurrencyTable = currencydata
+end
+datastream.Hook( "addcurrency", AddCurrency )
+
+Schemas = {}
+
+function AddSchema(data)
+	local schema = data:ReadString()
+	AddRclicks(schema)
+	AddCharCreates(schema)
+end
+usermessage.Hook("addschema", AddSchema)
+/*
+		[ "Name" ]		= name,
+		[ "Type" ]		= data:ReadString(),
+		[ "Founder" ]	= data:ReadString(),
+		[ "Rank" ]		= data:ReadString(),
+		[ "RankPermissions" ] = string.Explode( ",", data:ReadString() ),
+		[ "Inventory" ]	= {}
+*/
+
+local function RecieveMyGroup( handler, id, encoded, decoded )
+	
+	CAKE.MyGroup.Name = decoded.Name or false
+	CAKE.MyGroup.Type = decoded.Type or ""
+	CAKE.MyGroup.Founder = decoded.Founder or ""
+	CAKE.MyGroup.Rank = decoded.Rank or ""
+	CAKE.MyGroup.RankPermissions = decoded.RankPermissions or {}
+	CAKE.MyGroup.Inventory = decoded.Inventory or {}
+	CAKE.MyGroup.Image = decoded.Image or ""
+
+end
+datastream.Hook("recievemygroup", RecieveMyGroup )
+
+
+RclickTable = {}
+
+function AddRclicks(schema)
+		local list = file.FindInLua( "tiramisu/gamemode/schemas/" .. schema .. "/rclick/*.lua" )	
+		for k,v in pairs( list ) do
+			local path = "tiramisu/gamemode/schemas/" .. schema .. "/rclick/" .. v
+			RCLICK = { }
+			include( path )
+			table.insert(RclickTable, RCLICK);
+		end
+end
+
+
+InventoryTable = {}
+
+function AddItem(data)
+	local itemdata = {}
+	itemdata.Name = data:ReadString();
+	itemdata.Class = data:ReadString();
+	itemdata.Description = data:ReadString();
+	itemdata.Model = data:ReadString();
+	itemdata.Weight = data:ReadShort();
+	
+	table.insert(InventoryTable, itemdata);
+end
+usermessage.Hook("addinventory", AddItem);
+
+function ClearItems()
+	
+	InventoryTable = {}
+	
+end
+usermessage.Hook("clearinventory", ClearItems);
+
+BusinessTable = {};
+
+function AddBusinessItem(data)
+	local itemdata = {}
+	itemdata.Name = data:ReadString();
+	itemdata.Class = data:ReadString();
+	itemdata.Description = data:ReadString();
+	itemdata.Model = data:ReadString();
+	itemdata.Price = data:ReadLong();
+	
+	--print( itemdata.Class )
+	
+	table.insert(BusinessTable, itemdata);
+end
+usermessage.Hook("addbusiness", AddBusinessItem);
+
+MyGroupInventory = {}
+
+function AddMyGroupItem(data)
+	local itemdata = {}
+	itemdata.Name = data:ReadString();
+	itemdata.Class = data:ReadString();
+	itemdata.Description = data:ReadString();
+	itemdata.Model = data:ReadString();
+	itemdata.Price = data:ReadLong();
+	
+	
+	table.insert(MyGroupInventory, itemdata);
+end
+usermessage.Hook("addmygroupitem", AddMyGroupItem);
+
+function ClearBusinessItems()
+	
+	BusinessTable = {}
+	
+end
+usermessage.Hook("clearbusiness", ClearBusinessItems);
+
+function RecieveGroupInvite( um )
+	local group = um:ReadString()
+	local promoter = um:ReadString()
+	Derma_Query("You have recieved an invitation from " .. promoter .. " to join: " .. group, "Group Invite",
+				"Accept", function() RunConsoleCommand("rp_acceptinvite", group, promoter ) end,
+				"Decline", function() print( "You have declined a group invite" ) end)
+
+end
+usermessage.Hook("recievegroupinvite", RecieveGroupInvite);
+
+function RecieveGroupPromotion( um )
+	local rank = um:ReadString()
+	local promoter = um:ReadString()
+	Derma_Query("You have recieved an promotion from " .. promoter .. " to rank: " .. rank, "Congratulations!",
+				"Accept", function() RunConsoleCommand("rp_acceptinvite", group, promoter ) end)
+end
+usermessage.Hook("recievegrouppromotion", RecieveGroupPromotion);

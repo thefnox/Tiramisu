@@ -1,14 +1,8 @@
--------------------------------
--- CakeScript Generation 2
--- Author: LuaBanana ( Aka Jake )
--- Project Start: 5/24/2008
---
--- daynight.lua
--- Handles the day and night cycle, as well as the clock & date.
--- Credits to foszor for the day and night cycle script.
--------------------------------
+PLUGIN.Name = "Day Night Cycles"; -- What is the plugin name
+PLUGIN.Author = "Original by foszor, with edits by Huntskiksbut and LuaBanana";
+PLUGIN.Description = "";
 
---Additional fixes taken from PERP 2
+--Additional fixes come from PERP 2.
 
 // variables.
 local daylight = {  };
@@ -52,6 +46,10 @@ function daylight:init( )
 	self.night_events = ents.FindByName('night_events');
 	self.day_events = ents.FindByName('day_events');
 	self.tonemap = ents.FindByClass('env_tonemap_controller');
+	
+	if !self.shadow_control then
+		return
+	end
 	
 	// start at night.
 	if ( self.light_environment ) then
@@ -120,7 +118,6 @@ function daylight:buildLightTable( )
 	self.light_table = {}
 	
 	local startTime = CurTime();
-	Msg("Building lighting tables... ");
 	
 	for x = 1, DAY_LENGTH * 2 do
 		local i = x / 2;
@@ -185,7 +182,7 @@ function daylight:buildLightTable( )
 		end
 
 		// Fog color and distance calculations
-		local fBaseDist = 750
+		local fBaseDist = 1568
 		local fNum = 300
 		local fRed = math.floor( math.Clamp( math.Clamp(98 - (98 * math.Clamp( math.abs( ( i - NOON ) / NOON ), 0, 1 ) ), 0, 98 ) + ( math.floor( red ) * math.Clamp( math.abs( ( i - NOON ) / NOON ), 0.05, 0.7 ) ), 0, 255  ) );
 		local fGrn = math.floor( math.Clamp( math.Clamp(105 - (105 * math.Clamp( math.abs( ( i - NOON ) / NOON ), 0, 1 ) ), 0, 105 ) + ( math.floor( green ) * math.Clamp( math.abs( ( i - NOON ) / NOON ), 0.05, 0.7 ) ), 0, 255  ) );
@@ -235,17 +232,26 @@ function daylight:buildLightTable( )
 		self.light_table[i].shadow_angle = 'angles ' .. xPitch .. ' ' .. xYaw .. ' ' .. xRoll
 	end
 	
-	Msg("done! ( " .. CurTime() - startTime .. " seconds elapsed. )\n");
 end
 
-function get_days_in_month( month )
-  local days_in_month = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }   
-  local d = days_in_month[ month ]
-  return d
+function get_days_in_month( month, year )
+	local days_in_month = {}
+	if math.ceil( year / 4 ) == 4 then
+		days_in_month = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 } 
+	else
+		days_in_month = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 } 
+	end 
+	local d = days_in_month[ month ]
+	return d
 end
 
 // environment think.
 function daylight:think( )
+
+	if !self.shadow_control then --I DON'T HAVE CONTROL!
+		return
+	end
+	
 	// not ready to think?
 	if ( !self.ready || self.nextthink > CurTime( ) ) then return; end
 	
@@ -263,7 +269,7 @@ function daylight:think( )
 		CAKE.ClockDay = CAKE.ClockDay + 1
 	end
 	
-	if ( CAKE.ClockDay >= get_days_in_month( CAKE.ClockMonth ) ) then 
+	if ( CAKE.ClockDay >= get_days_in_month( CAKE.ClockMonth, CAKE.ClockYear ) ) then 
 		CAKE.ClockMonth = CAKE.ClockMonth + 1
 		CAKE.ClockDay = 1
 	end
