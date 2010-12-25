@@ -117,7 +117,7 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 					inverseangle = math.NormalizeAngle( v:GetAngles().y - 90 )
 					--Why do I create two instances of cam.Start3d2d, you may ask.
 					--It's actually quite simple, one's angles are mirrored in comparison to the other
-					--Considering that 3d2d screens render only one way, this is the only way to effectively have text
+					--Considering that 3d2d text render only one way, this is the only way to effectively have both sides
 					--That can be seen equally from the front of a character as well as from the back.
 					cam.Start3D2D( position, Angle( 0, angle , 90 ), 0.03 )
 						draw.DrawText( v:Nick( ), "TiramisuTitlesFont", screenpos.x, screenpos.y, Color( 255, 255, 255, alpha ), 1 )
@@ -197,16 +197,16 @@ end)
 
 
 function InitHiddenButton()
+	local ppos = CAKE.CamPos or LocalPlayer():GetShootPos()
 	HiddenButton = vgui.Create("DButton") -- HOLY SHIT WHAT A HACKY METHOD FO SHO
 	HiddenButton:SetSize(ScrW(), ScrH());
 	HiddenButton:SetText("");
 	HiddenButton:SetDrawBackground(false);
 	HiddenButton:SetDrawBorder(false);
 	HiddenButton.DoClick = function()
-		local Vect = gui.ScreenToVector(gui.MouseX(), gui.MouseY());
 		local tracedata = {};
-		tracedata.start = LocalPlayer():GetShootPos();
-		tracedata.endpos = LocalPlayer():GetShootPos() + (Vect * 100);
+		tracedata.start = ppos;
+		tracedata.endpos = LocalPlayer():GetCursorAimVector( )
 		tracedata.filter = LocalPlayer();
 		local trace = util.TraceLine(tracedata);
 		
@@ -221,8 +221,8 @@ function InitHiddenButton()
 	HiddenButton.DoRightClick = function()
 		local Vect = gui.ScreenToVector(gui.MouseX(), gui.MouseY());
 		local tracedata = {};
-		tracedata.start = LocalPlayer():GetShootPos();
-		tracedata.endpos = LocalPlayer():GetShootPos() + (Vect * 100);
+		tracedata.start = ppos;
+		tracedata.endpos = LocalPlayer():GetCursorAimVector( )
 		tracedata.filter = LocalPlayer();
 		local trace = util.TraceLine(tracedata);
 		

@@ -1,6 +1,8 @@
 CLPLUGIN.Name = "Third Person Camera"
 CLPLUGIN.Author = "F-Nox/Big Bang"
 
+CAKE.CamPos = false
+
 function CLPLUGIN.Init()
 	
 end
@@ -72,6 +74,7 @@ local function Thirdperson(ply, pos, angles, fov)
 				
 		newpos:Rotate(rotateangles)
 		pos=target+newpos
+		CAKE.CamPos = pos
 		return GAMEMODE:CalcView(ply, pos , (target-pos):Angle() ,fov)
 		
 	end
@@ -115,7 +118,7 @@ local function Thirdperson(ply, pos, angles, fov)
                     else
 						newpos = LerpVector( 0.2, oldpos, pos - ( angles:Forward()*50 ) - ( angles:Right()* 30 ) )
                     end
-					
+					CAKE.CamPos = newpos
 					return GAMEMODE:CalcView(ply, newpos , angles ,fov)
 					
 				else
@@ -129,7 +132,7 @@ local function Thirdperson(ply, pos, angles, fov)
 						else
 							newpos = LerpVector( 0.2, oldpos, pos - ( angles:Forward()*100 ) )
 						end
-				
+						CAKE.CamPos = newpos
 						return GAMEMODE:CalcView(ply, newpos , angles ,fov)
 				
 					end
@@ -143,8 +146,9 @@ local function Thirdperson(ply, pos, angles, fov)
 					else
 						headpos, headang = pos, angles
 					end
-					newpos = headpos + ( angles:Up()*CAKE.FirstPersonUp:GetFloat() ) + ( angles:Forward()*CAKE.FirstPersonForward:GetFloat() )
-					return GAMEMODE:CalcView(ply, newpos , angles ,fov)
+					
+					CAKE.CamPos = headpos
+					return GAMEMODE:CalcView(ply, headpos, headang ,fov)
 				
 				end
 			end

@@ -1,7 +1,14 @@
 --Hey hey hey! It's fucking NPC animations version three! This time with no Rick Dark shit.
 --Credits to Azuisleet ( Original hook ), Entoros( Holdtype thing -- Which is no more, since garry added that in :/ ), and well, me, Big Bang/F-Nox ( everything else )
+AddCSLuaFile( "animations.lua" )
+resource.AddFile( "models/Gustavio/alyxanimtree.mdl" )
+resource.AddFile( "models/Gustavio/combineanimtree.mdl" )
+resource.AddFile( "models/Gustavio/maleanimtree.mdl" )
+resource.AddFile( "models/Gustavio/femaleanimtree.mdl" )
+resource.AddFile( "models/Gustavio/metroanimtree.mdl" )
+resource.AddFile( "models/Gustavio/barneyanimtree.mdl" )
 
-local meta = _R["Player"]
+local meta = FindMetaTable( "Player" )
 local model
 function meta:GetGender()
 
@@ -510,7 +517,7 @@ local function HandleLuaAnimation( ply, animation )
 	
 end
 
-local function HandleSequence( ply, seq ) --Internal function to handle different sequence types.
+function HandleSequence( ply, seq ) --Internal function to handle different sequence types.
 	
 	--print( seq )
 	

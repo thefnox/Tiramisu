@@ -166,7 +166,7 @@ function ConfirmCharRemove( um )
 	declinebutton:SetSize( 150, 50 )
 	declinebutton:SetText( "Return to previous menu" )
 	declinebutton.DoClick = function( btn )
-		CreatePlayerMenu()
+		CAKE.SetActiveTab( "Characters" )
 		PlayerInfo:Remove()
 		PlayerInfo = nil;
 	end
