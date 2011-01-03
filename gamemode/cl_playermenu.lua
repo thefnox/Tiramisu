@@ -5,8 +5,7 @@ CAKE.MenuOpen = false
 CAKE.DisplayMenu = false
 CAKE.MenuFont = "Base 02"
 
-surface.CreateFont( CAKE.MenuFont, 18, 800, true, false, "BaseTitle" )
-surface.CreateFont( CAKE.MenuFont, 24, 400, true, false, "BaseOptions" )
+surface.CreateFont( CAKE.MenuFont, 20, 400, true, false, "BaseOptions" )
 
 local MenuPos
 local MenuAng

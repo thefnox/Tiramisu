@@ -34,7 +34,6 @@ if SERVER then
 
 	--Weapons that are never aimed
 	NeverAimed = {
-                "hands"
 	}
 	
 	function meta:SetAiming( bool )
@@ -84,6 +83,9 @@ if SERVER then
                 if ValidEntity( ply ) and ValidEntity( ply:GetActiveWeapon() ) then
                         if key == IN_ATTACK or key == IN_ATTACK2 then
                                 ply:SetAiming( true )
+                        end
+                        if key == IN_SPEED then
+                                ply:SetAiming( false )
                         end
                 end
         end )

@@ -335,7 +335,6 @@ function ccPickupItem( ply, cmd, args )
 					CAKE.SetCharField( ply, "weapons", weapons )
 				end
 				ply:Give( item.Class )
-				CAKE.HandleGear( ply, item.Class )
 				CAKE.SaveGear( ply )
 			end
 			if string.match( item.Class, "zipties" ) then

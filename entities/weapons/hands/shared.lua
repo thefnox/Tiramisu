@@ -23,11 +23,11 @@ SWEP.ViewModel      = ""
 SWEP.WorldModel   = ""
 SWEP.HoldType = "normal"
  
-SWEP.Primary.ClipSize      = 1
+SWEP.Primary.ClipSize      = -1
 SWEP.Primary.DefaultClip    = 1
 SWEP.Primary.Automatic    = false
 
-SWEP.Secondary.ClipSize      = 0
+SWEP.Secondary.ClipSize      = -1
 SWEP.Secondary.DefaultClip    = 0
 
 function SWEP:Reload()

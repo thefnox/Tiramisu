@@ -44,7 +44,7 @@ end
 function CAKE.HandleGear( ply, item, bone, offset, angle, scale, skin )
 	
 	if CAKE.ItemData[ item ] then
-		local bone = bone or CAKE.ItemData[ item ].Bone or "head"
+		bone = bone or CAKE.ItemData[ item ].Bone or "head"
 		
 		if !ply.Gear then
 			ply.Gear = {}
@@ -55,12 +55,12 @@ function CAKE.HandleGear( ply, item, bone, offset, angle, scale, skin )
 		end
 		
 		ply.Gear[ bone ] = {}
-		local model = CAKE.ItemData[ item ].Model
-		local offset = offset or CAKE.ItemData[ item ].Offset or Vector( 0, 0, 0 )
-		local angle = angle or CAKE.ItemData[ item ].OffsetAngle or Angle( 0, 0, 0 )
-		local scale = scale or CAKE.ItemData[ item ].Scale or Vector( 1, 1, 1 )
-		local skin = skin or CAKE.ItemData[ item ].Skin or 0
-		local bonemerge = true
+		model = CAKE.ItemData[ item ].Model
+		offset = offset or CAKE.ItemData[ item ].Offset or Vector( 0, 0, 0 )
+		angle = angle or CAKE.ItemData[ item ].OffsetAngle or Angle( 0, 0, 0 )
+		scale = scale or CAKE.ItemData[ item ].Scale or Vector( 1, 1, 1 )
+		skin = skin or CAKE.ItemData[ item ].Skin or 0
+		bonemerge = true
 		if CAKE.ItemData[ item ].WeaponType then
 			bonemerge = false
 		end
@@ -235,7 +235,9 @@ function meta:HideActiveWeapon()
 					if ValidEntity( v[ "entity" ] ) then
 						if v[ "item" ] == class and v[ "entity" ]:GetParent() == self then
 							v[ "entity" ]:SetDTBool( 1, false )
+							v[ "entity" ]:SetNoDraw( true )
 						else
+							v[ "entity" ]:SetNoDraw( false )
 							v[ "entity" ]:SetDTBool( 1, true)
 						end
 					end
@@ -249,16 +251,16 @@ function CAKE.SaveGear( ply )
 	
 	local tbl = table.Copy( ply.Gear )
 	
-	for k, v in pairs( tbl ) do
-		v[ "offset" ] = v[ "entity" ]:GetDTVector( 1 )
-		v[ "angle" ] = v[ "entity" ]:GetDTAngle( 1 )
-		v[ "scale" ] = v[ "entity" ]:GetDTVector( 2 )
-		v[ "skin" ] = v[ "entity" ]:GetSkin()
-		v[ "entity" ] = nil
+	if tbl then
+		for k, v in pairs( tbl ) do
+			v[ "offset" ] = v[ "entity" ]:GetDTVector( 1 )
+			v[ "angle" ] = v[ "entity" ]:GetDTAngle( 1 )
+			v[ "scale" ] = v[ "entity" ]:GetDTVector( 2 )
+			v[ "skin" ] = v[ "entity" ]:GetSkin()
+		end
+		
+		CAKE.SetCharField( ply, "gear", tbl )
 	end
-	
-	CAKE.SetCharField( ply, "gear", tbl )
-	
 	
 end
 
@@ -272,13 +274,13 @@ function CAKE.RestoreGear( ply )
 		datastream.StreamToClients( ply, "recievegear",  ply.Gear )
 	end
 	
-	timer.Create( ply:SteamID() .. "sendgear", 1, 0, function()
-		datastream.StreamToClients( ply, "recievegear",  ply.Gear )
-	end)
-	
 end
 
 local function GearSpawnHook( ply )
+
+	CAKE.RemoveAllGear( ply )
+	CAKE.RestoreGear( ply )
+
 	timer.Create( ply:SteamID() .. "gunchecktimer", 0.1, 0, function( ply ) --Please don't use this, this solution is horrid, but there are no other hooks for this.
 		if ValidEntity( ply ) then
 			ply:HideActiveWeapon()

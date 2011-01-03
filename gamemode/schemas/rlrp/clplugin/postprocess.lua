@@ -35,7 +35,7 @@ local function TiramisuPostProcess()
 	end
 	*/
 	DrawColorModify( tab )
-	DrawBloom( 0.34, bloommultiply, 5, 5, 14, 1, 1, 1, 1 )
+--	DrawBloom( 0.34, bloommultiply, 5, 5, 14, 1, 1, 1, 1 )
 	DrawSharpen( blurmultiply, 1)
 	DrawMotionBlur( 0.4, blurmultiply, 0 )
  

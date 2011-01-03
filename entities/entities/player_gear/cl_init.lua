@@ -27,8 +27,8 @@ function ENT:Draw()
 end
 
 function ENT:Think()
-	if ValidEntity( self.Entity:GetDTEntity( 1 ) ) then
-		local position, angles = self.Entity:GetDTEntity( 1 ):GetBonePosition(self.Entity:GetDTInt(1)) or Vector( 0, 0, 0 ), Angle( 0, 0, 0 )
+	if ValidEntity( self.Entity:GetParent() ) then
+		local position, angles = self.Entity:GetDTEntity( 1 ):GetBonePosition(self.Entity:GetDTInt(1))
 		local newposition, newangles = LocalToWorld( self.Entity:GetDTVector(1), self.Entity:GetDTAngle(1), position, angles )
 		self.Entity:SetPos(newposition)
 		self.Entity:SetAngles(newangles)

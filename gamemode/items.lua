@@ -50,7 +50,6 @@ function ccDropItem( ply, cmd, args )
 			if( v == args[ 1 ] ) then
 				if( string.match( v, "weapon" ) )then
 					ply:StripWeapon( v )
-					CAKE.RemoveGearItem( ply, v )
 					CAKE.SaveGear( ply )
 					if( table.HasValue( CAKE.GetCharField( ply, "weapons" ), v ) ) then
 						local weapons = CAKE.GetCharField( ply, "weapons" )

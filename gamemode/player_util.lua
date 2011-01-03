@@ -267,8 +267,6 @@ function meta:GiveItem( class )
 				CAKE.SetCharField( self, "weapons", weapons )
 			end
 			self:Give( class )
-			CAKE.HandleGear( self, class )
-			CAKE.SaveGear( self )
 		end 
 	end
 	
