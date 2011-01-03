@@ -197,18 +197,13 @@ end)
 
 
 function InitHiddenButton()
-	local ppos = CAKE.CamPos or LocalPlayer():GetShootPos()
 	HiddenButton = vgui.Create("DButton") -- HOLY SHIT WHAT A HACKY METHOD FO SHO
 	HiddenButton:SetSize(ScrW(), ScrH());
 	HiddenButton:SetText("");
 	HiddenButton:SetDrawBackground(false);
 	HiddenButton:SetDrawBorder(false);
 	HiddenButton.DoClick = function()
-		local tracedata = {};
-		tracedata.start = ppos;
-		tracedata.endpos = LocalPlayer():GetCursorAimVector( )
-		tracedata.filter = LocalPlayer();
-		local trace = util.TraceLine(tracedata);
+		local trace = LocalPlayer():GetEyeTrace( )
 		
 		if(trace.HitNonWorld) then
 			local target = trace.Entity
@@ -220,11 +215,7 @@ function InitHiddenButton()
 	end
 	HiddenButton.DoRightClick = function()
 		local Vect = gui.ScreenToVector(gui.MouseX(), gui.MouseY());
-		local tracedata = {};
-		tracedata.start = ppos;
-		tracedata.endpos = LocalPlayer():GetCursorAimVector( )
-		tracedata.filter = LocalPlayer();
-		local trace = util.TraceLine(tracedata);
+		local trace = LocalPlayer():GetEyeTrace( )
 		
 		if(trace.HitNonWorld) then
 			local target = trace.Entity;

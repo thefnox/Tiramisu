@@ -14,11 +14,23 @@ local perc
 local gunpos, gunang
 local ammotext 
 local textsizex, textsizey
+local label
+local menuopened
 
 hook.Add( "PostDrawOpaqueRenderables", "TiramisuHealthAmmoDisplay", function( )
 
+	if ValidEntity( LocalPlayer():GetEyeTrace().Entity ) and CAKE.IsDoor(LocalPlayer():GetEyeTrace().Entity) then
+		--Not yet lololol this is for door titles
+	end
 
-	if CAKE.Thirdperson:GetBool() then
+	if CAKE.Thirdperson:GetBool() or CAKE.MenuOpen then
+		if CAKE.MenuOpen then
+			plydamaged = true
+			menuopened = true
+		elseif !CAKE.MenuOpen and menuopened then
+			plydamaged = false
+			displaydamage = false
+		end
 		if plydamaged and !displaydamage then
 			displaydamage = true
 		elseif plydamaged and displaydamage then
@@ -64,7 +76,7 @@ hook.Add( "PostDrawOpaqueRenderables", "TiramisuHealthAmmoDisplay", function( )
 
 		wep = LocalPlayer():GetActiveWeapon()
 
-		if ValidEntity( wep ) and LocalPlayer():GetAiming() then
+		if ( ValidEntity( wep ) and LocalPlayer():GetAiming() ) or ( CAKE.MenuOpen and ValidEntity( wep ) ) then
 		    ammotext = tostring( wep:Clip1() ) .. "/" .. tostring( LocalPlayer():GetAmmoCount(wep:GetPrimaryAmmoType()) )
 		    gunpos, gunang = LocalPlayer():GetBonePosition(LocalPlayer():LookupBone("ValveBiped.Bip01_R_Hand"))
 		    gunang:RotateAroundAxis( gunang:Up(), 90 )

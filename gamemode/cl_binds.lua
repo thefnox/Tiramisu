@@ -34,6 +34,7 @@ end
 function GM:ScoreboardShow( )
 
 	CAKE.ContextEnabled = true;
+	CAKE.MenuOpen = true
 	gui.EnableScreenClicker( true )
 	HiddenButton:SetVisible( true );
 	
@@ -41,6 +42,7 @@ end
 
 function GM:ScoreboardHide( )
 
+	CAKE.MenuOpen = false
 	CAKE.ContextEnabled = false;
 	gui.EnableScreenClicker( false );
 	HiddenButton:SetVisible( false );

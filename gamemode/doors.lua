@@ -39,3 +39,7 @@ function CAKE.GetDoorGroup(entity)
 	return doorgroups;
 
 end
+
+function CAKE.SetDoorTitle( door, title )
+	door:SetNWString( "doortitle", string.Sub( title, 1, 33) )
+end

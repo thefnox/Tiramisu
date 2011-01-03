@@ -84,9 +84,6 @@ if SERVER then
                         if key == IN_ATTACK or key == IN_ATTACK2 then
                                 ply:SetAiming( true )
                         end
-                        if key == IN_SPEED then
-                                ply:SetAiming( false )
-                        end
                 end
         end )
 	
@@ -913,6 +910,9 @@ function GM:CalcMainActivity( ply, velocity )
 			else
 				if len2d > 135 then
 					ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
+                                        if SERVER then
+                                                ply:SetAiming( false )
+                                        end
 				elseif len2d > 0.1 then
 					ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "walk" ] )
 				else

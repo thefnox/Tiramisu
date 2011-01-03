@@ -44,6 +44,10 @@ function meta:CalcDrop( )
 	
 end
 
+function CAKE.GetDoorTitle( door )
+	return door:GetNWString( "doortitle", "Unowned" )
+end
+
 local monthstable = {
 	[1] = "January",
 	[2] = "February",

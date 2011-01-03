@@ -257,37 +257,12 @@ function ccPurchaseDoor( ply, cmd, args )
 				CAKE.ChangeMoney( ply, -50 );
 				door.owner = ply;
 				
-				local function Rental( ply, doornum )
-				
-					local door = ents.GetByIndex( tonumber( doornum ) );
-					
-					if( door.owner == ply ) then
-					
-						if( tonumber( CAKE.GetCharField( ply, "money" ) ) >= 50 ) then
-						
-							CAKE.ChangeMoney( ply, 0 - 50 );
-							CAKE.SendChat( ply, "You have been charged 50 credits for a door!" );
-							-- Start the timer again
-							timer.Simple( 900, Rental, ply, doornum ); -- 15 minutes hoo rah
-							
-						else
-						
-							CAKE.SendChat( ply, "You have lost a door due to insufficient funds." );
-							door.owner = nil;
-							
-						end
-						
-					end
-				
-				end
-				
-				timer.Simple( 900, Rental, ply, tonumber( args[ 1 ] ) );
-				
 			end
 			
 		elseif( door.owner == ply ) then
 		
 			door.owner = nil;
+			CAKE.ChangeMoney( ply, 50 );
 			CAKE.SendChat( ply, "Door Unowned" );
 			
 		else
@@ -300,6 +275,17 @@ function ccPurchaseDoor( ply, cmd, args )
 	
 end
 concommand.Add( "rp_purchasedoor", ccPurchaseDoor );
+
+local function ccDoorTitle( ply, cmd, args )
+
+	local door = ents.GetByIndex( tonumber( args[ 1 ] ) )
+	table.remove( args, 1 )
+	local title = table.concat( args, " " )
+
+	CAKE.SetDoorTitle( door, title )
+
+end
+concommand.Add( "rp_doortitle", ccDoorTitle )
 
 function ccDropWeapon( ply, cmd, args )
 	
