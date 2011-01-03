@@ -24,7 +24,6 @@ end
 function CAKE.AddStashItem(class,itemrarity)
 	if !CAKE.StashItems[itemrarity] then print("No such rarity") return end
 	table.insert(CAKE.StashItems[itemrarity], class)
-	PrintTable(CAKE.StashItems[itemrarity])
 end
 	
 function CAKE.AddStash(pos, ang)
@@ -49,7 +48,6 @@ function CAKE.ClearStashes()
 end
 
 function CAKE.SaveStashes()
-	PrintTable(CAKE.StashPoints)
 	local gloncomspawns = glon.encode(CAKE.StashPoints)
 	file.Write( CAKE.Name .. "/MapInfo/" ..game.GetMap().. "_stashes.txt" , gloncomspawns)
 end
@@ -73,7 +71,6 @@ function CAKE.InitStashes()
 		local keydspawntable = file.Read(CAKE.Name .. "/MapInfo/" ..game.GetMap().. "_stashes.txt")
 		print(keydspawntable)
 		CAKE.StashPoints = glon.decode(keydspawntable)
-		PrintTable(CAKE.StashPoints)
 		
 	end
 	

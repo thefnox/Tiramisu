@@ -6,15 +6,13 @@ local function OpenCharacter()
 	--PlayerMenu:SetPos( ScrW() / 2 - 320, ScrH() / 2 - 240 )
 	PlayerMenu:SetSize( 640, 480 )
 	PlayerMenu:SetTitle( "Characters" )
-	--PlayerMenu:SetBackgroundBlur( true )
+	PlayerMenu:SetBackgroundBlur( true )
 	PlayerMenu:SetVisible( true )
 	PlayerMenu:SetDraggable( true )
 	PlayerMenu:ShowCloseButton( true )
 	PlayerMenu:SetDeleteOnClose( true )
 	PlayerMenu:Center()
 	PlayerMenu:MakePopup()
-	function PlayerMenu:Paint()
-	end
 	
 	CharPanel = vgui.Create( "DPanelList", PlayerMenu )
 	CharPanel:SetSize( 640,450 )
@@ -117,6 +115,15 @@ local function CloseCharacter()
 	end
 end
 CAKE.RegisterMenuTab( "Characters", OpenCharacter, CloseCharacter )
+
+function RoundedBoxHook()
+draw.RoundedBox( 8, 5, ScrH()-105, 250, 100, Color(0, 0, 0, 180) );
+end
+hook.Add("HUDPaint", "TiramisuCharacterRender", function()
+	if PlayerMenu then
+		render.SetScissorRect( 0, 0, ScrW() / 2, ScrH() / 2, true )
+	end
+end)
 
 function CLPLUGIN.Init()
 	

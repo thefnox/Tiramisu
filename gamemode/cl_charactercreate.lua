@@ -98,6 +98,7 @@ local function CharacterCreatePanel( )
 
 	CAKE.SetActiveTab( "Characters" )
 	InitHUDMenu()
+	CAKE.CreateRadioMenu()
 	
 end
 usermessage.Hook( "charactercreate", CharacterCreatePanel );

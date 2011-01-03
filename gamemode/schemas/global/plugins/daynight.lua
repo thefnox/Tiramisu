@@ -39,7 +39,6 @@ function daylight:init( )
 	// get light entities.
 	self.env_sun = ents.FindByClass('env_sun');
 	self.shadow_control = ents.FindByClass('shadow_control');
-	self.sky_fog = ents.FindByClass('env_fog_controller');
 	--self.sky_overlay = ents.FindByName( 'skyoverlay*' ) or ents.FindByName('daynight_brush')
 	self.sky_overlay = ents.FindByName('daynight_brush');
 	self.light_environment = ents.FindByClass( 'light_environment' )
@@ -78,12 +77,6 @@ function daylight:init( )
 			// turn it black.
 			brush:Fire( 'Color' , '0 0 0' , 0.01 );
 		end
-	end
-	
-	
-	for _ , fog in pairs(self.sky_fog) do
-		fog:Fire("SetColor", "0 0 0" , 0.1)
-		fog:Fire("SetColorSecondary", "0 0 0" , 0.1)
 	end
 	
 	for _ , brush in pairs(self.sky_overlay) do
@@ -181,14 +174,6 @@ function daylight:buildLightTable( )
 			end
 		end
 
-		// Fog color and distance calculations
-		local fBaseDist = 1568
-		local fNum = 300
-		local fRed = math.floor( math.Clamp( math.Clamp(98 - (98 * math.Clamp( math.abs( ( i - NOON ) / NOON ), 0, 1 ) ), 0, 98 ) + ( math.floor( red ) * math.Clamp( math.abs( ( i - NOON ) / NOON ), 0.05, 0.7 ) ), 0, 255  ) );
-		local fGrn = math.floor( math.Clamp( math.Clamp(105 - (105 * math.Clamp( math.abs( ( i - NOON ) / NOON ), 0, 1 ) ), 0, 105 ) + ( math.floor( green ) * math.Clamp( math.abs( ( i - NOON ) / NOON ), 0.05, 0.7 ) ), 0, 255  ) );
-		local fBlu = math.floor( math.Clamp( math.Clamp(111 - (111 * math.Clamp( math.abs( ( i - NOON ) / NOON ), 0, 1 ) ), 0, 111 ) + ( math.floor( blue ) * math.Clamp( math.abs( ( i - NOON ) / NOON ), 0.05, 0.7 ) ), 0, 255  ) );
-		local fDist = math.floor( (fBaseDist) * (fNum) / (255 * math.Clamp( math.abs( ( i - NOON ) / NOON ) , 0.2 , 0.8 ) ) )
-
 		// Sun & Shadow Angle Calcs
 		local piday = ( DAY_LENGTH / 4 ) + i
 		if ( piday > DAY_LENGTH ) then
@@ -226,8 +211,7 @@ function daylight:buildLightTable( )
 		self.light_table[i].pattern = letter;
 		self.light_table[i].sky_overlay_alpha = math.floor( 255 * math.Clamp( math.abs( ( i - NOON) / NOON ) , 0 , 0.92 ) );
 		self.light_table[i].sky_overlay_color = math.floor( red ) .. ' ' .. math.floor( green ) .. ' ' .. math.floor( blue );
-		self.light_table[i].sky_fog_color = math.floor( fRed ) .. ' ' .. math.floor( fGrn ) .. ' ' .. math.floor ( fBlu );
-		self.light_table[i].sky_fog_dist = math.Clamp(math.floor( (fBaseDist) * (fNum) / (255 * math.Clamp( math.abs( ( i - NOON ) / NOON ) , 0.1 , 0.7 ) ) ), 1856, 3072 );
+
 		self.light_table[i].env_sun_angle = 'angles ' .. sPitch .. ' ' .. sYaw .. ' ' .. sRoll
 		self.light_table[i].shadow_angle = 'angles ' .. xPitch .. ' ' .. xYaw .. ' ' .. xRoll
 	end
@@ -278,18 +262,6 @@ function daylight:think( )
 		CAKE.ClockMonth = 1
 	end
 	
-	if (CAKE.ClockMins == DAWN_START) then
-		if (math.random(1, 40) == 1) then
-			self.CurFoggy = true;
-		end
-	elseif (CAKE.ClockMins == DAWN_END) then self.CurFoggy = false; end
-	
-	if (CAKE.ClockMins == DUSK_START) then
-		if (math.random(1, 40) == 1) then
-			self.CurFoggy = true;
-		end
-	elseif (CAKE.ClockMins == DUSK_END) then self.CurFoggy = false; end
-	
 	CAKE.ClockTime = DAY_START + CAKE.ClockMins - 1
 	
 	// light pattern.
@@ -327,37 +299,6 @@ function daylight:think( )
 	self.sky_overlay_alpha = sky_overlay_alpha;
 	self.sky_overlay_color = sky_overlay_color;
 	
-	// sky fog attributes
-	if ( self.sky_fog ) then
-		local sky_fog_color = self.light_table[ CAKE.ClockMins ].sky_fog_color
-		
-		local sky_fog_dist = self.light_table[ CAKE.ClockMins ].sky_fog_dist
-		local sky_fog_z = math.Clamp( (sky_fog_dist + 4000), 7500, 15000 )
-		if (self.CurFoggy) then
-			local dist_da = math.Clamp(1 - ((1 - (math.abs(CAKE.ClockMins - DAWN) / 144)) * .8), .25, 1);
-			local dist_du = math.Clamp(1 - ((1 - (math.abs(CAKE.ClockMins - DUSK) / 144)) * .8), .25, 1);
-			
-			if (CAKE.ClockMins < NOON) then
-				sky_fog_dist = sky_fog_dist * dist_da;
-			else
-				sky_fog_dist = sky_fog_dist * dist_du;
-			end
-		end
-		
-		local fog;
-		for _ , fog in pairs( self.sky_fog ) do
-			if (self.sky_fog_color != sky_fog_color ) then
-				fog:Fire( 'SetColor' , sky_fog_color , 0 )
-				fog:Fire( 'SetColorSecondary' , sky_fog_color , 0 )
-			end
-			if (self.sky_fog_dist != sky_fog_dist ) then
-				fog:Fire( 'SetEndDist' , sky_fog_dist , 0 )
-				fog:Fire( 'SetFarZ' , sky_fog_z , 0 )
-			end
-		end
-		self.sky_fog_color = sky_fog_color
-		self.sky_fog_dist = sky_fog_dist
-	end
 	
 	// Sun and Shadow angles (update at the same time)
 	local env_sun_angle = self.light_table[ CAKE.ClockMins ].env_sun_angle;

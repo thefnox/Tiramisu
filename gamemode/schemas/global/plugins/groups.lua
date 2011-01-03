@@ -18,8 +18,6 @@ function CAKE.CreateGroup( name, tbl )
 		CAKE.Groups[ name ] = tbl
 	end
 	
-	PrintTable( tbl )
-	
 end
 
 function CAKE.GetGroupField( name, field )
@@ -172,7 +170,6 @@ local function LoadAllGroups()
 	
 	end
 	
-	PrintTable( CAKE.Groups )
 
 end
 hook.Add( "Initialize", "LoadAllTiramisuGroups", LoadAllGroups )

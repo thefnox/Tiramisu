@@ -12,8 +12,7 @@ local function OpenOptions()
 	PlayerMenu:ShowCloseButton( true )
 	PlayerMenu:SetDeleteOnClose( true )
 	PlayerMenu:Center()
-	function PlayerMenu:Paint()
-	end
+	PlayerMenu:SetBackgroundBlur( true )
 	
 	local Options = vgui.Create( "DPanelList", PlayerMenu )
 	Options:SetSize( 640, 450 )
@@ -29,21 +28,12 @@ local function OpenOptions()
 	ThirdpersonCheck:SetConVar( "rp_thirdperson" ) -- ConCommand must be a 1 or 0 value
 	Options:AddItem( ThirdpersonCheck )
 	
-	/*
-	local RenderbodyCheck = vgui.Create( "DCheckBoxLabel"  )
-	RenderbodyCheck:SetText( "Toggle rendering of your body in firstperson" )
-	RenderbodyCheck:SetConVar( "rp_renderbody" ) -- ConCommand must be a 1 or 0 value
-	Options:AddItem( RenderbodyCheck )*/
 	
 	local HeadbobCheck = vgui.Create( "DCheckBoxLabel"  )
 	HeadbobCheck:SetText( "Toggle head bobbing" )
 	HeadbobCheck:SetConVar( "rp_headbob" ) -- ConCommand must be a 1 or 0 value
 	Options:AddItem( HeadbobCheck )
 	
-	local WhiteCheck = vgui.Create( "DCheckBoxLabel" )
-	WhiteCheck:SetText( "Toggle menu's white screen" )
-	WhiteCheck:SetConVar( "rp_whitescreen" ) -- ConCommand must be a 1 or 0 value
-	Options:AddItem( WhiteCheck )
 	
 	local colormixer = vgui.Create( "DColorMixer");
 	colormixer:SetColor( Color( 0, 0, 255, 255 ) )

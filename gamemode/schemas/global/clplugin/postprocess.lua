@@ -40,6 +40,8 @@ local function DrawDeathMessages()
 end
 hook.Add( "HUDPaint", "TiramisuDeathMessages", DrawDeathMessages )
 
+/*
+
 local matBlur = Material( "pp/blurscreen" )
 matBlur:SetMaterialFloat( "$blur", 0.1 )
 
@@ -64,7 +66,7 @@ local function DrawWhiteScreen()
 			/*
 			local matWhite = CreateMaterial( "white", "UnlitGeneric", {
 				[ "$basetexture" ] = "lights/white"
-			} )*/
+			} )
 			render.SetMaterial( matBlur )
 			render.DrawScreenQuad()
 			--render.ClearDepth()
@@ -97,7 +99,6 @@ local function DrawWhiteScreen()
 						end
 					end
 				end
-				/*
 				cam.Start3D2D( LocalPlayer():GetPos() + Vector( 0, 0, 100 ), Angle( 0, math.NormalizeAngle( LocalPlayer():GetAngles().y + 60 ) , 90 ), 0.1 )
 					surface.SetDrawColor( 255, 10, 10, 120) --Red
 					surface.DrawRect(0 , 0, 120, 50 )
@@ -110,7 +111,7 @@ local function DrawWhiteScreen()
 						draw.DrawText( k, "BaseTitle", 0, lastpos, Color( 255, 255, 255, 255 ), 1 )
 					end
 				cam.End3D2D()
-				lastpos = 0*/
+				lastpos = 0
 				render.SetStencilReferenceValue( 0 )
 				for k, v in pairs( ents.GetAll() ) do
 					if ValidEntity( v ) then
@@ -149,7 +150,7 @@ local function DrawWhiteScreen()
 		end
 	end
 end
-hook.Add( "PostDrawOpaqueRenderables", "DrawWhiteScreen", DrawWhiteScreen )
+hook.Add( "PostDrawOpaqueRenderables", "DrawWhiteScreen", DrawWhiteScreen )*/
 
 hook.Add( "RenderScreenspaceEffects", "Tiramisu: Turn Off PostProcess", function()
 	

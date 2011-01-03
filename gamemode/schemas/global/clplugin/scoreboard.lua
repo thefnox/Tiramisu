@@ -12,8 +12,7 @@ local function OpenScoreboard()
 	PlayerMenu:ShowCloseButton( true )
 	PlayerMenu:SetDeleteOnClose( true )
 	PlayerMenu:Center()
-	function PlayerMenu:Paint()
-	end
+	PlayerMenu:SetBackgroundBlur( true )
 	
 	Scoreboard = vgui.Create( "DPanelList", PlayerMenu )
 	Scoreboard:SetSize( 640, 450 )

@@ -36,7 +36,6 @@ function CAKE.EditChair( mdl, tbl )
 end
 
 function CAKE.SaveChairs()
-	PrintTable( CAKE.Chairs )
 	local keys = glon.encode(CAKE.Chairs);
 	file.Write( CAKE.Name .. "/chairs.txt", keys )
 end
@@ -45,7 +44,6 @@ function CAKE.LoadChairs()
 	if file.Exists( CAKE.Name .. "/chairs.txt" ) then
 		CAKE.Chairs = glon.decode(file.Read( CAKE.Name .. "/chairs.txt" ))
 	end
-	PrintTable( CAKE.Chairs )
 end
 
 local function LoadChairs()

@@ -4,26 +4,20 @@ local lolpos
 
 function ENT:Draw()
 
-	if self.Entity:GetParent() == LocalPlayer() and GetViewEntity() == LocalPlayer() and !CAKE.MenuOpen and !LocalPlayer():GetNWBool( "sittingground" ) and !LocalPlayer():GetNWBool( "sittingchair" ) then
-		if !CAKE.UseCalcView:GetBool() then
-			return
-		end
-		if !CAKE.Thirdperson:GetBool() then
-			/*
-			if !CAKE.RenderBody:GetBool() then
+	if self.Entity:GetParent() == LocalPlayer() then
+		if !CAKE.Thirdperson:GetBool() and !CAKE.MiddleDown then
+			if !gamemode.Call( "ShouldDrawLocalPlayer" ) then
 				return
-			else
-				--if self.Entity:GetDTInt( 1 ) == 2 or  then
-					return
-				--end
-			end*/
-			return
+			end
 		end
+	end
+
+	local FlexNum = self.Entity:GetFlexNum() - 1
+ 
+	for i=0, FlexNum do
+		self.Entity:SetFlexWeight( i, 1 )
 	end
 	
-	if self.Entity:GetParent():IsPlayer() then 
-		self.Entity:SetEyeTarget( self.Entity:GetParent():GetEyeTrace().HitPos )
-	end
 	self.Entity:RemoveEffects(EF_ITEM_BLINK)
 	self.Entity:DrawModel()
 	self.Entity:DrawShadow( true )

@@ -12,8 +12,7 @@ local function OpenInventory()
 	PlayerMenu:ShowCloseButton( true )
 	PlayerMenu:SetDeleteOnClose( true )
 	PlayerMenu:Center()
-	function PlayerMenu:Paint()
-	end
+	PlayerMenu:SetBackgroundBlur( true )
 	
 	Inventory = vgui.Create( "DPropertySheet", PlayerMenu )
 	Inventory:SetSize( 640,450 )

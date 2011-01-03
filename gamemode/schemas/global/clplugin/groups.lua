@@ -35,8 +35,7 @@ PlayerMenu:SetDraggable( true )
 PlayerMenu:ShowCloseButton( true )
 PlayerMenu:SetDeleteOnClose( true )
 PlayerMenu:Center()
-function PlayerMenu:Paint()
-end
+PlayerMenu:SetBackgroundBlur( true )
 
 imagelol = vgui.Create( "DImage", PlayerMenu )
 imagelol:SetImage( CAKE.MyGroup.Image )

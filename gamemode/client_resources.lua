@@ -22,13 +22,10 @@ function AddResource( res_type, path )
 		
 	end
 	
-	print( "Adding Resource: " .. path .. " (" .. res_type .. ")" )
-	
 end
 
 local function AddContentFolder( filepath )
 
-	print( "Adding 'content' folder to resource list" )
 
 	filepath = filepath or "gamemodes/" .. CAKE.Name .. "/content/*"
 	local exp
@@ -65,3 +62,4 @@ AddResource( "lua", "boneanimlib/cl_boneanimlib.lua")
 AddResource( "lua", "boneanimlib/sh_boneanimlib.lua")
 AddResource( "lua", "achat.lua")
 AddResource( "lua", "lua_animations.lua")
+AddResource( "lua", "overv_3d2d_lib.lua")

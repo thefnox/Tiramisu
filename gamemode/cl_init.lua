@@ -18,13 +18,6 @@ CAKE.Running = false;
 CAKE.Loaded = false;
 CAKE.Skin = "default"
 
-CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 0, true, true )
-CAKE.RenderBody = CreateClientConVar( "rp_renderbody", 0, true, true )
-CAKE.FirstPersonForward = CreateClientConVar( "rp_firstpersonforward", 0, true, true )
-CAKE.FirstPersonUp = CreateClientConVar( "rp_firstpersonup", 7, true, true )
-CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true )
-CAKE.UseWhiteScreen = CreateClientConVar( "rp_whitescreen", 1, true, true )
-CAKE.UseCalcView = CreateClientConVar( "rp_useview", 1, true, true )
 CAKE.ViewRagdoll = false
 
 CAKE.Clothing = "none"
@@ -49,6 +42,7 @@ include( "cl_playermenu.lua" );
 include( "boneanimlib/cl_boneanimlib.lua" )
 include( "boneanimlib/sh_boneanimlib.lua" )
 include( "animations.lua" )
+include( "overv_3d2d_lib.lua" )
 
 CAKE.Loaded = true;
 

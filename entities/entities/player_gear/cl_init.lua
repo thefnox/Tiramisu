@@ -5,19 +5,22 @@ local lolpos
 
 function ENT:Draw()
 
+	if !self.Entity:GetDTInt(1) or !self.Entity:GetDTEntity( 1 ) then
+		--no shirt, no pants, no service
+		return
+	end
+
 	if !self.Entity:GetDTBool(1) then
 		return
 	end
 
-	if self.Entity:GetParent() == LocalPlayer() and GetViewEntity() == LocalPlayer() and !CAKE.MenuOpen then
-		if !CAKE.UseCalcView:GetBool() then
-			return
-		end
-		if !CAKE.Thirdperson:GetBool() then
-			return
+	if self.Entity:GetParent() == LocalPlayer() then
+		if !CAKE.Thirdperson:GetBool() and !CAKE.MiddleDown then
+			if !gamemode.Call( "ShouldDrawLocalPlayer" ) then
+				return
+			end
 		end
 	end
-	
 	self.Entity:DrawModel()
 	self.Entity:DrawShadow( true )
 	

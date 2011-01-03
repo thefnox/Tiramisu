@@ -2,9 +2,11 @@ include('shared.lua')
 
 function ENT:Draw()
 
-	if !gamemode.Call( "ShouldDrawLocalPlayer" ) then
-		if GetViewEntity() == LocalPlayer() then
-			return
+	if self.Entity:GetParent() == LocalPlayer() then
+		if !CAKE.Thirdperson:GetBool() and !CAKE.MiddleDown then
+			if !gamemode.Call( "ShouldDrawLocalPlayer" ) then
+				return
+			end
 		end
 	end
 	

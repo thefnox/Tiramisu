@@ -34,6 +34,7 @@ if SERVER then
 
 	--Weapons that are never aimed
 	NeverAimed = {
+                "hands"
 	}
 	
 	function meta:SetAiming( bool )
@@ -78,6 +79,14 @@ if SERVER then
 			end
 		end)
 	end)
+
+        hook.Add( "KeyPress", "TiramisuAimCheck", function(ply, key)
+                if ValidEntity( ply ) and ValidEntity( ply:GetActiveWeapon() ) then
+                        if key == IN_ATTACK or key == IN_ATTACK2 then
+                                ply:SetAiming( true )
+                        end
+                end
+        end )
 	
 end
 

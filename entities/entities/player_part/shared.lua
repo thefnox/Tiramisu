@@ -13,3 +13,13 @@ function ENT:SetupDataTables()
 	self:DTVar("Int", 2, "index" );
 	self:DTVar("Int", 3, "headratio" );
 end
+
+function ENT:Think()
+	
+	if ValidEntity( self:GetParent() ) and self:GetParent():IsPlayer() then
+		if self:GetParent().CalcIdeal then
+			self:SetSequence( self:GetParent().CalcIdeal )
+		end
+	end
+
+end
