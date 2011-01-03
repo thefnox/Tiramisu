@@ -74,7 +74,7 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
             tracedata.endpos = pos - ( angles:Forward() * CAKE.ThirdpersonDistance:GetInt() ) + ( angles:Right()* 30 )
             tracedata.filter = ply
             trace = util.TraceLine(tracedata)
-
+            
             pos = newpos
 			newpos = LerpVector( 0.2, pos, trace.HitPos )
 

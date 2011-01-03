@@ -126,6 +126,7 @@ function GM:PlayerInitialSpawn( ply )
 	-- Set some default variables
 	ply.Ready = false;
 	ply:SetNWInt( "chatopen", 0 );
+	ply:SetModel( "models/kleiner.mdl" )
 	ply:ChangeMaxHealth(CAKE.ConVars[ "DefaultHealth" ]);
 	ply:ChangeMaxArmor(0);
 	ply:ChangeMaxWalkSpeed(CAKE.ConVars[ "WalkSpeed" ]);
@@ -254,7 +255,6 @@ function GM:PlayerSetModel(ply)
 				CAKE.CallHook( "PlayerSetModel", ply, m);
 		else
 			
-			local m = "models/kleiner.mdl";
 			ply:SetModel("models/kleiner.mdl");
 			CAKE.CallHook( "PlayerSetModel", ply, m);
 			

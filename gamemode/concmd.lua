@@ -179,9 +179,11 @@ function ccLockDoor( ply, cmd, args )
 	local entity = ents.GetByIndex( tonumber( args[ 1 ] ) );
 	
 	if( CAKE.IsDoor( entity ) ) then
-
-		entity:Fire( "lock", "", 0 );
-			
+		if( door.owner != nil ) and door.owner == ply then
+			entity:Fire( "lock", "", 0 );
+		else
+			CAKE.SendChat( ply, "This is not your door!" );
+		end
 	end
 
 end
@@ -192,9 +194,11 @@ function ccUnLockDoor( ply, cmd, args )
 	local entity = ents.GetByIndex( tonumber( args[ 1 ] ) );
 	
 	if( CAKE.IsDoor( entity ) ) then
-	
+		if( door.owner != nil ) and door.owner == ply then
 			entity:Fire( "unlock", "", 0 );
-
+		else
+			CAKE.SendChat( ply, "This is not your door!" );
+		end
 	end
 
 end
@@ -256,7 +260,8 @@ function ccPurchaseDoor( ply, cmd, args )
 				-- Enough money to start off, let's start the rental.
 				CAKE.ChangeMoney( ply, -50 );
 				door.owner = ply;
-				
+				CAKE.SendChat( ply, "Door Owned" );
+
 			end
 			
 		elseif( door.owner == ply ) then

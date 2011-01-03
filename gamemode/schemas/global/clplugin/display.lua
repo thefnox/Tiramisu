@@ -9,18 +9,21 @@ local plydamaged = false
 local displaydamage = true
 local alpha = 150
 local headpos, headang
-local wep
+local ent
 local perc
 local gunpos, gunang
 local ammotext 
 local textsizex, textsizey
 local label
 local menuopened
+local trace
+local tracedata = {}
 
 hook.Add( "PostDrawOpaqueRenderables", "TiramisuHealthAmmoDisplay", function( )
 
 	if ValidEntity( LocalPlayer():GetEyeTrace().Entity ) and CAKE.IsDoor(LocalPlayer():GetEyeTrace().Entity) then
 		--Not yet lololol this is for door titles
+
 	end
 
 	if CAKE.Thirdperson:GetBool() or CAKE.MenuOpen then
@@ -74,19 +77,19 @@ hook.Add( "PostDrawOpaqueRenderables", "TiramisuHealthAmmoDisplay", function( )
 			end
 		end
 
-		wep = LocalPlayer():GetActiveWeapon()
+		ent = LocalPlayer():GetActiveWeapon()
 
-		if ( ValidEntity( wep ) and LocalPlayer():GetAiming() ) or ( CAKE.MenuOpen and ValidEntity( wep ) ) then
-		    ammotext = tostring( wep:Clip1() ) .. "/" .. tostring( LocalPlayer():GetAmmoCount(wep:GetPrimaryAmmoType()) )
+		if ( ValidEntity( ent ) and LocalPlayer():GetAiming() ) or ( CAKE.MenuOpen and ValidEntity( ent ) ) then
+		    ammotext = tostring( ent:Clip1() ) .. "/" .. tostring( LocalPlayer():GetAmmoCount(ent:GetPrimaryAmmoType()) )
 		    gunpos, gunang = LocalPlayer():GetBonePosition(LocalPlayer():LookupBone("ValveBiped.Bip01_R_Hand"))
 		    gunang:RotateAroundAxis( gunang:Up(), 90 )
 		    gunang:RotateAroundAxis( gunang:Forward() ,-90 )
 		    gunang:RotateAroundAxis( gunang:Right() ,0 )
 
-		    if wep:Clip1() >= 0 then
+		    if ent:Clip1() >= 0 then
 		        cam.Start3D2D( gunpos - (gunang:Right() * 10) + (gunang:Forward() * 5), gunang , 0.2 )
-		        	if wep.Primary and wep.Primary.ClipSize then
-		        		perc = wep:Clip1() / wep.Primary.ClipSize
+		        	if ent.Primary and ent.Primary.ClipSize then
+		        		perc = ent:Clip1() / ent.Primary.ClipSize
 		        	else
 		        		perc = 1
 		        	end
@@ -94,11 +97,11 @@ hook.Add( "PostDrawOpaqueRenderables", "TiramisuHealthAmmoDisplay", function( )
 		            textsizex, textsizey = surface.GetTextSize( ammotext )
 		            draw.RoundedBox( 4, 0, 0, textsizex * perc, textsizey / 2 , Color( 60, 60, 60, 150 ) )
 		            draw.SimpleTextOutlined(ammotext, "Trebuchet24", textsizex / 2, 0, Color(180, 255, 180, 200),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200))
-		            if LocalPlayer():GetAmmoCount(wep:GetSecondaryAmmoType()) > 0 then
+		            if LocalPlayer():GetAmmoCount(ent:GetSecondaryAmmoType()) > 0 then
 		                surface.SetFont("Trebuchet20")
-		                textsizex, textsizey = surface.GetTextSize( tostring( LocalPlayer():GetAmmoCount(wep:GetSecondaryAmmoType()) ) )
+		                textsizex, textsizey = surface.GetTextSize( tostring( LocalPlayer():GetAmmoCount(ent:GetSecondaryAmmoType()) ) )
 		                draw.RoundedBox( 4, 50, 30, textsizex, textsizey / 2, Color( 60, 60, 60, 150 ) )
-		                draw.SimpleTextOutlined(tostring( LocalPlayer():GetAmmoCount(wep:GetSecondaryAmmoType()) ), "Trebuchet20", (textsizex / 2 ) + 50, 30, Color(180, 180, 255, 200),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200))
+		                draw.SimpleTextOutlined(tostring( LocalPlayer():GetAmmoCount(ent:GetSecondaryAmmoType()) ), "Trebuchet20", (textsizex / 2 ) + 50, 30, Color(180, 180, 255, 200),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200))
 		            end
 		        cam.End3D2D()
 		    end

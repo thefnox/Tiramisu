@@ -35,7 +35,7 @@ function CAKE.CloseTabs()
 end
 
 function CAKE.SetActiveTab( name )
-	CAKE.MenuOpen = true
+	--CAKE.MenuOpen = true
 	CAKE.CloseTabs()
 	CAKE.MenuTabs[ name ][ "function" ]()
 	CAKE.ActiveTab = name
@@ -50,7 +50,6 @@ function CreatePlayerMenu( um )
 			return
 		end
 	
-		CAKE.MenuOpen = true
 		CAKE.DisplayMenu = true
 		local plytrace = LocalPlayer():GetEyeTrace()
 		MenuPos = ( plytrace.HitPos  )

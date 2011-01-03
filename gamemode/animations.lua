@@ -616,8 +616,6 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 					--print(ply.SpecialModel)
 					--print(ply:GetModel())
 					ply:SetModel( model )
-				elseif !ply:GetNWBool( "charloaded", false ) then
-					ply:SetModel( "models/kleiner.mdl" )
 				end
 				return FindEnumeration( seq )
 			end
