@@ -14,7 +14,6 @@ local function WeaponEquipItem( wep )
 				CAKE.SetCharField( ply, "weapons", weapons )
 			end
 			ply:GiveItem( wep:GetClass( ) )
-			CAKE.SaveGear( ply )
 		end 
  
 	end)

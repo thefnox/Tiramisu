@@ -53,6 +53,26 @@ function GM:ShowHelp( ply )
 	
 end
 
+function GM:ShowTeam( ply )
+
+	umsg.Start( "toggleinventory", ply )
+	umsg.End()
+
+end
+
+function GM:ShowSpare1( ply )
+
+	ply:SetAiming( !ply:GetAiming() )
+
+end
+
+function GM:ShowSpare2( ply )
+
+	umsg.Start( "togglethirdperson", ply )
+	umsg.End()
+
+end
+
 -- NO SENT FOR YOU.
 function GM:PlayerSpawnSENT( ply, class )
 
@@ -300,24 +320,20 @@ function ccDropWeapon( ply, cmd, args )
 			ply:TakeItem( wep:GetClass() )
 		end
 		CAKE.RemoveGearItem( ply, wep:GetClass() )
+
+		ply:RefreshInventory( )
 	
 end
 concommand.Add( "rp_dropweapon", ccDropWeapon );
 
 function ccPickupItem( ply, cmd, args )
-	
+
 	local item = ents.GetByIndex( tonumber( args[ 1 ] ) );
 	
 	if( item != nil and item:IsValid( ) and item:GetClass( ) == "item_prop" and item:GetPos( ):Distance( ply:GetShootPos( ) ) < 100 ) then
 		if CAKE.CanPickupItem( ply, item.Class ) then
 			if ply:ItemHasFlag( item.Class , "extracargo" ) then
 				CAKE.SetCharField( ply, "extracargo", tonumber( ply:GetFlagValue( item.Class, "extracargo" ) ) )
-				if item.IsContainer then
-					for k,v in pairs(item.Inv) do
-						ply:GiveExtraItem( v )
-						CAKE.TakeContItem( item, v )
-					end
-				end
 			end
 			if( string.match( item.Class, "weapon" ) ) then
 				if !table.HasValue( CAKE.GetCharField( ply, "weapons" ), item.Class) then
@@ -326,7 +342,6 @@ function ccPickupItem( ply, cmd, args )
 					CAKE.SetCharField( ply, "weapons", weapons )
 				end
 				ply:Give( item.Class )
-				CAKE.SaveGear( ply )
 			end
 			if string.match( item.Class, "zipties" ) then
 				ply:Give( item.Class )
@@ -339,6 +354,8 @@ function ccPickupItem( ply, cmd, args )
 		end
 		
 	end
+
+	ply:RefreshInventory( )
 
 end
 concommand.Add( "rp_pickup", ccPickupItem );
@@ -362,8 +379,34 @@ function ccUseItem( ply, cmd, args )
 		
 	end
 
+	ply:RefreshInventory( )
+
 end
 concommand.Add( "rp_useitem", ccUseItem );
+
+function ccUseOnInventory( ply, cmd, args )
+
+	local item = CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ) )
+	
+	if( item != nil and item:IsValid( ) and item:GetClass( ) == "item_prop" ) then
+		
+		if( string.match( item.Class, "clothing" ) or string.match( item.Class, "helmet" ) or string.match( item.Class, "weapon" ) ) then
+			if( string.match( item.Class, "weapon" ) ) then
+				ply:Give( item.Class )
+			end
+			item:Pickup( ply );
+			ply:GiveItem( item.Class );
+			CAKE.SavePlayerData( ply )
+		else
+			item:UseItem( ply );
+		end
+		
+	end
+
+	ply:RefreshInventory( )
+
+end
+concommand.Add( "rp_useinventory", ccUseOnInventory)	
 
 function ccGiveMoney( ply, cmd, args )
 	
@@ -451,26 +494,6 @@ local function ccEditGear( ply, cmd, args )
 	datastream.StreamToClients( ply, "EditGear", { ["entity"] = ent });
 end
 concommand.Add( "rp_editgear", ccEditGear )*/
-
-local function ccCodeItem( ply, cmd, args )
-	
-	local flags = string.Explode( ",", args[8] )
-	local itemgroups = string.Explode( ",", args[7] )
-	local tbl = {
-		["Class"] = args[1],
-		["Name"] = args[2],
-		["Description"] = args[3],
-		["Model"] =	args[4],
-		["Purchaseable"] = util.tobool( args[5] ),
-		["Price"] = tonumber( args[6] ),
-		["ItemGroup" ] = itemgroups,
-		["Flags"] = flags
-	}
-
-	CAKE.CodeItem( args[1], tbl )
-	
-end
-concommand.Add( "rp_codeitem", ccCodeItem )
 
 local function ccKnockOut( ply, cmd, args )
 

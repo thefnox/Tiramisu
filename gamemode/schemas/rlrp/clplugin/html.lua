@@ -11,8 +11,7 @@ local function OpenForums()
 	PlayerMenu:ShowCloseButton( true )
 	PlayerMenu:SetDeleteOnClose( true )
 	PlayerMenu:Center()
-	function PlayerMenu:Paint()
-	end
+	PlayerMenu:SetBackgroundBlur( true )
 	
 	local Help = vgui.Create( "DPanelList", PlayerMenu )
 	Help:SetSize( 700, 490 )
@@ -22,7 +21,8 @@ local function OpenForums()
 	Help:EnableVerticalScrollbar(false);
 	
 	local html = vgui.Create( "HTML")
-	html:SizeToContents()
+	html:SetSize( 700, 467 )
+	html:SetPos( 0, 23)
 	html:OpenURL( "http://www.facepunch.com/showthread.php?t=1004787" )
 	Help:AddItem( html )
 end

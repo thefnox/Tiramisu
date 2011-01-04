@@ -48,8 +48,9 @@ include( "animations.lua" ); -- Animations
 include( "doors.lua" ); -- Doors
 include( "sql_main.lua" ); --MySQL handling
 include( "resources.lua" ) -- Automatic resource handling
+/*
 include( "boneanimlib/boneanimlib.lua" )
-include( "boneanimlib/sh_boneanimlib.lua" )
+include( "boneanimlib/sh_boneanimlib.lua" )*/
 
 CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ); -- Load the schema and plugins, this is NOT initializing.
 

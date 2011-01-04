@@ -65,6 +65,7 @@ function EditGear()
 	List:AddChoice("left calf")
 	List:AddChoice("left foot")
 	List:AddChoice("left toe")
+	List:SelectFirstItem( )
 	function List:OnSelect(index,value,data)
 		bone = value
 		if CAKE.Gear and CAKE.Gear[ bone ] then

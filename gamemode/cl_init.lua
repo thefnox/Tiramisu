@@ -39,8 +39,9 @@ include( "cl_hud.lua" );
 include( "cl_binds.lua" );
 include( "cl_charactercreate.lua" );
 include( "cl_playermenu.lua" );
+/*
 include( "boneanimlib/cl_boneanimlib.lua" )
-include( "boneanimlib/sh_boneanimlib.lua" )
+include( "boneanimlib/sh_boneanimlib.lua" )*/
 include( "animations.lua" )
 include( "overv_3d2d_lib.lua" )
 

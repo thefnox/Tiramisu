@@ -1,5 +1,5 @@
 PLUGIN.Name = "Gear"; -- What is the plugin name
-PLUGIN.Author = "Ryaga/BadassMC"; -- Author of the plugin
+PLUGIN.Author = "FNox/Big Bang"; -- Author of the plugin
 PLUGIN.Description = "Handles the stuff that you stick on yourself"; -- The description or purpose of the plugin
 
 --Thanks to the PAC team for this list.
@@ -44,54 +44,53 @@ end
 function CAKE.HandleGear( ply, item, bone, offset, angle, scale, skin )
 	
 	if CAKE.ItemData[ item ] then
-		bone = bone or CAKE.ItemData[ item ].Bone or "head"
+		local bone = bone or CAKE.ItemData[ item ].Bone or "head"
 		
 		if !ply.Gear then
 			ply.Gear = {}
 		end
 		
-		if ply.Gear[ bone ] then
-			CAKE.RemoveGear( ply, bone )
-		end
-		
-		ply.Gear[ bone ] = {}
-		model = CAKE.ItemData[ item ].Model
-		offset = offset or CAKE.ItemData[ item ].Offset or Vector( 0, 0, 0 )
-		angle = angle or CAKE.ItemData[ item ].OffsetAngle or Angle( 0, 0, 0 )
-		scale = scale or CAKE.ItemData[ item ].Scale or Vector( 1, 1, 1 )
-		skin = skin or CAKE.ItemData[ item ].Skin or 0
-		bonemerge = true
+		local id = #ply.Gear + 1
+		local model = CAKE.ItemData[ item ].Model
+		local offset = offset or CAKE.ItemData[ item ].Offset or Vector( 0, 0, 0 )
+		local angle = angle or CAKE.ItemData[ item ].OffsetAngle or Angle( 0, 0, 0 )
+		local scale = scale or CAKE.ItemData[ item ].Scale or Vector( 1, 1, 1 )
+		local skin = skin or CAKE.ItemData[ item ].Skin or 0
+		local bonemerge = true
 		if CAKE.ItemData[ item ].WeaponType then
 			bonemerge = false
 		end
 		
-		ply.Gear[ bone ][ "entity" ] = ents.Create( "player_gear" )
-		ply.Gear[ bone ][ "entity" ]:SetModel( model )
-		ply.Gear[ bone ][ "entity" ]:SetParent( ply )
-		ply.Gear[ bone ][ "entity" ]:SetPos( ply:GetPos() )
-		ply.Gear[ bone ][ "entity" ]:SetAngles( ply:GetAngles() )
-		ply.Gear[ bone ][ "entity" ]:SetDTInt( 1, ply:LookupBone( CAKE.BoneShorttoFull( bone ) ) )
-		ply.Gear[ bone ][ "entity" ]:SetDTEntity( 1, ply )
-		ply.Gear[ bone ][ "entity" ]:SetDTAngle( 1, angle )
-		ply.Gear[ bone ][ "entity" ]:SetDTVector( 1, offset )
-		ply.Gear[ bone ][ "entity" ]:SetDTVector( 2, scale )
-		ply.Gear[ bone ][ "entity" ]:SetDTBool( 1, true )
-		ply.Gear[ bone ][ "entity" ]:SetDTBool( 2, bonemerge )
-		if ValidEntity( ply.Gear[ bone ][ "entity" ]:GetPhysicsObject( ) ) then
-			ply.Gear[ bone ][ "entity" ]:GetPhysicsObject( ):EnableCollisions( false )
+		ply.Gear[ id ] = ents.Create( "player_gear" )
+		ply.Gear[ id ].bone = bone
+		ply.Gear[ id ]:SetModel( model )
+		ply.Gear[ id ]:SetParent( ply )
+		ply.Gear[ id ]:SetPos( ply:GetPos() )
+		ply.Gear[ id ]:SetAngles( ply:GetAngles() )
+		ply.Gear[ id ]:SetDTInt( 1, ply:LookupBone( CAKE.BoneShorttoFull( bone ) ) )
+		ply.Gear[ id ]:SetDTEntity( 1, ply )
+		ply.Gear[ id ]:SetDTAngle( 1, angle )
+		ply.Gear[ id ]:SetDTVector( 1, offset )
+		ply.Gear[ id ]:SetDTVector( 2, scale )
+		ply.Gear[ id ]:SetDTBool( 1, true )
+		ply.Gear[ id ]:SetDTBool( 2, bonemerge )
+		if ValidEntity( ply.Gear[ id ]:GetPhysicsObject( ) ) then
+			ply.Gear[ id ]:GetPhysicsObject( ):EnableCollisions( false )
 		end
-		ply.Gear[ bone ][ "entity" ]:Spawn()
-		ply.Gear[ bone ][ "entity" ]:SetSkin( skin )
-		ply.Gear[ bone ][ "item" ] = item
+		ply.Gear[ id ]:Spawn()
+		ply.Gear[ id ]:SetSkin( skin )
+		ply.Gear[ id ].item = item
 	end
 	
 end
-	
-function CAKE.RemoveGear( ply, bone )
 
-	if ply.Gear[ bone ] then
-		ply.Gear[ bone ][ "entity" ]:Remove()
-		ply.Gear[ bone ] = nil
+	
+function CAKE.RemoveGear( ply, id )
+
+	if ply.Gear[ id ] then
+		ply.Gear[ id ]:SetParent()
+		ply.Gear[ id ]:Remove()
+		ply.Gear[ id ] = nil
 	end
 	
 end
@@ -111,7 +110,7 @@ function CAKE.RemoveGearItem( ply, item )
 
 	if ply.Gear then
 		for k, v in pairs( ply.Gear ) do
-			if v[ "item" ] == item then
+			if v.item == item then
 				CAKE.RemoveGear( ply, k )
 			end
 			break
@@ -170,7 +169,7 @@ concommand.Add( "rp_removegear", ccRemoveGear )
 
 local function ccEditGear( ply, cmd, args )
 
-	local bone = args[1]
+	local bone = tonumber( args[1] )
 	local offset
 	local angle
 	local scale
@@ -181,40 +180,40 @@ local function ccEditGear( ply, cmd, args )
 		local exp = string.Explode( ",", args[2] )
 		offset = Vector( exp[1], exp[2], exp[3] )
 	else
-		offset = ply.Gear[ bone ][ "entity" ]:GetDTVector( 1 )
+		offset = ply.Gear[ bone ]:GetDTVector( 1 )
 	end
 	
 	if args[3] and args[3] != "none" then
 		local exp = string.Explode( ",", args[3] )
 		angle = Angle( exp[1], exp[2], exp[3] )
 	else
-		angle = ply.Gear[ bone ][ "entity" ]:GetDTAngle( 1 )
+		angle = ply.Gear[ bone ]:GetDTAngle( 1 )
 	end
 	
 	if args[4] and args[4] != "none" then
 		local exp = string.Explode( ",", args[4] )
 		scale = Vector( exp[1], exp[2], exp[3] )
 	else
-		scale = ply.Gear[ bone ][ "entity" ]:GetDTVector( 2 )
+		scale = ply.Gear[ bone ]:GetDTVector( 2 )
 	end
 	
 	if args[5] and args[5] != "none" then
 		visible = util.tobool( args[5] )
 	else
-		visible = ply.Gear[ bone ][ "entity" ]:GetDTBool( 1 )
+		visible = ply.Gear[ bone ]:GetDTBool( 1 )
 	end
 	
 	if args[6] and args[6] != "none" then
-		skin = math.Clamp( tonumber( args[6] ), 0, ply.Gear[ bone ][ "entity" ]:SkinCount() )
+		skin = math.Clamp( tonumber( args[6] ), 0, ply.Gear[ bone ]:SkinCount() )
 	else
-		skin = ply.Gear[ bone ][ "entity" ]:GetSkin()
+		skin = ply.Gear[ bone ]:GetSkin()
 	end
 	
-	ply.Gear[ bone ][ "entity" ]:SetDTVector( 1, offset )
-	ply.Gear[ bone ][ "entity" ]:SetDTVector( 2, scale )
-	ply.Gear[ bone ][ "entity" ]:SetDTAngle( 1, angle )
-	ply.Gear[ bone ][ "entity" ]:SetDTBool( 1, visible )
-	ply.Gear[ bone ][ "entity" ]:SetSkin( skin )
+	ply.Gear[ bone ]:SetDTVector( 1, offset )
+	ply.Gear[ bone ]:SetDTVector( 2, scale )
+	ply.Gear[ bone ]:SetDTAngle( 1, angle )
+	ply.Gear[ bone ]:SetDTBool( 1, visible )
+	ply.Gear[ bone ]:SetSkin( skin )
 	
 	CAKE.SaveGear( ply )
 	datastream.StreamToClients( ply, "recievegear",  ply.Gear )
@@ -226,41 +225,40 @@ local meta = FindMetaTable( "Player" )
 
 function meta:HideActiveWeapon()
 	
-	if ValidEntity( ply ) then
-		local wep = self:GetActiveWeapon()
-		if !self:GetNWBool( "observe" ) then
-			local class = wep:GetClass()
-			if self.Gear then
-				for k, v in pairs( self.Gear ) do
-					if ValidEntity( v[ "entity" ] ) then
-						if v[ "item" ] == class and v[ "entity" ]:GetParent() == self then
-							v[ "entity" ]:SetDTBool( 1, false )
-							v[ "entity" ]:SetNoDraw( true )
-						else
-							v[ "entity" ]:SetNoDraw( false )
-							v[ "entity" ]:SetDTBool( 1, true)
-						end
+	local wep = self:GetActiveWeapon()
+	if ValidEntity( wep ) and !self:GetNWBool( "observe" ) then
+		local class = wep:GetClass()
+		if self.Gear then
+			for k, v in pairs( self.Gear ) do
+				if ValidEntity( v ) then
+					if v.item == class and v:GetParent() == self then
+						v:SetDTBool( 1, false )
+					else
+						v:SetDTBool( 1, true)
 					end
 				end
 			end
 		end
 	end
+
 end
 
 function CAKE.SaveGear( ply )
+
+	local tbl = {}
 	
-	local tbl = table.Copy( ply.Gear )
-	
-	if tbl then
-		for k, v in pairs( tbl ) do
-			v[ "offset" ] = v[ "entity" ]:GetDTVector( 1 )
-			v[ "angle" ] = v[ "entity" ]:GetDTAngle( 1 )
-			v[ "scale" ] = v[ "entity" ]:GetDTVector( 2 )
-			v[ "skin" ] = v[ "entity" ]:GetSkin()
-		end
-		
-		CAKE.SetCharField( ply, "gear", tbl )
+	for k, v in pairs( ply.Gear ) do
+		tbl[ k ] = {}
+		tbl[ k ][ "offset"] = v:GetDTVector( 1 )
+		tbl[ k ][ "angle" ] = v:GetDTAngle( 1 )
+		tbl[ k ][ "scale" ] = v:GetDTVector( 2 )
+		tbl[ k ][ "skin" ] = v:GetSkin()
+		tbl[ k ][ "item" ] = v.item
+		tbl[ k ][ "bone" ] = v.bone
 	end
+	
+	CAKE.SetCharField( ply, "gear", tbl )
+	
 	
 end
 
@@ -269,31 +267,23 @@ function CAKE.RestoreGear( ply )
 	if ply:IsCharLoaded() then
 		local tbl = CAKE.GetCharField( ply, "gear" )
 		for k, v in pairs( tbl ) do
-			CAKE.HandleGear( ply, v[ "item" ], k, v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )
+			CAKE.HandleGear( ply, tbl[ k ][ "item" ], tbl[ k ][ "bone" ], tbl[ k ][ "offset" ], tbl[ k ][ "angle" ], tbl[ k ][ "scale" ], tbl[ k ][ "skin" ] )
 		end
 		datastream.StreamToClients( ply, "recievegear",  ply.Gear )
 	end
 	
+	timer.Create( ply:SteamID() .. "sendgear", 1, 0, function()
+		datastream.StreamToClients( ply, "recievegear",  ply.Gear )
+	end)
+	
 end
 
 local function GearSpawnHook( ply )
-
-	CAKE.RemoveAllGear( ply )
-	CAKE.RestoreGear( ply )
-
-	timer.Create( ply:SteamID() .. "gunchecktimer", 0.1, 0, function( ply ) --Please don't use this, this solution is horrid, but there are no other hooks for this.
-		if ValidEntity( ply ) then
-			ply:HideActiveWeapon()
-		end
+	timer.Create( ply:SteamID() .. "gunchecktimer", 0.1, 0, function() --Please not, this solution is horrid, but there are no other hooks for this.
+		ply:HideActiveWeapon()
 	end)
 end
 hook.Add( "PlayerSpawn", "TiramisuGearSpawnHook", GearSpawnHook )
-
-hook.Add( "PlayerDisconnected", "TiramisuGearRemovalHook", function( ply )
-	if timer.IsTimer( ply:SteamID() .. "gunchecktimer" ) then
-		timer.Destroy( ply:SteamID() .. "gunchecktimer" )
-	end
-end)
 
 function PLUGIN.Init()
 	

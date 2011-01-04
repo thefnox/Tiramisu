@@ -67,10 +67,10 @@ function CAKE.DeathMode( ply )
 	
 	if( ply.Gear ) then
 		for k, v in pairs( ply.Gear ) do
-			if( ValidEntity( v[ "entity" ] ) ) then
-				v[ "entity" ]:SetParent( rag )
-				v[ "entity" ]:SetDTInt( 1, rag:LookupBone( CAKE.BoneShorttoFull( k ) ) )
-				v[ "entity" ]:Initialize()
+			if( ValidEntity( v ) ) then
+				v:SetParent( rag )
+				v:SetDTEntity( 1, rag )
+				v:Initialize()
 			end
 		end
 	end
@@ -131,13 +131,14 @@ function CAKE.UnconciousMode( ply )
 	
 	if( ply.Gear ) then
 		for k, v in pairs( ply.Gear ) do
-			if( ValidEntity( v[ "entity" ] ) ) then
-				v[ "entity" ]:SetParent( rag )
-				v[ "entity" ]:SetDTInt( 1, rag:LookupBone( CAKE.BoneShorttoFull( k ) ) )
-				v[ "entity" ]:Initialize()
+			if( ValidEntity( v ) ) then
+				v:SetParent( rag )
+				v:SetDTEntity( 1, rag )
+				v:Initialize()
 			end
 		end
 	end
+	
 	
 	rag.clothing = ply.Clothing
 	rag.gear = ply.Gear
@@ -164,6 +165,7 @@ function CAKE.UnconciousMode( ply )
 		ply:SetNWInt( "unconciousmode", 0 )
 		ply:SetNWInt( "unconciousmoderemaining", 0 )
 		ply:SetViewEntity( ply );
+		ply:SetPos( rag:GetPos() + Vector( 0, 0, 10 ))
 		ply:UnLock()
 		CAKE.RestoreClothing( ply )
 		ply:GodDisable()

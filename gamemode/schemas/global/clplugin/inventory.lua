@@ -12,6 +12,7 @@ local function OpenInventory()
 	PlayerMenu:ShowCloseButton( true )
 	PlayerMenu:SetDeleteOnClose( true )
 	PlayerMenu:Center()
+	PlayerMenu:MakePopup()
 	PlayerMenu:SetBackgroundBlur( true )
 	
 	Inventory = vgui.Create( "DPropertySheet", PlayerMenu )
@@ -63,10 +64,7 @@ local function OpenInventory()
 			
 				local ContextMenu = DermaMenu()
 					ContextMenu:AddOption("Drop", function() LocalPlayer():ConCommand("rp_dropitem " .. v.Class); DeleteMyself(); end);
-					if CAKE.ExtraCargo > 0 then
-						--drawinventoryicons(); drawextrainventory();
-						ContextMenu:AddOption("Transfer to Cargo", function() LocalPlayer():ConCommand("rp_pickupextra " .. v.Class); DeleteMyself(); end);
-					end
+					ContextMenu:AddOption("Use", function() LocalPlayer():ConCommand("rp_useinventory " .. v.Class); DeleteMyself(); end);
 				ContextMenu:Open();
 				
 			end

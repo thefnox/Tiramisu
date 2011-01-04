@@ -187,15 +187,10 @@ function CAKE.CalculateEncumberment( ply )
 	
 		CAKE.SendChat( ply, "You are over-encumbered. Free up your inventory." )
 		CAKE.SendConsole( ply, "You are over-encumbered. Free up your inventory." )
-	
-		ply:SetWalkSpeed( CAKE.ConVars[ "WalkSpeed" ] -70 )
-		ply:SetRunSpeed( CAKE.ConVars[ "RunSpeed" ] - 105)
-		
+		return true
+
 	else
-		if ply.DamageProtection and ( ply.DamageProtection.Weight != "heavy" or ply.DamageProtection.Weight != "superheavy" ) then
-			ply:SetWalkSpeed( CAKE.ConVars[ "WalkSpeed" ] )
-			ply:SetRunSpeed( CAKE.ConVars[ "RunSpeed" ] )
-		end
+		return false
 	end
 
 end

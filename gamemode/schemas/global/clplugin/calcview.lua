@@ -15,6 +15,7 @@ local mousex
 local newpos
 local headpos, headang
 local tracedata = {}
+local ignoreent
 
 local function RecieveViewRagdoll( handler, id, encoded, decoded )
 	CAKE.ViewRagdoll = decoded.ragdoll
@@ -50,15 +51,12 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 	end
 	
 	if CAKE.MiddleDown then
-		tracedata.start = pos
+		tracedata.start = ply:EyePos()
 		tracedata.endpos = ply:GetForward()*100
 		tracedata.filter = ply
 		trace = util.TraceLine(tracedata)
-		if trace.HitWorld then
-			newpos = trace.HitPos
-		else
-			newpos = ply:GetForward()*100
-		end
+		
+		newpos = trace.HitPos
 		newpos:Rotate(mouserotate)
 		pos = ply:GetPos()+Vector(0,0,60) + newpos
 		return GAMEMODE:CalcView(ply, pos , (ply:GetPos()+Vector(0,0,60)-pos):Angle(),fov)
@@ -67,12 +65,15 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 	if( CAKE.Thirdperson:GetBool() ) then
 		if ValidEntity( CAKE.ViewRagdoll ) then
 			pos = CAKE.ViewRagdoll:GetPos()
+			ignoreent = CAKE.ViewRagdoll
+		else
+			ignoreent = ply
 		end
 					
 		if( ply:GetNWBool( "aiming", false ) ) then
             tracedata.start = pos
             tracedata.endpos = pos - ( angles:Forward() * CAKE.ThirdpersonDistance:GetInt() ) + ( angles:Right()* 30 )
-            tracedata.filter = ply
+            tracedata.filter = ignoreent
             trace = util.TraceLine(tracedata)
             
             pos = newpos
@@ -82,7 +83,7 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 		else
             tracedata.start = pos
             tracedata.endpos = pos - ( angles:Forward() * CAKE.ThirdpersonDistance:GetInt() * 2 ) + ( angles:Up()* 20 )
-            tracedata.filter = ply
+            tracedata.filter = ignoreent
             trace = util.TraceLine(tracedata)
             
             pos = newpos
@@ -110,7 +111,7 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 
 end)
 
-hook.Add("Think","TiramisuMouseCalc", function()
+timer.Create( "LocalMouseControlCam", 0.01, 0, function()
 	if !input.IsMouseDown(MOUSE_MIDDLE) and CAKE.MiddleDown then
 		CAKE.MiddleDown = false
 		gui.EnableScreenClicker( false )

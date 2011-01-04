@@ -21,7 +21,6 @@ function EditGear()
 		hook.Remove( "CalcMainActivity", "EditGearIdle" )
 		closebutton:Remove()
 		closebutton = nil
-		CAKE.MenuOpen = false
 	end
 	
 	local bone = ""
@@ -30,7 +29,7 @@ function EditGear()
 	local itemlist
 	
 	EditPanel = vgui.Create( "DFrame" ) -- Creates the frame itself
-	EditPanel:SetPos( ScrW() - 210,50 ) -- Position on the players screen
+	EditPanel:SetPos( ScrW() - 320,50 ) -- Position on the players screen
 	EditPanel:SetSize( 300, 300 ) -- Size of the frame
 	EditPanel:SetTitle( "Edit your gear" ) -- Title of the frame
 	EditPanel:SetVisible( true )
@@ -65,6 +64,7 @@ function EditGear()
 	List:AddChoice("left calf")
 	List:AddChoice("left foot")
 	List:AddChoice("left toe")
+	List:SelectFirstItem()
 	function List:OnSelect(index,value,data)
 		bone = value
 		if CAKE.Gear and CAKE.Gear[ bone ] then

@@ -101,11 +101,6 @@ function GM:ScalePlayerDamage( ply, hitgroup, dmginfo )
 				dmginfo:ScaleDamage( 1 )
 			end
 		end
-		
-		local randomchance = math.random( 1, 4 )
-		if( randomchance == 4 and ply:Health() < 20 ) then
-			CAKE.UnconciousMode( ply )
-		end
 
 end
 

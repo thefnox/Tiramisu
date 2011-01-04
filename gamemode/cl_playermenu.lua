@@ -28,10 +28,10 @@ function CAKE.RegisterMenuTab( name, func, closefunc ) --The third argument is t
 end
 
 function CAKE.CloseTabs()
-	if CAKE.ActiveTab then
-		CAKE.MenuTabs[ CAKE.ActiveTab ][ "closefunc" ]()
-		CAKE.ActiveTab = nil
+	for k, v in pairs( CAKE.MenuTabs ) do
+		v[ "closefunc" ]()
 	end
+	CAKE.ActiveTab = nil
 end
 
 function CAKE.SetActiveTab( name )
@@ -45,7 +45,7 @@ local postable = {}
 
 function CreatePlayerMenu( um )
 		
-		if CAKE.MenuOpen then
+		if TabPanel then
 			ClosePlayerMenu()
 			return
 		end
