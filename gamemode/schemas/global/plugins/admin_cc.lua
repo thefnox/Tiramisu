@@ -114,9 +114,8 @@ function Admin_Observe( ply, cmd, args )
 		   
 			if( ply.Gear ) then
 				for k, v in pairs( ply.Gear ) do
-					if ValidEntity( v[ "entity"] ) then
-						v[ "entity"]:SetDTBool( 1, false );
-						v[ "entity"]:SetNoDraw( true );
+					if ValidEntity( v ) then
+						v:SetNoDraw( true );
 					end
 				end
 			end
@@ -144,9 +143,8 @@ function Admin_Observe( ply, cmd, args )
 		   
 			if( ply.Gear ) then
 				for k, v in pairs( ply.Gear ) do
-					if ValidEntity( v[ "entity"] ) then
-						v[ "entity"]:SetDTBool( 1, true );
-						v[ "entity"]:SetNoDraw( false );
+					if ValidEntity( v ) then
+						v:SetNoDraw( false );
 					end
 				end
 			end

@@ -20,10 +20,10 @@ end
 
 function UnconciousMeter( )
 
-	local timeleft = 20 - LocalPlayer( ):GetNWInt( "unconciousmoderemaining" )
+	local timeleft = 10 - LocalPlayer( ):GetNWInt( "unconciousmoderemaining" )
 
-	draw.DrawText( "You have been knocked out.", "ChatFont", ScrW( ) / 2 - 250, 25 - 5, Color( 255,255,255,255 ), 0 );
-	draw.DrawText( "Wait " .. tostring( timeleft ) .. " seconds" , "ChatFont", ScrW( ) / 2 - 93, 50 - 5, Color( 255,255,255,255 ), 0 );
+	draw.DrawText( "You have been knocked out. Type 'rp_wakeup' on console.", "ChatFont", ScrW( ) / 2 - 250, 25 - 5, Color( 255,255,255,255 ), 0 );
+	draw.DrawText( "Or wait " .. tostring( timeleft ) .. " seconds" , "ChatFont", ScrW( ) / 2 - 93, 50 - 5, Color( 255,255,255,255 ), 0 );
 	
 end
 
@@ -33,7 +33,7 @@ local function DrawDeathMessages()
 		DrawDeathMeter( )
 	end
 	
-	if LocalPlayer():GetNWInt("unconciousmode", 0 ) == 1 then
+	if LocalPlayer():GetNWBool("unconciousmode", false ) then
 		UnconciousMeter( )
 	end
 

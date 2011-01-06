@@ -502,6 +502,15 @@ local function ccKnockOut( ply, cmd, args )
 end
 concommand.Add( "rp_passout", ccKnockOut )
 
+local function ccWakeUp( ply, cmd, args )
+
+	if ply:GetNWBool( "unconciousmode", false ) then
+		CAKE.UnconciousMode( ply )
+	end
+
+end
+concommand.Add( "rp_wakeup", ccWakeUp )
+
 local function ccArrest( ply, cmd, args )
 
 	local trace = ply:GetEyeTrace( )

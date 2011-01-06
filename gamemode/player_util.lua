@@ -50,7 +50,7 @@ function CAKE.DeathMode( ply )
 	local rag = ents.Create( "prop_ragdoll" )
 	rag:SetModel( mdl )
 	rag:SetPos( ply:GetPos( ) )
-	rag:SetAngles( ply:GetAngles( ) + Angle( 0, 90, 0 ) )
+	rag:SetAngles( ply:GetAngles( ) )
 	rag.isdeathdoll = true;
 	rag.ply = ply;
 	rag:Spawn( )
@@ -82,7 +82,10 @@ function CAKE.DeathMode( ply )
 	datastream.StreamToClients( ply, "RecieveViewRagdoll", { ["ragdoll"] = rag, ["clothing"] = rag.clothing } )
 	
 	--ply:SetViewEntity( rag );
-	
+
+	rag:GetPhysicsObject():ApplyForceCenter( ply:GetVelocity() )
+	rag:GetPhysicsObject():SetVelocity( ply:GetVelocity() )
+
 	ply.deathrag = rag;
 	
 	ply:SetNWInt( "deathmode", 1 )
@@ -102,79 +105,93 @@ function CAKE.DeathMode( ply )
 end
 
 function CAKE.UnconciousMode( ply )
+
+	if !ply:GetNWBool( "unconciousmode", false ) then
 	
-	ply:GodEnable()
-	
-	if ValidEntity( ply.unconciousrag ) then
-		ply.unconciousrag:Remove()
-		ply.unconciousrag = nil
-	end
-	
-	CAKE.DayLog( "script.txt", "Starting unconcious mode for " .. ply:SteamID( ) );
-	local mdl = ply:GetModel( )
-	
-	local rag = ents.Create( "prop_ragdoll" )
-	rag:SetModel( mdl )
-	rag:SetPos( ply:GetPos( ) )
-	rag:SetAngles( ply:GetAngles( ) + Angle( 0, 90, 0 ) )
-	rag.ply = ply;
-	rag:Spawn( )
-	
-	if( ply.Clothing ) then
-		for k, v in pairs( ply.Clothing ) do
-			if( ValidEntity( v ) ) then
-				v:SetParent( rag )
-				v:Initialize()
+		ply:GodEnable()
+		
+		if ValidEntity( ply.unconciousrag ) then
+			ply.unconciousrag:Remove()
+			ply.unconciousrag = nil
+		end
+		
+		CAKE.DayLog( "script.txt", "Starting unconcious mode for " .. ply:SteamID( ) );
+		local mdl = ply:GetModel( )
+		
+		local rag = ents.Create( "prop_ragdoll" )
+		rag:SetModel( mdl )
+		rag:SetPos( ply:GetPos( ) )
+		rag:SetAngles( ply:GetAngles( ) )
+		rag.ply = ply;
+		rag:Spawn( )
+		
+		if( ply.Clothing ) then
+			for k, v in pairs( ply.Clothing ) do
+				if( ValidEntity( v ) ) then
+					v:SetParent( rag )
+					v:Initialize()
+				end
 			end
 		end
-	end
-	
-	if( ply.Gear ) then
-		for k, v in pairs( ply.Gear ) do
-			if( ValidEntity( v ) ) then
-				v:SetParent( rag )
-				v:SetDTEntity( 1, rag )
-				v:Initialize()
+		
+		if( ply.Gear ) then
+			for k, v in pairs( ply.Gear ) do
+				if( ValidEntity( v ) ) then
+					v:SetParent( rag )
+					v:SetDTEntity( 1, rag )
+					v:Initialize()
+				end
 			end
 		end
-	end
-	
-	
-	rag.clothing = ply.Clothing
-	rag.gear = ply.Gear
-	ply.Clothing = nil
-	ply.Gear = nil
-	
-	datastream.StreamToClients( ply, "RecieveUnconciousRagdoll", { ["ragdoll"] = rag, ["clothing"] = rag.clothing } )
-	
-	ply.unconciousrag = rag;
-	
-	ply:SetNWInt( "unconciousmode", 1 )
-	
-	ply.unconcioustime = 0;
-	ply.nextsecond = CurTime( ) + 1;
-	
-	ply:Lock()
-	
-	timer.Create( ply:SteamID() .. "unconcioustimer", 1, 19, function()
-		ply:SetNWInt( "unconciousmoderemaining", ply:GetNWInt( "unconciousmoderemaining", 0 ) + 1 );
-	end)
-	
-	timer.Simple( 20, function()
-	
-		ply:SetNWInt( "unconciousmode", 0 )
+		
+		rag:GetPhysicsObject():ApplyForceCenter( ply:GetVelocity() )
+		
+		rag.clothing = ply.Clothing
+		rag.gear = ply.Gear
+		ply.Clothing = nil
+		ply.Gear = nil
+		
+		datastream.StreamToClients( ply, "RecieveUnconciousRagdoll", { ["ragdoll"] = rag, ["clothing"] = rag.clothing } )
+		
+		ply.unconciousrag = rag;
+		
+		ply:SetNWBool( "unconciousmode", true )
+		
+		ply.unconcioustime = 0;
+		ply.nextsecond = CurTime( ) + 1;
+		
+		ply:Lock()
+
+		if timer.IsTimer( ply:SteamID() .. "unconcioustimer" ) then
+			timer.Destroy( ply:SteamID() .. "unconcioustimer"  )
+		end
+		
+		timer.Create( ply:SteamID() .. "unconcioustimer", 1, 9, function()
+			ply:SetNWInt( "unconciousmoderemaining", ply:GetNWInt( "unconciousmoderemaining", 0 ) + 1 );
+		end)
+		
+		timer.Create( ply:SteamID() .. "UnconciousActionTimer", 10, 1 , function()
+			CAKE.UnconciousMode( ply )
+		end)
+	else
+		ply:SetNWBool( "unconciousmode", false )
 		ply:SetNWInt( "unconciousmoderemaining", 0 )
 		ply:SetViewEntity( ply );
-		ply:SetPos( rag:GetPos() + Vector( 0, 0, 10 ))
+		ply:SetPos( ply.unconciousrag:GetPos() + Vector( 0, 0, 10 ))
 		ply:UnLock()
 		CAKE.RestoreClothing( ply )
 		ply:GodDisable()
 		datastream.StreamToClients( ply, "RecieveUnconciousRagdoll", { ["ragdoll"] = false } )
-		if rag then
-			rag:Remove()
+		if ply.unconciousrag then
+			ply.unconciousrag:Remove()
 		end
-	end)
-	
+		if timer.IsTimer( ply:SteamID() .. "UnconciousActionTimer" ) then
+			timer.Destroy( ply:SteamID() .. "UnconciousActionTimer" )
+		end
+		if timer.IsTimer( ply:SteamID() .. "unconcioustimer" ) then
+			timer.Destroy( ply:SteamID() .. "unconcioustimer"  )
+		end
+	end
 end
 
 function ccGetCharInfo( ply, cmd, args )

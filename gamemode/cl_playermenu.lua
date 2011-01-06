@@ -37,7 +37,15 @@ end
 function CAKE.SetActiveTab( name )
 	--CAKE.MenuOpen = true
 	CAKE.CloseTabs()
-	CAKE.MenuTabs[ name ][ "function" ]()
+	if CAKE.MenuTabs and CAKE.MenuTabs[ name ] then
+		CAKE.MenuTabs[ name ][ "function" ]()
+	else
+		timer.Simple( 1, function()
+			if CAKE.MenuTabs and CAKE.MenuTabs[ name ] then
+				CAKE.MenuTabs[ name ][ "function" ]()
+			end
+		end)
+	end
 	CAKE.ActiveTab = name
 end
 

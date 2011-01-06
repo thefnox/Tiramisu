@@ -7,6 +7,8 @@
 -- General HUD stuff.
 -------------------------------
 
+CAKE.TitleDrawDistance = CreateClientConVar( "rp_titledrawdistance", 600, true, true )
+
 LocalPlayer( ).MyModel = "" -- Has to be blank for the initial value, so it will create a spawnicon in the first place.
 
 surface.CreateFont("TargetID", ScreenScale(72), 400, true, false, "TiramisuTitlesFont")
@@ -64,6 +66,7 @@ function GM:HUDShouldDraw( name )
 
 end
 
+/*
 hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 	
 	local position
@@ -193,6 +196,48 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 		end
 	end
 	
+end)
+*/
+
+local position
+local angle
+local closeplayers
+
+hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
+
+    closeplayers = ents.FindInSphere( LocalPlayer():GetPos(), CAKE.TitleDrawDistance:GetInt() )
+
+    for k, v in pairs( closeplayers ) do
+        if v:IsPlayer() and LocalPlayer() != v and v:Alive() and !v:GetNWBool( "observe" ) then
+            position = v:GetPos()
+            if v:GetBonePosition( v:LookupBone("ValveBiped.Bip01_Head1") ) then
+                position = v:GetBonePosition( v:LookupBone("ValveBiped.Bip01_Head1") )
+            else
+            	position = position + Vector( 0, 0, 80 )
+            end
+            angle = v:GetAngles()
+            angle = Angle( 0, angle.y, 0 )
+            angle:RotateAroundAxis( angle:Up(), 90 )
+            angle:RotateAroundAxis( angle:Forward(), 90 )
+            
+            position = position - angle:Right() * 18
+            cam.Start3D2D( position, angle, 0.03 )
+                surface.SetFont( "TiramisuTitlesFont" )
+                draw.SimpleTextOutlined( v:Nick(), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
+                draw.SimpleTextOutlined( v:GetNWString( "title", "Connecting.." ), "TiramisuTitlesFont", 0, 120, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
+                draw.SimpleTextOutlined( v:GetNWString( "title2", "Connecting.." ), "TiramisuTitlesFont", 0, 220, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
+            cam.End3D2D()
+            angle:RotateAroundAxis( angle:Forward(), 180 )
+            angle:RotateAroundAxis( angle:Up(), 180 )
+            cam.Start3D2D( position, angle, 0.03 )
+                surface.SetFont( "TiramisuTitlesFont" )
+                draw.SimpleTextOutlined( v:Nick(), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
+                draw.SimpleTextOutlined( v:GetNWString( "title", "Connecting.." ), "TiramisuTitlesFont", 0, 120, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
+                draw.SimpleTextOutlined( v:GetNWString( "title2", "Connecting.." ), "TiramisuTitlesFont", 0, 220, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
+            cam.End3D2D()
+            
+        end
+    end
 end)
 
 
