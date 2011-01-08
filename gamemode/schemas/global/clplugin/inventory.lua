@@ -2,7 +2,7 @@ CLPLUGIN.Name = "Inventory Menu"
 CLPLUGIN.Author = "F-Nox/Big Bang"
 
 local function OpenInventory()
-	PlayerMenu = vgui.Create( "DFrame" )
+	PlayerMenu = vgui.Create( "DFrameTransparent" )
 	--PlayerMenu:SetPos( ScrW() / 2 - 320, ScrH() / 2 - 240 )
 	PlayerMenu:SetSize( 640, 480 )
 	PlayerMenu:SetTitle( "Inventory" )
@@ -13,11 +13,10 @@ local function OpenInventory()
 	PlayerMenu:SetDeleteOnClose( true )
 	PlayerMenu:Center()
 	PlayerMenu:MakePopup()
-	PlayerMenu:SetBackgroundBlur( true )
 	
 	Inventory = vgui.Create( "DPropertySheet", PlayerMenu )
-	Inventory:SetSize( 640,450 )
-	Inventory:SetPos( 0, 23 )
+	Inventory:SetSize( 630,448 )
+	Inventory:SetPos( 5, 28 )
 	
 	InventorySheet = vgui.Create( "DPanelList" )
 	InventorySheet:SetPadding(10);

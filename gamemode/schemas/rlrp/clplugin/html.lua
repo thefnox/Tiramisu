@@ -3,7 +3,7 @@ CLPLUGIN.Author = "F-Nox/Big Bang"
 
 
 local function OpenForums()
-	PlayerMenu = vgui.Create( "DFrame" )
+	PlayerMenu = vgui.Create( "DFrameTransparent" )
 	PlayerMenu:SetSize( 700, 520 )
 	PlayerMenu:SetTitle( "Forums" )
 	PlayerMenu:SetVisible( true )
@@ -23,7 +23,7 @@ local function OpenForums()
 	local html = vgui.Create( "HTML")
 	html:SetSize( 700, 467 )
 	html:SetPos( 0, 23)
-	html:OpenURL( "http://www.facepunch.com/showthread.php?t=1004787" )
+	html:OpenURL( "http://www.facepunch.com/" )
 	Help:AddItem( html )
 end
 

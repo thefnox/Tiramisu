@@ -288,6 +288,7 @@ function ccPurchaseDoor( ply, cmd, args )
 		
 			door.owner = nil;
 			CAKE.ChangeMoney( ply, 50 );
+			CAKE.SetDoorTitle( door, "" )
 			CAKE.SendChat( ply, "Door Unowned" );
 			
 		else
@@ -303,11 +304,11 @@ concommand.Add( "rp_purchasedoor", ccPurchaseDoor );
 
 local function ccDoorTitle( ply, cmd, args )
 
-	local door = ents.GetByIndex( tonumber( args[ 1 ] ) )
-	table.remove( args, 1 )
-	local title = table.concat( args, " " )
-
-	CAKE.SetDoorTitle( door, title )
+	local door = ply:GetEyeTrace( ).Entity
+	if ValidEntity( door ) and CAKE.IsDoor( door ) and door.owner == ply then
+		local title = table.concat( args, " " )
+		CAKE.SetDoorTitle( door, title )
+	end
 
 end
 concommand.Add( "rp_doortitle", ccDoorTitle )

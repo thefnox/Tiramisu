@@ -8,10 +8,9 @@ end
 local plydamaged = false
 local displaydamage = true
 local alpha = 150
-local headpos, headang
+local pos, ang
 local ent
 local perc
-local gunpos, gunang
 local ammotext 
 local textsizex, textsizey
 local label
@@ -39,17 +38,17 @@ hook.Add( "PostDrawOpaqueRenderables", "TiramisuHealthAmmoDisplay", function( )
 			displaydamage = true
 		elseif plydamaged and displaydamage then
 			alpha = 150
-			headpos, headang = LocalPlayer():GetBonePosition(LocalPlayer():LookupBone("ValveBiped.Bip01_Head1"))
-		    headang:RotateAroundAxis( headang:Up(), 90 )
-		    headang:RotateAroundAxis( headang:Forward() , -180 )
-		    headang:RotateAroundAxis( headang:Right() , -90 )
-		    cam.Start3D2D( headpos - ( headang:Right() * 18 ), headang , 0.25 )
+			pos, ang = LocalPlayer():GetBonePosition(LocalPlayer():LookupBone("ValveBiped.Bip01_Head1"))
+		    ang:RotateAroundAxis( ang:Up(), 90 )
+		    ang:RotateAroundAxis( ang:Forward() , -180 )
+		    ang:RotateAroundAxis( ang:Right() , -90 )
+		    cam.Start3D2D( pos - ( ang:Right() * 18 ), ang , 0.25 )
 		        draw.RoundedBox( 4, 0, 0, 21, 18, Color( 60, 60, 60, 150 ) )
 		        draw.SimpleTextOutlined(tostring( LocalPlayer():Health() ), "Trebuchet22", 10, 8, Color(255, 100, 100, 200),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
 		    cam.End3D2D()
 		    
 		    if LocalPlayer():Armor() > 0 then
-			    cam.Start3D2D( headpos - ( headang:Right() * 12 ) + ( headang:Forward() * 7 ), headang , 0.25 )
+			    cam.Start3D2D( pos - ( ang:Right() * 12 ) + ( ang:Forward() * 7 ), ang , 0.25 )
 			        draw.RoundedBox( 4, 0, 0, 16, 15, Color( 60, 60, 60, 150 ) )
 			        draw.SimpleTextOutlined(tostring( LocalPlayer():Armor() ), "Trebuchet19", 8, 8, Color(100, 100, 255, 200),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
 			    cam.End3D2D()
@@ -57,17 +56,17 @@ hook.Add( "PostDrawOpaqueRenderables", "TiramisuHealthAmmoDisplay", function( )
 		elseif !plydamaged and displaydamage then
 			if alpha > 5 then
 				alpha = Lerp( 0.2, alpha, 0 )
-				headpos, headang = LocalPlayer():GetBonePosition(LocalPlayer():LookupBone("ValveBiped.Bip01_Head1"))
-			    headang:RotateAroundAxis( headang:Up(), 90 )
-			    headang:RotateAroundAxis( headang:Forward() , -180 )
-			    headang:RotateAroundAxis( headang:Right() , -90 )
-			    cam.Start3D2D( headpos - ( headang:Right() * 18 ), headang , 0.25 )
+				pos, ang = LocalPlayer():GetBonePosition(LocalPlayer():LookupBone("ValveBiped.Bip01_Head1"))
+			    ang:RotateAroundAxis( ang:Up(), 90 )
+			    ang:RotateAroundAxis( ang:Forward() , -180 )
+			    ang:RotateAroundAxis( ang:Right() , -90 )
+			    cam.Start3D2D( pos - ( ang:Right() * 18 ), ang , 0.25 )
 			        draw.RoundedBox( 4, 0, 0, 21, 18, Color( 60, 60, 60, alpha ) )
 			        draw.SimpleTextOutlined(tostring( LocalPlayer():Health() ), "Trebuchet22", 10, 8, Color(255, 100, 100, alpha),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
 			    cam.End3D2D()
 			    
 			    if LocalPlayer():Armor() > 0 then
-				    cam.Start3D2D( headpos - ( headang:Right() * 12 ) + ( headang:Forward() * 7 ), headang , 0.25 )
+				    cam.Start3D2D( pos - ( ang:Right() * 12 ) + ( ang:Forward() * 7 ), ang , 0.25 )
 				        draw.RoundedBox( 4, 0, 0, 16, 15, Color( 60, 60, 60, alpha ) )
 				        draw.SimpleTextOutlined(tostring( LocalPlayer():Armor() ), "Trebuchet19", 8, 8, Color(100, 100, 255, alpha),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
 				    cam.End3D2D()
@@ -82,13 +81,13 @@ hook.Add( "PostDrawOpaqueRenderables", "TiramisuHealthAmmoDisplay", function( )
 
 		if ( ValidEntity( ent ) and LocalPlayer():GetAiming() ) or ( CAKE.MenuOpen and ValidEntity( ent ) ) then
 		    ammotext = tostring( ent:Clip1() ) .. "/" .. tostring( LocalPlayer():GetAmmoCount(ent:GetPrimaryAmmoType()) )
-		    gunpos, gunang = LocalPlayer():GetBonePosition(LocalPlayer():LookupBone("ValveBiped.Bip01_R_Hand"))
-		    gunang:RotateAroundAxis( gunang:Up(), 90 )
-		    gunang:RotateAroundAxis( gunang:Forward() ,-90 )
-		    gunang:RotateAroundAxis( gunang:Right() ,0 )
+		    pos, ang = LocalPlayer():GetBonePosition(LocalPlayer():LookupBone("ValveBiped.Bip01_R_Hand"))
+		    ang:RotateAroundAxis( ang:Up(), 90 )
+		    ang:RotateAroundAxis( ang:Forward() ,-90 )
+		    ang:RotateAroundAxis( ang:Right() ,0 )
 
 		    if ent:Clip1() >= 0 and ent:GetClass() != "weapon_physcannon" then
-		        cam.Start3D2D( gunpos - (gunang:Right() * 10) + (gunang:Forward() * 5), gunang , 0.2 )
+		        cam.Start3D2D( pos - (ang:Right() * 10) + (ang:Forward() * 5), ang , 0.2 )
 		        	if ent.Primary and ent.Primary.ClipSize then
 		        		perc = ent:Clip1() / ent.Primary.ClipSize
 		        	else
@@ -138,16 +137,18 @@ local trace
 hook.Add( "HUDPaint", "TiramisuHUDDraw", function()
 	
 	if CAKE.Thirdperson:GetBool() then
-		trace = LocalPlayer():GetEyeTrace()
-		pos = trace.HitPos:ToScreen()
-		if pos.visible then
-			if !trace.HitWorld then
-				surface.SetDrawColor( 200, 50, 50, 220 )
-			else
-				surface.SetDrawColor( 220, 220, 220, 220 )
+		if LocalPlayer():GetAiming() then
+			trace = LocalPlayer():GetEyeTrace()
+			pos = trace.HitPos:ToScreen()
+			if pos.visible then
+				if !trace.HitWorld then
+					surface.SetDrawColor( 200, 50, 50, 220 )
+				else
+					surface.SetDrawColor( 220, 220, 220, 220 )
+				end
+				surface.DrawLine( pos.x - 5, pos.y, pos.x + 5, pos.y )
+				surface.DrawLine( pos.x, pos.y - 5, pos.x, pos.y + 5 )
 			end
-			surface.DrawLine( pos.x - 5, pos.y, pos.x + 5, pos.y )
-			surface.DrawLine( pos.x, pos.y - 5, pos.x, pos.y + 5 )
 		end
 	else
 		

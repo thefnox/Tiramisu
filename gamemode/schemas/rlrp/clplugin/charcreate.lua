@@ -44,7 +44,7 @@ local Description = "Set your description"
 
 function firststep()
 		      
-	      Step2 = vgui.Create( "DFrame" )
+	      Step2 = vgui.Create( "DFrameTransparent" )
 	      Step2:SetSize( 700, 450 )
 		  Step2:SetPos( ScrW() / 2 - Step2:GetWide() / 2, ScrH() / 2 - Step2:GetTall() / 2 )
 	      Step2:SetTitle( "Step 2" )
@@ -261,7 +261,7 @@ function secondstep()
 	      local demmodels = {}
 	      demmodels = table.Copy( models[ string.lower( Gender ) ] )
 	      
-	      Step3 = vgui.Create( "DFrame" )
+	      Step3 = vgui.Create( "DFrameTransparent" )
 	      Step3:SetSize( 615, 700 )
 		  Step3:SetPos( ScrW() / 2 - Step3:GetWide() / 2, ScrH() / 2 - Step3:GetTall() / 2 )
 	      Step3:SetTitle( "Step 3" )

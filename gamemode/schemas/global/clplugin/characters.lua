@@ -2,7 +2,7 @@ CLPLUGIN.Name = "Character Menu"
 CLPLUGIN.Author = "F-Nox/Big Bang"
 local function OpenCharacter()
 
-	PlayerMenu = vgui.Create( "DFrame" )
+	PlayerMenu = vgui.Create( "DFrameTransparent" )
 	--PlayerMenu:SetPos( ScrW() / 2 - 320, ScrH() / 2 - 240 )
 	PlayerMenu:SetSize( 640, 480 )
 	PlayerMenu:SetTitle( "Characters" )
@@ -15,8 +15,8 @@ local function OpenCharacter()
 	PlayerMenu:MakePopup()
 	
 	CharPanel = vgui.Create( "DPanelList", PlayerMenu )
-	CharPanel:SetSize( 640,450 )
-	CharPanel:SetPos( 0, 23 )
+	CharPanel:SetSize( 630,448 )
+	CharPanel:SetPos( 5, 28 )
 	CharPanel:SetPadding(20);
 	CharPanel:SetSpacing(10);
 	CharPanel:EnableVerticalScrollbar();

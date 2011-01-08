@@ -27,7 +27,7 @@ CAKE.MyGroup.Roster = {
     { ["Name"] = "Test", ["Rank"] = "lol", ["SteamID"] = "STEAMLOL" }
 }
 
-PlayerMenu = vgui.Create( "DFrame" )
+PlayerMenu = vgui.Create( "DFrameTransparent" )
 PlayerMenu:SetSize( 640, 480 )
 PlayerMenu:SetTitle( "Groups" )
 PlayerMenu:SetVisible( true )
@@ -35,7 +35,6 @@ PlayerMenu:SetDraggable( true )
 PlayerMenu:ShowCloseButton( true )
 PlayerMenu:SetDeleteOnClose( true )
 PlayerMenu:Center()
-PlayerMenu:SetBackgroundBlur( true )
 
 imagelol = vgui.Create( "DImage", PlayerMenu )
 imagelol:SetImage( CAKE.MyGroup.Image )

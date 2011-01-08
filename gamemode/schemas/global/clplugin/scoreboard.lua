@@ -4,7 +4,7 @@ CLPLUGIN.Author = "F-Nox/Big Bang"
 
 local function OpenScoreboard()
 
-	PlayerMenu = vgui.Create( "DFrame" )
+	PlayerMenu = vgui.Create( "DFrameTransparent" )
 	PlayerMenu:SetSize( 640, 480 )
 	PlayerMenu:SetTitle( "Scoreboard" )
 	PlayerMenu:SetVisible( true )
@@ -12,11 +12,10 @@ local function OpenScoreboard()
 	PlayerMenu:ShowCloseButton( true )
 	PlayerMenu:SetDeleteOnClose( true )
 	PlayerMenu:Center()
-	PlayerMenu:SetBackgroundBlur( true )
 	
 	Scoreboard = vgui.Create( "DPanelList", PlayerMenu )
-	Scoreboard:SetSize( 640, 450 )
-	Scoreboard:SetPos( 0, 23 )
+	Scoreboard:SetSize( 630, 448 )
+	Scoreboard:SetPos( 5, 28 )
 	Scoreboard:SetPadding(0);
 	Scoreboard:SetSpacing(0);
 

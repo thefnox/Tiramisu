@@ -51,12 +51,7 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 	end
 	
 	if CAKE.MiddleDown then
-		tracedata.start = ply:EyePos()
-		tracedata.endpos = ply:GetForward()*100
-		tracedata.filter = ply
-		trace = util.TraceLine(tracedata)
-		
-		newpos = trace.HitPos
+		newpos = ply:GetForward()*100
 		newpos:Rotate(mouserotate)
 		pos = ply:GetPos()+Vector(0,0,60) + newpos
 		return GAMEMODE:CalcView(ply, pos , (ply:GetPos()+Vector(0,0,60)-pos):Angle(),fov)

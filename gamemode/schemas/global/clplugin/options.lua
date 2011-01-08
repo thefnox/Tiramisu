@@ -4,7 +4,7 @@ CLPLUGIN.Author = "F-Nox/Big Bang"
 
 local function OpenOptions()
 
-	PlayerMenu = vgui.Create( "DFrame" )
+	PlayerMenu = vgui.Create( "DFrameTransparent" )
 	PlayerMenu:SetSize( 640, 480 )
 	PlayerMenu:SetTitle( "Options" )
 	PlayerMenu:SetVisible( true )
@@ -12,13 +12,12 @@ local function OpenOptions()
 	PlayerMenu:ShowCloseButton( true )
 	PlayerMenu:SetDeleteOnClose( true )
 	PlayerMenu:Center()
-	PlayerMenu:SetBackgroundBlur( true )
 	
 	local Options = vgui.Create( "DPanelList", PlayerMenu )
-	Options:SetSize( 640, 450 )
-	Options:SetPos( 0, 23 )
+	Options:SetSize( 630, 448 )
+	Options:SetPos( 5, 28 )
 	Options:SetPadding(20);
-	Options:SetSpacing(15)
+	Options:SetSpacing(5)
 	Options:EnableHorizontal(false);
 	Options:EnableVerticalScrollbar(true);
 	Options:SetAutoSize(false)
@@ -33,7 +32,22 @@ local function OpenOptions()
 	HeadbobCheck:SetText( "Toggle head bobbing" )
 	HeadbobCheck:SetConVar( "rp_headbob" ) -- ConCommand must be a 1 or 0 value
 	Options:AddItem( HeadbobCheck )
-	
+
+	local ThirdpersonDistance = vgui.Create( "DNumSlider" )
+	ThirdpersonDistance:SetText( "Thirdperson Distance" )
+	ThirdpersonDistance:SetDecimals( 0 )
+	ThirdpersonDistance:SetMin( 30)
+	ThirdpersonDistance:SetMax( 150 )
+	ThirdpersonDistance:SetConVar( "rp_thirdpersondistance" )
+	Options:AddItem( ThirdpersonDistance )
+
+	local TitleDrawDistance = vgui.Create( "DNumSlider" )
+	TitleDrawDistance:SetText( "3D Title Draw Distance( Affects Perfomance )" )
+	TitleDrawDistance:SetDecimals( 0 )
+	TitleDrawDistance:SetMin( 100 )
+	TitleDrawDistance:SetMax( 2000 )
+	TitleDrawDistance:SetConVar( "rp_titledrawdistance")
+	Options:AddItem( TitleDrawDistance )
 	
 	local colormixer = vgui.Create( "DColorMixer");
 	colormixer:SetColor( Color( 0, 0, 255, 255 ) )
@@ -41,7 +55,7 @@ local function OpenOptions()
 	
 	local OOCColor = vgui.Create( "DLabel" )
 	OOCColor:SetText( "OOC Color" )
-	OOCColor:SetFont( "HUDNumber" )
+	OOCColor:SetFont( "Trebuchet24" )
 	function OOCColor:PaintOver()
 		OOCColor:SetTextColor( colormixer:GetColor() )
 	end

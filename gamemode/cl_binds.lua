@@ -63,7 +63,7 @@ function GM:ScoreboardShow( )
 
 	QuickMenu = vgui.Create("DFrame");
 	QuickMenu:SetSize( 130, 400 )
-	QuickMenu:SetPos( -100, 10 )
+	QuickMenu:SetPos( ScrW() + 130, 200 )
 	QuickMenu:SetTitle( "" )
 	QuickMenu:SetDraggable( false ) -- Draggable by mouse?
 	QuickMenu:ShowCloseButton( false ) -- Show the close button?
@@ -83,11 +83,104 @@ function GM:ScoreboardShow( )
 		label:SetExpensiveShadow( 1, Color( 10, 10, 10, 255 ) )
 	end
 
+	VitalsMenu = vgui.Create( "DFrame" )
+	VitalsMenu:SetSize( 340, 230 )
+	VitalsMenu:SetTitle( "" )
+	VitalsMenu:SetVisible( true )
+	VitalsMenu:SetDraggable( false )
+	VitalsMenu:ShowCloseButton( false )
+	VitalsMenu:SetDeleteOnClose( true )
+	VitalsMenu:SetPos( -340, 200 )
+	VitalsMenu.Paint = function()
+	end
+
+	local PlayerInfo = vgui.Create( "DPanelList", VitalsMenu )
+	PlayerInfo:SetSize( 340, 200 )
+	PlayerInfo:SetPos( 0, 23 )
+	PlayerInfo:SetPadding(10);
+	PlayerInfo:SetSpacing(10);
+	PlayerInfo:EnableHorizontal(false);
+	function PlayerInfo:Paint()
+	end
+
+	local icdata = vgui.Create( "DForm" );
+	icdata:SetPadding(4);
+	icdata:SetName(LocalPlayer():Nick() or "");
+
+	local FullData = vgui.Create("DPanelList");
+	FullData:SetSize(0, 84);
+	FullData:SetPadding(10);
+
+	local DataList = vgui.Create("DPanelList");
+	DataList:SetSize(0, 64);
+
+	local spawnicon = vgui.Create( "SpawnIcon");
+	spawnicon:SetModel(LocalPlayer():GetNWString( "model", LocalPlayer():GetModel()) );
+	spawnicon:SetSize( 64, 64 );
+	DataList:AddItem(spawnicon);
+
+	local DataList2 = vgui.Create( "DPanelList" )
+
+	local label2 = vgui.Create("DLabel");
+	label2:SetText("Title: " .. LocalPlayer():GetNWString("title", ""));
+	DataList2:AddItem(label2);
+
+	local label3 = vgui.Create("DLabel");
+	label3:SetText("Title 2: " .. LocalPlayer():GetNWString("title2", ""));
+	DataList2:AddItem(label3);
+
+	local label4 = vgui.Create("DLabel");
+	label4:SetText( CurrencyTable.name .. ": " .. LocalPlayer():GetNWString("money", "0" ));
+	DataList2:AddItem(label4);
+
+	local Divider = vgui.Create("DHorizontalDivider");
+	Divider:SetLeft(spawnicon);
+	Divider:SetRight(DataList2);
+	Divider:SetLeftWidth(64);
+	Divider:SetHeight(64);
+
+	DataList:AddItem(spawnicon);
+	DataList:AddItem(DataList2);
+	DataList:AddItem(Divider);
+
+	FullData:AddItem(DataList)
+
+	icdata:AddItem(FullData)
+
+	local vitals = vgui.Create( "DForm" );
+	vitals:SetPadding(4);
+	vitals:SetName("Vital Signs");
+
+	local VitalData = vgui.Create("DPanelList");
+	VitalData:SetAutoSize(true)
+	VitalData:SetPadding(10);
+	vitals:AddItem(VitalData);
+
+	local healthstatus = ""
+	local hp = LocalPlayer():Health();
+
+	if(!LocalPlayer():Alive()) then healthstatus = "Dead";
+	elseif(hp > 95) then healthstatus = "Healthy";
+	elseif(hp > 50 and hp < 95) then healthstatus = "OK";
+	elseif(hp > 30 and hp < 50) then healthstatus = "Near Death";
+	elseif(hp > 1 and hp < 30) then healthstatus = "Death Imminent"; end
+
+	local health = vgui.Create("DLabel");
+	health:SetText("Vitals: " .. healthstatus);
+	VitalData:AddItem(health);
+
+	PlayerInfo:AddItem(icdata)
+	PlayerInfo:AddItem(vitals)
+
 	local posx, posy
 	timer.Create( "quickmenuscrolltimer", 0.01, 0, function()
 		if QuickMenu then
 			posx, posy = QuickMenu:GetPos( )
-			QuickMenu:SetPos( Lerp( 0.2, posx, 20 ), 10 )
+			QuickMenu:SetPos( Lerp( 0.2, posx, ScrW() - 150 ), 200 )
+			if VitalsMenu then
+				posx, posy = VitalsMenu:GetPos( )
+				VitalsMenu:SetPos( Lerp( 0.2, posx, 20 ), 200)
+			end
 		else
 			timer.Destroy( "quickmenuscrolltimer" )
 		end
@@ -106,6 +199,10 @@ function GM:ScoreboardHide( )
 	if QuickMenu then
 		QuickMenu:Remove()
 		QuickMenu = nil
+	end
+	if VitalsMenu then
+		VitalsMenu:Remove()
+		VitalsMenu = nil
 	end
 	
 end

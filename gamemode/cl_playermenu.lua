@@ -62,7 +62,6 @@ function CreatePlayerMenu( um )
 		local plytrace = LocalPlayer():GetEyeTrace()
 		MenuPos = ( plytrace.HitPos  )
 		MenuAng = plytrace.HitNormal:Angle(plytrace.HitPos)
-		MenuScale = math.Clamp(( LocalPlayer():GetPos():Distance( plytrace.HitPos ) ) / 1000 , 0.8, 1000 )
 		MenuAng:RotateAroundAxis( MenuAng:Up(), 90 )
 		MenuAng:RotateAroundAxis( MenuAng:Forward() * -1, -90 )
 		

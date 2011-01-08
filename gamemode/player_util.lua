@@ -151,7 +151,7 @@ function CAKE.UnconciousMode( ply )
 		ply.Clothing = nil
 		ply.Gear = nil
 		
-		datastream.StreamToClients( ply, "RecieveUnconciousRagdoll", { ["ragdoll"] = rag, ["clothing"] = rag.clothing } )
+		datastream.StreamToClients( ply, "RecieveViewRagdoll", { ["ragdoll"] = rag, ["clothing"] = rag.clothing } )
 		
 		ply.unconciousrag = rag;
 		
@@ -181,7 +181,7 @@ function CAKE.UnconciousMode( ply )
 		ply:UnLock()
 		CAKE.RestoreClothing( ply )
 		ply:GodDisable()
-		datastream.StreamToClients( ply, "RecieveUnconciousRagdoll", { ["ragdoll"] = false } )
+		datastream.StreamToClients( ply, "RecieveViewRagdoll", { ["ragdoll"] = false, ["clothing"] = false } )
 		if ply.unconciousrag then
 			ply.unconciousrag:Remove()
 		end

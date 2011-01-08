@@ -1,4 +1,4 @@
-RCLICK.Name = "Rent Door"
+RCLICK.Name = "Own/Unown Door"
 
 function RCLICK.Condition(target)
 
