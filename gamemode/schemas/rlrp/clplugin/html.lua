@@ -13,18 +13,11 @@ local function OpenForums()
 	PlayerMenu:Center()
 	PlayerMenu:SetBackgroundBlur( true )
 	
-	local Help = vgui.Create( "DPanelList", PlayerMenu )
-	Help:SetSize( 700, 490 )
-	Help:SetPos( 0, 23 )
-	Help:SetPadding(10);
-	Help:EnableHorizontal(false);
-	Help:EnableVerticalScrollbar(false);
-	
-	local html = vgui.Create( "HTML")
-	html:SetSize( 700, 467 )
-	html:SetPos( 0, 23)
+	local html = vgui.Create( "HTML" , PlayerMenu )
+	html:SetSize( 690, 487 )
+	html:SetPos( 5, 28 )
 	html:OpenURL( "http://www.facepunch.com/" )
-	Help:AddItem( html )
+
 end
 
 local function CloseForums()

@@ -44,13 +44,14 @@ end
 function CAKE.HandleGear( ply, item, bone, offset, angle, scale, skin )
 	
 	if CAKE.ItemData[ item ] then
-		local bone = bone or CAKE.ItemData[ item ].Bone or "head"
+		local bone = bone or CAKE.ItemData[ item ].Bone or "pelvis"
 		
 		if !ply.Gear then
 			ply.Gear = {}
 		end
 		
-		local id = #ply.Gear + 1
+		local id =  #ply.Gear + 1 
+		print( id )
 		local model = CAKE.ItemData[ item ].Model
 		local offset = offset or CAKE.ItemData[ item ].Offset or Vector( 0, 0, 0 )
 		local angle = angle or CAKE.ItemData[ item ].OffsetAngle or Angle( 0, 0, 0 )
@@ -80,6 +81,9 @@ function CAKE.HandleGear( ply, item, bone, offset, angle, scale, skin )
 		ply.Gear[ id ]:Spawn()
 		ply.Gear[ id ]:SetSkin( skin )
 		ply.Gear[ id ].item = item
+
+		return ply.Gear[ id ]
+
 	end
 	
 end
@@ -92,6 +96,8 @@ function CAKE.RemoveGear( ply, id )
 		ply.Gear[ id ]:Remove()
 		ply.Gear[ id ] = nil
 	end
+
+	CAKE.SaveGear( ply )
 	
 end
 	
@@ -104,13 +110,15 @@ function CAKE.RemoveAllGear( ply )
 	end
 		
 	ply.Gear = {}
+	CAKE.SaveGear( ply )
+
 end
 
 function CAKE.RemoveGearItem( ply, item )
 
 	if ply.Gear then
 		for k, v in pairs( ply.Gear ) do
-			if v.item == item then
+			if ValidEntity( v ) and v.item == item then
 				CAKE.RemoveGear( ply, k )
 			end
 			break
@@ -122,101 +130,104 @@ end
 local function ccSetGear( ply, cmd, args )
 	
 	local item = args[1]
-	local bone = args[2] or CAKE.ItemData[ item ].Bone or "head"
-	local offset
-	local angle
-	local scale
-	
-	if args[3] then
-		offset = Vector( tonumber( args[3] ), tonumber( args[4] ), tonumber( args[5] ) )
-	else
-		offset = CAKE.ItemData[ item ].Offset or Vector( 0, 0, 0 )
-	end
-	
-	if args[6] then
-		angle = Angle( tonumber( args[6] ), tonumber( args[7] ), tonumber( args[8] ) )
-	else
-		angle = CAKE.ItemData[ item ].OffsetAngle or Angle( 0, 0, 0 )
-	end
-	
-	if args[9] then
-		scale = Vector( tonumber( args[9] ), tonumber( args[10] ), tonumber( args[11] ) )
-	else
-		scale = CAKE.ItemData[ item ].Scale or Vector( 1, 1, 1 )
-	end
-	
-	
-	CAKE.RemoveGear( ply, bone )
-	CAKE.HandleGear( ply, item, bone, offset, angle, scale )
+	local bone = string.lower( args[2] ) or CAKE.ItemData[ item ].Bone or "pelvis"
+	local entity = CAKE.HandleGear( ply, item, bone )
+	local tbl = {}
+	tbl[ "entity" ] = entity
+	tbl[ "bone" ] = bone
+	tbl[ "item" ] = item
+	tbl[ "offset"] = entity:GetDTVector( 1 )
+	tbl[ "angle"] = entity:GetDTAngle( 1 )
+	tbl[ "scale" ] = entity:GetDTVector( 2 )
+	tbl[ "skin" ] = entity:GetSkin()
+
+	datastream.StreamToClients( ply, "editgear", tbl )
+
 	CAKE.SaveGear( ply )
-	datastream.StreamToClients( ply, "recievegear",  ply.Gear )
+	CAKE.SendGearToClient( ply )
 
 end
 concommand.Add( "rp_setgear", ccSetGear )
 
 local function ccRemoveGear( ply, cmd, args )
-	
+
 	if( args[1] ) then
-		CAKE.RemoveGear( ply, args[1] )
+		local ent = ents.GetByIndex( tonumber( args[ 1 ] ) )
+		for k, v in pairs( ply.Gear ) do
+			if v == ent then
+				CAKE.RemoveGear( ply, k )
+				break
+			end
+		end
 	else
 		CAKE.RemoveAllGear( ply )
 	end
 	CAKE.SaveGear( ply )
-	datastream.StreamToClients( ply, "recievegear",  ply.Gear )
-
+	CAKE.SendGearToClient( ply )
 end
 concommand.Add( "rp_removegear", ccRemoveGear )
 
 local function ccEditGear( ply, cmd, args )
 
-	local bone = tonumber( args[1] )
-	local offset
-	local angle
-	local scale
-	local visible
-	local skin
-	
-	if args[2] and args[2] != "none" then
-		local exp = string.Explode( ",", args[2] )
-		offset = Vector( exp[1], exp[2], exp[3] )
-	else
-		offset = ply.Gear[ bone ]:GetDTVector( 1 )
+	local ent = ents.GetByIndex( tonumber( args[ 1 ] ) )
+	if ValidEntity( ent ) and ent:GetDTEntity( 1 ) == ply then
+		local offset
+		local angle
+		local scale
+		local visible
+		local skin
+		local item
+		
+		if args[2] and args[2] != "none" then
+			local exp = string.Explode( ",", args[2] )
+			offset = Vector( exp[1], exp[2], exp[3] )
+		else
+			offset = ent:GetDTVector( 1 )
+		end
+		
+		if args[3] and args[3] != "none" then
+			local exp = string.Explode( ",", args[3] )
+			angle = Angle( exp[1], exp[2], exp[3] )
+		else
+			angle = ent:GetDTAngle( 1 )
+		end
+		
+		if args[4] and args[4] != "none" then
+			local exp = string.Explode( ",", args[4] )
+			scale = Vector( exp[1], exp[2], exp[3] )
+		else
+			scale = ent:GetDTVector( 2 )
+		end
+		
+		if args[5] and args[5] != "none" then
+			visible = util.tobool( args[5] )
+		else
+			visible = ent:GetDTBool( 1 )
+		end
+		
+		if args[6] and args[6] != "none" then
+			skin = math.Clamp( tonumber( args[6] ), 0, ent:SkinCount() )
+		else
+			skin = ent:GetSkin()
+		end
+
+		if args[7] and args[7] != "none" then
+			item = args[7]
+		else
+			item = ent.item
+		end
+		
+		ent:SetDTVector( 1, offset )
+		ent:SetDTVector( 2, scale )
+		ent:SetDTAngle( 1, angle )
+		ent:SetDTBool( 1, visible )
+		ent:SetSkin( skin )
+		ent.item = item
+		ent:SetModel( CAKE.ItemData[ item ].Model )
+		
+		CAKE.SaveGear( ply )
+		CAKE.SendGearToClient( ply )
 	end
-	
-	if args[3] and args[3] != "none" then
-		local exp = string.Explode( ",", args[3] )
-		angle = Angle( exp[1], exp[2], exp[3] )
-	else
-		angle = ply.Gear[ bone ]:GetDTAngle( 1 )
-	end
-	
-	if args[4] and args[4] != "none" then
-		local exp = string.Explode( ",", args[4] )
-		scale = Vector( exp[1], exp[2], exp[3] )
-	else
-		scale = ply.Gear[ bone ]:GetDTVector( 2 )
-	end
-	
-	if args[5] and args[5] != "none" then
-		visible = util.tobool( args[5] )
-	else
-		visible = ply.Gear[ bone ]:GetDTBool( 1 )
-	end
-	
-	if args[6] and args[6] != "none" then
-		skin = math.Clamp( tonumber( args[6] ), 0, ply.Gear[ bone ]:SkinCount() )
-	else
-		skin = ply.Gear[ bone ]:GetSkin()
-	end
-	
-	ply.Gear[ bone ]:SetDTVector( 1, offset )
-	ply.Gear[ bone ]:SetDTVector( 2, scale )
-	ply.Gear[ bone ]:SetDTAngle( 1, angle )
-	ply.Gear[ bone ]:SetDTBool( 1, visible )
-	ply.Gear[ bone ]:SetSkin( skin )
-	
-	CAKE.SaveGear( ply )
-	datastream.StreamToClients( ply, "recievegear",  ply.Gear )
 
 end
 concommand.Add( "rp_editgear", ccEditGear )
@@ -267,21 +278,41 @@ function CAKE.RestoreGear( ply )
 	if ply:IsCharLoaded() then
 		local tbl = CAKE.GetCharField( ply, "gear" )
 		for k, v in pairs( tbl ) do
-			CAKE.HandleGear( ply, tbl[ k ][ "item" ], tbl[ k ][ "bone" ], tbl[ k ][ "offset" ], tbl[ k ][ "angle" ], tbl[ k ][ "scale" ], tbl[ k ][ "skin" ] )
+			CAKE.HandleGear( ply, v[ "item" ], v[ "bone" ], v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )
 		end
-		datastream.StreamToClients( ply, "recievegear",  ply.Gear )
+		CAKE.SendGearToClient( ply )
 	end
-	
-	timer.Create( ply:SteamID() .. "sendgear", 1, 0, function()
-		datastream.StreamToClients( ply, "recievegear",  ply.Gear )
-	end)
 	
 end
 
+function CAKE.SendGearToClient( ply )
+	
+	local newtable = {}
+	local num
+	if ply:IsCharLoaded() and ply.Gear then
+		for k, v in pairs( ply.Gear ) do
+			if ValidEntity( v ) then
+				num = #newtable + 1
+				newtable[ num ] = {}
+				newtable[ num ].item = v.item
+				newtable[ num ].bone = v.bone
+				newtable[ num ].entity = v
+			end
+		end
+	end
+
+	datastream.StreamToClients( ply, "recievegear",  newtable )
+
+end
+
 local function GearSpawnHook( ply )
-	timer.Create( ply:SteamID() .. "gunchecktimer", 0.1, 0, function() --Please not, this solution is horrid, but there are no other hooks for this.
+	timer.Create( ply:SteamID() .. "gunchecktimer", 0.1, 0, function()
 		ply:HideActiveWeapon()
 	end)
+	timer.Simple( 2, function()
+		CAKE.RestoreGear( ply )
+	end)
+
 end
 hook.Add( "PlayerSpawn", "TiramisuGearSpawnHook", GearSpawnHook )
 

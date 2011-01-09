@@ -1,86 +1,228 @@
 CLPLUGIN.Name = "Edit Gear"
 CLPLUGIN.Author = "FNox"
 
+CAKE.Clothing = "none"
+CAKE.Helmet = "none"
+
+local BoneList = {
+		"Pelvis",
+		"Stomach",
+		"Lower back",
+		"Chest",
+		"Upper back",
+		"Neck",
+		"Head",
+		"Right clavicle",
+		"Right upper arm",
+		"Right forearm",
+		"Right hand",
+		"Left clavicle",
+		"Left upper arm",
+		"Left forearm",
+		"Left hand",
+		"Right thigh",
+		"Right calf",
+		"Right foot",
+		"Right toe",
+		"Left thigh",
+		"Left calf",
+		"Left foot",
+		"Left toe"
+}
+
+local function HandleGearEditing( entity, bone, item )
+
+	CloseGear()
+
+	if entity and ValidEntity( entity ) then
+		StartGearEditor( entity, item, bone, entity:GetDTVector( 1 ), entity:GetDTAngle( 1 ), entity:GetDTVector( 2 ), entity:GetSkin() )
+	else
+		if frame then
+			frame:Remove()
+			frame = nil
+		end
+
+		local frame = vgui.Create( "DFrameTransparent" )
+		frame:SetSize( 360, 423 )
+		frame:Center()
+		frame:SetTitle( "Choose the item you want to use for your gear" )
+		frame:MakePopup()
+
+		local panel = vgui.Create( "DPanelList", frame )
+		panel:SetSize( 350, 390 )
+		panel:SetPos( 5, 28 )
+		panel:SetSpacing( 5 )
+		panel:SetPadding( 5 )
+		panel:EnableHorizontal( true )
+
+		for k, v in pairs(InventoryTable) do
+		    local spawnicon = vgui.Create( "SpawnIcon");
+		    spawnicon:SetIconSize( 64 )
+		    spawnicon:SetModel(v.Model);
+		    spawnicon:SetToolTip(v.Description)
+		    spawnicon.DoClick = function()
+		        RunConsoleCommand( "rp_setgear", v.Class, bone )
+		        frame:Remove()
+		        frame = nil
+
+		    end
+		    panel:AddItem( spawnicon )
+		end
+	end
+
+end
+
 function EditGear() 
 
-	ClosePlayerMenu()
-	
-	local closebutton = vgui.Create( "DButton" )
-	closebutton:SetSize( 100, 30 )
-	closebutton:SetPos( ScrW() / 2 - 50, 20 )
-	closebutton:SetText( "Close Editor" )
-	closebutton.DoClick = function( button )
-		if EditPanel then
-			EditPanel:Remove()
-			EditPanel = nil
-		end
-		if ClothingPanel then
-			ClothingPanel:Remove()
-			ClothingPanel = nil
-		end
-		hook.Remove( "CalcMainActivity", "EditGearIdle" )
-		closebutton:Remove()
-		closebutton = nil
-	end
-	
-	local bone = ""
-	local ent
-	local item = ""
-	local itemlist
-	
-	EditPanel = vgui.Create( "DFrame" ) -- Creates the frame itself
-	EditPanel:SetPos( ScrW() - 320,50 ) -- Position on the players screen
-	EditPanel:SetSize( 300, 300 ) -- Size of the frame
-	EditPanel:SetTitle( "Edit your gear" ) -- Title of the frame
-	EditPanel:SetVisible( true )
-	EditPanel:SetDraggable( true ) -- Draggable by mouse?
-	EditPanel:ShowCloseButton( true ) -- Show the close button?
-	EditPanel:MakePopup() -- Show the frame
+	PlayerMenu = vgui.Create( "DFrameTransparent" )
+	PlayerMenu:SetSize( 330, 570 )
+	PlayerMenu:Center()
+	PlayerMenu:SetTitle( "Character Editor" )
 
-	local List= vgui.Create( "DMultiChoice", EditPanel )
-	List:SetText( "Bone" )
-	List:SetPos(2,32)
-	List:SetSize( 296, 20 )
-	List:AddChoice("pelvis")
-	List:AddChoice("stomach")
-	List:AddChoice("lower back")
-	List:AddChoice("chest")
-	List:AddChoice("upper back")
-	List:AddChoice("neck")
-	List:AddChoice("head")
-	List:AddChoice("right clavicle")
-	List:AddChoice("right upper arm")
-	List:AddChoice("right forearm")
-	List:AddChoice("right hand")
-	List:AddChoice("left clavicle")
-	List:AddChoice("left upper arm")
-	List:AddChoice("left forearm")
-	List:AddChoice("left hand")
-	List:AddChoice("right thigh")
-	List:AddChoice("right calf")
-	List:AddChoice("right foot")
-	List:AddChoice("right toe")
-	List:AddChoice("left thigh")
-	List:AddChoice("left calf")
-	List:AddChoice("left foot")
-	List:AddChoice("left toe")
-	List:SelectFirstItem()
-	function List:OnSelect(index,value,data)
-		bone = value
-		if CAKE.Gear and CAKE.Gear[ bone ] then
-			ent = CAKE.Gear[ bone ][ "entity" ]
-			item = CAKE.Gear[ bone ][ "item" ]
-			print( "ENTITY: " .. tostring( ent:EntIndex() ) .. " ITEM: " .. item )
-			itemlist:SetText( item )
-		else
-			itemlist:SetText( "None" )
+	local PropertySheet = vgui.Create( "DPropertySheet", PlayerMenu )
+	PropertySheet:SetPos( 5, 28 )
+	PropertySheet:SetSize( 320, 537 )
+
+	local ClothingList = vgui.Create( "DPanelList" )
+	ClothingList:SetSize( 300, 527 )
+	PropertySheet:AddSheet( "Clothing", ClothingList, "gui/silkicons/user", false, false, "Edit your clothes" )
+
+	local ClothesCategory = vgui.Create("DCollapsibleCategory")
+	ClothesCategory:SetExpanded( 1 ) -- Expanded when popped up
+	ClothesCategory:SetLabel( "Clothing/Bodies" )
+	ClothingList:AddItem( ClothesCategory )
+
+	local clist = vgui.Create( "DPanelList" )
+	clist:SetAutoSize( true )
+	clist:SetSpacing( 5 )
+	clist:EnableHorizontal( true )
+	clist:EnableVerticalScrollbar( true )
+	ClothesCategory:SetContents( clist )
+
+	local button
+	for k, v in pairs( InventoryTable ) do
+		if( string.match( v.Class, "clothing" ) ) then
+			button = vgui.Create( "SpawnIcon" )
+			button:SetIconSize( 64 )
+			button:SetModel( v.Model )
+			button:SetToolTip(v.Description)
+			button.DoClick = function()
+				CAKE.Clothing = v.Class
+				LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
+			end
+			clist:AddItem( button )
 		end
 	end
+	button = vgui.Create( "SpawnIcon" )
+	button:SetIconSize( 64 )
+	button:SetModel( LocalPlayer():GetModel() )
+	button:SetToolTip( "Your default clothes" )
+	button.DoClick = function()
+		CAKE.Clothing = "none"
+		LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
+	end
+	clist:AddItem( button )
+
+	local HelmetCategory = vgui.Create("DCollapsibleCategory")
+	HelmetCategory:SetExpanded( 1 ) -- Expanded when popped up
+	HelmetCategory:SetLabel( "Helmets/Heads" )
+	ClothingList:AddItem( HelmetCategory )
+
+	local hlist = vgui.Create( "DPanelList" )
+	hlist:SetAutoSize( true )
+	hlist:SetSpacing( 5 )
+	hlist:EnableHorizontal( true )
+	hlist:EnableVerticalScrollbar( true )
+	HelmetCategory:SetContents( hlist )
+
+	for k, v in pairs( InventoryTable ) do
+		if( string.match( v.Class, "helmet" ) ) then
+			button = vgui.Create( "SpawnIcon" )
+			button:SetIconSize( 64 )
+			button:SetModel( v.Model )
+			button:SetToolTip(v.Description)
+			button.DoClick = function()
+				CAKE.Helmet = v.Class
+				LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
+			end
+			hlist:AddItem( button )
+		end
+	end
+	button = vgui.Create( "SpawnIcon" )
+	button:SetIconSize( 64 )
+	button:SetModel( LocalPlayer():GetModel() )
+	button:SetToolTip( "Your default head" )
+	button.DoClick = function()
+		CAKE.Helmet = "none"
+		LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
+	end
+	hlist:AddItem( button )
+
+	local GearList = vgui.Create( "DPanelList" )
+	GearList:SetSize( 300, 527 )
+	PropertySheet:AddSheet( "Gear/Accessories", GearList, "gui/silkicons/user", false, false, "Edit your gear" )
+
+	local GearTree = vgui.Create( "DTree" )
+	GearTree:SetPadding( 5 )
+	GearTree:SetSize( 290, 517 )
+
+	local gear = {}
+	local num
+	if CAKE.Gear then
+		for k, v in pairs( CAKE.Gear ) do
+			if !gear[ v.bone ] then
+				gear[ v.bone ] = {}
+			end
+			num = #gear[ v.bone ] + 1
+			gear[ v.bone ][ num ] = {}
+			gear[ v.bone ][ num ].item = v.item
+			if ValidEntity( v.entity ) then
+				gear[ v.bone ][ num ].entity = v.entity
+			end
+		end
+	end
+
+
+	local bones = GearTree:AddNode("Bones")
+	local node
+	local node2
+	for k, v in pairs( BoneList ) do
+		node = bones:AddNode( v )
+		if gear and gear[ string.lower( v ) ] then
+			for k2, v2 in pairs( gear[ string.lower( v ) ] ) do
+				node2 = node:AddNode( v2.item )
+				node2.DoClick = function()
+					HandleGearEditing( v2.entity, v2.item, string.lower( v )  )
+				end
+			end
+		end
+		node2 = node:AddNode( "Create New Gear..." )
+		node2.DoClick = function()
+			HandleGearEditing( false, string.lower( v ) )
+		end
+	end
+
+	GearList:AddItem( GearTree )
+
+end
+
+function StartGearEditor( entity, item, bone, offset, angle, scale, skin )
+
+	CloseGear()
+
+	local EditorFrame = vgui.Create( "DFrameTransparent" ) -- Creates the frame itself
+	EditorFrame:Center() -- Position on the players screen
+	EditorFrame:SetSize( 300, 300 ) -- Size of the frame
+	EditorFrame:SetTitle( "Editing gear in bone " .. bone ) -- Title of the frame
+	EditorFrame:SetVisible( true )
+	EditorFrame:SetDraggable( true ) -- Draggable by mouse?
+	EditorFrame:ShowCloseButton( true ) -- Show the close button?
+	EditorFrame:MakePopup() -- Show the frame
 
 	local PropertySheet = vgui.Create( "DPropertySheet" )
-	PropertySheet:SetParent( EditPanel )
-	PropertySheet:SetPos( 2, 52 )
-	PropertySheet:SetSize( 296, 370 )
+	PropertySheet:SetParent( EditorFrame )
+	PropertySheet:SetPos( 5, 28 )
+	PropertySheet:SetSize( 290, 267 )
 
 	local EditList = vgui.Create( "DPanelList" )
 	EditList:SetPos( 25,25 )
@@ -98,13 +240,7 @@ function EditGear()
 	itemlist:SetPos(2,32)
 	itemlist:SetSize( 295, 20 )
 	function itemlist:OnSelect(index,value,data)
-		RunConsoleCommand( "rp_setgear", value, bone )
-		timer.Simple( 0.3, function()
-			if CAKE.Gear and CAKE.Gear[ bone ] then
-				ent = CAKE.Gear[ bone ][ "entity" ]
-				item = CAKE.Gear[ bone ][ "item" ]
-			end
-		end)
+		RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", "none", "none", "none", value )
 	end
 	for k, v in pairs( InventoryTable ) do
 		itemlist:AddChoice( v.Class )
@@ -120,7 +256,7 @@ function EditGear()
 	skinnumber:SetMin( 0 )
 	skinnumber:SetDecimals( 0 )
 	function skinnumber:OnValueChanged( val )
-		RunConsoleCommand( "rp_editgear", bone, "none", "none", "none", "none", tostring( val ))
+		RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", "none", "none", tostring( val ))
 	end
 	EditList:AddItem( skinnumber )
 	
@@ -128,17 +264,9 @@ function EditGear()
 	removebutton:SetSize( 100, 30 )
 	removebutton:SetText( "Remove Gear" )
 	removebutton.DoClick = function( button )
-		RunConsoleCommand( "rp_removegear", bone )
+		RunConsoleCommand( "rp_removegear", entity:EntIndex() )
 	end
 	EditList:AddItem( removebutton )
-	
-	local removeallbutton = vgui.Create( "DButton" )
-	removeallbutton:SetSize( 100, 30 )
-	removeallbutton:SetText( "Remove All Gear" )
-	removeallbutton.DoClick = function( button )
-		RunConsoleCommand( "rp_removegear" )
-	end
-	EditList:AddItem( removeallbutton )
 	
 	PropertySheet:AddSheet( "General", EditList, "gui/silkicons/group", false, false, "Edit general settings");
 
@@ -151,20 +279,22 @@ function EditGear()
 
 	local xslider = vgui.Create( "DNumSlider" )
 	xslider:SetText( "X Position" )
+	xslider:SetValue( offset.x )
 	xslider:SetMinMax( -40, 40 )
 	xslider.ValueChanged = function(self, value)
-		if CAKE.Gear[ bone ] and ValidEntity( CAKE.Gear[ bone ][ "entity" ] ) then
-			RunConsoleCommand( "rp_editgear", bone, tostring( value ) .. "," .. tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTVector( 1 ).y ) .. "," .. tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTVector( 1 ).z ) )
+		if  ValidEntity( entity ) then
+			RunConsoleCommand( "rp_editgear", entity:EntIndex(), tostring( value ) .. "," .. tostring( entity:GetDTVector( 1 ).y ) .. "," .. tostring( entity:GetDTVector( 1 ).z ) )
 		end
 	end
 	PosList:AddItem( xslider )
 
 	local yslider = vgui.Create( "DNumSlider" )
 	yslider:SetText( "Y Position" )
+	yslider:SetValue( offset.y )
 	yslider:SetMinMax( -40, 40 )
 	yslider.ValueChanged = function(self, value)
-		if CAKE.Gear[ bone ] and ValidEntity( CAKE.Gear[ bone ][ "entity" ] ) then
-			RunConsoleCommand( "rp_editgear", bone, tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTVector( 1 ).x ) .. "," .. tostring( value ) .. "," .. tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTVector( 1 ).z ) )
+		if  ValidEntity( entity ) then
+			RunConsoleCommand( "rp_editgear", entity:EntIndex(), tostring( entity:GetDTVector( 1 ).x ) .. "," .. tostring( value ) .. "," .. tostring( entity:GetDTVector( 1 ).z ) )
 		end
 	end
 	PosList:AddItem( yslider )
@@ -172,23 +302,31 @@ function EditGear()
 	local zslider = vgui.Create( "DNumSlider" )
 	zslider:SetText( "Z Position" )
 	zslider:SetMinMax( -40, 40 )
+	zslider:SetValue( offset.z )
 	zslider.ValueChanged = function(self, value)
-		if CAKE.Gear[ bone ] and ValidEntity( CAKE.Gear[ bone ][ "entity" ] ) then
-			RunConsoleCommand( "rp_editgear", bone, tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTVector( 1 ).x ) .. "," .. tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTVector( 1 ).y ) .. "," .. tostring( value ) )
+		if  ValidEntity( entity ) then
+			RunConsoleCommand( "rp_editgear", entity:EntIndex(), tostring( entity:GetDTVector( 1 ).x ) .. "," .. tostring( entity:GetDTVector( 1 ).z ) .. "," .. tostring( value ) )
 		end
 	end
 	PosList:AddItem( zslider )
+
+	local setbutton = vgui.Create( "DButton" )
+	setbutton:SetText( "Set Coordinates" )
+	setbutton.DoClick = function( button )
+		RunConsoleCommand( "rp_editgear", entity:EntIndex(), tostring( xslider:GetValue() ) .. "," .. tostring( yslider:GetValue() ) .. "," .. tostring( zslider:GetValue() ) )
+	end
+	PosList:AddItem( setbutton )
 	
 	local resetbutton = vgui.Create( "DButton" )
 	resetbutton:SetText( "Reset Coordinates" )
 	resetbutton.DoClick = function( button )
-		RunConsoleCommand( "rp_editgear", bone, "0,0,0" )
+		RunConsoleCommand( "rp_editgear", entity:EntIndex(), "0,0,0" )
 	end
 	PosList:AddItem( resetbutton )
 	
 	PropertySheet:AddSheet( "Position", PosList, "gui/silkicons/anchor", false, false, "Edit gear's position");
 
-	local AngList = vgui.Create( "DPanelList" )
+		local AngList = vgui.Create( "DPanelList" )
 	AngList:SetPos( 25,25 )
 	AngList:SetSize( 175, 375 )
 	AngList:SetSpacing( 10 ) -- Spacing between items
@@ -197,44 +335,50 @@ function EditGear()
 	
 	local pslider = vgui.Create( "DNumSlider" )
 	pslider:SetText( "Pitch" )
+	pslider:SetValue( angle.p )
 	pslider:SetMinMax( -180, 180 ) 
 	pslider.ValueChanged = function(self, value)
-		if CAKE.Gear[ bone ] and ValidEntity( CAKE.Gear[ bone ][ "entity" ] ) then
-			RunConsoleCommand( "rp_editgear", bone, "none" ,tostring( value ).. "," ..tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTAngle( 1 ).y ) .. "," .. tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTAngle( 1 ).r ) )
+		if ValidEntity( entity ) then
+			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none" ,tostring( value ).. "," ..tostring( entity:GetDTAngle( 1 ).y ) .. "," .. tostring( entity:GetDTAngle( 1 ).r ) )
 		end
 	end
 	AngList:AddItem( pslider )
 
 	local yslider = vgui.Create( "DNumSlider" )
 	yslider:SetText( "Yaw" )
+	yslider:SetValue( angle.y )
 	yslider:SetMinMax( -180, 180 )
 	yslider.ValueChanged = function(self, value)
-		if CAKE.Gear[ bone ] and ValidEntity( CAKE.Gear[ bone ][ "entity" ] ) then
-			RunConsoleCommand( "rp_editgear", bone, "none" ,tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTAngle( 1 ).p ).. "," .. tostring( value ) .. "," .. tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTAngle( 1 ).r ) )
+		if ValidEntity( entity ) then
+			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none" , tostring( entity:GetDTAngle( 1 ).p ).. "," .. tostring( value ) .. "," .. tostring( entity:GetDTAngle( 1 ).r ) )
 		end
 	end
 	AngList:AddItem( yslider )
 
 	local rslider = vgui.Create( "DNumSlider" )
 	rslider:SetText( "Roll" )
+	rslider:SetValue( angle.r )
 	rslider:SetMinMax( -180, 180 )
 	rslider.ValueChanged = function(self, value)
-		if CAKE.Gear[ bone ] and ValidEntity( CAKE.Gear[ bone ][ "entity" ] ) then
-			RunConsoleCommand( "rp_editgear", bone, "none" ,tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTAngle( 1 ).p ).. "," .. tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTAngle( 1 ).y ) .. "," .. tostring( value ) )
+		if ValidEntity( entity ) then
+			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none" , tostring( entity:GetDTAngle( 1 ).p ).. "," .. tostring( entity:GetDTAngle( 1 ).y ) .. "," .. tostring( value ) )
 		end
 	end
 	AngList:AddItem( rslider )
+
+	local setbutton = vgui.Create( "DButton" )
+	setbutton:SetText( "Set Angles" )
+	setbutton.DoClick = function( button )
+		RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", tostring( pslider:GetValue() ) .. "," .. tostring( yslider:GetValue() ) .. "," .. tostring( rslider:GetValue() ) )
+	end
+	AngList:AddItem( setbutton )
 	
 	local resetbutton = vgui.Create( "DButton" )
 	resetbutton:SetText( "Reset Angles" )
 	resetbutton.DoClick = function( button )
-		RunConsoleCommand( "rp_editgear", bone, "none", "0,0,0" )
+		RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "0,0,0" )
 	end
 	AngList:AddItem( resetbutton )
-	
-	local setbutton = vgui.Create( "DButton" )
-	setbutton:SetText( "Set Angles" )
-	AngList:AddItem( setbutton )
 
 	PropertySheet:AddSheet( "Angles", AngList, "gui/silkicons/application_view_detail", false, false, "Edit gear's angles");
 
@@ -246,228 +390,63 @@ function EditGear()
 	ScaleList:EnableVerticalScrollbar( false ) -- Allow scrollbar if you exceed the Y axis
 	
 	local xslider = vgui.Create( "DNumSlider" )
+	xslider:SetValue( scale.x )
 	xslider:SetText( "X Scale" )
-	xslider:SetMinMax( -10, 10 ) 
+	xslider:SetMinMax( 0, 10 ) 
 	xslider.ValueChanged = function(self, value)
-		if CAKE.Gear[ bone ] and ValidEntity( CAKE.Gear[ bone ][ "entity" ] ) then
-			RunConsoleCommand( "rp_editgear", bone, "none", "none", tostring( value ) .. "," .. tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTVector( 2 ).y ) .. "," .. tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTVector( 2 ).z ) )
+		if ValidEntity( entity ) then
+			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", tostring( value ) .. "," .. tostring( entity:GetDTVector( 2 ).y ) .. "," .. tostring( entity:GetDTVector( 2 ).z ) )
 		end
 	end
 	ScaleList:AddItem( xslider )
 
 	local yslider = vgui.Create( "DNumSlider" )
 	yslider:SetText( "Y Scale" )
-	yslider:SetMinMax( -10, 10 )
+	yslider:SetValue( scale.y )
+	yslider:SetMinMax( 0, 10 )
 	yslider.ValueChanged = function(self, value)
-		if CAKE.Gear[ bone ] and ValidEntity( CAKE.Gear[ bone ][ "entity" ] ) then
-			RunConsoleCommand( "rp_editgear", bone, "none", "none", tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTVector( 2 ).x ) .. "," .. tostring( value ) .. "," .. tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTVector( 2 ).z ) )
+		if ValidEntity( entity ) then
+			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", tostring( entity:GetDTVector( 2 ).x ) .. "," .. tostring( value ) .. "," .. tostring( entity:GetDTVector( 2 ).z ) )
 		end
 	end
 	ScaleList:AddItem( yslider )
 
 	local zslider = vgui.Create( "DNumSlider" )
+	zslider:SetValue( scale.z )
 	zslider:SetText( "Z Scale" )
-	zslider:SetMinMax( -10, 10 )
+	zslider:SetMinMax( 0, 10 )
 	zslider.ValueChanged = function(self, value)
-		if CAKE.Gear[ bone ] and ValidEntity( CAKE.Gear[ bone ][ "entity" ] ) then
-			RunConsoleCommand( "rp_editgear", bone, "none", "none", tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTVector( 2 ).x ) .. "," .. tostring( CAKE.Gear[ bone ][ "entity" ]:GetDTVector( 2 ).y ) .. "," ..  tostring( value ) )
+		if ValidEntity( entity ) then
+			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", tostring( entity:GetDTVector( 2 ).x ) .. "," .. tostring( entity:GetDTVector( 2 ).y ) .. "," .. tostring( value) )
 		end
 	end
 	ScaleList:AddItem( zslider )
+
+	local setbutton = vgui.Create( "DButton" )
+	setbutton:SetText( "Set Angles" )
+	setbutton.DoClick = function( button )
+		RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", tostring( xslider:GetValue() ) .. "," .. tostring( yslider:GetValue() ) .. "," .. tostring( zslider:GetValue() ) )
+	end
+	ScaleList:AddItem( setbutton )
 	
 	local resetbutton = vgui.Create( "DButton" )
 	resetbutton:SetText( "Reset Coordinates" )
 	resetbutton.DoClick = function( button )
-		RunConsoleCommand( "rp_editgear", bone, "none", "none", "1,1,1" )
+		RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", "1,1,1" )
 	end
 	ScaleList:AddItem( resetbutton )
-	
-	local setbutton = vgui.Create( "DButton" )
-	setbutton:SetText( "Set Coordinates" )
-	ScaleList:AddItem( setbutton )
 
 	PropertySheet:AddSheet( "Scale", ScaleList, "gui/silkicons/magnifier", false, false, "Edit gear's scale");
-	
-	ClothingPanel = vgui.Create( "DFrame" ) -- Creates the frame itself
-	ClothingPanel:SetPos( 10 ,50 ) -- Position on the players screen
-	ClothingPanel:SetSize( 400, 330 ) -- Size of the frame
-	ClothingPanel:SetTitle( "Edit your clothing" ) -- Title of the frame
-	ClothingPanel:SetVisible( true )
-	ClothingPanel:SetDraggable( true ) -- Draggable by mouse?
-	ClothingPanel:ShowCloseButton( true ) -- Show the close button?
-	ClothingPanel:MakePopup() -- Show the frame
-	
-	Clothing = vgui.Create( "DPropertySheet", ClothingPanel )
-	Clothing:SetSize( 400, 300 )
-	Clothing:SetPos( 0, 23 )
-	
-	ClothingSheet = vgui.Create( "DPanelList" )
-	ClothingSheet:SetPadding(0);
-	ClothingSheet:SetSpacing(0);
-	ClothingSheet:EnableHorizontal(false);
-	ClothingSheet:EnableVerticalScrollbar(false)
-	
-	local desc = ""
-	
-	ClothingBox = vgui.Create("DListView");
-	ClothingBox:SetMultiSelect( false )
-	ClothingBox:SetSize(310,130);
-	ClothingBox:AddColumn("Item Name");
-	ClothingBox:AddColumn("Item Class");
-	ClothingBox:AddLine( "Default Clothes", "none" )
-	for k, v in pairs( InventoryTable ) do
-		if( string.match( v.Class, "clothing" ) ) then
-			ClothingBox:AddLine( v.Name, v.Class )
-		end
-	end
-	ClothingBox.DoDoubleClick = function(parent, index, list)
-		if list:GetValue(2) == "none" then
-			CAKE.Clothing = "none"
-			desc = ""
-			LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
-		else
-			for k, v in pairs( InventoryTable ) do
-				if v.Class == list:GetValue(2) then
-					CAKE.Clothing = v.Class
-					desc = v.Description
-					--LocalPlayer():ConCommand("rp_setclothing " .. TeamTable[LineID].flagkey);
-					LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
-				end
-			end
-		end
-		
-	end
-	ClothingSheet:AddItem( ClothingBox )
-	
-	Clothing:AddSheet( "Clothing/Armor", ClothingSheet, "gui/silkicons/user", false, false, "Set your clothes")
-	
-	HelmetSheet = vgui.Create( "DPanelList" )
-	HelmetSheet:SetPadding(0);
-	HelmetSheet:SetSpacing(00);
-	HelmetSheet:EnableHorizontal(false);
-	HelmetSheet:EnableVerticalScrollbar(true);
-	
-	local Helmets = vgui.Create("DListView");
-	Helmets:SetMultiSelect( false )
-	Helmets:SetSize(310,130);
-	Helmets:AddColumn( "Item Name" )
-	Helmets:AddColumn( "Item Class" )
-	Helmets:AddLine( "Default Helmet/Face", "none" )
-	for k, v in pairs( InventoryTable ) do
-		if( string.match( v.Class, "helmet" ) ) then
-			Helmets:AddLine( v.Name, v.Class )
-		end
-	end
-	Helmets.DoDoubleClick = function(parent, index, list)
-		if list:GetValue(2) == "none" then
-			CAKE.Helmet = "none"
-			desc = ""
-			LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
-		else
-			for k, v in pairs( InventoryTable ) do
-				if v.Class == list:GetValue(2) then
-					CAKE.Helmet = v.Class
-					desc = v.Description
-					--LocalPlayer():ConCommand("rp_setclothing " .. TeamTable[LineID].flagkey);
-					LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
-				end
-			end
-		end
-		
-	end
-	
-	HelmetSheet:AddItem( Helmets )
-	
-	Clothing:AddSheet( "Helmets", HelmetSheet, "gui/silkicons/user", false, false, "Set your helmet")
 
-	
-	/*
-	local ToolData = vgui.Create("DPanelList", ClothingPanel );
-	ToolData:SetPos( 0, 23 )
-	ToolData:SetSize( 300, 277 )
-	ToolData:SetAutoSize(true)
-	ToolData:SetPadding(10);
-	ToolData:SetSpacing(4);
-	
-	local modellabel = vgui.Create("DLabel");
-	modellabel:SetSize(30,25);
-	modellabel:SetPos(5, 50);
-	modellabel:SetText("Model: ")
-	
-	local modelname = vgui.Create("DTextEntry");
-	modelname:SetSize(450,20);
-	modelname:SetPos(390, 50);
-	modelname:SetText("");
-	
-	local permacheck = vgui.Create( "DCheckBoxLabel" )
-	permacheck:SetText( "Permanently change your model" )
-	
-	local specialcheck = vgui.Create( "DCheckBoxLabel" )
-	specialcheck:SetText( "Non bipedal/prop/special model" )
-	
-	local selectedpart = 0
-	local bodypart = vgui.Create( "DMultiChoice" )
-	bodypart:AddChoice("Whole Body")
-	bodypart:AddChoice("Torso/Legs")
-	bodypart:AddChoice("Head")
-	bodypart:AddChoice("Hands")
-	bodypart:ChooseOptionID( 1 )
-	function bodypart:OnSelect(index,value,data)
-		selectedpart = index - 1
-		print( tostring( selectedpart ) )
-	end
-		
-	local settemp = vgui.Create("DButton");
-	settemp:SetSize(75, 25);
-	settemp:SetText("Change Your Model");
-	settemp.DoClick = function ( btn )
-		
-		if(modelname:GetValue() == "" ) then
-			LocalPlayer():PrintMessage(3, "You must enter a model's file path!");
-			return;
-		end
-		 
-		local permabool = permacheck:GetChecked(true)
-		local permastr = "0"
-		local specialbool = specialcheck:GetChecked(true)
-		local specialstr = "0"
-		if permabool then permastr = "1" end
-		if specialbool then specialstr = "1" end
-		
-		LocalPlayer():ConCommand("rp_changemodel \"" .. modelname:GetValue() .. "\" " .. permastr .. " " .. specialstr .. " " .. tostring(selectedpart));
-		
-	end
-	
-	
-	ToolData:AddItem(modellabel)
-	ToolData:AddItem(modelname)
-	ToolData:AddItem(settemp)
-	ToolData:AddItem(permacheck)
-	ToolData:AddItem(specialcheck)
-	ToolData:AddItem(bodypart)*/
-	hook.Add( "CalcMainActivity", "EditGearIdle", function()
-		return ACT_DIERAGDOLL, -1
-	end)
-	
-	
 end
 
-local function CloseGear()
-	if EditPanel then
-		EditPanel:Remove()
-		EditPanel = nil
+function CloseGear()
+	if PlayerMenu then
+		PlayerMenu:Remove()
+		PlayerMenu = nil
 	end
 end
 CAKE.RegisterMenuTab( "Character Editor", EditGear, CloseGear )
-
-local function EditSit( um )
-	local vec = um:ReadVector( )
-	local ang = um:ReadAngle( )
-	local newposition, newangles = LocalToWorld( vec, ang, LocalPlayer():GetParent():GetPos(), LocalPlayer():GetParent():GetAngles() )
-	LocalPlayer():SetRenderOrigin(newposition)
-	LocalPlayer():SetRenderAngles(newangles)
-end
-usermessage.Hook( "editsit", EditSit )
 
 local function RecieveGear( handler, id, encoded, decoded )
 
@@ -476,6 +455,13 @@ local function RecieveGear( handler, id, encoded, decoded )
 end
 datastream.Hook( "recievegear", RecieveGear );
 
+local function StreamGearEditor( handler, id, encoded, decoded )
+
+	StartGearEditor( decoded.entity, decoded.item, decoded.bone, decoded.offset, decoded.angle, decoded.scale, decoded.skin )
+
+end
+datastream.Hook( "editgear", StreamGearEditor )
+
 local function RecieveClothing( handler, id, encoded, decoded )
 
 	CAKE.ClothingTbl = decoded
@@ -483,12 +469,6 @@ local function RecieveClothing( handler, id, encoded, decoded )
 end
 datastream.Hook( "recieveclothing", RecieveClothing );
 
-local function EnterEditGear( handler, id, encoded, decoded )
-
-	CAKE.SetActiveTab( "Character Editor" )
-
-end
-datastream.Hook( "EnterGearEdit", EnterEditGear );
 
 function CLPLUGIN.Init()
 

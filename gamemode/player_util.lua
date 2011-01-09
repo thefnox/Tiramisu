@@ -109,6 +109,11 @@ function CAKE.UnconciousMode( ply )
 	if !ply:GetNWBool( "unconciousmode", false ) then
 	
 		ply:GodEnable()
+		ply:SetAiming( false )
+
+		if ply:GetActiveWeapon():IsValid() then
+			ply:GetActiveWeapon():SetNoDraw( true )
+		end
 		
 		if ValidEntity( ply.unconciousrag ) then
 			ply.unconciousrag:Remove()
@@ -150,37 +155,28 @@ function CAKE.UnconciousMode( ply )
 		rag.gear = ply.Gear
 		ply.Clothing = nil
 		ply.Gear = nil
+		ply:SetNWBool( "unconciousmode", true ) 
 		
 		datastream.StreamToClients( ply, "RecieveViewRagdoll", { ["ragdoll"] = rag, ["clothing"] = rag.clothing } )
 		
 		ply.unconciousrag = rag;
 		
-		ply:SetNWBool( "unconciousmode", true )
-		
 		ply.unconcioustime = 0;
 		ply.nextsecond = CurTime( ) + 1;
 		
 		ply:Lock()
-
-		if timer.IsTimer( ply:SteamID() .. "unconcioustimer" ) then
-			timer.Destroy( ply:SteamID() .. "unconcioustimer"  )
-		end
 		
-		timer.Create( ply:SteamID() .. "unconcioustimer", 1, 9, function()
-			ply:SetNWInt( "unconciousmoderemaining", ply:GetNWInt( "unconciousmoderemaining", 0 ) + 1 );
-		end)
-		
-		timer.Create( ply:SteamID() .. "UnconciousActionTimer", 10, 1 , function()
-			CAKE.UnconciousMode( ply )
-		end)
 	else
 		ply:SetNWBool( "unconciousmode", false )
-		ply:SetNWInt( "unconciousmoderemaining", 0 )
-		ply:SetViewEntity( ply );
+		ply:SetViewEntity( ply )
+		CAKE.RestoreGear( ply )
 		ply:SetPos( ply.unconciousrag:GetPos() + Vector( 0, 0, 10 ))
 		ply:UnLock()
 		CAKE.RestoreClothing( ply )
 		ply:GodDisable()
+		if ply:GetActiveWeapon():IsValid() then
+			ply:GetActiveWeapon():SetNoDraw( false )
+		end
 		datastream.StreamToClients( ply, "RecieveViewRagdoll", { ["ragdoll"] = false, ["clothing"] = false } )
 		if ply.unconciousrag then
 			ply.unconciousrag:Remove()

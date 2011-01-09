@@ -100,7 +100,7 @@ local function ccRoll( ply, cmd, args )
 end
 concommand.Add("rp_roll", ccRoll);
 
-function Report( ply, text )
+local function Report( ply, text )
 
 	for k, v in pairs(player.GetAll()) do
 		
@@ -122,7 +122,7 @@ function Report( ply, text )
 	
 end
 
-function Broadcast( ply, text )
+local function Broadcast( ply, text )
 
 	-- Check to see if the player's team allows broadcasting
 	local team = CAKE.GetCharField( ply, "group" )
@@ -141,7 +141,7 @@ function Broadcast( ply, text )
 	
 end
 
-function Event( ply, text )
+local function Event( ply, text )
 
 	-- Check to see if the player's team allows broadcasting
 	if( CAKE.PlayerRank(ply) > 3 ) then
@@ -158,7 +158,7 @@ function Event( ply, text )
 	
 end
 
-function PersonalMessage( ply, text )
+local function PersonalMessage( ply, text )
 
 	-- Check to see if the player's team allows broadcasting
 	local exp = string.Explode( " ", text )
@@ -175,7 +175,7 @@ function PersonalMessage( ply, text )
 	
 end
 
-function RemoveHelmet( ply, text )
+local function RemoveHelmet( ply, text )
 	
 	local gender = CAKE.GetCharField( ply, "gender" )
 	local article = ""
@@ -204,7 +204,7 @@ function RemoveHelmet( ply, text )
 
 end
 
-function Advertise( ply, text )
+local function Advertise( ply, text )
 
 	if(CAKE.ConVars[ "AdvertiseEnabled" ] == "1") then
 	
@@ -234,7 +234,7 @@ function Advertise( ply, text )
 	
 end
 
-function Radio( ply, text )
+local function Radio( ply, text )
 
 	local players = player.GetAll();
 	local heardit = {};
@@ -280,23 +280,28 @@ function Radio( ply, text )
 
 end
 
-function Chat_ModPlayerVars(ply)
+local function Chat_ModPlayerVars(ply)
 
 	ply.LastOOC = -100000; -- This is so people can talk for the first time without having to wait.
 		
 end
 
-function Title( ply, text )
-	ply:ConCommand( "rp_title \"" .. text .. "\"" )
+local function Title( ply, text )
+	ply:ConCommand( "rp_title " .. text )
 	return "";
 end
 
-function Title2( ply, text )
-	ply:ConCommand( "rp_title2 \"" .. text .. "\"" )
+local function Title2( ply, text )
+	ply:ConCommand( "rp_title2 " .. text )
 	return "";
 end
 
-function Yell( ply, text )
+local function DoorTitle( ply, text )
+	ply:ConCommand( "rp_doortitle " .. text)
+	return "";
+end
+
+local function Yell( ply, text )
 	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "YellRange" ] )
 	for k, v in pairs( players ) do
 		if v:IsPlayer() then
@@ -306,7 +311,7 @@ function Yell( ply, text )
 	return "";
 end
 
-function Whisper( ply, text )
+local function Whisper( ply, text )
 	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "WhisperRange" ] )
 	for k, v in pairs( players ) do
 		if v:IsPlayer() then
@@ -316,7 +321,7 @@ function Whisper( ply, text )
 	return "";
 end
 
-function Emote( ply, text )
+local function Emote( ply, text )
 	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "MeRange" ] )
 	for k, v in pairs( players ) do
 		if v:IsPlayer() then

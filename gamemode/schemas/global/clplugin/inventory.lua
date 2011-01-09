@@ -101,90 +101,6 @@ local function OpenInventory()
 	end
 	drawinventoryicons()
 	
-	ExtraSheet = vgui.Create( "DPanelList" )
-	ExtraSheet:SetPadding(10);
-	ExtraSheet:SetSpacing(10);
-	ExtraSheet:EnableHorizontal(false);
-	ExtraSheet:EnableVerticalScrollbar(false);
-	local elipsis = ""
-	
-	local function drawextrainventory()
-		local label = vgui.Create( "DLabel" )
-		label:SizeToContents()
-		label:SetText( "Cargohold Capacity: " .. tostring( CAKE.ExtraCargo ) .. ".kg" )
-		ExtraSheet:AddItem(label);
-		
-		for k, v in pairs(ExtraInventory) do
-			
-			if string.len( v.Name ) > 6 then
-				elipsis = "..."
-			else
-				elipsis = ""
-			end
-			
-			local spawnicon = vgui.Create( "SpawnIcon");
-			spawnicon:SetSize( 64, 64 );
-			spawnicon:SetIconSize( 64 )
-			spawnicon:SetModel(v.Model);
-			spawnicon:SetToolTip(v.Description);
-			
-			local function DeleteMyself()
-				spawnicon:Remove()
-			end
-			
-			spawnicon.DoClick = function ( btn )
-			
-				local ContextMenu = DermaMenu()
-					ContextMenu:AddOption("Transfer to Backpack", function()
-						LocalPlayer():ConCommand("rp_dropextraitem " .. v.Class);
-						DeleteMyself();
-						drawextrainventory()
-						drawinventoryicons()
-					end);
-				ContextMenu:Open();
-				
-			end
-			
-			spawnicon.PaintOver = function()
-				surface.SetTextColor(Color(255,255,255,255));
-				surface.SetFont("DefaultSmall");
-				surface.SetTextPos(32 - surface.GetTextSize( string.sub( v.Name, 1, 6 ) .. elipsis) / 2, 5);
-				surface.DrawText( string.sub( v.Name, 1, 6 ) .. elipsis )
-				
-				surface.SetTextColor(Color(255,255,255,255));
-				surface.SetFont("DefaultSmall");
-				surface.SetTextPos(60, 60);
-				surface.DrawText( v.Weight )
-			end
-			
-			spawnicon.PaintOverHovered = function()
-				surface.SetTextColor(Color(255,255,255,255));
-				surface.SetFont("DefaultSmall");
-				surface.SetTextPos(32 - surface.GetTextSize( string.sub( v.Name, 1, 6 ) .. elipsis ) / 2, 5);
-				surface.DrawText(string.sub( v.Name, 1, 6 ) .. elipsis)
-				
-				surface.SetTextColor(Color(255,255,255,255));
-				surface.SetFont("DefaultSmall");
-				surface.SetTextPos(60, 60);
-				surface.DrawText( v.Weight )
-			end
-			
-			ExtraSheet:AddItem(spawnicon);
-		end
-	end
-	
-	if CAKE.ExtraCargo and CAKE.ExtraCargo > 0 then
-		
-		drawextrainventory()
-		drawinventoryicons()
-		
-	else
-		local label = vgui.Create( "DLabel" )
-		label:SizeToContents()
-		label:SetText( "You don't have an extra container to put your cargo on!" )
-		ExtraSheet:AddItem(label);
-	end
-	
 	BusinessSheet = vgui.Create( "DPanelList" )
 	BusinessSheet:SetPadding(20);
 	BusinessSheet:SetSpacing(20);
@@ -230,7 +146,6 @@ local function OpenInventory()
 	
 	Inventory:AddSheet( "Backpack", InventorySheet, "gui/silkicons/box", false, false, "View your inventory.")
 	Inventory:AddSheet( "Business", BusinessSheet, "gui/silkicons/box", false, false, "View your store.")
-	Inventory:AddSheet( "Extra Cargo", ExtraSheet, "gui/silkicons/box", false, false, "Open your additional cargohold.")
 
 end
 

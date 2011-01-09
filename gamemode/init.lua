@@ -189,9 +189,6 @@ function GM:PlayerSpawn( ply )
 	end
 
 	CAKE.SpawnPointHandle(ply)
-
-	umsg.Start( "closeplayermenu", ply );
-	umsg.End( )
 	
 	if( ply:IsUserGroup("admin") )	then
 		CAKE.SetPlayerField( ply, "adrank", "Administrator" )

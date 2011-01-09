@@ -23,7 +23,6 @@ function UnconciousMeter( )
 	local timeleft = 10 - LocalPlayer( ):GetNWInt( "unconciousmoderemaining" )
 
 	draw.DrawText( "You have been knocked out. Type 'rp_wakeup' on console.", "ChatFont", ScrW( ) / 2 - 250, 25 - 5, Color( 255,255,255,255 ), 0 );
-	draw.DrawText( "Or wait " .. tostring( timeleft ) .. " seconds" , "ChatFont", ScrW( ) / 2 - 93, 50 - 5, Color( 255,255,255,255 ), 0 );
 	
 end
 

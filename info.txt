@@ -1,12 +1,12 @@
 "Gamemode"
 {
 	"name"		"Tiramisu"
-	"version"	"0.1 Beta"
+	"version"	"1.0"
 
-	"author_name"	"MC Badass and Nvgg3t"
+	"author_name"	"FNox and Ryaga"
 	"author_email"	""
 	"author_url"	""
 	
-	"info"		"The revolution of GMODRP gamemodes, updated."
+	"info"		"The free and better alternative."
 	"hide"		"0"
 }

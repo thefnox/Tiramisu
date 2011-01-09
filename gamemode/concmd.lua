@@ -35,22 +35,10 @@ end
 
 -- This is the F1 menu
 function GM:ShowHelp( ply )
-
-	local PlyCharTable = CAKE.PlayerData[ CAKE.FormatSteamID( ply:SteamID() ) ]["characters"]
-
-	for k, v in pairs( PlyCharTable ) do
-		
-		umsg.Start( "ReceiveChar", ply );
-			umsg.Long( k );
-			umsg.String( v[ "name" ] );
-			umsg.String( v[ "model" ] );
-		umsg.End( );
-		
-	end
 	
-	umsg.Start( "openplayermenu", ply );
-	umsg.End( )
-	
+	umsg.Start( "toggleinventory", ply )
+	umsg.End()
+
 end
 
 function GM:ShowTeam( ply )

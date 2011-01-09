@@ -77,7 +77,6 @@ end
 	
 function meta:RemoveClothing()
 		if self.Clothing then
-			CAKE.RemoveAllGear( self )
 		
 			for k, v in pairs( self.Clothing ) do
 				if type( v ) != "table" then
@@ -136,17 +135,11 @@ function CAKE.RestoreClothing( ply )
 		if special == "none" or special == "" then
 			ply:SetNWBool( "specialmodel", false )
 			CAKE.SetClothing( ply, clothes, helmet, gloves )
-			CAKE.RemoveAllGear( ply )
-			CAKE.RestoreGear( ply )
-			CAKE.SendConsole( ply, "Gear Restored" )
 		else
 			ply:SetNWBool( "specialmodel", true )
 			ply:SetNWString( "model", tostring( special ) )
 			ply:SetModel( tostring( special ) )
 		end
-		timer.Create( ply:SteamID() .. "sendclothes", 1, 0, function()
-			datastream.StreamToClients( ply, "recieveclothing",  ply.Clothing )
-		end)
 end
 	
 local function SpawnClothingHook( ply )
