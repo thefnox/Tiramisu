@@ -50,7 +50,7 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 		newpos = pos
 	end
 	
-	if CAKE.FreeScroll and CAKE.InEditor then
+	if CAKE.FreeScroll then
 		newpos = ply:GetForward()*100
 		newpos:Rotate(mouserotate)
 		pos = ply:GetPos()+Vector(0,0,60) + newpos
@@ -107,25 +107,24 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 end)
 
 local keydown = false
+local editoron = false
 timer.Create( "LocalMouseControlCam", 0.01, 0, function()
-
-	if !CAKE.InEditor then
-		CAKE.FreeScroll = input.IsMouseDown(MOUSE_RIGHT)
-	else
-		CAKE.FreeScroll = input.IsMouseDown(MOUSE_RIGHT)
-	end
+	
+	keydown = input.IsMouseDown(MOUSE_MIDDLE)
 	
 	if !CAKE.FreeScroll then
-		if !CAKE.InEditor then
-			mouserotate = false
-			gui.EnableScreenClicker( false )
-		end
-	else
-		if !mouserotate then
+		if keydown then
 			gui.EnableScreenClicker( true )
 			gui.SetMousePos( ScrW()/2, ScrH()/2 )
-			mouserotate = Angle(0,0,0)
 			mousex = gui.MouseX()
+			CAKE.FreeScroll = true
+		end
+	else
+		if keydown then
+			gui.EnableScreenClicker( true )
+		else
+			CAKE.FreeScroll = false
+			gui.EnableScreenClicker( false )
 		end
 		mouserotate.y = math.NormalizeAngle(( gui.MouseX() - mousex ) / 2)
 	end

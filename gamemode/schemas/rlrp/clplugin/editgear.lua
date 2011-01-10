@@ -210,9 +210,10 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin )
 
 	CloseGear()
 
-	local EditorFrame = vgui.Create( "DFrameTransparent" ) -- Creates the frame itself
+	EditorFrame = vgui.Create( "DFrameTransparent" ) -- Creates the frame itself
 	EditorFrame:Center() -- Position on the players screen
 	EditorFrame:SetSize( 300, 300 ) -- Size of the frame
+	EditorFrame:SetDeleteOnClose( true )
 	EditorFrame:SetTitle( "Editing gear in bone " .. bone ) -- Title of the frame
 	EditorFrame:SetVisible( true )
 	EditorFrame:SetDraggable( true ) -- Draggable by mouse?

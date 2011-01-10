@@ -51,7 +51,6 @@ function CAKE.HandleGear( ply, item, bone, offset, angle, scale, skin )
 		end
 		
 		local id =  #ply.Gear + 1 
-		print( id )
 		local model = CAKE.ItemData[ item ].Model
 		local offset = offset or CAKE.ItemData[ item ].Offset or Vector( 0, 0, 0 )
 		local angle = angle or CAKE.ItemData[ item ].OffsetAngle or Angle( 0, 0, 0 )
