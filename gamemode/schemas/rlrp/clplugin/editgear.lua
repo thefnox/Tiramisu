@@ -160,7 +160,7 @@ function EditGear()
 
 	local GearList = vgui.Create( "DPanelList" )
 	GearList:SetSize( 300, 527 )
-	PropertySheet:AddSheet( "Gear/Accessories", GearList, "gui/silkicons/user", false, false, "Edit your gear" )
+	PropertySheet:AddSheet( "Gear/Accessories", GearList, "gui/silkicons/wrench", false, false, "Edit your gear" )
 
 	local GearTree = vgui.Create( "DTree" )
 	GearTree:SetPadding( 5 )

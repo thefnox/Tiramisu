@@ -40,6 +40,13 @@ function CAKE.AdminCommand( ccName, func, description, CanRunFromConsole, CanRun
 end
 
 function CAKE.PlayerRank(ply)
+
+	if ply:IsSuperAdmin() then
+		return 5
+	elseif ply:IsAdmin() then
+		return 4
+	end
+		
 	if CAKE.GetPlayerField( ply, "adrank" ) == "Player" then
 		return 0
 	else

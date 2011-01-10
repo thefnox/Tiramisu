@@ -36,7 +36,7 @@ end
 -- This is the F1 menu
 function GM:ShowHelp( ply )
 	
-	umsg.Start( "toggleinventory", ply )
+	umsg.Start( "showhelpmenu", ply )
 	umsg.End()
 
 end
