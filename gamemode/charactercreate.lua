@@ -23,19 +23,6 @@ function ccSetModel( ply, cmd, args )
 end
 concommand.Add( "rp_setmodel", ccSetModel );
 
-function ccSetRace( ply, cmd, args )
-	
-	local race = args[ 1 ];
-	
-	if( ply:GetNWInt( "charactercreate" ) == 1 ) then
-	
-			CAKE.SetCharField(ply, "race", race );	
-	end
-	
-	return;
-end
-concommand.Add( "rp_setrace", ccSetRace );
-
 function ccSetAge( ply, cmd, args )
 	
 	local age = args[ 1 ];
@@ -46,28 +33,6 @@ function ccSetAge( ply, cmd, args )
 end
 concommand.Add( "rp_setage", ccSetAge );
 
-function ccSetDescription( ply, cmd, args )
-
-	local Desc = table.concat( args, " " );
-	
-			CAKE.SetCharField(ply, "description", Desc );
-	
-	return;
-end
-concommand.Add( "rp_setdescription", ccSetDescription );
-
-function ccSetBirthPlace( ply, cmd, args )
-
-	local birthplace = args[ 1 ];
-	
-	if( ply:GetNWInt( "charactercreate" ) == 1 ) then
-	
-			CAKE.SetCharField(ply, "birthplace", birthplace );	
-	end
-	
-	return;
-end
-concommand.Add( "rp_setbirthplace", ccSetBirthPlace );
 
 function ccSetGender( ply, cmd, args )
 
@@ -81,19 +46,6 @@ function ccSetGender( ply, cmd, args )
 	return;
 end
 concommand.Add( "rp_setgender", ccSetGender );
-
-function ccSetAlignment( ply, cmd, args )
-
-	local alignment = args[ 1 ];
-	
-	if( ply:GetNWInt( "charactercreate" ) == 1 ) then
-	
-			CAKE.SetCharField(ply, "alignment", alignment );	
-	end
-	
-	return;
-end
-concommand.Add( "rp_setalignment", ccSetAlignment );
 
 -- Start Creation
 function ccStartCreate( ply, cmd, args )
@@ -156,8 +108,6 @@ function ccFinishCreate( ply, cmd, args )
 		ply:Spawn( );
 		
 		ply:ConCommand( "fadein" );
-		
-		--datastream.StreamToClients( ply, "EnterGearEdit", {} )
 		
 		CAKE.CallHook( "CharacterCreation_Finished", ply, ply:GetNWString( "uid" ) );
 		

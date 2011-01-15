@@ -71,7 +71,7 @@ function CAKE.SetClothing( ply, body, helmet, glove )
 	end
 	
 	CAKE.CalculateEncumberment( ply )
-	datastream.StreamToClients( ply, "recieveclothing",  ply.Clothing )
+	CAKE.SendClothingToClient( ply )
 		
 end
 	
@@ -184,10 +184,26 @@ local function ccSetClothing( ply, cmd, args )
 	CAKE.SetClothing( ply, body, helmet, gloves )
 	CAKE.SetCharField( ply, "clothing", body )
 	CAKE.SetCharField( ply, "helmet", helmet )
-	datastream.StreamToClients( ply, "recieveclothing",  ply.Clothing )
 
 end
 concommand.Add( "rp_setclothing", ccSetClothing );
+
+function CAKE.SendClothingToClient( ply )
+	
+	if ply.Clothing then
+		umsg.Start( "clearclothing", ply )
+		umsg.End()
+
+		for k, v in pairs( ply.Clothing ) do
+			if ValidEntity( v ) then
+				umsg.Start( "addclothing", ply )
+					umsg.Entity( v )
+				umsg.End()
+			end
+		end
+	end
+
+end
 
 function PLUGIN.Init()
 	

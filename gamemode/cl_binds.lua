@@ -72,12 +72,16 @@ function GM:ScoreboardShow( )
 	local lastpos = 0
 	for k, v in pairs( CAKE.MenuTabs ) do
 		lastpos = lastpos + 27
-		local label = vgui.Create( "DButton", QuickMenu )
+		local label = vgui.Create( "DImageButton", QuickMenu )
+		label:SetMaterial( "tiramisu/tabbutton.vmt" )
 		label:SetText( k )
 		label:SetSize( 120, 25 )
 		label:SetTextColor( Color( 255, 255, 255 ) )
 		label.DoClick = function()
 			CAKE.SetActiveTab(k)
+		end
+		label.PaintOver = function()
+			draw.DrawText(k, "DefaultSmallDropShadow", 60, 6, Color(255, 255, 255, 255),TEXT_ALIGN_CENTER)
 		end
 		label:SetPos( 5, lastpos)
 		label:SetExpensiveShadow( 1, Color( 10, 10, 10, 255 ) )

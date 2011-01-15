@@ -184,11 +184,11 @@ concommand.Add( "rp_flag", ccFlag );
 
 function ccLockDoor( ply, cmd, args )
 	
-	local entity = ents.GetByIndex( tonumber( args[ 1 ] ) );
+	local door = ents.GetByIndex( tonumber( args[ 1 ] ) );
 	
-	if( CAKE.IsDoor( entity ) ) then
+	if( CAKE.IsDoor( door ) ) then
 		if( door.owner != nil ) and door.owner == ply then
-			entity:Fire( "lock", "", 0 );
+			door:Fire( "lock", "", 0 );
 		else
 			CAKE.SendChat( ply, "This is not your door!" );
 		end
@@ -199,11 +199,11 @@ concommand.Add( "rp_lockdoor", ccLockDoor );
 
 function ccUnLockDoor( ply, cmd, args )
 	
-	local entity = ents.GetByIndex( tonumber( args[ 1 ] ) );
+	local door = ents.GetByIndex( tonumber( args[ 1 ] ) );
 	
-	if( CAKE.IsDoor( entity ) ) then
+	if( CAKE.IsDoor( door ) ) then
 		if( door.owner != nil ) and door.owner == ply then
-			entity:Fire( "unlock", "", 0 );
+			door:Fire( "unlock", "", 0 );
 		else
 			CAKE.SendChat( ply, "This is not your door!" );
 		end
@@ -387,6 +387,7 @@ function ccUseOnInventory( ply, cmd, args )
 			ply:GiveItem( item.Class );
 			CAKE.SavePlayerData( ply )
 		else
+			ply:TakeItem( item.Class )
 			item:UseItem( ply );
 		end
 		
@@ -476,13 +477,6 @@ local function ccRemoveChar( ply, cmd, args )
 end
 concommand.Add( "rp_removechar", ccRemoveChar )
 
-/*
-local function ccEditGear( ply, cmd, args )
-
-	local ent = ents.GetByIndex( tonumber( args[ 1 ] ) )
-	datastream.StreamToClients( ply, "EditGear", { ["entity"] = ent });
-end
-concommand.Add( "rp_editgear", ccEditGear )*/
 
 local function ccKnockOut( ply, cmd, args )
 

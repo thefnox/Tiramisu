@@ -1,6 +1,7 @@
 CLPLUGIN.Name = "Edit Gear"
 CLPLUGIN.Author = "FNox"
 
+CAKE.Gear = {}
 CAKE.Clothing = "none"
 CAKE.Helmet = "none"
 
@@ -56,17 +57,19 @@ local function HandleGearEditing( entity, bone, item )
 		panel:EnableHorizontal( true )
 
 		for k, v in pairs(InventoryTable) do
-		    local spawnicon = vgui.Create( "SpawnIcon");
-		    spawnicon:SetIconSize( 64 )
-		    spawnicon:SetModel(v.Model);
-		    spawnicon:SetToolTip(v.Description)
-		    spawnicon.DoClick = function()
-		        RunConsoleCommand( "rp_setgear", v.Class, bone )
-		        frame:Remove()
-		        frame = nil
+			if !string.match( v.Class, "clothing" ) and !string.match( v.Class, "helmet" ) then
+			    local spawnicon = vgui.Create( "SpawnIcon");
+			    spawnicon:SetIconSize( 64 )
+			    spawnicon:SetModel(v.Model);
+			    spawnicon:SetToolTip(v.Description)
+			    spawnicon.DoClick = function()
+			        RunConsoleCommand( "rp_setgear", v.Class, bone )
+			        frame:Remove()
+			        frame = nil
 
-		    end
-		    panel:AddItem( spawnicon )
+			    end
+			    panel:AddItem( spawnicon )
+			end
 		end
 	end
 
@@ -166,39 +169,22 @@ function EditGear()
 	GearTree:SetPadding( 5 )
 	GearTree:SetSize( 290, 517 )
 
-	local gear = {}
-	local num
-	if CAKE.Gear then
-		for k, v in pairs( CAKE.Gear ) do
-			if !gear[ v.bone ] then
-				gear[ v.bone ] = {}
-			end
-			num = #gear[ v.bone ] + 1
-			gear[ v.bone ][ num ] = {}
-			gear[ v.bone ][ num ].item = v.item
-			if ValidEntity( v.entity ) then
-				gear[ v.bone ][ num ].entity = v.entity
-			end
-		end
-	end
-
-
 	local bones = GearTree:AddNode("Bones")
 	local node
 	local node2
-	for k, v in pairs( BoneList ) do
-		node = bones:AddNode( v )
-		if gear and gear[ string.lower( v ) ] then
-			for k2, v2 in pairs( gear[ string.lower( v ) ] ) do
-				node2 = node:AddNode( v2.item )
+	for _, bone in pairs( BoneList ) do
+		node = bones:AddNode( bone )
+		if CAKE.Gear and CAKE.Gear[ string.lower( bone ) ] then
+			for __, tbl in pairs( CAKE.Gear[ string.lower( bone ) ] ) do
+				node2 = node:AddNode( tbl.item )
 				node2.DoClick = function()
-					HandleGearEditing( v2.entity, v2.item, string.lower( v )  )
+					HandleGearEditing( tbl.entity, tbl.item, string.lower( bone ) )
 				end
 			end
 		end
 		node2 = node:AddNode( "Create New Gear..." )
 		node2.DoClick = function()
-			HandleGearEditing( false, string.lower( v ) )
+			HandleGearEditing( false, string.lower( bone ) )
 		end
 	end
 
@@ -266,6 +252,8 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin )
 	removebutton:SetText( "Remove Gear" )
 	removebutton.DoClick = function( button )
 		RunConsoleCommand( "rp_removegear", entity:EntIndex() )
+		EditorFrame:Remove()
+		EditorFrame = nil
 	end
 	EditList:AddItem( removebutton )
 	
@@ -449,26 +437,48 @@ function CloseGear()
 end
 CAKE.RegisterMenuTab( "Character Editor", EditGear, CloseGear )
 
-local function RecieveGear( handler, id, encoded, decoded )
+usermessage.Hook( "cleargear", function( um )
+	CAKE.Gear = {}
+end)
 
-	CAKE.Gear = decoded
+usermessage.Hook( "clearclothing", function( um )
+	CAKE.ClothingTbl = {}
+end)
 
-end
-datastream.Hook( "recievegear", RecieveGear );
 
-local function StreamGearEditor( handler, id, encoded, decoded )
+usermessage.Hook( "addgear", function( um )
 
-	StartGearEditor( decoded.entity, decoded.item, decoded.bone, decoded.offset, decoded.angle, decoded.scale, decoded.skin )
+	local entity = um:ReadEntity()
+	local item = um:ReadString()
+	local bone = um:ReadString()
 
-end
-datastream.Hook( "editgear", StreamGearEditor )
+	if CAKE.Gear and !CAKE.Gear[ bone ] then
+		CAKE.Gear[ bone ] = {}
+	end
 
-local function RecieveClothing( handler, id, encoded, decoded )
+	local tbl = {}
+	tbl.item = item
+	tbl.entity = entity
 
-	CAKE.ClothingTbl = decoded
+	table.insert( CAKE.Gear[ bone ], tbl )
 
-end
-datastream.Hook( "recieveclothing", RecieveClothing );
+end)
+
+usermessage.Hook( "addclothing", function( um )
+
+	local entity = um:ReadEntity()
+
+	table.insert( CAKE.ClothingTbl, entity )
+
+end)
+
+usermessage.Hook( "editgear", function( um )
+	
+	local ent = um:ReadEntity()
+
+	StartGearEditor( ent, um:ReadString(), um:ReadString(), ent:GetDTVector( 1 ), ent:GetDTAngle( 1 ), ent:GetDTVector( 2 ), ent:GetSkin() )
+
+end)
 
 
 function CLPLUGIN.Init()

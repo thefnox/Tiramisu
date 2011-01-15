@@ -17,21 +17,12 @@ local headpos, headang
 local tracedata = {}
 local ignoreent
 
-local function RecieveViewRagdoll( handler, id, encoded, decoded )
-	CAKE.ViewRagdoll = decoded.ragdoll
-	if ValidEntity( CAKE.ViewRagdoll ) then
-		CAKE.ViewRagdoll.Clothing = decoded.clothing
-	end
-end
-datastream.Hook( "RecieveViewRagdoll", RecieveViewRagdoll )
+usermessage.Hook( "recieveragdoll", function( um )
+	
+	CAKE.ViewRagdoll = um:ReadEntity()
 
-local function RecieveUnconciousRagdoll( handler, id, encoded, decoded )
-	CAKE.ViewRagdoll = decoded.ragdoll
-	if ValidEntity( CAKE.ViewRagdoll ) then
-		CAKE.ViewRagdoll.Clothing = decoded.clothing
-	end
-end
-datastream.Hook( "RecieveUnconciousRagdoll", RecieveUnconciousRagdoll )
+end)
+
 
 local function drawlocalplayer()
 
@@ -107,7 +98,6 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 end)
 
 local keydown = false
-local editoron = false
 timer.Create( "LocalMouseControlCam", 0.01, 0, function()
 	
 	keydown = input.IsMouseDown(MOUSE_MIDDLE)
@@ -120,9 +110,7 @@ timer.Create( "LocalMouseControlCam", 0.01, 0, function()
 			CAKE.FreeScroll = true
 		end
 	else
-		if keydown then
-			gui.EnableScreenClicker( true )
-		else
+		if !keydown then
 			CAKE.FreeScroll = false
 			gui.EnableScreenClicker( false )
 		end

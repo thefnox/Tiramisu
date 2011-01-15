@@ -132,15 +132,11 @@ local function ccSetGear( ply, cmd, args )
 	local bone = string.lower( args[2] ) or CAKE.ItemData[ item ].Bone or "pelvis"
 	local entity = CAKE.HandleGear( ply, item, bone )
 	local tbl = {}
-	tbl[ "entity" ] = entity
-	tbl[ "bone" ] = bone
-	tbl[ "item" ] = item
-	tbl[ "offset"] = entity:GetDTVector( 1 )
-	tbl[ "angle"] = entity:GetDTAngle( 1 )
-	tbl[ "scale" ] = entity:GetDTVector( 2 )
-	tbl[ "skin" ] = entity:GetSkin()
-
-	datastream.StreamToClients( ply, "editgear", tbl )
+	umsg.Start( "editgear", ply )
+		umsg.Entity( entity )
+		umsg.String( item )
+		umsg.String( bone )
+	umsg.End( )
 
 	CAKE.SaveGear( ply )
 	CAKE.SendGearToClient( ply )
@@ -289,18 +285,18 @@ function CAKE.SendGearToClient( ply )
 	local newtable = {}
 	local num
 	if ply:IsCharLoaded() and ply.Gear then
+		umsg.Start( "cleargear", ply )
+		umsg.End()
 		for k, v in pairs( ply.Gear ) do
 			if ValidEntity( v ) then
-				num = #newtable + 1
-				newtable[ num ] = {}
-				newtable[ num ].item = v.item
-				newtable[ num ].bone = v.bone
-				newtable[ num ].entity = v
+				umsg.Start( "addgear", ply )
+					umsg.Entity( v )
+					umsg.String( v.item )
+					umsg.String( v.bone )
+				umsg.End( )
 			end
 		end
 	end
-
-	datastream.StreamToClients( ply, "recievegear",  newtable )
 
 end
 

@@ -341,31 +341,3 @@ local function ccPromote( ply, cmd, args )
 	
 end
 concommand.Add( "rp_promote", ccPromote )
-
-local function GroupSpawnHook( ply )
-
-	if ply:IsCharLoaded() then
-		if CAKE.GetCharField( ply, "group" ) == "None" or CAKE.GetCharField( ply, "group" ) == "none" then
-			datastream.StreamToClients( ply, "recievemygroup", {} )
-		else
-			local name = CAKE.GetCharField( ply, "group" )
-			local rank = CAKE.GetCharField( ply, "grouprank" )
-			local rankname = CAKE.GetRankPermission( name, rank, "formalname" )
-			local type = CAKE.GetGroupField( name, "Type" )
-			local founder = CAKE.GetGroupField( name, "Founder" )
-			local image = CAKE.GetGroupField( name, "Image" )
-			local rankpermissions = CAKE.GetRankPermissions( name, rank )
-			datastream.StreamToClients( ply, "recievemygroup", {
-				[ "Name" ]		= name,
-				[ "Type" ]		= type,
-				[ "Founder" ]	= founder,
-				[ "Rank" ]		= rankname,
-				[ "RankPermissions" ] = rankpermissions,
-				[ "Inventory" ]	= {},
-				[ "Image" ] = image
-			})
-		end
-	end
-
-end
-hook.Add( "PlayerSpawn", "TiramisuGroupSpawnHook", GroupSpawnHook )

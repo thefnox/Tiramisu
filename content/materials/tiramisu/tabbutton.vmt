@@ -1,0 +1,5 @@
+"UnlitGeneric"
+{
+	"$basetexture" "tiramisu/tabbutton"
+	"$translucent" 1
+}

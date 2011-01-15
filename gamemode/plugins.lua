@@ -9,6 +9,28 @@
 
 
 CAKE.Plugins = {  };
+CAKE.CurrencyData = {  };
+
+function CAKE.LoadCurrency( schema, filename )
+
+	local path = "schemas/" .. schema .. "/currency/" .. filename;
+	
+	CURRENCY = {  };
+	
+	include( path );
+	
+	CAKE.CurrencyData[ CURRENCY.Name ] = CURRENCY;
+	
+end
+
+function CAKE.LoadRClick( schema, filename )
+
+	local path = "schemas/" .. schema .. "/rclick/" .. filename;
+	print( path )
+	AddResource("lua", path)
+	
+end
+
 
 function CAKE.LoadPlugin( schema, filename )
 	

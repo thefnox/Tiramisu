@@ -39,11 +39,7 @@ include( "cl_hud.lua" );
 include( "cl_binds.lua" );
 include( "cl_charactercreate.lua" );
 include( "cl_playermenu.lua" );
-/*
-include( "boneanimlib/cl_boneanimlib.lua" )
-include( "boneanimlib/sh_boneanimlib.lua" )*/
 include( "animations.lua" )
-include( "overv_3d2d_lib.lua" )
 
 CAKE.Loaded = true;
 
@@ -281,15 +277,13 @@ function RemoveChar( um )
 end
 usermessage.Hook( "RemoveChar", RemoveChar );
 
-function AddCurrency( ply, handle, id, encoded, decoded )
+usermessage.Hook( "addcurrency", function( um )
 	local currencydata = {}
-	currencydata.name = encoded.name
-	currencydata.centenials = encoded.centenials
-	currencydata.slang = encoded.slang
-	currencydata.abr   = encoded.abr
+	currencydata.name = um:ReadString()
+	currencydata.slang = um:ReadString()
+	currencydata.abr   = um:ReadString()
 	CurrencyTable = currencydata
-end
-datastream.Hook( "addcurrency", AddCurrency )
+end)
 
 Schemas = {}
 
@@ -307,20 +301,6 @@ usermessage.Hook("addschema", AddSchema)
 		[ "RankPermissions" ] = string.Explode( ",", data:ReadString() ),
 		[ "Inventory" ]	= {}
 */
-
-local function RecieveMyGroup( handler, id, encoded, decoded )
-	
-	CAKE.MyGroup.Name = decoded.Name or false
-	CAKE.MyGroup.Type = decoded.Type or ""
-	CAKE.MyGroup.Founder = decoded.Founder or ""
-	CAKE.MyGroup.Rank = decoded.Rank or ""
-	CAKE.MyGroup.RankPermissions = decoded.RankPermissions or {}
-	CAKE.MyGroup.Inventory = decoded.Inventory or {}
-	CAKE.MyGroup.Image = decoded.Image or ""
-
-end
-datastream.Hook("recievemygroup", RecieveMyGroup )
-
 
 RclickTable = {}
 

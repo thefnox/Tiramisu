@@ -79,7 +79,9 @@ function CAKE.DeathMode( ply )
 	ply.Clothing = nil
 	ply.Gear = nil
 	
-	datastream.StreamToClients( ply, "RecieveViewRagdoll", { ["ragdoll"] = rag, ["clothing"] = rag.clothing } )
+	umsg.Start( "recieveragdoll", ply )
+		umsg.Entity( rag )
+	umsg.End()
 	
 	--ply:SetViewEntity( rag );
 
@@ -157,7 +159,9 @@ function CAKE.UnconciousMode( ply )
 		ply.Gear = nil
 		ply:SetNWBool( "unconciousmode", true ) 
 		
-		datastream.StreamToClients( ply, "RecieveViewRagdoll", { ["ragdoll"] = rag, ["clothing"] = rag.clothing } )
+		umsg.Start( "recieveragdoll", ply )
+			umsg.Entity( rag )
+		umsg.End()
 		
 		ply.unconciousrag = rag;
 		
@@ -177,7 +181,9 @@ function CAKE.UnconciousMode( ply )
 		if ply:GetActiveWeapon():IsValid() then
 			ply:GetActiveWeapon():SetNoDraw( false )
 		end
-		datastream.StreamToClients( ply, "RecieveViewRagdoll", { ["ragdoll"] = false, ["clothing"] = false } )
+		umsg.Start( "recieveragdoll", ply )
+			umsg.Entity( nil )
+		umsg.End()
 		if ply.unconciousrag then
 			ply.unconciousrag:Remove()
 		end

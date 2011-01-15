@@ -39,18 +39,12 @@ include( "util.lua" ); -- Functions
 include( "charactercreate.lua" ); -- Character Creation functions
 include( "items.lua" ); -- Items system
 include( "schema.lua" ); -- Schema system
-include( "rclick.lua" ) -- Rightclick system
-include( "currency.lua" ) -- Currency System
 include( "plugins.lua" ); -- Plugin system
 include( "teams.lua" ); -- Teams system
 include( "client_resources.lua" ); -- Sends files to the client
 include( "animations.lua" ); -- Animations
 include( "doors.lua" ); -- Doors
-include( "sql_main.lua" ); --MySQL handling
 include( "resources.lua" ) -- Automatic resource handling
-/*
-include( "boneanimlib/boneanimlib.lua" )
-include( "boneanimlib/sh_boneanimlib.lua" )*/
 
 CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ); -- Load the schema and plugins, this is NOT initializing.
 
@@ -111,17 +105,14 @@ function GM:PlayerInitialSpawn( ply )
 			
 		umsg.End( );
 	end
-	
+
 	for k, v in pairs( CAKE.CurrencyData ) do
-		datastream.StreamToClients( ply, "addcurrency", 
-		{ 
-			["name"] = v.Name, 
-			["centenials"] = v.Centenials,
-			["slang"] = v.Slang,
-			["abr"] = v.Abr
-		} );
+		umsg.Start( "addcurrency", ply )
+			umsg.String( v.Name )
+			umsg.String( v.Slang )
+			umsg.String( v.Abr )
+		umsg.End()
 	end
-	
 
 	
 	-- Set some default variables
@@ -200,7 +191,9 @@ function GM:PlayerSpawn( ply )
 	
 	CAKE.SavePlayerData( ply )
 	
-	datastream.StreamToClients( ply, "RecieveViewRagdoll", { ["ragdoll"] = false } ) --This is to reset the player's view back to their character after they die.
+	umsg.Start( "recieveragdoll", ply )
+		umsg.Entity( nil )
+	umsg.End()--This is to reset the player's view back to their character after they die.
 	
 	ply:StripWeapons( );
 	
