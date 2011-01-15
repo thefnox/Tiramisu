@@ -52,8 +52,8 @@ function CAKE.GetRankField( name, rank, field )
 end
 
 function CAKE.SetRankField(name, rank, field, value)
-	if CAKe.Groups[name] and CAKE.Groups[name]["Ranks"][rank] then
-		return CAKE.Groups[name]["Ranks"][rank][field] = value
+	if CAKE.Groups[name] and CAKE.Groups[name]["Ranks"][rank] then
+		CAKE.Groups[name]["Ranks"][rank][field] = value
 	end
 end
 
@@ -91,7 +91,8 @@ end
 
 function CAKE.SetCharGroup( name, ply )
 	if CAKE.GetCharField(ply, "group") == "none" then
-		
+	
+	end
 end
 
 function CAKE.RemoveCharGroup( ply )

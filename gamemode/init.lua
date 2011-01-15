@@ -219,8 +219,6 @@ function GM:PlayerSpawn( ply )
 	ply:ChangeMaxRunSpeed(CAKE.ConVars[ "RunSpeed" ] - ply:MaxRunSpeed());
 	ply:SetAiming( false )
 	
-	ply:RefreshExtraInventory( )
-	
 	self.BaseClass:PlayerSpawn( ply )
 	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] );
 	CAKE.CallHook( "PlayerSpawn", ply )

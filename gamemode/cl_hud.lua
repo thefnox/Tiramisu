@@ -16,10 +16,23 @@ surface.CreateFont("ChatFont", ScreenScale(72), 400, true, false, "TiramisuChatF
 
 local function DrawTime( )
 
+	surface.SetFont( "HudHintTextLarge" )
+
+	local struc = {}
+	struc.pos = { 10,10 } -- Pos x, y
+	struc.color = Color(255,255,255,255 ) -- Red
+	struc.font = "HudHintTextLarge" -- Font
+	struc.xalign = TEXT_ALIGN_LEFT -- Horizontal Alignment
+	struc.yalign = TEXT_ALIGN_LEFT -- Vertical Alignment
+
 	if GetGlobalString( "time" ) != "Loading.." then
-		draw.DrawText( CAKE.FindDayName() .. ", " .. GetGlobalString( "time" ) , "PlInfoFont", 10, 10, Color( 255,255,255,255 ), 0 );
+		struc.text = CAKE.FindDayName() .. ", " .. GetGlobalString( "time" )
+		draw.TextShadow( struc,  3,  150 )
+		--draw.DrawText( CAKE.FindDayName() .. ", " .. GetGlobalString( "time" ) , "PlInfoFont", 10, 10, Color( 255,255,255,255 ), 0 );
 	else
-		draw.DrawText( GetGlobalString( "time" ), "PlInfoFont", 10, 10, Color( 255,255,255,255 ), 0 );
+		struc.text = GetGlobalString( "time" )
+		draw.TextShadow( struc,  3,  180 )
+		--draw.DrawText( GetGlobalString( "time" ), "PlInfoFont", 10, 10, Color( 255,255,255,255 ), 0 );
 	end
 	
 end
@@ -168,7 +181,7 @@ end
 
 function GM:HUDPaint( )
 	
-	--DrawTime( );
+	DrawTime( );
 	--DrawPlayerInfo( );
 	DrawTargetInfo( );
 	

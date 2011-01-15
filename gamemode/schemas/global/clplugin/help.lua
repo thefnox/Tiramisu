@@ -118,7 +118,7 @@ function OpenHelp()
 	local label = vgui.Create( "DLabel" )
 	label:SetText( abouttext )
 	label:SetWrap( true )
-	label:SetSize( 380, 300 )
+	label:SetSize( 380, 600 )
 	label:SetTextColor( Color( 255, 255, 255, 255 ))
 	apanel:AddItem( label )
 
