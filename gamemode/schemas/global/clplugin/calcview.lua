@@ -19,7 +19,7 @@ local ignoreent
 
 usermessage.Hook( "recieveragdoll", function( um )
 	
-	CAKE.ViewRagdoll = um:ReadEntity()
+	CAKE.ViewRagdoll = ents.GetByIndex( um:ReadShort() )
 
 end)
 

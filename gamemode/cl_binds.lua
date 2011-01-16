@@ -99,7 +99,7 @@ function GM:ScoreboardShow( )
 	end
 
 	local PlayerInfo = vgui.Create( "DPanelList", VitalsMenu )
-	PlayerInfo:SetSize( 340, 200 )
+	PlayerInfo:SetSize( 240, 200 )
 	PlayerInfo:SetPos( 0, 23 )
 	PlayerInfo:SetPadding(10);
 	PlayerInfo:SetSpacing(10);

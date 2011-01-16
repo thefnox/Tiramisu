@@ -87,7 +87,7 @@ function ccAdmin( ply, cmd, args )
 		
 	else	
 	
-		if CAKE.PlayerRank(ply) > 0 then -- We're dealing with an admin.
+		if CAKE.PlayerRank(ply) >= 0 then -- We're dealing with an admin.
 			
 			if CAKE.PlayerRank(ply) > cmd.MinRank then
 			

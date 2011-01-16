@@ -167,22 +167,19 @@ usermessage.Hook( "ConfirmCharRemoval", ConfirmCharRemove );
 
 function message_GetPlayerInfo( um )
 	local target = um:ReadEntity()
-	local birthplace = um:ReadString()
 	local gender = um:ReadString()
-	local description = um:ReadString()
 	local age = um:ReadString()
-	local alignment = um:ReadString()
-	PlayerInfo = vgui.Create( "DFrame" )
-	PlayerInfo:SetPos( ScrW() / 2 - 320, ScrH() / 2 - 240 )
-	PlayerInfo:SetSize( 536, 350 )
+	PlayerInfo = vgui.Create( "DFrameTransparent" )
+	PlayerInfo:Center()
+	PlayerInfo:SetSize( 450, 350 )
 	PlayerInfo:SetTitle( "Character Info: " .. target:Nick() )
 	PlayerInfo:SetVisible( true )
 	PlayerInfo:SetDraggable( true )
 	PlayerInfo:ShowCloseButton( true )
 	PlayerInfo:MakePopup()
-	PlayerPanel = vgui.Create( "DPanel", PlayerInfo )
-	PlayerPanel:SetPos( 2, 23 )
-	PlayerPanel:SetSize( 532, 325 )
+	PlayerPanel = vgui.Create( "DPanelList", PlayerInfo )
+	PlayerPanel:SetPos( 5, 28 )
+	PlayerPanel:SetSize( 420, 318 )
 	PlayerPanel.Paint = function()
 		surface.SetDrawColor( 50, 50, 50, 255 )
 		surface.DrawRect( 0, 0, PlayerPanel:GetWide(), PlayerPanel:GetTall() )
@@ -191,47 +188,38 @@ function message_GetPlayerInfo( um )
 	namelabel:SetPos( 5, 3 )
 	namelabel:SetSize( 150, 20 )
 	namelabel:SetText( target:Nick() )
+
+	PlayerPanel:AddItem( namelabel)
 	
 	local genderlabel = vgui.Create( "DLabel", PlayerPanel )
 	genderlabel:SetPos( 5, 63 )
 	genderlabel:SetSize( 150, 20 )
 	genderlabel:SetText( "Gender : " .. gender )
-	
-	local namelabel = vgui.Create( "DLabel", PlayerPanel )
-	namelabel:SetPos( 5, 33 )
-	namelabel:SetSize( 150, 20 )
-	namelabel:SetText( "Birthplace : " .. birthplace )
+
+	PlayerPanel:AddItem( genderlabel)
 	
 	local agelabel = vgui.Create( "DLabel", PlayerPanel )
 	agelabel:SetPos( 5, 93 )
 	agelabel:SetSize( 150, 20 )
 	agelabel:SetText( "Age : " .. age )
-	
-	local alignlabel = vgui.Create( "DLabel", PlayerPanel )
-	alignlabel:SetPos( 5, 153 )
-	alignlabel:SetSize( 150, 20 )
-	alignlabel:SetText( "Alignment : " .. alignment )
+
+	PlayerPanel:AddItem( agelabel)
 	
 	local titlelabel = vgui.Create( "DLabel", PlayerPanel )
 	titlelabel:SetPos( 5, 183 )
 	titlelabel:SetSize( 150, 20 )
 	titlelabel:SetText( target:GetNWString( "title" ) )
+
+	PlayerPanel:AddItem( titlelabel)
 	
 	local title2label = vgui.Create( "DLabel", PlayerPanel )
 	title2label:SetPos( 5, 213 )
 	title2label:SetSize( 150, 20 )
 	title2label:SetText( target:GetNWString( "title2" ) )
-	
-	local desctext = vgui.Create( "DTextEntry", PlayerPanel )
-	desctext:SetPos( 5 , 243 )
-	desctext:SetSize( 200, 75 )
-	desctext:SetMultiline( true )
-	desctext:SetEditable( false )
-	desctext:SetText( description )
+	PlayerPanel:AddItem( title2label)
 	
 	local mdlPanel = vgui.Create( "DModelPanel", PlayerPanel )
-	mdlPanel:SetSize( 400, 400 )
-	mdlPanel:SetPos( 180, -30 )
+	mdlPanel:SetSize( 200, 200 )
 	mdlPanel:SetModel( target:GetModel() )
 	mdlPanel:SetAnimSpeed( 0.0 )
 	mdlPanel:SetAnimated( false )
@@ -247,6 +235,8 @@ function message_GetPlayerInfo( um )
 		Entity:SetAngles( Angle( 0, 0, 0) )
 		
 	end
+
+	PlayerPanel:AddItem( mdlPanel)
 end
 usermessage.Hook( "GetPlayerInfo", message_GetPlayerInfo );
 

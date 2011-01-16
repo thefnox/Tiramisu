@@ -4,6 +4,7 @@ local function OpenCharacter()
 
 	PlayerMenu = vgui.Create( "DFrameTransparent" )
 	--PlayerMenu:SetPos( ScrW() / 2 - 320, ScrH() / 2 - 240 )
+	PlayerMenu:NoClipping( false );
 	PlayerMenu:SetSize( 640, 480 )
 	PlayerMenu:SetTitle( "Characters" )
 	PlayerMenu:SetBackgroundBlur( true )

@@ -612,7 +612,7 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 				model = exp2[2]
 				seq = exp[2]
 				if( ply:GetModel() != string.lower(model) and !ply.SpecialModel and ply:GetNWBool( "charloaded", false )) then
-					--print( "Switching model to " .. model )
+					print( "Switching model to " .. model )
 					--print(ply.SpecialModel)
 					--print(ply:GetModel())
 					ply:SetModel( model )
@@ -759,11 +759,11 @@ function GM:HandlePlayerJumping( ply ) --Handles jumping
                 end
                 
                 if ply.Jumping then --If we're still on a part of the jumping sequence, that means we're either on the process of jumping or landing.
-					if !ply.Landing then 
-                        ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "jump" ] )
-					else
-						ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "land" ] )
-					end
+		      if !ply.Landing then 
+                            ply.CalcIdeal = ACT_JUMP
+		      else
+						ply.CalcIdeal = ACT_LAND
+			end
                     return true
                 end
         end

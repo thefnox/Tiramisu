@@ -179,6 +179,8 @@ function GM:PlayerSpawn( ply )
 		return; -- Player data isn't loaded. This is an initial spawn.
 	end
 
+	ply:DrawShadow( false )
+
 	CAKE.SpawnPointHandle(ply)
 	
 	if( ply:IsUserGroup("admin") )	then
@@ -192,7 +194,7 @@ function GM:PlayerSpawn( ply )
 	CAKE.SavePlayerData( ply )
 	
 	umsg.Start( "recieveragdoll", ply )
-		umsg.Entity( nil )
+		umsg.Short( nil )
 	umsg.End()--This is to reset the player's view back to their character after they die.
 	
 	ply:StripWeapons( );

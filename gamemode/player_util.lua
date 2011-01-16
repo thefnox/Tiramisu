@@ -80,7 +80,7 @@ function CAKE.DeathMode( ply )
 	ply.Gear = nil
 	
 	umsg.Start( "recieveragdoll", ply )
-		umsg.Entity( rag )
+		umsg.S( rag )
 	umsg.End()
 	
 	--ply:SetViewEntity( rag );
@@ -160,7 +160,7 @@ function CAKE.UnconciousMode( ply )
 		ply:SetNWBool( "unconciousmode", true ) 
 		
 		umsg.Start( "recieveragdoll", ply )
-			umsg.Entity( rag )
+			umsg.Short( rag:EntIndex() )
 		umsg.End()
 		
 		ply.unconciousrag = rag;
@@ -182,7 +182,7 @@ function CAKE.UnconciousMode( ply )
 			ply:GetActiveWeapon():SetNoDraw( false )
 		end
 		umsg.Start( "recieveragdoll", ply )
-			umsg.Entity( nil )
+			umsg.Short( nil )
 		umsg.End()
 		if ply.unconciousrag then
 			ply.unconciousrag:Remove()
@@ -196,24 +196,6 @@ function CAKE.UnconciousMode( ply )
 	end
 end
 
-function ccGetCharInfo( ply, cmd, args )
-	
-	local target =  CAKE.FindPlayer( args[1] )
-	local birthplace = CAKE.GetCharField( target, "birthplace" )
-	local gender = CAKE.GetCharField( target, "gender" )
-	local description = CAKE.GetCharField( target, "description" )
-	local age = CAKE.GetCharField( target, "age" )
-	umsg.Start("GetPlayerInfo", ply)
-		umsg.Entity( target )
-		umsg.String( birthplace )
-		umsg.String( gender )
-		umsg.String( description )
-		umsg.String( age )
-		umsg.String( alignment )
-	umsg.End()
-	
-end
-concommand.Add( "rp_getcharinfo", ccGetCharInfo )
 
 local meta = FindMetaTable( "Player" );
 

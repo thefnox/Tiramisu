@@ -133,7 +133,7 @@ local function ccSetGear( ply, cmd, args )
 	local entity = CAKE.HandleGear( ply, item, bone )
 	local tbl = {}
 	umsg.Start( "editgear", ply )
-		umsg.Entity( entity )
+		umsg.Short( entity:EntIndex() )
 		umsg.String( item )
 		umsg.String( bone )
 	umsg.End( )
@@ -290,7 +290,7 @@ function CAKE.SendGearToClient( ply )
 		for k, v in pairs( ply.Gear ) do
 			if ValidEntity( v ) then
 				umsg.Start( "addgear", ply )
-					umsg.Entity( v )
+					umsg.Short( v:EntIndex() )
 					umsg.String( v.item )
 					umsg.String( v.bone )
 				umsg.End( )

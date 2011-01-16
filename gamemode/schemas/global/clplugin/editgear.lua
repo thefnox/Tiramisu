@@ -448,7 +448,7 @@ end)
 
 usermessage.Hook( "addgear", function( um )
 
-	local entity = um:ReadEntity()
+	local entity = ents.GetByIndex( um:ReadShort() )
 	local item = um:ReadString()
 	local bone = um:ReadString()
 
@@ -466,7 +466,7 @@ end)
 
 usermessage.Hook( "addclothing", function( um )
 
-	local entity = um:ReadEntity()
+	local entity = ents.GetByIndex( um:ReadShort() )
 
 	table.insert( CAKE.ClothingTbl, entity )
 
@@ -474,7 +474,7 @@ end)
 
 usermessage.Hook( "editgear", function( um )
 	
-	local ent = um:ReadEntity()
+	local ent = ents.GetByIndex( um:ReadShort() )
 
 	StartGearEditor( ent, um:ReadString(), um:ReadString(), ent:GetDTVector( 1 ), ent:GetDTAngle( 1 ), ent:GetDTVector( 2 ), ent:GetSkin() )
 

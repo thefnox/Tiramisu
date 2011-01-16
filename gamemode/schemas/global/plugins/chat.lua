@@ -328,7 +328,6 @@ local function Emote( ply, text )
 			CAKE.SendChat( v, "*** " ..  ply:Nick() .. " " .. text, "ChatFont" )
 		end
 	end
-	CAKE.DetectGesture( ply, text )
 	return "";
 end
 

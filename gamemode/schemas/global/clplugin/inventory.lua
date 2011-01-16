@@ -26,6 +26,8 @@ local function OpenInventory()
 	local elipsis = ""
 	
 	local availablespace = 10
+
+	local icons = {}
 	
 	local function drawinventoryicons()
 		availablespace = 10
@@ -43,58 +45,78 @@ local function OpenInventory()
 		
 		for k, v in pairs(InventoryTable) do
 			
-			if string.len( v.Name ) > 6 then
-				elipsis = "..."
+			if !icons[ v.Class ] then
+			
+				if string.len( v.Name ) > 6 then
+					elipsis = "..."
+				else
+					elipsis = ""
+				end
+				
+				local spawnicon = vgui.Create( "SpawnIcon");
+				spawnicon:SetSize( 64, 64 );
+				spawnicon:SetIconSize( 64 )
+				spawnicon.count = 1
+				spawnicon:SetModel(v.Model);
+				spawnicon:SetToolTip(v.Description);
+				icons[ v.Class ] = spawnicon
+				
+				local function DeleteMyself()
+					spawnicon.count = spawnicon.count - 1
+					if spawnicon.count < 1 then
+						grid:RemoveItem( spawnicon )
+					end
+				end
+				
+				spawnicon.DoClick = function ( btn )
+				
+					local ContextMenu = DermaMenu()
+						ContextMenu:AddOption("Drop", function() LocalPlayer():ConCommand("rp_dropitem " .. v.Class); DeleteMyself(); end);
+						ContextMenu:AddOption("Use", function() LocalPlayer():ConCommand("rp_useinventory " .. v.Class); DeleteMyself(); end);
+					ContextMenu:Open();
+					
+				end
+				
+				spawnicon.PaintOver = function()
+					surface.SetTextColor(Color(255,255,255,255));
+					surface.SetFont("TabLarge");
+					surface.SetTextPos(32 - surface.GetTextSize( string.sub( v.Name, 1, 6 ) .. elipsis) / 2, 5);
+					surface.DrawText( string.sub( v.Name, 1, 6 ) .. elipsis )
+					
+					surface.SetTextColor(Color(255,100,100,255))
+					surface.SetTextPos(52, 50);
+					surface.DrawText( v.Weight or 1 )
+
+					if spawnicon.count and spawnicon.count > 1 then
+						surface.SetTextColor(Color(100,255,100,255))
+						surface.SetTextPos(5, 50);
+						surface.DrawText( tostring( spawnicon.count ) )
+					end
+				end
+				
+				spawnicon.PaintOverHovered = function()
+					surface.SetTextColor(Color(255,255,255,255));
+					surface.SetFont("TabLarge");
+					surface.SetTextPos(32 - surface.GetTextSize( string.sub( v.Name, 1, 6 ) .. elipsis) / 2, 5);
+					surface.DrawText( string.sub( v.Name, 1, 6 ) .. elipsis )
+					
+					surface.SetTextColor(Color(255,100,100,255))
+					surface.SetTextPos(52, 50);
+					surface.DrawText( v.Weight or 1 )
+
+					if spawnicon.count and spawnicon.count > 1 then
+						surface.SetTextColor(Color(100,255,100,255))
+						surface.SetTextPos(5, 50);
+						surface.DrawText( tostring( spawnicon.count ) )
+					end
+				end
+				
+				availablespace = availablespace - v.Weight
+				
+				grid:AddItem(spawnicon);
 			else
-				elipsis = ""
+				icons[ v.Class ].count = icons[ v.Class ].count + 1
 			end
-			
-			local spawnicon = vgui.Create( "SpawnIcon");
-			spawnicon:SetSize( 64, 64 );
-			spawnicon:SetIconSize( 64 )
-			spawnicon:SetModel(v.Model);
-			spawnicon:SetToolTip(v.Description);
-			
-			local function DeleteMyself()
-				grid:RemoveItem( spawnicon )
-			end
-			
-			spawnicon.DoClick = function ( btn )
-			
-				local ContextMenu = DermaMenu()
-					ContextMenu:AddOption("Drop", function() LocalPlayer():ConCommand("rp_dropitem " .. v.Class); DeleteMyself(); end);
-					ContextMenu:AddOption("Use", function() LocalPlayer():ConCommand("rp_useinventory " .. v.Class); DeleteMyself(); end);
-				ContextMenu:Open();
-				
-			end
-			
-			spawnicon.PaintOver = function()
-				surface.SetTextColor(Color(255,255,255,255));
-				surface.SetFont("DefaultSmall");
-				surface.SetTextPos(32 - surface.GetTextSize( string.sub( v.Name, 1, 6 ) .. elipsis) / 2, 5);
-				surface.DrawText( string.sub( v.Name, 1, 6 ) .. elipsis )
-				
-				surface.SetTextColor(Color(255,255,255,255));
-				surface.SetFont("DefaultSmall");
-				surface.SetTextPos(60, 60);
-				surface.DrawText( v.Weight )
-			end
-			
-			spawnicon.PaintOverHovered = function()
-				surface.SetTextColor(Color(255,255,255,255));
-				surface.SetFont("DefaultSmall");
-				surface.SetTextPos(32 - surface.GetTextSize( string.sub( v.Name, 1, 6 ) .. elipsis ) / 2, 5);
-				surface.DrawText(string.sub( v.Name, 1, 6 ) .. elipsis)
-				
-				surface.SetTextColor(Color(255,255,255,255));
-				surface.SetFont("DefaultSmall");
-				surface.SetTextPos(60, 60);
-				surface.DrawText( v.Weight )
-			end
-			
-			availablespace = availablespace - v.Weight
-			
-			grid:AddItem(spawnicon);
 		end
 		
 		label:SetText( "Available space: " .. tostring( math.Clamp( availablespace, 0, 100 ) ) .. ".kg" )
