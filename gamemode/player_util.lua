@@ -79,10 +79,6 @@ function CAKE.DeathMode( ply )
 	ply.Clothing = nil
 	ply.Gear = nil
 	
-	umsg.Start( "recieveragdoll", ply )
-		umsg.S( rag )
-	umsg.End()
-	
 	--ply:SetViewEntity( rag );
 
 	rag:GetPhysicsObject():ApplyForceCenter( ply:GetVelocity() )
@@ -92,6 +88,10 @@ function CAKE.DeathMode( ply )
 	
 	ply:SetNWInt( "deathmode", 1 )
 	ply:SetNWInt("deathmoderemaining", CAKE.ConVars[ "Respawn_Timer" ] )
+
+	umsg.Start( "recieveragdoll", ply )
+		umsg.Short( rag:EntIndex() )
+	umsg.End()
 	
 	ply.deathtime = 0;
 	ply.nextsecond = CurTime( ) + 1;
