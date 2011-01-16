@@ -451,7 +451,7 @@ concommand.Add( "rp_closedchat", ccCloseChat );
 function ccConfirmRemoval( ply, cmd, args )
 	
 	local id = args[1]
-	local SteamID = CAKE.FormatSteamID( ply:SteamID() );
+	local SteamID = CAKE.FormatText( ply:SteamID() );
 	local name = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "name" ]
 	local gender = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "gender" ]
 	local age = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "age" ]

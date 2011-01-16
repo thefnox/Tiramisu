@@ -50,7 +50,7 @@ concommand.Add( "rp_setgender", ccSetGender );
 -- Start Creation
 function ccStartCreate( ply, cmd, args )
 	
-	local PlyCharTable = CAKE.PlayerData[ CAKE.FormatSteamID( ply:SteamID() ) ][ "characters" ]
+	local PlyCharTable = CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ]
 	
 	-- Find the highest Unique ID
 	local high = 0;
@@ -72,7 +72,7 @@ function ccStartCreate( ply, cmd, args )
 	ply:SetNWString( "uid", tostring(high) );
 	
 	ply:SetNWInt( "charactercreate", 1 );
-	CAKE.PlayerData[ CAKE.FormatSteamID( ply:SteamID() ) ][ "characters" ][ tostring(high) ] = {  }
+	CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ tostring(high) ] = {  }
 	
 	CAKE.CallHook( "CharacterCreation_Start", ply );
 	
@@ -86,7 +86,7 @@ function ccFinishCreate( ply, cmd, args )
 		
 		ply:SetNWInt( "charactercreate", 0 )
 		
-		local SteamID = CAKE.FormatSteamID( ply:SteamID() );
+		local SteamID = CAKE.FormatText( ply:SteamID() );
 		
 		for fieldname, default in pairs( CAKE.CharacterDataFields ) do
 		
@@ -119,7 +119,7 @@ concommand.Add( "rp_finishcreate", ccFinishCreate );
 function ccSelectChar( ply, cmd, args )
 
 	local uid = args[ 1 ];
-	local SteamID = CAKE.FormatSteamID(ply:SteamID());
+	local SteamID = CAKE.FormatText(ply:SteamID());
 	
 	if( CAKE.PlayerData[ SteamID ][ "characters" ][ uid ] != nil ) then
 	
@@ -158,7 +158,7 @@ function ccReady( ply, cmd, args )
 		-- Find the highest Unique ID and set it - just in case they want to create a character.
 		local high = 0;
 		
-		local PlyCharTable = CAKE.PlayerData[ CAKE.FormatSteamID( ply:SteamID() ) ]["characters"];
+		local PlyCharTable = CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ]["characters"];
 		
 		for k, v in pairs( PlyCharTable ) do
 		

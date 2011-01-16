@@ -387,11 +387,9 @@ end
 
 function Admin_ListItems( ply, cmd, args )
 	
-	local str = ""
-	for k, v in ipairs( CAKE.ItemData ) do
+	for k, v in pairs( CAKE.ItemData ) do
 	
-		str = str .. v.Class .. "\n"
-		CAKE.SendConsole( ply, str )
+		CAKE.SendConsole( ply, v.Class .. "\n" )
 	
 	end
 

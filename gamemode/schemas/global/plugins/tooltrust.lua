@@ -30,9 +30,9 @@ end
 
 function CAKE.CreateSpawnTable(ply)
 	
-	SpawnTable[CAKE.FormatSteamID(ply:SteamID())] = {};
+	SpawnTable[CAKE.FormatText(ply:SteamID())] = {};
 	
-	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	local spawntable = SpawnTable[CAKE.FormatText(ply:SteamID())];
 	spawntable.props = {};
 	spawntable.ragdolls = {};
 	spawntable.vehicles = {};
@@ -42,7 +42,7 @@ end
 
 function GM:PlayerSpawnProp(ply, mdl)
 
-	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	local spawntable = SpawnTable[CAKE.FormatText(ply:SteamID())];
 	
 	if CAKE.PlayerRank(ply) <= 2 then
 	
@@ -100,7 +100,7 @@ end
 
 function GM:PlayerSpawnRagdoll(ply, mdl)
 
-	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	local spawntable = SpawnTable[CAKE.FormatText(ply:SteamID())];
 	
 	if CAKE.PlayerRank(ply) <= 2 then
 	
@@ -158,7 +158,7 @@ end
 
 function GM:PlayerSpawnVehicle(ply)
 
-	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	local spawntable = SpawnTable[CAKE.FormatText(ply:SteamID())];
 	
 	if CAKE.PlayerRank(ply) <= 2 then
 	
@@ -216,7 +216,7 @@ end
 
 function GM:PlayerSpawnEffect(ply, mdl)
 
-	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	local spawntable = SpawnTable[CAKE.FormatText(ply:SteamID())];
 	
 	if CAKE.PlayerRank(ply) <= 2 then
 	
@@ -274,28 +274,28 @@ end
 
 function GM:PlayerSpawnedProp(ply, mdl, ent)
 
-	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	local spawntable = SpawnTable[CAKE.FormatText(ply:SteamID())];
 	table.insert(spawntable.props, ent);
 	
 end
 
 function GM:PlayerSpawnedRagdoll(ply, mdl, ent)
 
-	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	local spawntable = SpawnTable[CAKE.FormatText(ply:SteamID())];
 	table.insert(spawntable.ragdolls, ent);
 	
 end
 
 function GM:PlayerSpawnedVehicle(ply, ent)
 
-	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	local spawntable = SpawnTable[CAKE.FormatText(ply:SteamID())];
 	table.insert(spawntable.vehicles, ent);
 	
 end
 
 function GM:PlayerSpawnedEffect(ply, mdl, ent)
 
-	local spawntable = SpawnTable[CAKE.FormatSteamID(ply:SteamID())];
+	local spawntable = SpawnTable[CAKE.FormatText(ply:SteamID())];
 	table.insert(spawntable.effects, ent);
 	
 end

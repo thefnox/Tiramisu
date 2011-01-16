@@ -26,13 +26,14 @@ end
 
 -- This formats a player's SteamID for things such as data file names
 -- For example, STEAM_0:1:5947214 would turn into 015947214
-function CAKE.FormatSteamID( SteamID )
+function CAKE.FormatText( SteamID )
 
 	local SteamID = CAKE.NilFix(SteamID, "STEAM_0:0:0");
 
 	s = string.gsub( SteamID,"STEAM","" );
 	s = string.gsub( s,":","" );
 	s = string.gsub( s,"_","" );
+	s = string.gsub( s," ","" );
 	
 	return s;
 	
@@ -68,7 +69,7 @@ end
 
 function CAKE.HasSavedData( ply )
 
-	if( file.Exists( CAKE.Name .. "/PlayerData/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatSteamID( ply:SteamID() ) .. ".txt" ) ) then
+	if( file.Exists( CAKE.Name .. "/PlayerData/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" ) ) then
 		return true
 	end
 		
@@ -79,7 +80,7 @@ end
 -- Load a player's data
 function CAKE.LoadPlayerDataFile( ply )
 
-	local SteamID = CAKE.FormatSteamID( ply:SteamID( ) );
+	local SteamID = CAKE.FormatText( ply:SteamID( ) );
 	
 	CAKE.PlayerData[ SteamID ]  = {  };
 	
@@ -91,7 +92,7 @@ function CAKE.LoadPlayerDataFile( ply )
 		CAKE.DayLog( "script.txt", "Loading player data file for " .. ply:SteamID( ) );
 		
 		-- Read the data from their data file
-		local Data_Raw = file.Read( CAKE.Name .. "/PlayerData/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatSteamID( ply:SteamID() ) .. ".txt" );
+		local Data_Raw = file.Read( CAKE.Name .. "/PlayerData/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" );
 		
 		-- Convert the data into a table
 		local Data_Table = CAKE.NilFix(glon.decode( Data_Raw ), { });
@@ -194,7 +195,7 @@ end
 
 function CAKE.ResendCharData( ply ) -- Network all of the player's character data
 
-	local SteamID = CAKE.FormatSteamID( ply:SteamID() );
+	local SteamID = CAKE.FormatText( ply:SteamID() );
 	
 		if( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ] == nil ) then
 			return;
@@ -221,7 +222,7 @@ end
 
 function CAKE.SetPlayerField( ply, fieldname, data )
 
-	local SteamID = CAKE.FormatSteamID( ply:SteamID() );
+	local SteamID = CAKE.FormatText( ply:SteamID() );
 		-- Check to see if this is a valid field
 		if( CAKE.PlayerDataFields[ fieldname ] ) then
 		
@@ -239,7 +240,7 @@ end
 	
 function CAKE.GetPlayerField( ply, fieldname )
 
-	local SteamID = CAKE.FormatSteamID( ply:SteamID() );
+	local SteamID = CAKE.FormatText( ply:SteamID() );
 	
 		-- Check to see if this is a valid field
 		if( CAKE.PlayerDataFields[ fieldname ] ) then
@@ -255,7 +256,7 @@ end
 
 function CAKE.SetCharField( ply, fieldname, data )
 
-	local SteamID = CAKE.FormatSteamID( ply:SteamID() );
+	local SteamID = CAKE.FormatText( ply:SteamID() );
 		-- Check to see if this is a valid field
 		if( CAKE.CharacterDataFields[ fieldname ] ) then
 	
@@ -275,7 +276,7 @@ function CAKE.GetCharField( ply, fieldname )
 		-- Check to see if this is a valid field
 		if( CAKE.CharacterDataFields[ fieldname ] ) then
 	
-			return CAKE.NilFix(CAKE.PlayerData[ CAKE.FormatSteamID( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ], CAKE.CharacterDataFields[ fieldname ]);
+			return CAKE.NilFix(CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ], CAKE.CharacterDataFields[ fieldname ]);
 		 
 		else
 	
@@ -287,13 +288,13 @@ end
 
 function CAKE.SavePlayerData( ply )
 	if ValidEntity( ply ) then
-		local keys = glon.encode(CAKE.PlayerData[CAKE.FormatSteamID( ply:SteamID() )]);
-		file.Write( CAKE.Name .. "/PlayerData/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatSteamID( ply:SteamID() ) .. ".txt" , keys);
+		local keys = glon.encode(CAKE.PlayerData[CAKE.FormatText( ply:SteamID() )]);
+		file.Write( CAKE.Name .. "/PlayerData/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" , keys);
 	end
 end
 
 function CAKE.RemoveCharacter( ply, id )
-	local SteamID = CAKE.FormatSteamID( ply:SteamID() );
+	local SteamID = CAKE.FormatText( ply:SteamID() );
 	table.Empty( CAKE.PlayerData[ SteamID ][ "characters" ][ id ] )
 	CAKE.PlayerData[ SteamID ][ "characters" ][ id ] = nil;
 	CAKE.SavePlayerData( ply )

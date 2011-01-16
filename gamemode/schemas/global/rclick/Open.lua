@@ -48,9 +48,9 @@ function MakeContainerUp( um )
 	end
 	
 	ContainerInventory = vgui.Create( "DPanelList", ContainerPanel )
-	ContainerInventory:SetPadding(0);
-	ContainerInventory:SetSpacing(0);
-	ContainerInventory:EnableHorizontal(false);
+	ContainerInventory:SetPadding(10);
+	ContainerInventory:SetSpacing(10);
+	ContainerInventory:EnableHorizontal(true);
 	ContainerInventory:EnableVerticalScrollbar(true);
 	
 	for k, v in pairs(CONTAINER) do
@@ -95,8 +95,8 @@ function MakeContainerUp( um )
 	end
 	
 	Inventory = vgui.Create( "DPanelList", ContainerPanel )
-	Inventory:SetPadding(20);
-	Inventory:SetSpacing(20);
+	Inventory:SetPadding(10);
+	Inventory:SetSpacing(10);
 	Inventory:EnableHorizontal(true);
 	Inventory:EnableVerticalScrollbar(true);
 	

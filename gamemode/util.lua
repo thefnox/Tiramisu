@@ -137,5 +137,4 @@ function CAKE.FindPlayer(name)
 end
 
 function CAKE.GetCharSignature( ply )
-	return ply:Nick() .. CAKE.FormatSteamID(ply:SteamID())
-end
+	return ply:Nick() .. CAKE.FormatText(ply:SteamID()) end

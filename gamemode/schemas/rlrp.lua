@@ -28,7 +28,7 @@ function SCHEMA.SetUp( )
 	
 	CAKE.AddTeam( CAKE.DefoTeam() ); --This is necessary, because the player needs to be assigned to a default "citizen" group for it to load correctly.
 	
-	CAKE.RLRPFaction( "State Police",
+	CAKE.RLRPFaction( "Police",
 	"The State Government",
 	{ 	["recruit"] = { [ "formalname" ] = "Police Recruit", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 1 },
 		["officer"] = { [ "formalname" ] = "Police Officer", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 2 },
@@ -51,7 +51,7 @@ function SCHEMA.SetUp( )
 	"rlrp/policeshield"
 	)
 	
-	CAKE.RLRPFaction( "Melon Mafia",
+	CAKE.RLRPFaction( "Mafia",
 	"Ricky Ricardo",
 	{ 	["recruit"] = { [ "formalname" ] = "Mafia Recruit", [ "loadout" ] = { "clothing_combat", "clothing_combatf", "weapon_glock" }, [ "level" ] = 1 },
 		["thug"] = { [ "formalname" ] = "Mafia Thug", [ "loadout" ] = { "clothing_combat", "clothing_combatf", "weapon_ak47", "helmet_balaclava" }, [ "level" ] = 2 },
@@ -71,7 +71,7 @@ function SCHEMA.SetUp( )
 	2,
 	"rlrp/melonmafia")
 	
-	CAKE.RLRPFaction( "Workers Syndicate",
+	CAKE.RLRPFaction( "Syndicate",
 	"The Workers",
 	{ 	["worker"] = { [ "formalname" ] = "Syndicated Worker", [ "loadout" ] = {}, [ "level" ] = 1 },
 		["salesman"] = { [ "formalname" ] = "Syndicated Salesperson", [ "loadout" ] = {}, [ "level" ] = 1, ["canbuy"] = true, ["buygroups"] = { 1, 3 } },
