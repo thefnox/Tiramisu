@@ -90,11 +90,13 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 
 		if ValidEntity( CAKE.ViewRagdoll ) then
 			headpos, headang = CAKE.ViewRagdoll:GetBonePosition( CAKE.ViewRagdoll:LookupBone( "ValveBiped.Bip01_Head1" ) )
+			newpos = headpos
 			return GAMEMODE:CalcView(ply, headpos, angles ,fov)
 		end
 
 		if CAKE.Headbob:GetBool() then
 			headpos, headang = LocalPlayer():GetBonePosition( LocalPlayer():LookupBone( "ValveBiped.Bip01_Head1" ) )
+			newpos = headpos
 			return GAMEMODE:CalcView(ply, headpos, angles ,fov)
 		end
 
