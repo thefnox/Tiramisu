@@ -178,9 +178,7 @@ function GM:PlayerSpawn( ply )
 	if( !ply:IsCharLoaded() ) then
 		return; -- Player data isn't loaded. This is an initial spawn.
 	end
-
-	ply:DrawShadow( false )
-
+	
 	CAKE.SpawnPointHandle(ply)
 	
 	if( ply:IsUserGroup("admin") )	then

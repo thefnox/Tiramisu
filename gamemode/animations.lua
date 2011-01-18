@@ -115,8 +115,12 @@ Anims.Male[ "default" ] = {
         [ "land" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_LAND",
         [ "fly" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_GLIDE",
         [ "sit" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_BUSY_SIT_CHAIR",
-		[ "swim" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_GLIDE",
+        [ "sitentry" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_BUSY_SIT_CHAIR_ENTRY",
+        [ "sitexit" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_BUSY_SIT_CHAIR_EXIT",
+	[ "swim" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_GLIDE",
         [ "sitground" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_BUSY_SIT_GROUND",
+        [ "sitgroundentry" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_BUSY_SIT_GROUND_ENTRY",
+        [ "sitgroundexit" ] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_BUSY_SIT_GROUND_EXIT",
         [ "flinch" ] = {
                 ["explosion"] = "&switch:models/Gustavio/maleanimtree.mdl;ACT_GESTURE_FLINCH_BLAST"
                 },
@@ -309,8 +313,12 @@ Anims.Female[ "default" ] = {
         [ "land" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_LAND",
         [ "fly" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_GLIDE",
         [ "sit" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_BUSY_SIT_CHAIR",
-		[ "swim" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_GLIDE",
+        [ "sitentry" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_BUSY_SIT_CHAIR_ENTRY",
+        [ "sitexit" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_BUSY_SIT_CHAIR_EXIT",
+	[ "swim" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_GLIDE",
         [ "sitground" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_BUSY_SIT_GROUND",
+        [ "sitgroundentry" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_BUSY_SIT_GROUND_ENTRY",
+        [ "sitgroundexit" ] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_BUSY_SIT_GROUND_EXIT",
         [ "flinch" ] = {
                 ["explosion"] = "&switch:models/Gustavio/femaleanimtree.mdl;ACT_GESTURE_FLINCH_BLAST"
                 },
@@ -612,7 +620,7 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 				model = exp2[2]
 				seq = exp[2]
 				if( ply:GetModel() != string.lower(model) and !ply.SpecialModel and ply:GetNWBool( "charloaded", false )) then
-					print( "Switching model to " .. model )
+					--print( "Switching model to " .. model )
 					--print(ply.SpecialModel)
 					--print(ply:GetModel())
 					ply:SetModel( model )
@@ -834,18 +842,18 @@ function GM:HandleExtraActivities( ply ) --Drop in here everything additional yo
 
 		if ply:GetNWBool( "sittingchair", false ) then
 			if !ply.IsSittingDamn then
-				ply.CalcIdeal = HandleSequence( ply, "ACT_BUSY_SIT_CHAIR_ENTRY" )
+				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "sitentry" ]  )
 				timer.Simple( 1.5, function()
 					ply.IsSittingDamn = true
 				end)
 				return true
 			else
-				ply.CalcIdeal = HandleSequence( ply, "ACT_BUSY_SIT_CHAIR" )
+				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "sit" ]  )
 				return true
 			end
 		else
 			if ply.IsSittingDamn then
-				ply.CalcIdeal = HandleSequence( ply, "ACT_BUSY_SIT_CHAIR_EXIT" )
+				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "sitexit" ]  )
 				timer.Simple( 0.8, function()
 					ply.IsSittingDamn = false
 				end)
@@ -855,19 +863,19 @@ function GM:HandleExtraActivities( ply ) --Drop in here everything additional yo
 		
 		if ply:GetNWBool( "sittingground", false ) then
 			if !ply.IsSittingGround then
-				ply.CalcIdeal = HandleSequence( ply, "ACT_BUSY_SIT_GROUND_ENTRY" )
-				timer.Simple( 2, function()
+				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "sitgroundentry" ]  )
+				timer.Simple( 1.7, function()
 					ply.IsSittingGround = true
 				end)
 				return true
 			else
-				ply.CalcIdeal = HandleSequence( ply, "ACT_BUSY_SIT_GROUND" )
+				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "sitground" ]  )
 				return true
 			end
 		else
 			if ply.IsSittingGround then
-				ply.CalcIdeal = HandleSequence( ply, "ACT_BUSY_SIT_GROUND_EXIT" )
-				timer.Simple( 1.4, function()
+				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "sitgroundexit" ]  )
+				timer.Simple( 1.2, function()
 					ply.IsSittingGround = false
 				end)
 				return true

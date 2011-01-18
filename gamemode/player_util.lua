@@ -89,9 +89,11 @@ function CAKE.DeathMode( ply )
 	ply:SetNWInt( "deathmode", 1 )
 	ply:SetNWInt("deathmoderemaining", CAKE.ConVars[ "Respawn_Timer" ] )
 
-	umsg.Start( "recieveragdoll", ply )
-		umsg.Short( rag:EntIndex() )
-	umsg.End()
+	timer.Simple( 1, function()
+		umsg.Start( "recieveragdoll", ply )
+			umsg.Short( rag:EntIndex() )
+		umsg.End()
+	end)
 	
 	ply.deathtime = 0;
 	ply.nextsecond = CurTime( ) + 1;
@@ -108,91 +110,103 @@ end
 
 function CAKE.UnconciousMode( ply )
 
-	if !ply:GetNWBool( "unconciousmode", false ) then
-	
-		ply:GodEnable()
-		ply:SetAiming( false )
+	if ply:Alive() then
 
-		if ply:GetActiveWeapon():IsValid() then
-			ply:GetActiveWeapon():SetNoDraw( true )
-		end
+		if !ply:GetNWBool( "unconciousmode", false ) then
 		
-		if ValidEntity( ply.unconciousrag ) then
-			ply.unconciousrag:Remove()
-			ply.unconciousrag = nil
-		end
-		
-		CAKE.DayLog( "script.txt", "Starting unconcious mode for " .. ply:SteamID( ) );
-		local mdl = ply:GetModel( )
-		
-		local rag = ents.Create( "prop_ragdoll" )
-		rag:SetModel( mdl )
-		rag:SetPos( ply:GetPos( ) )
-		rag:SetAngles( ply:GetAngles( ) )
-		rag.ply = ply;
-		rag:Spawn( )
-		
-		if( ply.Clothing ) then
-			for k, v in pairs( ply.Clothing ) do
-				if( ValidEntity( v ) ) then
-					v:SetParent( rag )
-					v:Initialize()
+			ply:GodEnable()
+			ply:SetAiming( false )
+
+			if ply:GetActiveWeapon():IsValid() then
+				ply:GetActiveWeapon():SetNoDraw( true )
+			end
+			
+			if ValidEntity( ply.unconciousrag ) then
+				ply.unconciousrag:Remove()
+				ply.unconciousrag = nil
+			end
+			
+			CAKE.DayLog( "script.txt", "Starting unconcious mode for " .. ply:SteamID( ) );
+			local mdl = ply:GetModel( )
+			
+			local rag = ents.Create( "prop_ragdoll" )
+			rag:SetModel( mdl )
+			rag:SetPos( ply:GetPos( ) )
+			rag:SetAngles( ply:GetAngles( ) )
+			rag.ply = ply;
+			rag:Spawn( )
+			
+			if( ply.Clothing ) then
+				for k, v in pairs( ply.Clothing ) do
+					if( ValidEntity( v ) ) then
+						v:SetParent( rag )
+						v:Initialize()
+					end
 				end
 			end
-		end
-		
-		if( ply.Gear ) then
-			for k, v in pairs( ply.Gear ) do
-				if( ValidEntity( v ) ) then
-					v:SetParent( rag )
-					v:SetDTEntity( 1, rag )
-					v:Initialize()
+			
+			if( ply.Gear ) then
+				for k, v in pairs( ply.Gear ) do
+					if( ValidEntity( v ) ) then
+						v:SetParent( rag )
+						v:SetDTEntity( 1, rag )
+						v:Initialize()
+					end
 				end
 			end
+			
+			rag:GetPhysicsObject():ApplyForceCenter( ply:GetVelocity() )
+			
+			rag.clothing = ply.Clothing
+			rag.gear = ply.Gear
+			ply.Clothing = nil
+			ply.Gear = nil
+			ply:SetNWBool( "unconciousmode", true ) 
+			
+			timer.Simple( 1, function()
+				umsg.Start( "recieveragdoll", ply )
+					umsg.Short( rag:EntIndex() )
+				umsg.End()
+				umsg.Start( "ToggleFreescroll", ply )
+					umsg.Bool( true )
+				umsg.End()
+			end)
+			
+			ply.unconciousrag = rag;
+			
+			ply.unconcioustime = 0;
+			ply.nextsecond = CurTime( ) + 1;
+			
+			ply:Lock()
+			
+		else
+			ply:SetNWBool( "unconciousmode", false )
+			ply:SetViewEntity( ply )
+			CAKE.RestoreGear( ply )
+			ply:SetPos( ply.unconciousrag:GetPos() + Vector( 0, 0, 10 ))
+			ply:UnLock()
+			CAKE.RestoreClothing( ply )
+			ply:GodDisable()
+			if ply:GetActiveWeapon():IsValid() then
+				ply:GetActiveWeapon():SetNoDraw( false )
+			end
+			umsg.Start( "recieveragdoll", ply )
+				umsg.Short( nil )
+			umsg.End()
+			umsg.Start( "ToggleFreescroll", ply )
+				umsg.Bool( false )
+			umsg.End()
+			if ply.unconciousrag then
+				ply.unconciousrag:Remove()
+			end
+			if timer.IsTimer( ply:SteamID() .. "UnconciousActionTimer" ) then
+				timer.Destroy( ply:SteamID() .. "UnconciousActionTimer" )
+			end
+			if timer.IsTimer( ply:SteamID() .. "unconcioustimer" ) then
+				timer.Destroy( ply:SteamID() .. "unconcioustimer"  )
+			end
 		end
-		
-		rag:GetPhysicsObject():ApplyForceCenter( ply:GetVelocity() )
-		
-		rag.clothing = ply.Clothing
-		rag.gear = ply.Gear
-		ply.Clothing = nil
-		ply.Gear = nil
-		ply:SetNWBool( "unconciousmode", true ) 
-		
-		umsg.Start( "recieveragdoll", ply )
-			umsg.Short( rag:EntIndex() )
-		umsg.End()
-		
-		ply.unconciousrag = rag;
-		
-		ply.unconcioustime = 0;
-		ply.nextsecond = CurTime( ) + 1;
-		
-		ply:Lock()
-		
-	else
-		ply:SetNWBool( "unconciousmode", false )
-		ply:SetViewEntity( ply )
-		CAKE.RestoreGear( ply )
-		ply:SetPos( ply.unconciousrag:GetPos() + Vector( 0, 0, 10 ))
-		ply:UnLock()
-		CAKE.RestoreClothing( ply )
-		ply:GodDisable()
-		if ply:GetActiveWeapon():IsValid() then
-			ply:GetActiveWeapon():SetNoDraw( false )
-		end
-		umsg.Start( "recieveragdoll", ply )
-			umsg.Short( nil )
-		umsg.End()
-		if ply.unconciousrag then
-			ply.unconciousrag:Remove()
-		end
-		if timer.IsTimer( ply:SteamID() .. "UnconciousActionTimer" ) then
-			timer.Destroy( ply:SteamID() .. "UnconciousActionTimer" )
-		end
-		if timer.IsTimer( ply:SteamID() .. "unconcioustimer" ) then
-			timer.Destroy( ply:SteamID() .. "unconcioustimer"  )
-		end
+
 	end
 end
 

@@ -132,11 +132,13 @@ local function ccSetGear( ply, cmd, args )
 	local bone = string.lower( args[2] ) or CAKE.ItemData[ item ].Bone or "pelvis"
 	local entity = CAKE.HandleGear( ply, item, bone )
 	local tbl = {}
-	umsg.Start( "editgear", ply )
-		umsg.Short( entity:EntIndex() )
-		umsg.String( item )
-		umsg.String( bone )
-	umsg.End( )
+	timer.Simple( 1, function()
+		umsg.Start( "editgear", ply )
+			umsg.Short( entity:EntIndex() )
+			umsg.String( item )
+			umsg.String( bone )
+		umsg.End( )
+	end)
 
 	CAKE.SaveGear( ply )
 	CAKE.SendGearToClient( ply )
@@ -285,17 +287,21 @@ function CAKE.SendGearToClient( ply )
 	local newtable = {}
 	local num
 	if ply:IsCharLoaded() and ply.Gear then
-		umsg.Start( "cleargear", ply )
-		umsg.End()
-		for k, v in pairs( ply.Gear ) do
-			if ValidEntity( v ) then
-				umsg.Start( "addgear", ply )
-					umsg.Short( v:EntIndex() )
-					umsg.String( v.item )
-					umsg.String( v.bone )
-				umsg.End( )
+		timer.Simple( 1, function()
+			if ply.Gear then
+				umsg.Start( "cleargear", ply )
+				umsg.End()
+				for k, v in pairs( ply.Gear ) do
+					if ValidEntity( v ) then
+						umsg.Start( "addgear", ply )
+							umsg.Short( v:EntIndex() )
+							umsg.String( v.item )
+							umsg.String( v.bone )
+						umsg.End( )
+					end
+				end
 			end
-		end
+		end)
 	end
 
 end

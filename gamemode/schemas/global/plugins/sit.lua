@@ -104,7 +104,7 @@ local function ccSitDown( ply, cmd, args )
 			end
 		end
 		if hassit then
-			umsg.Start( "ToggleMouseOnSit", ply )
+			umsg.Start( "ToggleFreescroll", ply )
 				umsg.Bool( true )
 			umsg.End()
 			CAKE.SendChat( ply, "Use !stand to get back on your feet." )
@@ -113,7 +113,7 @@ local function ccSitDown( ply, cmd, args )
 		end
 	else
 		if ply:OnGround() then
-			umsg.Start( "ToggleMouseOnSit", ply )
+			umsg.Start( "ToggleFreescroll", ply )
 				umsg.Bool( true )
 			umsg.End()
 			ply:SetNWBool( "sittingground", true )
@@ -137,7 +137,7 @@ function CAKE.StandUp( ply )
 		elseif ply:GetNWBool( "sittingground", false ) then
 			ply:SetNWBool( "sittingground", false )
 		end
-		umsg.Start( "ToggleMouseOnSit", ply )
+		umsg.Start( "ToggleFreescroll", ply )
 			umsg.Bool( false )
 		umsg.End()
 		ply:SetParent()

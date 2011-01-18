@@ -1,9 +1,13 @@
 CLPLUGIN.Name = "Sitting System"
 CLPLUGIN.Author = "F-Nox/Big Bang"
 
-usermessage.Hook( "ToggleMouseOnSit", function( um )
+usermessage.Hook( "ToggleFreescroll", function( um )
 
-	gui.EnableScreenClicker( um:ReadBool() )
+	local bool = um:ReadBool()
+
+	gui.EnableScreenClicker( bool )
+	CAKE.ForceFreeScroll = bool
+	CAKE.FreeScroll = bool
 	
 end)
 

@@ -9,6 +9,7 @@ CAKE.ThirdpersonDistance = CreateClientConVar( "rp_thirdpersondistance", 50, tru
 CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true )
 CAKE.HeadbobAmount = CreateClientConVar( "rp_headbob", 1, true, true )
 CAKE.FreeScroll = false
+CAKE.ForceFreeScroll = false
 
 local mouserotate = Angle( 0, 0, 0 )
 local mousex
@@ -42,10 +43,17 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 	end
 	
 	if CAKE.FreeScroll then
-		newpos = ply:GetForward()*100
-		newpos:Rotate(mouserotate)
-		pos = ply:GetPos()+Vector(0,0,60) + newpos
-		return GAMEMODE:CalcView(ply, pos , (ply:GetPos()+Vector(0,0,60)-pos):Angle(),fov)
+		if ValidEntity( CAKE.ViewRagdoll ) then
+			newpos =  CAKE.ViewRagdoll:GetForward()*100
+			newpos:Rotate(mouserotate)
+			pos = CAKE.ViewRagdoll:GetPos()+Vector(0,0,60) + newpos
+			return GAMEMODE:CalcView(ply, pos , (CAKE.ViewRagdoll:GetPos()+Vector(0,0,60)-pos):Angle(),fov)
+		else
+			newpos = ply:GetForward()*100
+			newpos:Rotate(mouserotate)
+			pos = ply:GetPos()+Vector(0,0,60) + newpos
+			return GAMEMODE:CalcView(ply, pos , (ply:GetPos()+Vector(0,0,60)-pos):Angle(),fov)
+		end
 	end
 
 	if( CAKE.Thirdperson:GetBool() ) then
@@ -63,7 +71,7 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
             trace = util.TraceLine(tracedata)
             
             pos = newpos
-			newpos = LerpVector( 0.2, pos, trace.HitPos )
+			newpos = LerpVector( 0.3, pos, trace.HitPos )
 
 			return GAMEMODE:CalcView(ply, newpos , angles ,fov)
 		else
@@ -73,7 +81,7 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
             trace = util.TraceLine(tracedata)
             
             pos = newpos
-			newpos = LerpVector( 0.2, pos, trace.HitPos )
+			newpos = LerpVector( 0.3, pos, trace.HitPos )
 
 			return GAMEMODE:CalcView(ply, newpos , angles ,fov)
 
@@ -106,15 +114,14 @@ timer.Create( "LocalMouseControlCam", 0.01, 0, function()
 		if keydown then
 			gui.EnableScreenClicker( true )
 			gui.SetMousePos( ScrW()/2, ScrH()/2 )
-			mousex = gui.MouseX()
 			CAKE.FreeScroll = true
 		end
 	else
-		if !keydown then
+		if !keydown and !CAKE.ForceFreeScroll then
 			CAKE.FreeScroll = false
 			gui.EnableScreenClicker( false )
 		end
-		mouserotate.y = math.NormalizeAngle(( gui.MouseX() - mousex ) / 2)
+		mouserotate.y = math.NormalizeAngle(( gui.MouseX() - ScrW()/2 ) / 2)
 	end
 
 end)

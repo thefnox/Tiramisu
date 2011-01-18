@@ -384,7 +384,6 @@ function ccUseOnInventory( ply, cmd, args )
 				ply:Give( item.Class )
 			end
 			item:Pickup( ply );
-			ply:GiveItem( item.Class );
 			CAKE.SavePlayerData( ply )
 		else
 			ply:TakeItem( item.Class )
