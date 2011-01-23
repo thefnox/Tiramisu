@@ -45,13 +45,6 @@ function GM:PlayerSpawnProp(ply, mdl)
 	local spawntable = SpawnTable[CAKE.FormatText(ply:SteamID())];
 	
 	if CAKE.PlayerRank(ply) <= 2 then
-	
-		if(CAKE.GetPlayerField(ply, "tooltrust") <= 0 ) then
-		
-			CAKE.SendChat(ply, "You are not allowed to spawn anything!");
-			return false;
-			
-		end
 		
 		if(spawntable != nil) then
 		
