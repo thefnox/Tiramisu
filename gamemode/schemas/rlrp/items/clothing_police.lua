@@ -12,6 +12,10 @@ ITEM.Flags = {
 	"kineticarmor;0.6",
 	"bulletarmor;0.7"
 }
+ITEM.Content = {
+	"materials/models/police/metrocop_sheet.vmt",
+	"models/Police.mdl"
+}
 function ITEM:Drop(ply)
 	
 end

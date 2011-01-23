@@ -45,6 +45,7 @@ include( "client_resources.lua" ); -- Sends files to the client
 include( "animations.lua" ); -- Animations
 include( "doors.lua" ); -- Doors
 include( "resources.lua" ) -- Automatic resource handling
+include( "resourcex.lua" ) -- Resource downloading
 
 CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ); -- Load the schema and plugins, this is NOT initializing.
 

@@ -9,6 +9,13 @@ ITEM.Flags = {
 	"overlay;1",
 	"headprotection;0.8"
 }
+ITEM.Content = {
+	"models/Combine_Soldier.mdl",
+	"materials/models/combine_soldier/combinesoldiersheet",
+	"materials/models/combine_soldier/combinesoldiersheet_shotgun"
+}
+
+
 function ITEM:Drop(ply)
 	
 end

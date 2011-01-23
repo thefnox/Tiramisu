@@ -142,10 +142,12 @@ function PANEL:Think()
         
 end
  
- 
+local x, y
+local lastpos
+
 function PANEL:Paint()  
-    local x, y = self:ScreenToLocal( 0, 0 ) 
-    local lastpos = 0
+    x, y = self:ScreenToLocal( 0, 0 ) 
+    lastpos = 0
        
     // Background 
     surface.SetMaterial( matBlurScreen ) 
@@ -158,11 +160,6 @@ function PANEL:Paint()
        
     surface.SetDrawColor( 100, 100, 100, 150 ) 
     surface.DrawRect( x, y, ScrW(), ScrH() ) 
-       
-    // Border 
-    surface.SetDrawColor( 50, 50, 50, 255 ) 
-    surface.DrawOutlinedRect( 0, 0, self:GetWide(), self:GetTall() )
-    surface.DrawLine( 0, 23, self:GetWide(), 23 )
 
     // Pretentious line bullshit :P
     x = math.floor( self:GetWide() / 5 )
@@ -174,9 +171,21 @@ function PANEL:Paint()
         surface.DrawLine( 0, ( i * 5 ) + 23, (y * 5) - (i * 5), self:GetTall() + 23 )
     end
 
-     for i = 0, x + 5 do
+    for i = 0, x + 5 do
         surface.DrawLine( i * 5 , 23, self:GetWide(), ( x * 5 ) - ( i * 5 ) + 23 )
     end
+
+    // and some gradient shit for additional overkill
+
+    for i = 1, ( y + 5 ) do
+        surface.SetDrawColor( 50, 50, 50, Lerp( i / ( ( y + 5 ) ), 0 , 255 ) ) 
+        surface.DrawRect( 0, ( i * 5 ) , self:GetWide(), 5 )
+    end
+
+    // Border 
+    surface.SetDrawColor( 50, 50, 50, 255 ) 
+    surface.DrawOutlinedRect( 0, 0, self:GetWide(), self:GetTall() )
+    surface.DrawLine( 0, 23, self:GetWide(), 23 )
        
     return true 
 end

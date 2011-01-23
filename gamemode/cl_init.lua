@@ -40,6 +40,7 @@ include( "cl_binds.lua" );
 include( "cl_charactercreate.lua" );
 include( "cl_playermenu.lua" );
 include( "animations.lua" )
+include( "resourcex.lua" ) -- Resource downloading
 
 CAKE.Loaded = true;
 

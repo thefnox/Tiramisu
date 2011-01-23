@@ -43,9 +43,6 @@ end
 
 function ccDropItem( ply, cmd, args )
 	
-	if ply:ItemHasFlag( args[1], "extracargo" ) then
-		CAKE.RemoveExtraCargoHold( ply, args[1] )
-	else
 		local inv = CAKE.GetCharField( ply, "inventory" );
 		for k, v in pairs( inv ) do
 			if( v == args[ 1 ] ) then
@@ -61,29 +58,17 @@ function ccDropItem( ply, cmd, args )
 						CAKE.SetCharField( ply, "weapons", weapons )
 					end
 				end
-				if string.match( v, "zipties" ) then
-					ply:StripWeapon( v )
-					if( table.HasValue( CAKE.GetCharField( ply, "weapons" ), v ) ) then
-						local weapons = CAKE.GetCharField( ply, "weapons" )
-						for k2, v2 in pairs( weapons ) do
-							if v2 == v then
-								table.remove( weapons, k2 )
-							end
-						end
-						CAKE.SetCharField( ply, "weapons", weapons )
-					end
-				end
+				CAKE.RestoreClothing( ply )
+				CAKE.RestoreGear( ply )
 				CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ) );
 				ply:TakeItem( args[ 1 ] );
 				return;
 			end
 		end
-	end
 	
 	CAKE.CalculateEncumberment( ply )
 	
 	ply:RefreshInventory( )
-	ply:RefreshExtraInventory( );
 	
 end
 concommand.Add( "rp_dropitem", ccDropItem );

@@ -13,6 +13,12 @@ ITEM.Flags = {
 	"kineticarmor;0.6",
 	"rigweight;medium"
 }
+ITEM.Content = {
+	"materials/models/combine_soldier/combinesoldiersheet.vmt",
+	"materials/models/combine_soldier/combinesoldiersheet_shotgun.vmt",
+	"models/Combine_Soldier.mdl"
+}
+
 function ITEM:Drop(ply)
 
 end
