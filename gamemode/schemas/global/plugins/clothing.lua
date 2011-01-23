@@ -29,12 +29,6 @@ local meta = FindMetaTable( "Player" );
 function CAKE.SetClothing( ply, body, helmet, glove )
 	
 	CAKE.CalculateShields( ply, body, helmet )
-
-		timer.Simple( 1, function()
-			if resourcex then
-				resourcex.AddFile( ply.Clothing[ type ]:GetModel( ), false )
-			end
-		end)
 	
 	if !ply:ItemHasFlag( body, "nogloves" ) then
 		glove = body

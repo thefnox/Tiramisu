@@ -46,6 +46,7 @@ include( "animations.lua" ); -- Animations
 include( "doors.lua" ); -- Doors
 include( "resources.lua" ) -- Automatic resource handling
 include( "resourcex.lua" ) -- Resource downloading
+include( "sn3_base_sv.lua" )
 
 CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ); -- Load the schema and plugins, this is NOT initializing.
 

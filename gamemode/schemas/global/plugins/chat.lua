@@ -241,6 +241,7 @@ local function Radio( ply, text )
 	local group = CAKE.GetCharField( ply, "group" )
 
 	if(CAKE.Teams[ply:Team()] == nil) then return ""; end
+	if !CAKE.GroupExists( name ) then return ""; end
 
 	if(group != 0) then
 		for k2, v2 in pairs(player.GetAll()) do

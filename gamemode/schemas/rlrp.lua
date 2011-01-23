@@ -47,8 +47,7 @@ function SCHEMA.SetUp( )
 		[ "ispolice" ] = true,
 		[ "radiogroup" ] = 1
 	},
-	1,
-	"rlrp/policeshield"
+	1
 	)
 	
 	CAKE.RLRPFaction( "Mafia",
@@ -68,8 +67,7 @@ function SCHEMA.SetUp( )
 		[ "ispolice" ] = false,
 		[ "radiogroup" ] = 2
 	},
-	2,
-	"rlrp/melonmafia")
+	2)
 	
 	CAKE.RLRPFaction( "Syndicate",
 	"The Workers",
@@ -88,7 +86,6 @@ function SCHEMA.SetUp( )
 		[ "ispolice" ] = false,
 		[ "radiogroup" ] = 1
 	},
-	3,
-	"rlrp/workersyndicate")
+	3)
 	
 end

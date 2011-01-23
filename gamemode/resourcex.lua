@@ -10,9 +10,6 @@ TRANSFER_QUEUE = {}
 	
 if SERVER then
 	-- Client resources
-
-	AddCSLuaFile( "autorun/resourcex.lua" )
-
 	-- Server includes
 
 	include( "sn3_base_sv.lua" )

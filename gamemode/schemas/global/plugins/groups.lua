@@ -18,6 +18,13 @@ function CAKE.CreateGroup( name, tbl )
 		CAKE.Groups[name] = tbl
 		CAKE.Groups[name][ "name" ] = name --what
 		CAKE.SaveGroupData(name)
+		timer.Create( name .. "GroupSaveTimer", 60, 0, function()
+			if CAKE.GroupExists( name ) then
+				CAKE.SaveGroupData( name )
+			else
+				timer.Destroy( name .. "GroupSaveTimer" )
+			end
+		end)
 		return true
 	else
 		table.Merge(CAKE.Groups[name], tbl)
@@ -77,6 +84,12 @@ function CAKE.RankExists( group, rank )
 	return false
 end
 
+function CAKE.CreateRank( group, rank, table )
+	if CAKE.GroupExists( group ) and !CAKE.RankExists( group, rank ) then
+		CAKE.Groups[name]["ranks"][rank] = table
+	end
+end
+
 function CAKE.GroupHasMember(name, ply)
 
 	if CAKE.Groups[name] then
@@ -100,7 +113,6 @@ function CAKE.GroupHasMember(name, ply)
 end
 
 function CAKE.SaveGroupData( name )
-	print( CAKE.FormatText( name ) )
 	if CAKE.Groups[name] then
 		local keys = glon.encode(CAKE.Groups[name])
 		file.Write( CAKE.Name .. "/GroupData/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( name ) .. ".txt" , keys)
@@ -115,9 +127,11 @@ end
 function CAKE.LoadAllGroups()
 
 	local groups = file.Find(CAKE.Name .. "/GroupData/" .. CAKE.ConVars[ "Schema" ] .. "/*.txt")
+	local name = ""
 
 	for k, v in pairs( groups ) do
-		CAKE.LoadGroupData( string.gsub( v, ".txt", "" ))
+		name = string.gsub( v, ".txt", "" )
+		CAKE.LoadGroupData( name )
 	end
 
 end
@@ -134,13 +148,13 @@ function CAKE.JoinGroup( ply, name )
 			CAKE.LeaveGroup( ply )
 		end
 		CAKE.SetCharField( ply, "group", name )
-		CAKE.SetCharField( ply, "grouprank", CAKE.GetGroupField( name, "defaultrank" ))
+		CAKE.SetCharField( ply, "grouprank", CAKE.GetGroupField( name, "DefaultRank" ))
 		local roster = CAKE.GetGroupField( name, "members" )
 		local tbl = {}
 		tbl.Name = ply:Nick()
 		tbl.SteamID = ply:SteamID()
 		tbl.Signature = CAKE.GetCharSignature(ply)
-		tbl.Rank = CAKE.GetGroupField( name, "defaultrank" )
+		tbl.Rank = CAKE.GetGroupField( name, "DefaultRank" )
 		CAKE.Groups[name]["members"][CAKE.GetCharSignature(ply)] = tbl
 	end
 end
@@ -215,6 +229,27 @@ concommand.Add( "rp_kickfromgroup", function( ply, cmd, args )
 
 end)
 
+concommand.Add( "rp_creategroup", function( ply, cmd, args)
+
+	local founder = CAKE.GetCharSignature(ply)
+	local name = args[1]
+	local tbl = {}
+	tbl[ "Name" ]		= name
+	tbl[ "Type" ]		= "public"
+	tbl[ "Founder" ]	= founder
+	tbl[ "Members" ]	= {}
+	tbl[ "Inventory" ]	= {}
+	tbl[ "Flags" ]		= {}
+	tbl[ "Ranks" ]		= {}
+	tbl[ "DefaultRank"] = "DefaultRank"
+	CAKE.CreateGroup( name, tbl )
+	CAKE.CreateRank( group, "DefaultRank", {} )
+	CAKE.JoinGroup( ply, name )
+
+	
+
+end)
+
 local function GroupSpawnHook( ply )
 
 	if ply:IsCharLoaded() then
@@ -227,161 +262,4 @@ local function GroupSpawnHook( ply )
 
 end
 hook.Add( "PlayerSpawn", "TiramisuGroupSpawnHook", GroupSpawnHook )
-/*
-function sanitizeGroupName( str )
-	str = string.gsub( str,":","" );
-	str = string.gsub( str,"_","" );
-	str = string.gsub( str,".","" );
-	return str
-end
 
-function CAKE.CreateGroup( name, tbl )
-	if !CAKE.Groups[name] then
-		CAKE.Groups[name] = tbl
-		CAKE.SaveGroupData(name)
-		return true
-	else
-		table.Merge(CAKE.Groups[name], tbl)
-	end
-end
-
-function CAKE.GetGroupField( name, field )
-	return CAKE.Groups[field] or false
-end
-
-function CAKE.SetGroupField( name, field, data )
-	if CAKE.Groups[name] then
-		CAKE.Groups[name][field] = data
-		CAKE.SaveGroupData(name)
-		return true
-	end
-	
-	return false
-end
-
-function CAKE.GetGroupFlag( name, flag )
-	if CAKE.Groups[name] then
-		return CAKE.Groups[name]["Flags"][flag] or false
-	end
-	
-	return false
-end
-
-function CAKE.GetRankField( name, rank, field )
-	if CAKE.Groups[name] and CAKE.Groups[name]["Ranks"][rank] then
-		return CAKE.Groups[name]["Ranks"][rank][field] or false
-	end
-	
-	return false
-end
-
-function CAKE.SetRankField(name, rank, field, value)
-	if CAKE.Groups[name] and CAKE.Groups[name]["Ranks"][rank] then
-		CAKE.Groups[name]["Ranks"][rank][field] = value
-	end
-end
-
-function CAKE.GroupHasMember(name, ply)
-	if !CAKE.Groups[name] then return false end -- dumbass.
-	
-	if CAKE.Groups[name]["Members"][CAKE.GetCharSignature(ply)] and CAKE.GetCharField(ply, "group") == name then
-		return true
-	elseif CAKE.Groups[name]["Members"][CAKE.GetCharSignature(ply)] and !CAKE.GetCharField(ply, "group") == name then
-		CAKE.SetCharField(ply, "group", name)
-	elseif !CAKE.Groups[name]["Members"][CAKE.GetCharSignature(ply)] and CAKE.GetCharField(ply, "group") == name then
-		CAKE.SetCharField(ply, "group", "none")
-	end
-end
-
-function CAKE.GetPlayerGroup(ply)
-	if CAKE.GetCharField(ply, "group") == "none" then
-		return "none"
-	else
-		if CAKE.GroupHasMember(CAKE.GetCharField(ply, "group"), ply) then
-			return true
-		end
-	end
-	
-	return "none"
-end
-
-function CAKE.GetRankFields( name, rank )
-	if CAKE.Groups[name] and CAKE.Groups[name]["Ranks"][rank] then
-		return CAKE.Groups[name]["Ranks"][rank]
-	end
-	
-	return false
-end
-
-function CAKE.SetCharGroup( name, ply )
-	if CAKE.GetCharField(ply, "group") == "none" then
-	
-	end
-end
-
-function CAKE.RemoveCharGroup( ply )
-	if CAKE.GroupHasMember(CAKE.GetCharField(ply, "group"), ply) then
-		CAKE.Groups[name]["Members"][CAKE.GetCharSignature(ply)] = nil
-		CAKE.SetCharField(ply, "group", "none")
-	end
-end
-function CAKE.SetCharRank( ply, rank )
-
-	if ply:IsCharLoaded() then
-		ply:
-	end
-	
-end
-
-function CAKE.SaveGroupData( name )
-
-end
-
-function CAKE.RemoveGroupData( name )
-
-end
-
-local function FetchFactions()
-	
-end
-hook.Add( "InitPostEntity", "FetchFactions", FetchFactions )
-
-local function LoadAllGroups()
-
-end
-hook.Add( "Initialize", "LoadAllTiramisuGroups", LoadAllGroups )
-
-local function ccCreateGroup( ply, cmd, args )
-
-end
-concommand.Add( "rp_creategroup", ccCreateGroup )
-
-local function ccJoinGroup( ply, cmd, args )
-
-end
-concommand.Add( "rp_joingroup", ccJoinGroup )
-
-local function ccLeaveGroup( ply, cmd, args )
-
-end
-concommand.Add( "rp_leavegroup", ccLeaveGroup )
-
-local function ccSendInvite( ply, cmd, args )
-
-end
-concommand.Add( "rp_sendinvite", ccSendInvite )
-
-local function ccAcceptInvite( ply, cmd, args )
-
-end
-concommand.Add( "rp_acceptinvite", ccAcceptInvite )
-
-local function ccPromote( ply, cmd, args )
-
-end
-concommand.Add( "rp_promote", ccPromote )
-
-local function GroupSpawnHook( ply )
-
-end
-hook.Add( "PlayerSpawn", "TiramisuGroupSpawnHook", GroupSpawnHook )*/

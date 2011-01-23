@@ -29,7 +29,7 @@ function CAKE.DefoTeam()
 	return team;
 end
 
-function CAKE.RLRPFaction( name, founder, ranks, flags, doorgroup, image )
+function CAKE.RLRPFaction( name, founder, ranks, flags, doorgroup )
 
 	local tbl = {
 	[ "Name" ]		= name,
@@ -38,8 +38,7 @@ function CAKE.RLRPFaction( name, founder, ranks, flags, doorgroup, image )
 	[ "Members" ]	= {},
 	[ "Inventory" ]	= {},
 	[ "Flags" ]		= flags,
-	[ "Ranks" ]		= ranks,
-	[ "Image" ]		= image,
+	[ "Ranks" ]		= ranks
 	}
 	
 	local doorgroups = {
