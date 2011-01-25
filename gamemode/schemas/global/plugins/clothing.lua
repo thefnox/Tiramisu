@@ -29,6 +29,21 @@ local meta = FindMetaTable( "Player" );
 function CAKE.SetClothing( ply, body, helmet, glove )
 	
 	CAKE.CalculateShields( ply, body, helmet )
+
+	if resourcex then
+		if CAKE.ItemData[ body ] and CAKE.ItemData[ body ].Content then
+			for k, v in ipairs( CAKE.ItemData[ body ].Content ) do
+				print( "Adding " .. v )
+				resourcex.AddFile( v, true )
+			end
+		end
+		if CAKE.ItemData[ helmet ] and CAKE.ItemData[ helmet ].Content then
+			for k, v in ipairs( CAKE.ItemData[ helmet ].Content ) do
+				print( "Adding " .. v )
+				resourcex.AddFile( v, true )
+			end
+		end
+	end
 	
 	if !ply:ItemHasFlag( body, "nogloves" ) then
 		glove = body
@@ -37,13 +52,6 @@ function CAKE.SetClothing( ply, body, helmet, glove )
 		helmet = CAKE.GetCharField( ply, "model" )
 	else
 		helmet = CAKE.ItemData[ helmet ].Model
-		timer.Simple( 1, function()
-			if resourcex and CAKE.ItemData[ helmet ].Content then
-				for k, v in ipairs( CAKE.ItemData[ helmet ].Content ) do
-					resourcex.AddFile( v, true )
-				end
-			end
-		end)
 	end
 	if !ply:HasItem( glove ) or glove == "none" then
 		glove = CAKE.GetCharField( ply, "model" )
@@ -54,13 +62,6 @@ function CAKE.SetClothing( ply, body, helmet, glove )
 		body = CAKE.GetCharField( ply, "model" )
 	else
 		body = CAKE.ItemData[ body ].Model
-		timer.Simple( 1, function()
-			if resourcex and CAKE.ItemData[ body ].Content then
-				for k, v in ipairs( CAKE.ItemData[ body ].Content ) do
-					resourcex.AddFile( v, true )
-				end
-			end
-		end)
 	end
 	
 	ply:SetNWString( "model", helmet )

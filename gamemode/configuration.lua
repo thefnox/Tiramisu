@@ -29,4 +29,6 @@ CAKE.ConVars[ "Default_Ammo" ] = {  };
 CAKE.ConVars[ "Respawn_Timer" ] = 5 --Time in seconds that it takes for people to be allowed to respawn.
 CAKE.ConVars[ "Schema" ] = "rlrp"; -- What folder is schema data being loaded from?
 
-CAKE.ConVars[ "Tiramisu" ] = "1.0 b1";
+CAKE.ConVars[ "ContentDownload" ] = true --Set this to true if you want new playermodels to download dynamically ( Like toybox ).
+
+CAKE.ConVars[ "Tiramisu" ] = "1.0 b3";
