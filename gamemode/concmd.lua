@@ -452,13 +452,15 @@ function ccConfirmRemoval( ply, cmd, args )
 	local id = args[1]
 	local SteamID = CAKE.FormatText( ply:SteamID() );
 	local name = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "name" ]
-	local gender = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "gender" ]
 	local age = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "age" ]
+	local title = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "title" ]
+	local title2 = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "title2" ]
 	local model = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "model" ]
 	umsg.Start("ConfirmCharRemoval", ply)
 		umsg.String( name )
-		umsg.String( gender )
-		umsg.String( age )
+		umsg.Short( tonumber( age ) )
+		umsg.String( title )
+		umsg.String( title2 )
 		umsg.String( model )
 		umsg.Long( id )
 	umsg.End()

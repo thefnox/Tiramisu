@@ -1,6 +1,8 @@
 CLPLUGIN.Name = "Inventory Menu"
 CLPLUGIN.Author = "F-Nox/Big Bang"
 
+InventoryTable = {}
+
 local function OpenInventory()
 	PlayerMenu = vgui.Create( "DFrameTransparent" )
 	--PlayerMenu:SetPos( ScrW() / 2 - 320, ScrH() / 2 - 240 )
@@ -177,7 +179,49 @@ local function CloseInventory()
 		PlayerMenu = nil
 	end
 end
-CAKE.RegisterMenuTab( "Inventory", OpenInventory, CloseInventory )
-function CLPLUGIN.Init()
+
+local function AddItem(data)
+	local itemdata = {}
+	itemdata.Name = data:ReadString();
+	itemdata.Class = data:ReadString();
+	itemdata.Description = data:ReadString();
+	itemdata.Model = data:ReadString();
+	itemdata.Weight = data:ReadShort();
 	
+	table.insert(InventoryTable, itemdata);
+end
+usermessage.Hook("addinventory", AddItem);
+
+local function ClearItems()
+	
+	InventoryTable = {}
+	
+end
+usermessage.Hook("clearinventory", ClearItems);
+
+BusinessTable = {};
+
+local function ClearBusiness()
+	
+	BusinessTable = {}
+	
+end
+usermessage.Hook("clearbusiness", ClearBusiness);
+
+local function AddBusinessItem(data)
+	local itemdata = {}
+	itemdata.Name = data:ReadString();
+	itemdata.Class = data:ReadString();
+	itemdata.Description = data:ReadString();
+	itemdata.Model = data:ReadString();
+	itemdata.Price = data:ReadLong();
+	
+	--print( itemdata.Class )
+	
+	table.insert(BusinessTable, itemdata);
+end
+usermessage.Hook("addbusiness", AddBusinessItem);
+
+function CLPLUGIN.Init()
+	CAKE.RegisterMenuTab( "Inventory", OpenInventory, CloseInventory )
 end

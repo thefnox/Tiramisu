@@ -93,8 +93,9 @@ local function OpenCharacter()
 	
 	
 	for k, v in pairs(ExistingChars) do
-		AddCharacterModel( k, v['model'] )
-		
+		if v then
+			AddCharacterModel( k, v['model'] )
+		end
 	end
 	
 	local newchar = vgui.Create("DButton");

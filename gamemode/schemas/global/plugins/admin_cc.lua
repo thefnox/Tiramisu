@@ -458,6 +458,46 @@ function Admin_Slay( ply, cmd, args )
 		end
 		
 end
+
+
+function Admin_SetRank( ply, cmd, args)
+
+	if #args != 2 then
+		if ValidEntity( ply ) and ply:IsPlayer() then
+			CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin setrank \"name\" \"rank\" )")
+		end
+		return
+	end
+	
+	args[1] = CAKE.FindPlayer(args[1])
+	if !args[1] then
+		if ValidEntity( ply ) and ply:IsPlayer() then
+			CAKE.SendChat(ply, "Target not found!")
+		end
+		return
+	end
+	
+	if !CAKE.AdminRanks[args[2]] then CAKE.SendChat(ply, "Invalid rank!") else
+		CAKE.SetPlayerField( args[1], "adrank", args[2])
+		CAKE.AnnounceAction( ply, "made " .. args[1]:Nick( ).. " a " ..args[2] );
+	end
+
+end
+
+function Admin_AddSpawn( ply, cmd, args)
+	
+	if #args == 1 then
+		local pos = ply:GetPos()
+		local ang = ply:EyeAngles( )
+		local team = team.GetName(ply:Team())
+		CAKE.AddSpawn(pos, ang, team)
+	else
+		local pos = ply:GetPos()
+		local ang = ply:EyeAngles( )
+		CAKE.AddSpawn(pos, ang)
+	end
+	
+end
 	
 -- Let's make some ADMIN COMMANDS!
 function PLUGIN.Init( )
@@ -488,6 +528,7 @@ function PLUGIN.Init( )
 	CAKE.AdminCommand( "bring", Admin_Bring, "Brings a player to you", true, true, 3);
 	CAKE.AdminCommand( "goto", Admin_GoTo, "Takes you to a player", true, true, 3 );
 	CAKE.AdminCommand( "slay", Admin_Slay, "Kills a player", true, true, 3 );
+	CAKE.AdminCommand( "setrank", Admin_SetRank, "Set the rank of another player", true, true, 5 )
 	
 end
 

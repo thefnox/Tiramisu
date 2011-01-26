@@ -214,10 +214,21 @@ function CAKE.ResendCharData( ply ) -- Network all of the player's character dat
 		end
 		*/
 		--When there's just a small set of variables we gotta send as NWVars
+
 		ply:SetNWString( "name", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "name" ] or "" )
 		ply:SetNWString( "title", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "title" ] or "" )
 		ply:SetNWString( "title2", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "title2" ] or "" )
 		ply:SetNWInt( "money", tonumber( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "money" ] ) or 0 )
+
+		for k, v in pairs( CAKE.PlayerData[ SteamID ][ "characters" ] ) do -- Send them all their characters for selection
+			if v then
+				umsg.Start( "ReceiveChar", ply );
+					umsg.Long( tonumber(k) );
+					umsg.String( v[ "name" ] );
+					umsg.String( v[ "model" ] );
+				umsg.End( );
+			end
+		end
 end
 
 function CAKE.SetPlayerField( ply, fieldname, data )
@@ -299,7 +310,4 @@ function CAKE.RemoveCharacter( ply, id )
 	CAKE.PlayerData[ SteamID ][ "characters" ][ id ] = nil;
 	CAKE.SavePlayerData( ply )
 	CAKE.ResendCharData( ply )
-	umsg.Start( "RemoveChar", ply )
-		umsg.Long( tonumber( id ) )
-	umsg.End()
 end

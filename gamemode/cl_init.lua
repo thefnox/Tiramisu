@@ -70,178 +70,84 @@ function GM:ForceDermaSkin()
 	
 end
 
-local function AddToChat( um )
+usermessage.Hook( "tiramisuaddtochat", function( um )
 	local string = um:ReadString()
 	local font = um:ReadString()
 	if aChat and aChat.AddChatLine then
 		aChat.AddChatLine( "<color=135,209,255,255><font=" .. font .. ">" .. string .. "</font></color>" )
 	end
-end
-usermessage.Hook( "tiramisuaddtochat", AddToChat )
+end)
 
-function ConfirmCharRemove( um )
-	local name = um:ReadString()
-	local gender = um:ReadString()
-	local description = um:ReadString()
-	local age = um:ReadString()
-	local model = um:ReadString()
+usermessage.Hook( "ConfirmCharRemoval", function( um )
+
+	local namestr = um:ReadString()
+	local agestr = tostring( um:ReadShort() )
+	local titlestr = um:ReadString()
+	local title2str = um:ReadString()
+	local modelstr = um:ReadString()
 	local id = um:ReadLong()
-	PlayerInfo = vgui.Create( "DFrame" )
-	PlayerInfo:SetPos( ScrW() / 2 - 320, ScrH() / 2 - 240 )
-	PlayerInfo:SetSize( 536, 450 )
-	PlayerInfo:SetTitle( "Confirm delete of: " .. name )
-	PlayerInfo:SetVisible( true )
-	PlayerInfo:SetDraggable( true )
-	PlayerInfo:ShowCloseButton( false )
-	PlayerInfo:MakePopup()
-	PlayerPanel = vgui.Create( "DPanel", PlayerInfo )
-	PlayerPanel:SetPos( 2, 23 )
-	PlayerPanel:SetSize( 532, 425 )
-	PlayerPanel.Paint = function()
-		surface.SetDrawColor( 50, 50, 50, 255 )
-		surface.DrawRect( 0, 0, PlayerPanel:GetWide(), PlayerPanel:GetTall() )
-	end
-	local namelabel = vgui.Create( "DLabel", PlayerPanel )
-	namelabel:SetPos( 5, 3 )
-	namelabel:SetSize( 150, 20 )
-	namelabel:SetText( name )
-	
-	local genderlabel = vgui.Create( "DLabel", PlayerPanel )
-	genderlabel:SetPos( 5, 63 )
-	genderlabel:SetSize( 150, 20 )
-	genderlabel:SetText( "Gender : " .. gender )
-	
-	local agelabel = vgui.Create( "DLabel", PlayerPanel )
-	agelabel:SetPos( 5, 93 )
-	agelabel:SetSize( 150, 20 )
-	agelabel:SetText( "Age : " .. age )
-	
-	local desctext = vgui.Create( "DTextEntry", PlayerPanel )
-	desctext:SetPos( 5 , 243 )
-	desctext:SetSize( 200, 75 )
-	desctext:SetMultiline( true )
-	desctext:SetEditable( false )
-	desctext:SetText( description )
-	
-	local mdlPanel = vgui.Create( "DModelPanel", PlayerPanel )
-	mdlPanel:SetSize( 400, 400 )
-	mdlPanel:SetPos( 180, -30 )
-	mdlPanel:SetModel( model )
-	mdlPanel:SetAnimSpeed( 0.0 )
-	mdlPanel:SetAnimated( false )
-	mdlPanel:SetAmbientLight( Color( 50, 50, 50 ) )
-	mdlPanel:SetDirectionalLight( BOX_TOP, Color( 255, 255, 255 ) )
-	mdlPanel:SetDirectionalLight( BOX_FRONT, Color( 255, 255, 255 ) )
-	mdlPanel:SetCamPos( Vector( 100, 0, 30) );
-	mdlPanel:SetLookAt( Vector( 0, 0, 30) );
-	mdlPanel:SetFOV( 70 );
-	function mdlPanel:LayoutEntity(Entity)
 
-		self:RunAnimation()
-		Entity:SetAngles( Angle( 0, 0, 0) )
-		
-	end
-	
-	local confirmbutton = vgui.Create( "DButton", PlayerPanel )
-	confirmbutton:SetPos( 366, 375 )
-	confirmbutton:SetSize( 150, 50 )
+	local frame = vgui.Create( "DFrameTransparent" )
+	frame:SetSize( 250, 228 )
+	frame:SetTitle( "Confirm Removal" )
+	frame:Center()
+	frame:ShowCloseButton( false )
+	frame:MakePopup()
+
+	local panel = vgui.Create( "DPanel", frame )
+	panel:SetSize( 240, 195 )
+	panel:SetPos( 5, 28 )
+
+	local confirmbutton = vgui.Create( "DButton", panel )
+	confirmbutton:SetSize( 100, 30 )
 	confirmbutton:SetText( "Confirm Delete" )
-	confirmbutton.DoClick = function( btn )
+	confirmbutton.DoClick = function()
 		LocalPlayer():ConCommand("rp_removechar " .. id);
-		CreatePlayerMenu()
-		PlayerInfo:Remove()
-		PlayerInfo = nil;
-	end
-	
-	local declinebutton = vgui.Create( "DButton", PlayerPanel )
-	declinebutton:SetPos( 66, 375 )
-	declinebutton:SetSize( 150, 50 )
-	declinebutton:SetText( "Return to previous menu" )
-	declinebutton.DoClick = function( btn )
+		ExistingChars[id] = nil
 		CAKE.SetActiveTab( "Characters" )
-		PlayerInfo:Remove()
-		PlayerInfo = nil;
+		frame:Remove()
+		frame = nil
 	end
-end
-usermessage.Hook( "ConfirmCharRemoval", ConfirmCharRemove );
+	confirmbutton:SetPos( 130, 160 )
 
-
-function message_GetPlayerInfo( um )
-	local target = um:ReadEntity()
-	local gender = um:ReadString()
-	local age = um:ReadString()
-	PlayerInfo = vgui.Create( "DFrameTransparent" )
-	PlayerInfo:Center()
-	PlayerInfo:SetSize( 450, 350 )
-	PlayerInfo:SetTitle( "Character Info: " .. target:Nick() )
-	PlayerInfo:SetVisible( true )
-	PlayerInfo:SetDraggable( true )
-	PlayerInfo:ShowCloseButton( true )
-	PlayerInfo:MakePopup()
-	PlayerPanel = vgui.Create( "DPanelList", PlayerInfo )
-	PlayerPanel:SetPos( 5, 28 )
-	PlayerPanel:SetSize( 420, 318 )
-	PlayerPanel.Paint = function()
-		surface.SetDrawColor( 50, 50, 50, 255 )
-		surface.DrawRect( 0, 0, PlayerPanel:GetWide(), PlayerPanel:GetTall() )
+	local gobackbutton = vgui.Create( "DButton", panel )
+	gobackbutton:SetSize( 100, 30 )
+	gobackbutton:SetText( "Cancel" )
+	gobackbutton.DoClick = function()
+		CAKE.SetActiveTab( "Characters" )
+		frame:Remove()
+		frame = nil
 	end
-	local namelabel = vgui.Create( "DLabel", PlayerPanel )
-	namelabel:SetPos( 5, 3 )
-	namelabel:SetSize( 150, 20 )
-	namelabel:SetText( target:Nick() )
+	gobackbutton:SetPos( 15, 160 )
 
-	PlayerPanel:AddItem( namelabel)
-	
-	local genderlabel = vgui.Create( "DLabel", PlayerPanel )
-	genderlabel:SetPos( 5, 63 )
-	genderlabel:SetSize( 150, 20 )
-	genderlabel:SetText( "Gender : " .. gender )
+	local model = vgui.Create( "DModelPanel", panel )
+	model:SetSize( 120, 120 )
+	model:SetModel( modelstr )
+	model:SetPos( 110, 20 )
 
-	PlayerPanel:AddItem( genderlabel)
-	
-	local agelabel = vgui.Create( "DLabel", PlayerPanel )
-	agelabel:SetPos( 5, 93 )
-	agelabel:SetSize( 150, 20 )
-	agelabel:SetText( "Age : " .. age )
+	local name = vgui.Create( "DLabel", panel )
+	name:SetSize( 100, 20 )
+	name:SetPos( 10, 10 )
+	name:SetText( namestr )
 
-	PlayerPanel:AddItem( agelabel)
-	
-	local titlelabel = vgui.Create( "DLabel", PlayerPanel )
-	titlelabel:SetPos( 5, 183 )
-	titlelabel:SetSize( 150, 20 )
-	titlelabel:SetText( target:GetNWString( "title" ) )
+	local age = vgui.Create( "DLabel", panel )
+	age:SetSize( 100, 20 )
+	age:SetPos( 10, 40 )
+	age:SetText( "Age: " .. agestr )
 
-	PlayerPanel:AddItem( titlelabel)
-	
-	local title2label = vgui.Create( "DLabel", PlayerPanel )
-	title2label:SetPos( 5, 213 )
-	title2label:SetSize( 150, 20 )
-	title2label:SetText( target:GetNWString( "title2" ) )
-	PlayerPanel:AddItem( title2label)
-	
-	local mdlPanel = vgui.Create( "DModelPanel", PlayerPanel )
-	mdlPanel:SetSize( 200, 200 )
-	mdlPanel:SetModel( target:GetModel() )
-	mdlPanel:SetAnimSpeed( 0.0 )
-	mdlPanel:SetAnimated( false )
-	mdlPanel:SetAmbientLight( Color( 50, 50, 50 ) )
-	mdlPanel:SetDirectionalLight( BOX_TOP, Color( 255, 255, 255 ) )
-	mdlPanel:SetDirectionalLight( BOX_FRONT, Color( 255, 255, 255 ) )
-	mdlPanel:SetCamPos( Vector( 100, 0, 30) );
-	mdlPanel:SetLookAt( Vector( 0, 0, 30) );
-	mdlPanel:SetFOV( 70 );
-	function mdlPanel:LayoutEntity(Entity)
+	local title = vgui.Create( "DLabel", panel )
+	title:SetSize( 100, 20 )
+	title:SetPos( 10, 70 )
+	title:SetText( titlestr )
 
-		self:RunAnimation()
-		Entity:SetAngles( Angle( 0, 0, 0) )
-		
-	end
+	local title2 = vgui.Create( "DLabel", panel )
+	title2:SetSize( 100, 20 )
+	title2:SetPos( 10, 100 )
+	title2:SetText( title2str )
 
-	PlayerPanel:AddItem( mdlPanel)
-end
-usermessage.Hook( "GetPlayerInfo", message_GetPlayerInfo );
+end)
 
-function RunConcommand( um ) --Simple fix to garry's fuckup.
+usermessage.Hook( "runconcommand", function( um ) --Simple fix to garry's fuckup.
 	
 	local cmd = um:ReadString()
 	local exp = string.Explode( " ", cmd )
@@ -256,17 +162,7 @@ function RunConcommand( um ) --Simple fix to garry's fuckup.
 	
 	RunConsoleCommand( cmd, args )
 	
-end
-usermessage.Hook( "runconcommand", RunConcommand )
-
-function RemoveChar( um )
-	
-	local n = um:ReadLong();
-	table.Empty( ExistingChars[ n ] )
-	ExistingChars[ n ] = nil;
-	
-end
-usermessage.Hook( "RemoveChar", RemoveChar );
+end)
 
 usermessage.Hook( "addcurrency", function( um )
 	local currencydata = {}
@@ -278,20 +174,11 @@ end)
 
 Schemas = {}
 
-function AddSchema(data)
+usermessage.Hook("addschema", function(data)
 	local schema = data:ReadString()
 	AddRclicks(schema)
 	AddCharCreates(schema)
-end
-usermessage.Hook("addschema", AddSchema)
-/*
-		[ "Name" ]		= name,
-		[ "Type" ]		= data:ReadString(),
-		[ "Founder" ]	= data:ReadString(),
-		[ "Rank" ]		= data:ReadString(),
-		[ "RankPermissions" ] = string.Explode( ",", data:ReadString() ),
-		[ "Inventory" ]	= {}
-*/
+end )
 
 RclickTable = {}
 
@@ -304,81 +191,3 @@ function AddRclicks(schema)
 			table.insert(RclickTable, RCLICK);
 		end
 end
-
-
-InventoryTable = {}
-
-function AddItem(data)
-	local itemdata = {}
-	itemdata.Name = data:ReadString();
-	itemdata.Class = data:ReadString();
-	itemdata.Description = data:ReadString();
-	itemdata.Model = data:ReadString();
-	itemdata.Weight = data:ReadShort();
-	
-	table.insert(InventoryTable, itemdata);
-end
-usermessage.Hook("addinventory", AddItem);
-
-function ClearItems()
-	
-	InventoryTable = {}
-	
-end
-usermessage.Hook("clearinventory", ClearItems);
-
-BusinessTable = {};
-
-function AddBusinessItem(data)
-	local itemdata = {}
-	itemdata.Name = data:ReadString();
-	itemdata.Class = data:ReadString();
-	itemdata.Description = data:ReadString();
-	itemdata.Model = data:ReadString();
-	itemdata.Price = data:ReadLong();
-	
-	--print( itemdata.Class )
-	
-	table.insert(BusinessTable, itemdata);
-end
-usermessage.Hook("addbusiness", AddBusinessItem);
-
-MyGroupInventory = {}
-
-function AddMyGroupItem(data)
-	local itemdata = {}
-	itemdata.Name = data:ReadString();
-	itemdata.Class = data:ReadString();
-	itemdata.Description = data:ReadString();
-	itemdata.Model = data:ReadString();
-	itemdata.Price = data:ReadLong();
-	
-	
-	table.insert(MyGroupInventory, itemdata);
-end
-usermessage.Hook("addmygroupitem", AddMyGroupItem);
-
-function ClearBusinessItems()
-	
-	BusinessTable = {}
-	
-end
-usermessage.Hook("clearbusiness", ClearBusinessItems);
-
-function RecieveGroupInvite( um )
-	local group = um:ReadString()
-	local promoter = um:ReadString()
-	Derma_Query("You have recieved an invitation from " .. promoter .. " to join: " .. group, "Group Invite",
-				"Accept", function() RunConsoleCommand("rp_acceptinvite", group, promoter ) end,
-				"Decline", function() print( "You have declined a group invite" ) end)
-
-end
-usermessage.Hook("recievegroupinvite", RecieveGroupInvite);
-
-function RecieveGroupPromotion( um )
-	local rank = um:ReadString()
-	local promoter = um:ReadString()
-	Derma_Query("You have recieved an promotion from " .. promoter .. " to rank: " .. rank, "Congratulations!",
-				"Accept", function() RunConsoleCommand("rp_acceptinvite", group, promoter ) end)
-end
-usermessage.Hook("recievegrouppromotion", RecieveGroupPromotion);
