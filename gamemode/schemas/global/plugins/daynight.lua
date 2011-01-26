@@ -232,134 +232,137 @@ end
 // environment think.
 function daylight:think( )
 
-	if !self.shadow_control then --I DON'T HAVE CONTROL!
-		return
-	end
-	
-	// not ready to think?
-	if ( !self.ready || self.nextthink > CurTime( ) ) then return; end
-	
-	local daylen = daylight.dayspeed:GetFloat( );
-	
-	// delay next think.
-	self.nextthink = CurTime( ) + ( ( daylen / 1440 ) * 60 );
-	
-	// progress the time.
-	CAKE.ClockMins = CAKE.ClockMins + 1;
-	
-	// CakeScript Clock
-	if ( CAKE.ClockMins > DAY_LENGTH ) then
-		CAKE.ClockMins = 1
-		CAKE.ClockDay = CAKE.ClockDay + 1
-	end
-	
-	if ( CAKE.ClockDay >= get_days_in_month( CAKE.ClockMonth, CAKE.ClockYear ) ) then 
-		CAKE.ClockMonth = CAKE.ClockMonth + 1
-		CAKE.ClockDay = 1
-	end
-	if ( CAKE.ClockMonth > 12 ) then 
-		CAKE.ClockYear = CAKE.ClockYear + 1
-		CAKE.ClockMonth = 1
-	end
-	
-	CAKE.ClockTime = DAY_START + CAKE.ClockMins - 1
-	
-	// light pattern.
-	local pattern = self.light_table[ CAKE.ClockMins ].pattern;
-	
-	// change the pattern if needed.
-	if ( self.light_environment && self.pattern != pattern ) then
-		local light;
-		for _ , light in pairs( self.light_environment ) do
-			light:Fire( 'FadeToPattern' , pattern , 0 );
-			light:Activate( );
-		end
-	end
-	
-	// save the current pattern.
-	self.pattern = pattern;
-	
-	// sky overlay attributes.
-	local sky_overlay_alpha = self.light_table[ CAKE.ClockMins ].sky_overlay_alpha;
-	local sky_overlay_color = self.light_table[ CAKE.ClockMins ].sky_overlay_color;
-	if ( self.sky_overlay ) then
-		local brush;
-		for _ , brush in pairs( self.sky_overlay ) do
-			// change the alpha if needed.
-			if ( self.sky_overlay_alpha != sky_overlay_alpha ) then
-				brush:Fire( 'Alpha' , sky_overlay_alpha , 0 );
-			end
-			
-			// change the color if needed.
-			if ( self.sky_overlay_color != sky_overlay_color ) then
-				brush:Fire( 'Color' , sky_overlay_color , 0 );
-			end
-		end
-	end
-	self.sky_overlay_alpha = sky_overlay_alpha;
-	self.sky_overlay_color = sky_overlay_color;
-	
-	
-	// Sun and Shadow angles (update at the same time)
-	local env_sun_angle = self.light_table[ CAKE.ClockMins ].env_sun_angle;
-	local shadow_angles = self.light_table[ CAKE.ClockMins ].shadow_angle;
-	if ( self.env_sun && self.env_sun_angle != env_sun_angle ) then
-		local sun;
-		for _ , sun in pairs( self.env_sun ) do
-			sun:Fire( 'addoutput' , env_sun_angle , 0 );
-			sun:Activate( );
-		if ( self.shadow_control ) then
-		end
-			local shadow;
-			for _ , shadow in pairs( self.shadow_control ) do
-				shadow:Fire( 'addoutput', shadow_angles )
-			end
-		end
-	end
-	self.env_sun_angle = env_sun_angle;
-	
-	// sun angle.
-	local env_sun_angle = self.light_table[ CAKE.ClockMins ].env_sun_angle;
-	
-	// update the sun position if needed.
-	if ( self.env_sun && self.env_sun_angle != env_sun_angle ) then
-		local sun;
-		for _ , sun in pairs( self.env_sun ) do
-			sun:Fire( 'addoutput' , env_sun_angle , 0 );
-			sun:Activate( );
-		end
-	end
-	// save the sun angle.
-	self.env_sun_angle = env_sun_angle;
-	
-	// make the lights go magic!
-	if ( CAKE.ClockMins == DAWN ) then
-		self:lightsOff( );
-		self:PushDayEffects(true);
-		for _, dEvents in pairs( self.day_events ) do
-			dEvents:Fire( 'trigger', 0 );
-		end
-	elseif ( CAKE.ClockMins == DUSK ) then
-		self:lightsOn( );
-		self:PushDayEffects(false);
-		for _, nEvents in pairs( self.night_events ) do
-			nEvents:Fire( 'trigger', 0 );
-		end
-	end
-end
+	if CAKE.ClockStarted then
 
-function daylight:PushDayEffects( isDay )
-	if (isDay == daylight.DayEffects) then return false; end
-	
-	daylight.DayEffects = isDay;
-	
-	if (isDay) then
-		for _, nTone in pairs( self.tonemap ) do
-			nTone:Fire('setautoexposuremax', '2', 0 )
+		if !self.shadow_control then --I DON'T HAVE CONTROL!
+			return
 		end
-	else
-		for _, nTone in pairs( self.tonemap ) do
-			nTone:Fire('setautoexposuremax', '0.5', 0 ) 
+		
+		// not ready to think?
+		if ( !self.ready || self.nextthink > CurTime( ) ) then return; end
+		
+		local daylen = daylight.dayspeed:GetFloat( );
+		
+		// delay next think.
+		self.nextthink = CurTime( ) + ( ( daylen / 1440 ) * 60 );
+		
+		// progress the time.
+		CAKE.ClockMins = CAKE.ClockMins + 1;
+		
+		// CakeScript Clock
+		if ( CAKE.ClockMins > DAY_LENGTH ) then
+			CAKE.ClockMins = 1
+			CAKE.ClockDay = CAKE.ClockDay + 1
+		end
+		
+		if ( CAKE.ClockDay >= get_days_in_month( CAKE.ClockMonth, CAKE.ClockYear ) ) then 
+			CAKE.ClockMonth = CAKE.ClockMonth + 1
+			CAKE.ClockDay = 1
+		end
+		if ( CAKE.ClockMonth > 12 ) then 
+			CAKE.ClockYear = CAKE.ClockYear + 1
+			CAKE.ClockMonth = 1
+		end
+		
+		CAKE.ClockTime = DAY_START + CAKE.ClockMins - 1
+		
+		// light pattern.
+		local pattern = self.light_table[ CAKE.ClockMins ].pattern;
+		
+		// change the pattern if needed.
+		if ( self.light_environment && self.pattern != pattern ) then
+			local light;
+			for _ , light in pairs( self.light_environment ) do
+				light:Fire( 'FadeToPattern' , pattern , 0 );
+				light:Activate( );
+			end
+		end
+		
+		// save the current pattern.
+		self.pattern = pattern;
+		
+		// sky overlay attributes.
+		local sky_overlay_alpha = self.light_table[ CAKE.ClockMins ].sky_overlay_alpha;
+		local sky_overlay_color = self.light_table[ CAKE.ClockMins ].sky_overlay_color;
+		if ( self.sky_overlay ) then
+			local brush;
+			for _ , brush in pairs( self.sky_overlay ) do
+				// change the alpha if needed.
+				if ( self.sky_overlay_alpha != sky_overlay_alpha ) then
+					brush:Fire( 'Alpha' , sky_overlay_alpha , 0 );
+				end
+				
+				// change the color if needed.
+				if ( self.sky_overlay_color != sky_overlay_color ) then
+					brush:Fire( 'Color' , sky_overlay_color , 0 );
+				end
+			end
+		end
+		self.sky_overlay_alpha = sky_overlay_alpha;
+		self.sky_overlay_color = sky_overlay_color;
+		
+		
+		// Sun and Shadow angles (update at the same time)
+		local env_sun_angle = self.light_table[ CAKE.ClockMins ].env_sun_angle;
+		local shadow_angles = self.light_table[ CAKE.ClockMins ].shadow_angle;
+		if ( self.env_sun && self.env_sun_angle != env_sun_angle ) then
+			local sun;
+			for _ , sun in pairs( self.env_sun ) do
+				sun:Fire( 'addoutput' , env_sun_angle , 0 );
+				sun:Activate( );
+			if ( self.shadow_control ) then
+			end
+				local shadow;
+				for _ , shadow in pairs( self.shadow_control ) do
+					shadow:Fire( 'addoutput', shadow_angles )
+				end
+			end
+		end
+		self.env_sun_angle = env_sun_angle;
+		
+		// sun angle.
+		local env_sun_angle = self.light_table[ CAKE.ClockMins ].env_sun_angle;
+		
+		// update the sun position if needed.
+		if ( self.env_sun && self.env_sun_angle != env_sun_angle ) then
+			local sun;
+			for _ , sun in pairs( self.env_sun ) do
+				sun:Fire( 'addoutput' , env_sun_angle , 0 );
+				sun:Activate( );
+			end
+		end
+		// save the sun angle.
+		self.env_sun_angle = env_sun_angle;
+		
+		// make the lights go magic!
+		if ( CAKE.ClockMins == DAWN ) then
+			self:lightsOff( );
+			self:PushDayEffects(true);
+			for _, dEvents in pairs( self.day_events ) do
+				dEvents:Fire( 'trigger', 0 );
+			end
+		elseif ( CAKE.ClockMins == DUSK ) then
+			self:lightsOn( );
+			self:PushDayEffects(false);
+			for _, nEvents in pairs( self.night_events ) do
+				nEvents:Fire( 'trigger', 0 );
+			end
+		end
+	end
+
+	function daylight:PushDayEffects( isDay )
+		if (isDay == daylight.DayEffects) then return false; end
+		
+		daylight.DayEffects = isDay;
+		
+		if (isDay) then
+			for _, nTone in pairs( self.tonemap ) do
+				nTone:Fire('setautoexposuremax', '2', 0 )
+			end
+		else
+			for _, nTone in pairs( self.tonemap ) do
+				nTone:Fire('setautoexposuremax', '0.5', 0 ) 
+			end
 		end
 	end
 end

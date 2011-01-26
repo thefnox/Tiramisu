@@ -7,6 +7,8 @@
 -- Contains important server functions.
 -------------------------------
 
+CAKE.ClockStarted = false
+
 -- Oh, don't mind me.. just adding a useful function.
 function string.explode(str)
 
@@ -63,14 +65,24 @@ function CAKE.InitTime() -- Load the time from a text file or default value, thi
 		file.Write(CAKE.Name .. "/time.txt", "1 1 2011 1")
 		
 	end
-	
-	local unclumped = string.Explode(" ", clumpedtime)
-	CAKE.ClockDay = tonumber(unclumped[1])
-	CAKE.ClockMonth = tonumber(unclumped[2])
-	CAKE.ClockYear = tonumber(unclumped[3])
-	CAKE.ClockMins = tonumber(unclumped[4])
+
+	if clumpedtime and clumpedtime != "" then
+		local unclumped = string.Explode(" ", clumpedtime)
+		CAKE.ClockDay = tonumber(unclumped[1] or 1)
+		CAKE.ClockMonth = tonumber(unclumped[2] or 1)
+		CAKE.ClockYear = tonumber(unclumped[3] or 2011)
+		CAKE.ClockMins = tonumber(unclumped[4] or 1)
+
+	else
+		CAKE.ClockDay = 1
+		CAKE.ClockMonth = 1
+		CAKE.ClockYear = 2011
+		CAKE.ClockMins = 1
+	end
 	
 	SetGlobalString("time", "Loading..")
+
+	CAKE.ClockStarted = true
 	
 end
 
