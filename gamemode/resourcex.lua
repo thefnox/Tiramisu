@@ -1,3 +1,6 @@
+--CHRISASTER MADE THIS AND FOR THAT WE'RE ETERNALLY GRATEFUL
+
+
 	-- Utils
 		
 	local function FixSlashes( str )
