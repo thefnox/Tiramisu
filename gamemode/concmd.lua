@@ -17,8 +17,6 @@
 
 function GM:PlayerSpawnSWEP( ply, class )
 
-	CAKE.CallTeamHook( "PlayerSpawnSWEP", ply, class ); -- Perhaps allow certain flags to use sweps, eh?
-	
 	if( CAKE.PlayerRank( ply ) > 0 ) then return true; end
 	return false;
 	
@@ -26,14 +24,12 @@ end
 
 function GM:PlayerGiveSWEP( ply )
 
-	CAKE.CallTeamHook( "PlayerGiveSWEP", ply, class ); -- Perhaps allow certain flags to use sweps, eh?
-
 	if( CAKE.PlayerRank( ply ) > 0 ) then return true; end
 	return false; 
 	
 end
 
--- This is the F1 menu
+-- This is the help menu
 function GM:ShowHelp( ply )
 	
 	umsg.Start( "showhelpmenu", ply )
@@ -63,8 +59,6 @@ end
 
 -- NO SENT FOR YOU.
 function GM:PlayerSpawnSENT( ply, class )
-
-	CAKE.CallTeamHook( "PlayerSpawnSWEP", ply, class ); -- Perhaps allow certain flags to use sents, eh?
 	
 	if( CAKE.PlayerRank( ply ) > 0 ) then return true; end
 	return false;
@@ -134,54 +128,6 @@ function ccChangeName( ply, cmd, args )
 end
 concommand.Add( "rp_changename", ccChangeName );
 
--- Allows a player to skip the respawn timer.
-function ccAcceptDeath( ply, cmd, args )
-
-	ply.deathtime = 120;
-	ply.CheatedDeath = true
-	
-end
-concommand.Add( "rp_acceptdeath", ccAcceptDeath );
-
-function ccFlag( ply, cmd, args )
-	
-	local FlagTo = "";
-	
-	for k, v in pairs( CAKE.Teams ) do
-	
-		if( v[ "flag_key" ] == args[ 1 ] ) then
-		
-			FlagTo = v;
-			FlagTo.n = k;
-			break;
-			
-		end
-		
-	end
-	
-	if( FlagTo == "" ) then
-	
-		CAKE.SendChat( ply, "Incorrect Flag!" );
-		return;
-		
-	end
-
-	if( ( CAKE.GetCharField(ply, "flags" ) != nil and table.HasValue( CAKE.GetCharField( ply, "flags" ), args[ 1 ] ) ) or FlagTo[ "public" ] ) then
-		
-		ply:SetTeam( FlagTo.n );
-		ply:RefreshBusiness();
-		ply:Spawn( );
-		return;
-				
-	else
-	
-		CAKE.SendChat( ply, "You do not have this flag!" );
-		
-	end		
-	
-end
-concommand.Add( "rp_flag", ccFlag );
-
 function ccLockDoor( ply, cmd, args )
 	
 	local door = ents.GetByIndex( tonumber( args[ 1 ] ) );
@@ -211,37 +157,6 @@ function ccUnLockDoor( ply, cmd, args )
 
 end
 concommand.Add( "rp_unlockdoor", ccUnLockDoor );
-
-function ccOpenDoor( ply, cmd, args )
-
-	local entity = ply:GetEyeTrace( ).Entity;
-	
-	if( entity != nil and entity:IsValid( ) and CAKE.IsDoor( entity ) and ply:GetPos( ):Distance( entity:GetPos( ) ) < 200 ) then
-	
-		local pos = entity:GetPos( );
-		
-		for k, v in pairs( CAKE.Doors ) do
-		
-			if( tonumber( v[ "x" ] ) == math.ceil( tonumber( pos.x ) ) and tonumber( v[ "y" ] ) == math.ceil( tonumber( pos.y ) ) and tonumber( v[ "z" ] ) == math.ceil( tonumber( pos.z ) ) ) then
-			
-				for k2, v2 in pairs( CAKE.Teams[ ply:Team( ) ][ "door_groups" ] ) do
-				
-					if( tonumber( v[ "group" ] ) == tonumber( v2 ) ) then
-					
-						entity:Fire( "toggle", "", 0 );
-						
-					end
-					
-				end
-				
-			end
-			
-		end
-		
-	end
-	
-end
-concommand.Add( "rp_opendoor", ccOpenDoor );
 
 function ccPurchaseDoor( ply, cmd, args )
 	local door = ents.GetByIndex( tonumber( args[ 1 ] ) );

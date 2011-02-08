@@ -81,7 +81,7 @@ function GM:ScoreboardShow( )
 			CAKE.SetActiveTab(k)
 		end
 		label.PaintOver = function()
-			draw.DrawText(k, "DefaultSmallDropShadow", 60, 6, Color(255, 255, 255, 255),TEXT_ALIGN_CENTER)
+			draw.DrawText(k, "TiramisuTabsFont", 60, 6, Color(255, 255, 255, 255),TEXT_ALIGN_CENTER)
 		end
 		label:SetPos( 5, lastpos)
 		label:SetExpensiveShadow( 1, Color( 10, 10, 10, 255 ) )

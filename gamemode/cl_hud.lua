@@ -11,8 +11,9 @@ CAKE.TitleDrawDistance = CreateClientConVar( "rp_titledrawdistance", 600, true, 
 
 LocalPlayer( ).MyModel = "" -- Has to be blank for the initial value, so it will create a spawnicon in the first place.
 
-surface.CreateFont("TargetID", 32, 400, true, false, "TiramisuTitlesFont")
-surface.CreateFont("ChatFont", 32, 400, true, false, "TiramisuChatFont")
+surface.CreateFont(CAKE.MenuFont, 32, 500, true, false, "TiramisuTitlesFont")
+surface.CreateFont(CAKE.MenuFont, 18, 500, true, false, "TiramisuTimeFont")
+surface.CreateFont(CAKE.MenuFont, 12, 400, true, false, "TiramisuTabsFont", true )
 
 local function DrawTime( )
 
@@ -21,7 +22,7 @@ local function DrawTime( )
 	local struc = {}
 	struc.pos = { 10,10 } -- Pos x, y
 	struc.color = Color(255,255,255,255 ) -- Red
-	struc.font = "HudHintTextLarge" -- Font
+	struc.font = "TiramisuTimeFont" -- Font
 	struc.xalign = TEXT_ALIGN_LEFT -- Horizontal Alignment
 	struc.yalign = TEXT_ALIGN_LEFT -- Vertical Alignment
 
@@ -110,38 +111,38 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 		            angle:RotateAroundAxis( angle:Forward(), 90 )
 		            
 		            position = position - angle:Right() * 16
-		            cam.Start3D2D( position, angle, 0.1 )
+		            cam.Start3D2D( position, angle, 0.12 )
 		                surface.SetFont( "TiramisuTitlesFont" )
 		                if v:GetNWInt( "chatopen", 0 ) == 1 then
-		                	draw.SimpleTextOutlined( "Typing...", "TiramisuTitlesFont", 0, -50, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
+		                	draw.SimpleTextOutlined( "Typing...", "TiramisuTitlesFont", 0, -50, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,200) )
 		                end
-		                draw.SimpleTextOutlined( v:Nick(), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
-		                draw.SimpleTextOutlined( v:GetNWString( "title", "Connecting.." ), "TiramisuTitlesFont", 0, 30, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
-		                draw.SimpleTextOutlined( v:GetNWString( "title2", "Connecting.." ), "TiramisuTitlesFont", 0, 60, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
+		                draw.SimpleTextOutlined( v:Nick(), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,200) )
+		                draw.SimpleTextOutlined( v:GetNWString( "title", "Connecting.." ), "TiramisuTitlesFont", 0, 30, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,200) )
+		                draw.SimpleTextOutlined( v:GetNWString( "title2", "Connecting.." ), "TiramisuTitlesFont", 0, 60, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,200) )
 		            cam.End3D2D()
 		            angle:RotateAroundAxis( angle:Forward(), 180 )
 		            angle:RotateAroundAxis( angle:Up(), 180 )
-		            cam.Start3D2D( position, angle, 0.1 )
+		            cam.Start3D2D( position, angle, 0.12 )
 		                surface.SetFont( "TiramisuTitlesFont" )
 		                if v:GetNWInt( "chatopen", 0 ) == 1 then
-		                	draw.SimpleTextOutlined( "Typing...", "TiramisuTitlesFont", 0, -50, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
+		                	draw.SimpleTextOutlined( "Typing...", "TiramisuTitlesFont", 0, -50, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,200) )
 		                end
 		                draw.SimpleTextOutlined( v:Nick(), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
-		                draw.SimpleTextOutlined( v:GetNWString( "title", "Connecting.." ), "TiramisuTitlesFont", 0, 30, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
-		                draw.SimpleTextOutlined( v:GetNWString( "title2", "Connecting.." ), "TiramisuTitlesFont", 0, 60, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
+		                draw.SimpleTextOutlined( v:GetNWString( "title", "Connecting.." ), "TiramisuTitlesFont", 0, 30, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,200) )
+		                draw.SimpleTextOutlined( v:GetNWString( "title2", "Connecting.." ), "TiramisuTitlesFont", 0, 60, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,200) )
 		            cam.End3D2D()
 		        elseif CAKE.IsDoor( v ) and CAKE.GetDoorTitle( v ) != "" then
 		      	  	position = v:LocalToWorld(v:OBBCenter())
 				    angle = v:GetAngles()
 				    angle:RotateAroundAxis( angle:Up(), 90 )
 				    angle:RotateAroundAxis( angle:Forward() * -1, -90 )
-				    cam.Start3D2D( position + ( angle:Up() * 4 ), angle , 0.045 )
-				        draw.SimpleTextOutlined( CAKE.GetDoorTitle( v ), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
+				    cam.Start3D2D( position + ( angle:Up() * 4 ), angle , 0.12 )
+				        draw.SimpleTextOutlined( CAKE.GetDoorTitle( v ), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,200) )
 				    cam.End3D2D()   
 				                angle:RotateAroundAxis( angle:Forward(), 180 )
 				            angle:RotateAroundAxis( angle:Up(), 180 )
-				    cam.Start3D2D( position + ( angle:Up() * 4 ), angle , 0.045 )
-				        draw.SimpleTextOutlined( CAKE.GetDoorTitle( v ), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
+				    cam.Start3D2D( position + ( angle:Up() * 4 ), angle , 0.12 )
+				        draw.SimpleTextOutlined( CAKE.GetDoorTitle( v ), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,200) )
 				    cam.End3D2D()   
 		        end
 		   end

@@ -85,9 +85,6 @@ function CAKE.LoadPlayerDataFile( ply )
 	CAKE.PlayerData[ SteamID ]  = {  };
 	
 	if( CAKE.HasSavedData( ply ) ) then	
-	
-	
-		CAKE.CallHook( "LoadPlayerDataFile", ply );
 		
 		CAKE.DayLog( "script.txt", "Loading player data file for " .. ply:SteamID( ) );
 		
@@ -162,8 +159,6 @@ function CAKE.LoadPlayerDataFile( ply )
 		
 		CAKE.SavePlayerData(ply);
 		
-		CAKE.CallHook( "LoadedPlayerDataFile", ply, Data_Table );
-		
 	else
 		
 		-- Seems they don't have a player table. Let's create a default one for them.
@@ -185,9 +180,6 @@ function CAKE.LoadPlayerDataFile( ply )
 		
 		-- We won't make a character, obviously. That is done later.
 		CAKE.SavePlayerData(ply);
-		
-		-- Technically, we didn't load it, but the data is now there.
-		CAKE.CallHook( "LoadedPlayerDataFile", ply, Data_Table );
 		
 	end
 	

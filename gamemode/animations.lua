@@ -620,9 +620,6 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 				model = exp2[2]
 				seq = exp[2]
 				if( ply:GetModel() != string.lower(model) and !ply.SpecialModel and ply:GetNWBool( "charloaded", false )) then
-					--print( "Switching model to " .. model )
-					--print(ply.SpecialModel)
-					--print(ply:GetModel())
 					ply:SetModel( model )
 				end
 				return FindEnumeration( seq )

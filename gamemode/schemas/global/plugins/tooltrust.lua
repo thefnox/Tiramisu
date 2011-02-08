@@ -293,7 +293,7 @@ function GM:PlayerSpawnedEffect(ply, mdl, ent)
 	
 end
 
-function Tooltrust_Give(ply)
+hook.Add( "PlayerLoadout", "TiramisuTooltrustLoadout", function( ply )
 
 	if(tostring(CAKE.GetPlayerField(ply, "tooltrust")) >= "0") then
 	
@@ -309,7 +309,7 @@ function Tooltrust_Give(ply)
 	
 	end
 
-end
+end)
 
 function Admin_Tooltrust(ply, cmd, args)
 
@@ -366,8 +366,6 @@ function PLUGIN.Init()
 	CAKE.ConVars[ "Default_Tooltrust" ] = 0; -- Are players allowed to have the toolgun when they first start.
 	
 	CAKE.AddDataField( 1, "tooltrust", CAKE.ConVars[ "Default_Tooltrust" ] ); -- Is the player allowed to have the toolgun
-	
-	CAKE.AddHook("PlayerSpawn", "tooltrust_give", Tooltrust_Give);
 	
 	CAKE.AdminCommand( "tooltrust", Admin_Tooltrust, "Change someones tooltrust", true, true, 3 );
 	

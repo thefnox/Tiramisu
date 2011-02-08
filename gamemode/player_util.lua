@@ -411,13 +411,7 @@ end
 
 function meta:IsCharLoaded()
 	
-	if CAKE.Teams[self:Team()] != nil then
-		self:SetNWBool( "charloaded", true )
-		return true
-	else
-		self:SetNWBool( "charloaded", false )
-		return false
-	end
+	return self:GetNWBool( "charloaded", false )
 
 end
 

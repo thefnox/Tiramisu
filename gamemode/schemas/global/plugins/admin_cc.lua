@@ -172,16 +172,12 @@ function Admin_Noclip( ply, cmd, args )
 		   ply:SetNotSolid( true );
 		   ply:SetMoveType( 8 );
 		   
-		   ply:GetTable().Observe = true;
-		   
 	   else
 
 		   ply:GodDisable();
 		   
 		   ply:SetNotSolid( false );
 		   ply:SetMoveType( 2 );
-		   
-		   ply:GetTable().Noclip = false;
 		   
 	   end
 end
@@ -260,7 +256,6 @@ function Admin_SetConVar( ply, cmd, args )
 		end
 		
 		CAKE.SendChat( ply, args[ 1 ] .. " set to " .. args[ 2 ] );
-		CAKE.CallHook( "SetConVar", ply, args[ 1 ], args[ 2 ] );
 		
 	else
 	
@@ -274,7 +269,6 @@ function Admin_SetOOCDelay( ply, cmd, args )
 
 	CAKE.ConVars[ args[ 1 ] ] = tostring(args[ 1 ]);
 	CAKE.SendChat( ply, "OOC Delay set to " .. tostring(args[ 1 ]) );
-	CAKE.CallHook( "SetConVar", ply, "OOCDelay", args[ 1 ] );
 	
 end
 
@@ -528,7 +522,7 @@ function PLUGIN.Init( )
 	CAKE.AdminCommand( "bring", Admin_Bring, "Brings a player to you", true, true, 3);
 	CAKE.AdminCommand( "goto", Admin_GoTo, "Takes you to a player", true, true, 3 );
 	CAKE.AdminCommand( "slay", Admin_Slay, "Kills a player", true, true, 3 );
-	CAKE.AdminCommand( "setrank", Admin_SetRank, "Set the rank of another player", true, true, 5 )
+	CAKE.AdminCommand( "setrank", Admin_SetRank, "Set the rank of another player", true, true, 4 )
 	
 end
 

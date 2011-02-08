@@ -16,7 +16,6 @@ function ccVoice( ply, cmd, args ) -- People near you will hear the voice
 	end
 
 	local voice = CAKE.Voices[ id ];
-	local team = ply:Team( );
 	
 	if( CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "soundgroup" ) and CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "soundgroup" ) == voice.soundgroup ) then
 		
@@ -24,23 +23,6 @@ function ccVoice( ply, cmd, args ) -- People near you will hear the voice
 		
 		if((string.find(string.lower(ply:GetModel()), "female") or string.lower(ply:GetModel()) == "models/alyx.mdl") and voice.femalealt != "") then
 			path = voice.femalealt;
-		end
-		
-		if(CAKE.Teams[ team ].rations == true) then
-		
-			-- This is a combine team, thus we will give them COMBINE STYLE VOICES.
-			util.PrecacheSound( "/npc/metropolice/vo/on2.wav" );
-			util.PrecacheSound( "/npc/metropolice/vo/off2.wav" );
-			
-			ply:EmitSound( "/npc/metropolice/vo/on2.wav" );
-			
-			local function EmitThatShit()
-				ply:EmitSound(path);
-			end
-			timer.Simple(1, EmitThatShit);
-			
-			return "";
-			
 		end
 			
 		util.PrecacheSound( path );

@@ -34,8 +34,6 @@ end
 
 function CAKE.LoadPlugin( schema, filename )
 	
-	CAKE.CallHook( "LoadPlugin", schema, filename );
-	
 	local path = "schemas/" .. schema .. "/plugins/" .. filename;
 	
 	PLUGIN = {  };
@@ -74,7 +72,6 @@ function CAKE.InitPlugins( )
 
 	for _, PLUGIN in pairs( CAKE.Plugins ) do
 		
-		CAKE.CallHook( "InitPlugin", _, PLUGIN );
 		CAKE.DayLog("script.txt", "Initializing " .. PLUGIN.Name);
 		
 		if(PLUGIN.Init) then

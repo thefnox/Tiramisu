@@ -46,41 +46,6 @@ end
 
 TeamTable = {};
 
-function SetUpTeam(data)
-
-	local newteam = {}
-	newteam.id = data:ReadLong();
-	newteam.name = data:ReadString();
-	newteam.r = data:ReadLong();
-	newteam.g = data:ReadLong();
-	newteam.b = data:ReadLong();
-	newteam.a = data:ReadLong();
-	newteam.public = data:ReadBool();
-	newteam.salary = data:ReadLong();
-	newteam.flagkey = data:ReadString();
-	newteam.business = data:ReadBool();
-	
-	team.SetUp(newteam.id, newteam.name, Color(newteam.r,newteam.g,newteam.b,newteam.a));
-	TeamTable[newteam.id] = newteam;
-	
-end
-usermessage.Hook("setupteam", SetUpTeam);
-
-ChosenModel = "";
-models = {};
-
-function AddModel( data )
-
-	table.insert( models, data:ReadString( ) )
-	
-end
-usermessage.Hook( "addmodel", AddModel );
-
-function SetChosenModel( mdl )
-
-	ChosenModel = mdl
-	
-end
 
 ExistingChars = {  }
 

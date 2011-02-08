@@ -25,14 +25,11 @@ end
 
 include( "shared.lua" ); -- Shared Functions
 include( "log.lua" ); -- Logging functions
-include( "error_handling.lua" ); -- Error handling functions
-include( "hooks.lua" ); -- CakeScript Hook System
 include( "configuration.lua" ); -- Configuration data
 include( "player_data.lua" ); -- Player data functions
 include( "player_shared.lua" ); -- Shared player functions
 include( "player_util.lua" ); -- Player functions
 include( "admin.lua" ); -- Admin functions
-include( "admin_cc.lua" ); -- Admin commands
 include( "chat.lua" ); -- Chat Commands
 include( "concmd.lua" ); -- Concommands
 include( "util.lua" ); -- Functions
@@ -40,13 +37,20 @@ include( "charactercreate.lua" ); -- Character Creation functions
 include( "items.lua" ); -- Items system
 include( "schema.lua" ); -- Schema system
 include( "plugins.lua" ); -- Plugin system
-include( "teams.lua" ); -- Teams system
 include( "client_resources.lua" ); -- Sends files to the client
 include( "animations.lua" ); -- Animations
 include( "doors.lua" ); -- Doors
-include( "resources.lua" ) -- Automatic resource handling
 include( "resourcex.lua" ) -- Resource downloading
 include( "sn3_base_sv.lua" )
+
+resource.AddFile( "models/Gustavio/alyxanimtree.mdl" )
+resource.AddFile( "models/Gustavio/combineanimtree.mdl" )
+resource.AddFile( "models/Gustavio/maleanimtree.mdl" )
+resource.AddFile( "models/Gustavio/femaleanimtree.mdl" )
+resource.AddFile( "models/Gustavio/metroanimtree.mdl" )
+resource.AddFile( "models/Gustavio/barneyanimtree.mdl" )
+resource.AddFile( "materials/tiramisu/tabbutton.vmt" )
+resource.AddFile( "resource/fonts/Harabara.ttf")
 
 CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ); -- Load the schema and plugins, this is NOT initializing.
 
@@ -76,8 +80,6 @@ function GM:Initialize( ) -- Initialize the gamemode
 	timer.Create( "timesave", 120, 0, CAKE.SaveTime );
 	timer.Create( "sendtime", 1, 0, CAKE.SendTime );
 	
-	CAKE.CallHook("GamemodeInitialize");
-	
 	CAKE.Running = true;
 	
 end
@@ -85,10 +87,9 @@ end
 -- Player Initial Spawn
 function GM:PlayerInitialSpawn( ply )
 	
+	ply.LastOOC = -100000; -- This is so people can talk for the first time without having to wait.
+
 	CAKE.SpawnPointHandle(ply)
-	
-	-- Call the hook before we start initializing the player
-	CAKE.CallHook( "Player_Preload", ply );
 	
 	-- Send them valid models
 	for k, v in pairs( CAKE.ValidModels ) do
@@ -126,27 +127,8 @@ function GM:PlayerInitialSpawn( ply )
 	ply:ChangeMaxWalkSpeed(CAKE.ConVars[ "WalkSpeed" ]);
 	ply:ChangeMaxRunSpeed(CAKE.ConVars[ "RunSpeed" ]);
 	
-	/*
-	-- Check if they are admins
-	if( ply:IsUserGroup("admin") )	then
-		--ply:SetUserGroup( "superadmin" );
-		CAKE.SetPlayerField( ply, "adrank", "Administrator" )
-	end
-	
-	if( ply:IsUserGroup("superadmin") ) then
-		--ply:SetUserGroup( "admin" );
-		CAKE.SetPlayerField( ply, "adrank", "Super Administrator" )
-	end
-	*/
-	
-	-- Send them all the teams
-	CAKE.InitTeams( ply );
-	
 	-- Load their data, or create a new datafile for them.
 	CAKE.LoadPlayerDataFile( ply );
-
-	-- Call the hook after we have finished initializing the player
-	CAKE.CallHook( "Player_Postload", ply );
 	
 	self.BaseClass:PlayerInitialSpawn( ply )
 
@@ -154,18 +136,7 @@ end
 
 function GM:PlayerLoadout(ply)
 
-	CAKE.CallHook( "PlayerLoadout", ply );
 	if(ply:GetNWInt("charactercreate") != 1) then
-		
-		if(CAKE.Teams[ply:Team()] != nil) then
-		
-			for k, v in pairs(CAKE.Teams[ply:Team()]["weapons"]) do
-			
-				ply:Give(v);
-				
-			end
-			
-		end
 
 		ply:Give("hands");
 		
@@ -182,14 +153,6 @@ function GM:PlayerSpawn( ply )
 	end
 	
 	CAKE.SpawnPointHandle(ply)
-	
-	if( ply:IsUserGroup("admin") )	then
-		CAKE.SetPlayerField( ply, "adrank", "Administrator" )
-	end
-	
-	if( ply:IsUserGroup("superadmin") ) then
-		CAKE.SetPlayerField( ply, "adrank", "Super Administrator" )
-	end
 	
 	CAKE.SavePlayerData( ply )
 	
@@ -221,10 +184,9 @@ function GM:PlayerSpawn( ply )
 	ply:ChangeMaxRunSpeed(CAKE.ConVars[ "RunSpeed" ] - ply:MaxRunSpeed());
 	ply:SetAiming( false )
 	
+	ply:SetColor(0, 0, 0, 0) 
 	self.BaseClass:PlayerSpawn( ply )
 	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] );
-	CAKE.CallHook( "PlayerSpawn", ply )
-	CAKE.CallTeamHook( "PlayerSpawn", ply ); -- Change player speeds perhaps?
 	
 	
 end
@@ -243,33 +205,23 @@ function GM:PlayerSetModel(ply)
 				end
 				
 				ply:SetModel( m );
-				CAKE.CallHook( "PlayerSetModel", ply, m);
 		else
-			
 			ply:SetModel("models/kleiner.mdl");
-			CAKE.CallHook( "PlayerSetModel", ply, m);
-			
 		end
 	end
-	CAKE.CallTeamHook( "PlayerSetModel", ply, m or ply:GetModel()); -- Hrm. Looks like the teamhook will take priority over the regular hook.. PREPARE FOR HELLFIRE (puts on helmet)
 
 end
 
-local function FunkyPlayerDisconnect( ply )
-	timer.Destroy( ply:SteamID() .. "rechargetimer" )
-	--CAKE.SetPlayerField( ply, "lastlogin", tostring( CAKE.ClockMins ) .. ";" .. tostring( CAKE.ClockMonth ) .. "/" .. tostring( CAKE.ClockDay ) .. "/" .. tostring( CAKE.ClockYear ) )
+function GM:PlayerDisconnected( ply )
 	CAKE.SavePlayerData( ply )
 end
-hook.Add( "PlayerDisconnected", "CAKE.PlayerDisconnect", FunkyPlayerDisconnect )
 
 
 function GM:PlayerDeath(ply)
 	
 	CAKE.StandUp( ply )
 	CAKE.DeathMode(ply);
-	CAKE.CallHook("PlayerDeath", ply);
-	CAKE.CallTeamHook("PlayerDeath", ply);
-	
+
 end
 
 function GM:PlayerDeathThink(ply)
@@ -286,16 +238,6 @@ function GM:PlayerDeathThink(ply)
 			ply:SetNWInt("deathmoderemaining", CAKE.ConVars[ "Respawn_Timer" ] - ply.deathtime);
 			
 		else
-			/*
-			if ply.CheatedDeath then --If the player used !acceptdeath then just spawn him normally
-				ply:Spawn();
-			else
-				ply:Spawn();
-				ply:SetPos( ply.deathrag:GetPos() + Vector( 0, 10, 0 ) )
-				ply:SetHealth( 10 )
-				ply.deathrag:Remove()
-				ply.deathrag = nil
-			end*/
 			CAKE.StandUp( ply )
 			ply:Spawn()
 			ply.deathtime = nil;

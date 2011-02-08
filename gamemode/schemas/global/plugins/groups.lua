@@ -42,7 +42,11 @@ function CAKE.GroupExists( name )
 end
 
 function CAKE.GetGroupField( name, field )
-	return CAKE.Groups[name][field] or false
+	if CAKE.Groups[name] and CAKE.Groups[name][field] then
+		return CAKE.Groups[name][field]
+	end
+
+	return false
 end
 
 function CAKE.SetGroupField( name, field, data )
@@ -205,12 +209,38 @@ concommand.Add( "rp_joingroup", function( ply, cmd, args )
 
 end )
 
-concommand.Add( "rp_acceptinvite", function( ply, cmd, args )
+concommand.Add( "rp_sendinvite", function( ply, cmd, args )
 	
-	local group = table.concat( args, " " )
-	if ply.AuthorizedToJoin == group then
-		ply.AuthorizedToJoin = "none"
-		CAKE.JoinGroup( ply, group )
+	local group = CAKE.GetCharField( ply, "group" )
+	local rank = CAKE.GetCharField( ply, "grouprank")
+	local target = args[1]
+
+	if ( CAKE.GroupHasMember(group, ply) and CAKE.GetRankField( group, rank, "caninvite" ) ) then
+		if !CAKE.GroupHasMember(group, target) then
+			target.AuthorizedToJoin = group
+		end
+	end
+
+end)
+
+concommand.Add( "rp_setgroupfield", function( ply, cmd, args )
+	
+	local group = CAKE.GetCharField( ply, "group" )
+	local rank = CAKE.GetCharField( ply, "grouprank")
+	local field = args[1]
+	table.remove( args, 1 )
+	local data = table.concat( args, " ")
+
+	if CAKE.GroupHasMember(group, ply) and CAKE.GetRankField( group, rank, "canedit" ) then
+		if type( CAKE.GetGroupField( group, field ) ) != "table" then
+			if type( CAKE.GetGroupField( group, field ) ) == "number" then
+				CAKE.SetGroupField( group, field, tonumber( data ) )
+			elseif type( CAKE.GetGroupField( group, field ) ) == "string" then
+				CAKE.SetGroupField( group, field, data )
+			elseif type( CAKE.GetGroupField( group, field ) ) == "boolean" then
+				CAKE.SetGroupField( group, field, util.tobool( data ) )
+			end
+		end
 	end
 
 end)
@@ -221,13 +251,14 @@ concommand.Add( "rp_kickfromgroup", function( ply, cmd, args )
 	local rank = CAKE.GetCharField( ply, "grouprank")
 	local target = args[1]
 
-	if CAKE.GroupHasMember(group, ply) and CAKE.GetRankField( group, rank, "cankick" ) then
+	if ( CAKE.GroupHasMember(group, ply) and CAKE.GetRankField( group, rank, "cankick" ) ) then
 		if CAKE.GroupHasMember(group, target) then
 			CAKE.LeaveGroup( target )
 		end
 	end
 
 end)
+
 
 concommand.Add( "rp_creategroup", function( ply, cmd, args)
 
@@ -263,3 +294,7 @@ local function GroupSpawnHook( ply )
 end
 hook.Add( "PlayerSpawn", "TiramisuGroupSpawnHook", GroupSpawnHook )
 
+function PLUGIN.Init( )
+
+
+end

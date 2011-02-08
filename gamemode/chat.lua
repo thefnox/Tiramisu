@@ -52,7 +52,6 @@ end
 hook.Add( "PlayerSay", "TiramisuChatHandling", function( ply, text, toall )
 
 	CAKE.DayLog("chat.txt", ply:SteamID() .. ": " .. text); -- we be spyins.
-	CAKE.CallHook("PlayerSay", ply, text, toall);
 	
 	if( string.sub( text, 1, 1 ) == "!" ) then -- All rp_ commands can be executed with /
 	

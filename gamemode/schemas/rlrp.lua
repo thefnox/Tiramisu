@@ -26,8 +26,6 @@ SCHEMA.Base = "global";
 
 function SCHEMA.SetUp( )
 	
-	CAKE.AddTeam( CAKE.DefoTeam() ); --This is necessary, because the player needs to be assigned to a default "citizen" group for it to load correctly.
-	
 	CAKE.RLRPFaction( "Police",
 	"The State Government",
 	{ 	["recruit"] = { [ "formalname" ] = "Police Recruit", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 1 },

@@ -17,6 +17,8 @@ CAKE = {  };
 CAKE.Running = false;
 CAKE.Loaded = false;
 CAKE.Skin = "default"
+CAKE.MenuFont = "Harabara"
+CAKE.BaseColor = Color( 100, 100, 115, 150 ) --The schema's default frame color
 
 CAKE.ViewRagdoll = false
 

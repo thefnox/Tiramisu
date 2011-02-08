@@ -3,9 +3,6 @@ CAKE.MenuTabs = {}
 CAKE.ActiveTab = nil
 CAKE.MenuOpen = false
 CAKE.DisplayMenu = false
-CAKE.MenuFont = "Base 02"
-
-surface.CreateFont( CAKE.MenuFont, 20, 400, true, false, "BaseOptions" )
 
 function CAKE.RegisterMenuTab( name, func, closefunc ) --The third argument is the function used for closing your panel.
 	print( "Registering Menu Tab " .. name )

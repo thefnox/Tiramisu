@@ -79,23 +79,6 @@ function meta:RestoreAmmo()
 
 end
 
-/*
-local function RemoveWeaponsAtDeath(ply)
-
-	--CAKE.DeathMode(ply);
-	local weapons = CAKE.GetCharField( ply, "weapons" )
-	for k, v in pairs( weapons ) do
-		ply:TakeItem( v )
-	end
-	ply:RemoveAllAmmo( )
-	CAKE.SetCharField( ply, "ammo", {} )
-	CAKE.SetCharField( ply, "weapons", {} )
-	CAKE.CallHook("PlayerDeath", ply);
-	CAKE.CallTeamHook("PlayerDeath", ply);
-	
-end
-hook.Add( "PlayerDeath", "CakePlayerDeath", RemoveWeaponsAtDeath )*/
-
 local function WeaponsLoadout( ply )
 	
 	if ply:IsCharLoaded() then

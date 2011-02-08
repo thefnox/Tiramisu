@@ -86,16 +86,6 @@ function PANEL:StartDraw()
         		end
         	end
         end
-
-        if CAKE.Gear then
-        	for _, bone in pairs( CAKE.Gear ) do
-        		for k, v in pairs( bone ) do
-        			if ValidEntity( v.entity ) then
-        				v.entity:SetNoDraw( true )
-        			end
-        		end
-        	end
-        end
         
         
 end
@@ -114,17 +104,6 @@ function PANEL:EndDraw()
         		end
         	end
         end
-
-        if CAKE.Gear then
-        	for _, bone in pairs( CAKE.Gear ) do
-        		for k, v in pairs( bone ) do
-        			if ValidEntity( v.entity ) then
-        				v.entity:SetNoDraw( true )
-        			end
-        		end
-        	end
-        end
-        
         
 end
  
@@ -164,16 +143,6 @@ function PANEL:Paint()
 	        	end
 	        end
 
-	        if CAKE.Gear then
-	        	for _, bone in pairs( CAKE.Gear ) do
-	        		for k, v in pairs( bone ) do
-	        			if ValidEntity( v.entity ) then
-	        				v.entity:DrawModel()
-	        			end
-	        		end
-	        	end
-       		end
-	        
 	        render.SuppressEngineLighting( false )
 	        cam.IgnoreZ( false )
         cam.End3D()

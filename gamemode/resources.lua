@@ -1,8 +1,0 @@
-resource.AddFile( "models/Gustavio/alyxanimtree.mdl" )
-resource.AddFile( "models/Gustavio/combineanimtree.mdl" )
-resource.AddFile( "models/Gustavio/maleanimtree.mdl" )
-resource.AddFile( "models/Gustavio/femaleanimtree.mdl" )
-resource.AddFile( "models/Gustavio/metroanimtree.mdl" )
-resource.AddFile( "models/Gustavio/barneyanimtree.mdl" )
-resource.AddFile( "materials/tiramisu/tabbutton.vtf" )
-resource.AddFile( "materials/tiramisu/tabbutton.vmt" )

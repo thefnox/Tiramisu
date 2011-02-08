@@ -1,5 +1,35 @@
 CLPLUGIN.Name = "Character Menu"
 CLPLUGIN.Author = "F-Nox/Big Bang"
+
+/*local frame = vgui.Create( "DFrame" )
+frame:SetSize( ScrW(), ScrH() )
+frame:Center()
+frame:SetTitle( "" )
+frame.Paint = function()
+
+Derma_DrawBackgroundBlur( frame, 0 )
+
+end
+frame:MakePopup()
+
+local titlelabel = vgui.Create( "DLabel", frame )
+titlelabel:SetText( "Welcome to Tiramisu" )
+titlelabel:SetFont( "TiramisuTitlesFont" )
+titlelabel:SizeToContents()
+titlelabel:SetPos( ScrW() / 2 - titlelabel:GetWide() / 2, 0 )
+local x, y
+titlelabel.PaintOver = function()
+	x,y = titlelabel:GetPos()
+	titlelabel:SetPos( x, Lerp( 0.15, y, 100 ))
+end
+
+local model = vgui.Create( "PlayerPanel", frame )
+model:SetSize( 500, 500 )
+model:SetPos( ScrW() / 2 - 250, ScrH() / 2 - 250 )
+model:StartDraw()
+*/
+
+
 local function OpenCharacter()
 
 	PlayerMenu = vgui.Create( "DFrameTransparent" )

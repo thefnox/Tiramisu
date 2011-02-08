@@ -81,8 +81,7 @@ end
 function CAKE.InitSchemas( )
 
 	for _, SCHEMA in pairs( CAKE.Schemas ) do
-		
-		CAKE.CallHook( "InitSchema", SCHEMA );
+
 		SCHEMA.SetUp( );
 		
 	end

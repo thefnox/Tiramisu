@@ -233,22 +233,23 @@ local meta = FindMetaTable( "Player" )
 
 function meta:HideActiveWeapon()
 	
-	local wep = self:GetActiveWeapon()
-	if ValidEntity( wep ) and !self:GetNWBool( "observe" ) then
-		local class = wep:GetClass()
-		if self.Gear then
-			for k, v in pairs( self.Gear ) do
-				if ValidEntity( v ) then
-					if v.item == class and v:GetParent() == self then
-						v:SetDTBool( 1, false )
-					else
-						v:SetDTBool( 1, true)
+	if ValidEntity( self ) then
+		local wep = self:GetActiveWeapon()
+		if ValidEntity( wep ) and !self:GetNWBool( "observe" ) then
+			local class = wep:GetClass()
+			if self.Gear then
+				for k, v in pairs( self.Gear ) do
+					if ValidEntity( v ) then
+						if v.item == class and v:GetParent() == self then
+							v:SetDTBool( 1, false )
+						else
+							v:SetDTBool( 1, true)
+						end
 					end
 				end
 			end
 		end
 	end
-
 end
 
 function CAKE.SaveGear( ply )

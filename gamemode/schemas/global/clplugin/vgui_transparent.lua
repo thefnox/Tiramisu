@@ -31,6 +31,7 @@ function PANEL:Init()
         self.btnClose.DoClick = function ( button ) self:Close() end
         self.btnClose:SetDrawBorder( false )
         self.btnClose:SetDrawBackground( false )
+        self.Color = CAKE.BaseColor
         
         self.lblTitle = vgui.Create( "DLabel", self )
         
@@ -46,6 +47,12 @@ function PANEL:Init()
         
         self.m_fCreateTime = SysTime()
  
+end
+
+function PANEL:SetColor( color )
+
+    self.Color = color
+
 end
  
 /*---------------------------------------------------------
@@ -158,7 +165,7 @@ function PANEL:Paint()
        
     surface.DrawTexturedRect( x, y, ScrW(), ScrH() ) 
        
-    surface.SetDrawColor( 100, 100, 100, 150 ) 
+    surface.SetDrawColor( self.Color.r, self.Color.g, self.Color.b, 150 ) 
     surface.DrawRect( x, y, ScrW(), ScrH() ) 
 
     // Pretentious line bullshit :P
@@ -178,12 +185,12 @@ function PANEL:Paint()
     // and some gradient shit for additional overkill
 
     for i = 1, ( y + 5 ) do
-        surface.SetDrawColor( 50, 50, 50, Lerp( i / ( ( y + 5 ) ), 0 , 255 ) ) 
+        surface.SetDrawColor( math.Clamp( self.Color.r - 50, 0, 255 ), math.Clamp( self.Color.g - 50,0, 255 ), math.Clamp( self.Color.b - 50, 0, 255 ), Lerp( i / ( ( y + 5 ) ), 0 , 245 ) ) 
         surface.DrawRect( 0, ( i * 5 ) , self:GetWide(), 5 )
     end
 
     // Border 
-    surface.SetDrawColor( 50, 50, 50, 255 ) 
+    surface.SetDrawColor( math.Clamp( self.Color.r - 50, 0, 255 ), math.Clamp( self.Color.g - 50,0, 255 ), math.Clamp( self.Color.b - 50, 0, 255 ), 255 ) 
     surface.DrawOutlinedRect( 0, 0, self:GetWide(), self:GetTall() )
     surface.DrawLine( 0, 23, self:GetWide(), 23 )
        

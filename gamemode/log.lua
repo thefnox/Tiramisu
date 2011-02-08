@@ -26,8 +26,6 @@ function CAKE.DayLog( outputfile, text )
 	
 	local curtime = hours .. ":" .. mins .. ":" .. secs
 	
-	CAKE.CallHook( "WriteDayLog", filedir, text );
-	
 	text = string.gsub(text, "\n", ""); -- \n fix for all those basteds. >:O
 	
 	file.Write( filedir, old .. "\n" .. curtime .. " " .. text );

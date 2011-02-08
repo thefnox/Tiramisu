@@ -240,12 +240,12 @@ local function Radio( ply, text )
 	local heardit = {};
 	local group = CAKE.GetCharField( ply, "group" )
 
-	if(CAKE.Teams[ply:Team()] == nil) then return ""; end
+	if !ply:IsCharLoaded() then return ""; end
 	if !CAKE.GroupExists( name ) then return ""; end
 
 	if(group != 0) then
 		for k2, v2 in pairs(player.GetAll()) do
-			if(CAKE.Teams[v2:Team()] != nil) then
+			if v2:IsCharLoaded() then
 				if( CAKE.GetCharField( v2, "group" ) == group or CAKE.GetGroupFlag( CAKE.GetCharField( v2, "group" ), "radiogroup" ) == CAKE.GetGroupFlag( group, "radiogroup" ) ) then
 					/*
 					if v2 != ply then
@@ -279,12 +279,6 @@ local function Radio( ply, text )
 	
 	return "";
 
-end
-
-local function Chat_ModPlayerVars(ply)
-
-	ply.LastOOC = -100000; -- This is so people can talk for the first time without having to wait.
-		
 end
 
 local function Title( ply, text )
@@ -367,8 +361,6 @@ function PLUGIN.Init( ) -- We run this in init, because this is called after the
 	CAKE.ChatCommand( "/title", Title );
 	CAKE.ChatCommand( "/title2", Title2 );
 	CAKE.ChatCommand( "/report", Report );
-	
-	CAKE.AddHook("Player_Preload", "chat_modplayervars", Chat_ModPlayerVars); -- Put in our OOCDelay variable
 	
 end
 

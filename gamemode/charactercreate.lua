@@ -14,7 +14,6 @@ function ccSetModel( ply, cmd, args )
 	
 	if( ply:GetNWInt( "charactercreate" ) == 1 ) then
 
-		CAKE.CallHook( "CharacterCreation_SetModel", ply, mdl );
 		CAKE.SetCharField(ply, "model", mdl );
 		
 	end
@@ -74,8 +73,6 @@ function ccStartCreate( ply, cmd, args )
 	ply:SetNWInt( "charactercreate", 1 );
 	CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ tostring(high) ] = {  }
 	
-	CAKE.CallHook( "CharacterCreation_Start", ply );
-	
 end
 concommand.Add( "rp_startcreate", ccStartCreate );
 
@@ -109,8 +106,6 @@ function ccFinishCreate( ply, cmd, args )
 		
 		ply:ConCommand( "fadein" );
 		
-		CAKE.CallHook( "CharacterCreation_Finished", ply, ply:GetNWString( "uid" ) );
-		
 	end
 	
 end
@@ -129,16 +124,14 @@ function ccSelectChar( ply, cmd, args )
 		ply:SetNWInt( "charactercreate", 0 );
 	
 		ply:SetTeam( 1 );
-		CAKE.CallHook( "CharacterSelect_PostSetTeam", ply, CAKE.PlayerData[ SteamID ][ "characters" ][ uid ] );
 		
 		ply:RefreshInventory( )
 		ply:RefreshBusiness( )
 		
 		ply:ConCommand( "fadein" );
-		
+		ply:SetNWBool( "charloaded", true )
+
 		ply:Spawn( );
-		
-		CAKE.CallHook( "CharacterSelected", ply, CAKE.PlayerData[ SteamID ][ "characters" ][ uid ] );
 		
 	else
 		
@@ -190,8 +183,6 @@ function ccReady( ply, cmd, args )
 		
 		umsg.Start( "charactercreate", ply );
 		umsg.End( );
-		
-		CAKE.CallHook( "PlayerReady", ply );
 		
 	end
 	
