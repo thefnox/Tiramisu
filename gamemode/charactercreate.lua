@@ -117,6 +117,32 @@ function ccSelectChar( ply, cmd, args )
 	local SteamID = CAKE.FormatText(ply:SteamID());
 	
 	if( CAKE.PlayerData[ SteamID ][ "characters" ][ uid ] != nil ) then
+
+		if( CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "gender" ] == "Female" ) then
+			ply:SetModel( "models/Tiramisu/AnimationTrees/femaleanimtree.mdl" )
+			ply:SetNWString( "gender", "Female" )
+		else
+			ply:SetModel( "models/Tiramisu/AnimationTrees/maleanimtree.mdl" )
+			ply:SetNWString( "gender", "Male" )
+		end
+	
+		CAKE.TestClothing( ply, CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "model" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "clothing" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "helmet" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "gloves" ] )
+		
+	else
+		
+		return;
+		
+	end
+
+end
+concommand.Add( "rp_selectchar", ccSelectChar );
+
+function ccSpawnChar( ply, cmd, args )
+
+	local uid = args[ 1 ];
+	local SteamID = CAKE.FormatText(ply:SteamID());
+	
+	if( CAKE.PlayerData[ SteamID ][ "characters" ][ uid ] != nil ) then
 	
 		ply:SetNWString( "uid", uid );
 		CAKE.ResendCharData( ply );
@@ -140,7 +166,7 @@ function ccSelectChar( ply, cmd, args )
 	end
 
 end
-concommand.Add( "rp_selectchar", ccSelectChar );
+concommand.Add( "rp_spawnchar", ccSpawnChar );
 
 function ccReady( ply, cmd, args )
 
@@ -175,6 +201,8 @@ function ccReady( ply, cmd, args )
 				umsg.Long( tonumber(k) );
 				umsg.String( v[ "name" ] );
 				umsg.String( v[ "model" ] );
+				umsg.String( v[ "title" ] );
+				umsg.String( v[ "title2" ] );
 			umsg.End( );
 			
 		end

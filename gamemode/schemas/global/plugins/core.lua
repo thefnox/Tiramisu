@@ -19,3 +19,8 @@ CAKE.AddDataField( 2, "title", CAKE.ConVars[ "Default_Title" ] ); -- What is the
 CAKE.AddDataField( 2, "money", CAKE.ConVars[ "Default_Money" ] ); -- How much money do players start out with.
 CAKE.AddDataField( 2, "flags", CAKE.ConVars[ "Default_Flags" ] ); -- What flags do they start with.
 CAKE.AddDataField( 2, "inventory", CAKE.ConVars[ "Default_Inventory" ] ); -- What inventory do they start with
+CAKE.AddDataField( 2, "title2", "" ); -- What is their second title.
+CAKE.AddDataField( 2, "gender", "Male" ) -- MAN POWER
+CAKE.AddDataField( 2, "age", 30 ) --Can't think of any puns.
+CAKE.AddDataField( 2, "group", "None" )
+CAKE.AddDataField( 2, "grouprank", "None" )

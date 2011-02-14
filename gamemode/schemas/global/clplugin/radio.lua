@@ -50,6 +50,7 @@ end
 local function AddRadioMsg( um )
 	local text = um:ReadString()
 	local color = Color( um:ReadShort(), um:ReadShort(), um:ReadShort() )
+	CAKE.CreateRadioMenu()
 	CAKE.AddRadioLine( text, color )
 end
 usermessage.Hook( "AddRadioLine", AddRadioMsg )

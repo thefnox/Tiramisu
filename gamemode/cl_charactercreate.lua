@@ -11,7 +11,7 @@ CAKE.CLPlugin = {}
 steps = 0
 step = 0
 
-function AddCharCreates(schema)
+function AddCLPlugins(schema)
 
 		local list = file.FindInLua( "tiramisu/gamemode/schemas/" .. schema .. "/clplugin/*.lua" )	
 		for k,v in pairs( list ) do
@@ -19,29 +19,17 @@ function AddCharCreates(schema)
 			CLPLUGIN = { }
 			include( path )
 			CAKE.CLPlugin[CLPLUGIN.Name] = {}
-			CAKE.CLPlugin[CLPLUGIN.Name].Init = CLPLUGIN.Init
-			CAKE.CLPlugin[CLPLUGIN.Name].Init()
+			if CLPLUGIN.Init then
+				CAKE.CLPlugin[CLPLUGIN.Name].Init = CLPLUGIN.Init
+				CAKE.CLPlugin[CLPLUGIN.Name].Init()
+			end
 		end
 end
 
-function CAKE.AddStep( passedfunc )
+function CAKE.RegisterCharCreate( passedfunc )
 
-	if !CAKE.Steps then
-		CAKE.Steps = {}
-	end
-	
-	CAKE.Steps[#CAKE.Steps+1] = passedfunc
+	CAKE.CharCreate = passedfunc
 
-end
-
-local step = 1
-function CAKE.NextStep()
-	CAKE.Steps[step]()
-	step = step + 1
-end
-
-function CAKE.ResetStep()
-	step = 1
 end
 
 TeamTable = {};
@@ -55,6 +43,8 @@ function ReceiveChar( data )
 	ExistingChars[ n ] = {  }
 	ExistingChars[ n ][ 'name' ] = data:ReadString( );
 	ExistingChars[ n ][ 'model' ] = data:ReadString( );
+	ExistingChars[ n ][ 'title' ] = data:ReadString( );
+	ExistingChars[ n ][ 'title2' ] = data:ReadString( );
 	
 end
 usermessage.Hook( "ReceiveChar", ReceiveChar );
@@ -63,7 +53,6 @@ local function CharacterCreatePanel( )
 
 	CAKE.SetActiveTab( "Characters" )
 	InitHUDMenu()
-	CAKE.CreateRadioMenu()
 	
 end
 usermessage.Hook( "charactercreate", CharacterCreatePanel );

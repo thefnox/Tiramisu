@@ -11,15 +11,9 @@
 CAKE.Plugins = {  };
 CAKE.CurrencyData = {  };
 
-function CAKE.LoadCurrency( schema, filename )
-
-	local path = "schemas/" .. schema .. "/currency/" .. filename;
+function CAKE.RegisterCurrency( currency )
 	
-	CURRENCY = {  };
-	
-	include( path );
-	
-	CAKE.CurrencyData[ CURRENCY.Name ] = CURRENCY;
+	CAKE.CurrencyData[ currency.Name ] = currency
 	
 end
 

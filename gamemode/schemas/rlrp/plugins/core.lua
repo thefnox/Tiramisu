@@ -4,11 +4,6 @@ PLUGIN.Description = "Configures the schema"; -- The description or purpose of t
 
 function PLUGIN.Init()
 	
-	CAKE.AddDataField( 2, "title2", "" ); -- What is their default title.
-	CAKE.AddDataField( 2, "gender", "Male" ) -- MAN POWER
-	CAKE.AddDataField( 2, "age", 30 ) --Can't think of any puns.
-	CAKE.AddDataField( 2, "group", "None" )
-	CAKE.AddDataField( 2, "grouprank", "None" )
 	
 	CAKE.AddCType("models/props_junk/wood_crate001a_damagedmax.mdl", 16)
 	CAKE.AddCType("models/props_junk/wood_crate001a_damaged.mdl", 16)
@@ -31,5 +26,11 @@ function PLUGIN.Init()
 	CAKE.AddCType("models/items/ammocrate_ar2.mdl", 20)
 	CAKE.AddCType("models/items/ammocrate_grenade.mdl", 10)
 	CAKE.AddCType("models/weapons/w_suitcase_passenger.mdl", 5)
+
+	CURRENCY = {}
+	CURRENCY.Name        = "Dollars";
+	CURRENCY.Slang       = "dollar"
+	CURRENCY.Abr         = "$"
+	CAKE.RegisterCurrency( CURRENCY )
 	
 end

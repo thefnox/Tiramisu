@@ -218,6 +218,8 @@ function CAKE.ResendCharData( ply ) -- Network all of the player's character dat
 					umsg.Long( tonumber(k) );
 					umsg.String( v[ "name" ] );
 					umsg.String( v[ "model" ] );
+					umsg.String( v[ "title" ] );
+					umsg.String( v[ "title2" ] );
 				umsg.End( );
 			end
 		end

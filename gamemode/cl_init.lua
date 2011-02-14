@@ -17,6 +17,7 @@ CAKE = {  };
 CAKE.Running = false;
 CAKE.Loaded = false;
 CAKE.Skin = "default"
+CAKE.CharCreate = function() end
 CAKE.MenuFont = "Harabara"
 CAKE.BaseColor = Color( 100, 100, 115, 150 ) --The schema's default frame color
 
@@ -80,75 +81,6 @@ usermessage.Hook( "tiramisuaddtochat", function( um )
 	end
 end)
 
-usermessage.Hook( "ConfirmCharRemoval", function( um )
-
-	local namestr = um:ReadString()
-	local agestr = tostring( um:ReadShort() )
-	local titlestr = um:ReadString()
-	local title2str = um:ReadString()
-	local modelstr = um:ReadString()
-	local id = um:ReadLong()
-
-	local frame = vgui.Create( "DFrameTransparent" )
-	frame:SetSize( 250, 228 )
-	frame:SetTitle( "Confirm Removal" )
-	frame:Center()
-	frame:ShowCloseButton( false )
-	frame:MakePopup()
-
-	local panel = vgui.Create( "DPanel", frame )
-	panel:SetSize( 240, 195 )
-	panel:SetPos( 5, 28 )
-
-	local confirmbutton = vgui.Create( "DButton", panel )
-	confirmbutton:SetSize( 100, 30 )
-	confirmbutton:SetText( "Confirm Delete" )
-	confirmbutton.DoClick = function()
-		LocalPlayer():ConCommand("rp_removechar " .. id);
-		ExistingChars[id] = nil
-		CAKE.SetActiveTab( "Characters" )
-		frame:Remove()
-		frame = nil
-	end
-	confirmbutton:SetPos( 130, 160 )
-
-	local gobackbutton = vgui.Create( "DButton", panel )
-	gobackbutton:SetSize( 100, 30 )
-	gobackbutton:SetText( "Cancel" )
-	gobackbutton.DoClick = function()
-		CAKE.SetActiveTab( "Characters" )
-		frame:Remove()
-		frame = nil
-	end
-	gobackbutton:SetPos( 15, 160 )
-
-	local model = vgui.Create( "DModelPanel", panel )
-	model:SetSize( 120, 120 )
-	model:SetModel( modelstr )
-	model:SetPos( 110, 20 )
-
-	local name = vgui.Create( "DLabel", panel )
-	name:SetSize( 100, 20 )
-	name:SetPos( 10, 10 )
-	name:SetText( namestr )
-
-	local age = vgui.Create( "DLabel", panel )
-	age:SetSize( 100, 20 )
-	age:SetPos( 10, 40 )
-	age:SetText( "Age: " .. agestr )
-
-	local title = vgui.Create( "DLabel", panel )
-	title:SetSize( 100, 20 )
-	title:SetPos( 10, 70 )
-	title:SetText( titlestr )
-
-	local title2 = vgui.Create( "DLabel", panel )
-	title2:SetSize( 100, 20 )
-	title2:SetPos( 10, 100 )
-	title2:SetText( title2str )
-
-end)
-
 usermessage.Hook( "runconcommand", function( um ) --Simple fix to garry's fuckup.
 	
 	local cmd = um:ReadString()
@@ -179,7 +111,7 @@ Schemas = {}
 usermessage.Hook("addschema", function(data)
 	local schema = data:ReadString()
 	AddRclicks(schema)
-	AddCharCreates(schema)
+	AddCLPlugins(schema)
 end )
 
 RclickTable = {}

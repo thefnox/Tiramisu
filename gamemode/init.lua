@@ -43,12 +43,12 @@ include( "doors.lua" ); -- Doors
 include( "resourcex.lua" ) -- Resource downloading
 include( "sn3_base_sv.lua" )
 
-resource.AddFile( "models/Gustavio/alyxanimtree.mdl" )
-resource.AddFile( "models/Gustavio/combineanimtree.mdl" )
-resource.AddFile( "models/Gustavio/maleanimtree.mdl" )
-resource.AddFile( "models/Gustavio/femaleanimtree.mdl" )
-resource.AddFile( "models/Gustavio/metroanimtree.mdl" )
-resource.AddFile( "models/Gustavio/barneyanimtree.mdl" )
+resource.AddFile( "models/Tiramisu/AnimationTrees/alyxanimtree.mdl" )
+resource.AddFile( "models/Tiramisu/AnimationTrees/combineanimtree.mdl" )
+resource.AddFile( "models/Tiramisu/AnimationTrees/maleanimtree.mdl" )
+resource.AddFile( "models/Tiramisu/AnimationTrees/femaleanimtree.mdl" )
+resource.AddFile( "models/Tiramisu/AnimationTrees/policeanimtree.mdl" )
+resource.AddFile( "models/Tiramisu/AnimationTrees/barneyanimtree.mdl" )
 resource.AddFile( "materials/tiramisu/tabbutton.vmt" )
 resource.AddFile( "resource/fonts/Harabara.ttf")
 
@@ -197,10 +197,10 @@ function GM:PlayerSetModel(ply)
 		if(ply:IsCharLoaded()) then
 				local m = ""
 				if( CAKE.GetCharField( ply, "gender" ) == "Female" ) then
-					m = "models/Gustavio/femaleanimtree.mdl"
+					m = "models/Tiramisu/AnimationTrees/femaleanimtree.mdl"
 					ply:SetNWString( "gender", "Female" )
 				else
-					m = "models/Gustavio/maleanimtree.mdl"
+					m = "models/Tiramisu/AnimationTrees/maleanimtree.mdl"
 					ply:SetNWString( "gender", "Male" )
 				end
 				

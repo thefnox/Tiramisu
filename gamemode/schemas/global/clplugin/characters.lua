@@ -1,152 +1,255 @@
 CLPLUGIN.Name = "Character Menu"
 CLPLUGIN.Author = "F-Nox/Big Bang"
 
-/*local frame = vgui.Create( "DFrame" )
-frame:SetSize( ScrW(), ScrH() )
-frame:Center()
-frame:SetTitle( "" )
-frame.Paint = function()
+CAKE.SelectedChar = 0
 
-Derma_DrawBackgroundBlur( frame, 0 )
-
-end
-frame:MakePopup()
-
-local titlelabel = vgui.Create( "DLabel", frame )
-titlelabel:SetText( "Welcome to Tiramisu" )
-titlelabel:SetFont( "TiramisuTitlesFont" )
-titlelabel:SizeToContents()
-titlelabel:SetPos( ScrW() / 2 - titlelabel:GetWide() / 2, 0 )
-local x, y
-titlelabel.PaintOver = function()
-	x,y = titlelabel:GetPos()
-	titlelabel:SetPos( x, Lerp( 0.15, y, 100 ))
-end
-
-local model = vgui.Create( "PlayerPanel", frame )
-model:SetSize( 500, 500 )
-model:SetPos( ScrW() / 2 - 250, ScrH() / 2 - 250 )
-model:StartDraw()
-*/
+local x,y 
+local charpanel
 
 
-local function OpenCharacter()
+function OpenCharacterMenu()
 
-	PlayerMenu = vgui.Create( "DFrameTransparent" )
-	--PlayerMenu:SetPos( ScrW() / 2 - 320, ScrH() / 2 - 240 )
-	PlayerMenu:NoClipping( false );
-	PlayerMenu:SetSize( 640, 480 )
-	PlayerMenu:SetTitle( "Characters" )
-	PlayerMenu:SetBackgroundBlur( true )
-	PlayerMenu:SetVisible( true )
-	PlayerMenu:SetDraggable( true )
-	PlayerMenu:ShowCloseButton( true )
-	PlayerMenu:SetDeleteOnClose( true )
-	PlayerMenu:Center()
-	PlayerMenu:MakePopup()
-	
-	CharPanel = vgui.Create( "DPanelList", PlayerMenu )
-	CharPanel:SetSize( 630,448 )
-	CharPanel:SetPos( 5, 28 )
-	CharPanel:SetPadding(20);
-	CharPanel:SetSpacing(10);
-	CharPanel:EnableVerticalScrollbar();
-	CharPanel:EnableHorizontal(false);
+	if !CharacterMenu then
+		CharacterMenu = vgui.Create( "DFrame" )
+		CharacterMenu:SetSize( ScrW(), ScrH() )
+		CharacterMenu:Center()
+		CharacterMenu:SetDraggable( false )
+		CharacterMenu:ShowCloseButton( false )
+		CharacterMenu:SetTitle( "" )
+		CharacterMenu.Paint = function()
 
-	local label = vgui.Create("DLabel");
-	label:SetText("Click your character to select it");
-	CharPanel:AddItem(label);
-	
-	local widthnshit = 600
-	local numberofchars = table.getn( ExistingChars )
-	local modelnumber = {}
-	
-	local function AddCharacterModel( n, model )
-		
-		local mdlpanel = modelnumber[n]
-		
-		mdlpanel = vgui.Create( "DModelPanel" )
-		mdlpanel:SetSize( 200, 180 )
-		mdlpanel:SetModel( model )
-		mdlpanel:SetAnimSpeed( 0.0 )
-		mdlpanel:SetAnimated( false )
-		mdlpanel:SetAmbientLight( Color( 50, 50, 50 ) )
-		mdlpanel:SetDirectionalLight( BOX_TOP, Color( 255, 255, 255 ) )
-		mdlpanel:SetDirectionalLight( BOX_FRONT, Color( 255, 255, 255 ) )
-		mdlpanel:SetCamPos( Vector( 100, 0, 40 ) )
-		mdlpanel:SetLookAt( Vector( 0, 0, 40 ) )
-		mdlpanel:SetFOV( 70 )
+		Derma_DrawBackgroundBlur( CharacterMenu, 0 )
 
-		mdlpanel.PaintOver = function()
-			surface.SetTextColor(Color(255,255,255,255));
-			surface.SetFont("Trebuchet18");
-			surface.SetTextPos( surface.GetTextSize(ExistingChars[n]['name']) , 0);
-			surface.DrawText(ExistingChars[n]['name'])
 		end
-		
-		function mdlpanel:OnMousePressed()
-			local Options = DermaMenu()
-			Options:AddOption("Select Character", function() 
-				LocalPlayer():ConCommand("rp_selectchar " .. n);
-				LocalPlayer().MyModel = ""
-				PlayerMenu:Remove();
-				PlayerMenu = nil;
-				CAKE.MenuOpen = false
-			end )
-			Options:AddOption("Delete Character", function() 
-				LocalPlayer():ConCommand("rp_confirmremoval " .. n);
-				PlayerMenu:Remove();
-				PlayerMenu = nil;
-			end )
-			Options:Open()
+		CharacterMenu:MakePopup()
+
+		local titlelabel = vgui.Create( "DLabel", CharacterMenu )
+		titlelabel:SetText( "Welcome to Tiramisu" )
+		titlelabel:SetFont( "TiramisuTitlesFont" )
+		titlelabel:SizeToContents()
+		titlelabel:SetPos( ScrW() / 2 - titlelabel:GetWide() / 2, 0 )
+		local x, y
+		titlelabel.PaintOver = function()
+			x,y = titlelabel:GetPos()
+			titlelabel:SetPos( x, Lerp( 0.15, y, 70 ))
 		end
 
-		function mdlpanel:LayoutEntity(Entity)
-
-			self:RunAnimation();
-			
-		end
-		function InitAnim()
-		
-			if(mdlpanel.Entity) then		
-				local iSeq = mdlpanel.Entity:LookupSequence( "idle_angry" );
-				mdlpanel.Entity:ResetSequence(iSeq);
-			
+		PlayerModel = vgui.Create( "PlayerPanel", CharacterMenu )
+		PlayerModel:SetSize( 500, 500 )
+		PlayerModel:SetPos( ScrW() / 2 - 100, ScrH() / 2 - 300 )
+		PlayerModel.PaintOver = function()
+			if PlayerModel.SlideOut then
+				x, y = PlayerModel:GetPos()
+				PlayerModel:SetPos( Lerp( 0.1, x, ScrW() / 2 - 400 ), ScrH() / 2 - 300 )
+			else
+				x, y = PlayerModel:GetPos()
+				PlayerModel:SetPos( Lerp( 0.1, x, ScrW() / 2 - 100 ), ScrH() / 2 - 300 )
 			end
-			
 		end
-		
-		InitAnim()
-		CharPanel:AddItem(mdlpanel);
-	
-	end
-	
-	
-	for k, v in pairs(ExistingChars) do
-		if v then
-			AddCharacterModel( k, v['model'] )
+	else
+		if PlayerModel then
+			PlayerModel.SlideOut = false
 		end
 	end
-	
-	local newchar = vgui.Create("DButton");
-	newchar:SetSize(100, 25);
-	newchar:SetText("New Character");
-	newchar.DoClick = function ( btn )
-		CAKE.NextStep()
-		PlayerMenu:Remove();
-		PlayerMenu = nil;
-	end
-	CharPanel:AddItem( newchar )
+
+	CreateCharList( )
+	CreateMenuButtons()
 
 end
 
-local function CloseCharacter()
-	if PlayerMenu then
-		PlayerMenu:Remove()
-		PlayerMenu = nil
+function CreateCharList( )
+
+		if CharacterMenu then
+			if charpanel then
+				charpanel:Remove()
+				charpanel = nil
+			end
+
+			charpanel = vgui.Create( "DPanelList", CharacterMenu )
+			charpanel:SetSize( 210, 500 )
+			charpanel:SetPos( -500, ScrH() / 2 - 500 )
+			charpanel:SetAutoSize( false )
+			charpanel:EnableVerticalScrollbar( true )
+			charpanel.Paint = function()
+			end
+			charpanel.Think = function()
+				x,y = charpanel:GetPos()
+				if !charpanel.SlideOut then
+					charpanel:SetPos( Lerp( 0.1, x, ScrW() / 2 - 330 ),ScrH() / 2 - 270 )
+				else
+					charpanel:SetPos( Lerp( 0.1, x, -500 ),ScrH() / 2 - 270 )
+					if x < 0 then
+						charpanel:Remove()
+						charpanel = nil		
+					end
+				end
+			end
+
+
+			for k, v in pairs(ExistingChars) do
+
+				local plist = vgui.Create("DPanelList");
+				plist:SetAutoSize( false )
+				plist:SetSize( 200, 75 )
+
+				local ccategory = vgui.Create("DCollapsibleCategory")
+				ccategory:SetExpanded( 1 )
+				ccategory:SetLabel( v['name'] )
+
+				local spawnicon = vgui.Create( "SpawnIcon")
+				spawnicon:SetModel( v['model'] )
+				spawnicon:SetSize( 64, 64 )
+				plist:AddItem(spawnicon)
+
+				local plist2 = vgui.Create( "DPanelList" )
+				plist2:EnableHorizontal( true )
+				plist2:SetAutoSize( true )
+
+				local title = vgui.Create("DLabel");
+				title:SetText(v['title'])
+				title:SetSize( 120, 26 )
+				plist2:AddItem(title)
+
+				local title2 = vgui.Create("DLabel")
+				title2:SetText( v['title2'])
+				title2:SetSize( 120, 20 )
+				plist2:AddItem(title2)
+
+				local selectchar = vgui.Create( "DButton" )
+				selectchar:SetSize( 61, 20 )
+				selectchar:SetText( "Select" )
+				selectchar.DoClick = function()
+					LocalPlayer():ConCommand("rp_selectchar " .. tostring( k ))
+					CAKE.SelectedChar = k
+				end
+				plist2:AddItem( selectchar )
+
+				local deletechar = vgui.Create( "DButton" )
+				deletechar:SetSize( 61, 20 )
+				deletechar:SetText( "Delete")
+				deletechar.DoClick = function()
+					LocalPlayer():ConCommand("rp_confirmremoval " .. tostring( k ))
+				end
+				plist2:AddItem( deletechar )
+
+				local divider = vgui.Create("DHorizontalDivider");
+				divider:SetLeft(spawnicon);
+				divider:SetRight(plist2);
+				divider:SetLeftWidth(64);
+				divider:SetHeight(64);
+
+				plist:AddItem(spawnicon);
+				plist:AddItem(plist2);
+				plist:AddItem(divider);
+
+				ccategory:SetContents(plist);
+				charpanel:AddItem(ccategory)
+
+		end
 	end
 end
-CAKE.RegisterMenuTab( "Characters", OpenCharacter, CloseCharacter )
+
+function CreateMenuButtons()
+	local spawnlabel = vgui.Create( "DButton", CharacterMenu )
+	spawnlabel:SetSize( 80, 26 )
+	spawnlabel:SetText( "" )
+	spawnlabel:SetPos( (ScrW() / 2 )- 60, ScrH() + 500  )
+	spawnlabel.Paint = function() end
+	spawnlabel.PaintOver = function()
+		draw.SimpleText( "Spawn", "TiramisuTimeFont", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
+		x,y = spawnlabel:GetPos()
+		if !spawnlabel.SlideOut then
+			spawnlabel:SetPos( (ScrW() / 2 )- 60, Lerp( 0.1, y, ScrH() / 2 + 230 ))
+		else
+			spawnlabel:SetPos( (ScrW() / 2 )- 60, Lerp( 0.1, y, ScrH() + 500 ))
+			if y > ScrH() then
+				spawnlabel:Remove()
+				spawnlabel = nil
+			end
+		end
+	end
+	spawnlabel.DoClick = function()
+		RunConsoleCommand( "rp_spawnchar", tostring( CAKE.SelectedChar ))
+		if CharacterMenu then
+			CharacterMenu:Remove()
+			CharacterMenu = nil
+		end
+	end
+
+	local disconnectlabel = vgui.Create( "DButton", CharacterMenu )
+	disconnectlabel:SetSize( 80, 26 )
+	disconnectlabel:SetText( "" )
+	disconnectlabel:SetPos( (ScrW() / 2 )- 160, ScrH() + 500  )
+	disconnectlabel.Paint = function() end
+	disconnectlabel.PaintOver = function()
+		draw.SimpleText( "Disconnect", "TiramisuTimeFont", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
+		x,y = disconnectlabel:GetPos()
+		if !disconnectlabel.SlideOut then
+			disconnectlabel:SetPos( (ScrW() / 2 )- 160, Lerp( 0.1, y, ScrH() / 2 + 230 ))
+		else
+			disconnectlabel:SetPos( (ScrW() / 2 )- 160, Lerp( 0.1, y, ScrH() + 500  ))
+			if y > ScrH() then
+				disconnectlabel:Remove()
+				disconnectlabel = nil
+			end
+		end
+	end
+	disconnectlabel.DoClick = function()
+		RunConsoleCommand( "disconnect" )
+	end
+
+	local createcharacter = vgui.Create( "DButton", CharacterMenu )
+	createcharacter:SetText( "" )
+	createcharacter:SetSize( 200, 26 )
+	createcharacter:SetColor(Color( 200, 255, 200 ))
+	createcharacter:SetPos( (ScrW() / 2 ) + 20, ScrH() + 500  )
+	createcharacter.Paint = function() end
+	createcharacter.PaintOver = function()
+		draw.SimpleText( "Create New Character", "TiramisuTimeFont", 100, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
+		x,y = createcharacter:GetPos()
+		if !createcharacter.SlideOut then
+			createcharacter:SetPos( (ScrW() / 2 ) + 20, Lerp( 0.1, y, ScrH() / 2 + 230 ))
+		else
+			createcharacter:SetPos( (ScrW() / 2 ) + 20, Lerp( 0.1, y, ScrH() + 500 ))
+			if y > ScrH() then
+				createcharacter:Remove()
+				createcharacter = nil
+			end
+		end
+	end
+	createcharacter.DoClick = function()
+		CAKE.CharCreate()
+		spawnlabel.SlideOut = true
+		disconnectlabel.SlideOut = true
+		createcharacter.SlideOut = true
+		charpanel.SlideOut = true
+		PlayerModel.SlideOut = true
+	end
+
+end
+
+function CloseCharacterMenu()
+	if CharacterMenu then
+		CharacterMenu:Remove()
+		CharacterMenu = nil
+	end
+end
+CAKE.RegisterMenuTab( "Characters", OpenCharacterMenu, CloseCharacterMenu )
+
+usermessage.Hook( "ConfirmCharRemoval", function( um )
+
+	local namestr = um:ReadString()
+	local id = um:ReadLong()
+
+	CAKE.Query( "Are you sure you want to delete " .. namestr .. "? (Cannot be undone)", "Confirm Character Removal",
+		"Confirm", function()
+			LocalPlayer():ConCommand("rp_removechar " .. tostring( id ))
+			table.remove( ExistingChars, id )
+			CreateCharList( )
+		end,  
+		"Cancel", function()
+		 end )
+end)
 
 function CLPLUGIN.Init()
 	

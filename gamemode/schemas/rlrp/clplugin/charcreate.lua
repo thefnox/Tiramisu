@@ -1,10 +1,5 @@
 CLPLUGIN.Name = "Charcreation Menu"
 CLPLUGIN.Author = "Matt/Ryaga"
---Yep, 650 lines of character creation, clientside. Beat that, Tacoscript 2
-
-local function ErrorMessage( msg )
-	Derma_Message(msg, "Error!", "OK")
-end
 
 local models = {}
 models[ "male" ] = {
@@ -45,8 +40,7 @@ local function firststep()
 	Step1:SetTitle( "Create your Character" )
 	Step1:SetVisible( true )
 	Step1:SetDraggable( true )
-	Step1:SetBackgroundBlur( true )
-	Step1:ShowCloseButton( true )
+	Step1:ShowCloseButton( false )
 	Step1:MakePopup()
 
 	local mdlPanel = vgui.Create( "DModelPanel", Step1 )
@@ -212,7 +206,7 @@ local function firststep()
 	GoBackButton:SetText( "Go back to Selection" )
 	GoBackButton:SetPos( 355, 355 )
 	GoBackButton.DoClick = function ( btn )
-		CAKE.SetActiveTab( "Characters" )
+		OpenCharacterMenu()
 		Step1:Remove()
 		Step1 = nil
 	end
@@ -223,12 +217,12 @@ local function firststep()
 	AcceptButton:SetPos( 515, 355 )
 	AcceptButton.DoClick = function ( btn )
 		if(firstname:GetValue() == "" ) then
-			Derma_Message("You must enter a first name!", "Error!", "OK")
+			CAKE.Message("You must enter a first name!", "Error!", "OK", Color( 140, 100, 100))
 			return;
 		end
 
 		if(numberwang:GetValue() < 1 ) then
-			Derma_Message("You must enter a valid age!", "Error!", "OK")
+			CAKE.Message("You must enter a valid age!", "Error!", "OK", Color( 140, 100, 100))
 			return;
 		end
 
@@ -247,8 +241,8 @@ local function firststep()
 		LocalPlayer():ConCommand("rp_setgender " .. Gender )
 		LocalPlayer().MyModel = ""
 		LocalPlayer():ConCommand("rp_finishcreate");
-		CAKE.ResetStep()
 
+		OpenCharacterMenu()
 		Step1:Remove();
 		Step1 = nil;
 	end
@@ -256,6 +250,6 @@ end
 
 function CLPLUGIN.Init()
 
-	CAKE.AddStep(firststep)
+	CAKE.RegisterCharCreate(firststep)
 	
 end

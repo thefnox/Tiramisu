@@ -4,6 +4,10 @@ local lolpos
 
 function ENT:Draw()
 
+	if CAKE.ForceDraw then
+			self.Entity:DrawModel()
+	end
+
 	if self.Entity:GetParent() == LocalPlayer() then
 		if !CAKE.Thirdperson:GetBool() and !CAKE.MiddleDown then
 			if !gamemode.Call( "ShouldDrawLocalPlayer" ) then
@@ -19,7 +23,6 @@ function ENT:Draw()
 	end
 	
 	self.Entity:RemoveEffects(EF_ITEM_BLINK)
-	self.Entity:DrawModel()
 	self.Entity:DrawShadow( true )
 	
 end

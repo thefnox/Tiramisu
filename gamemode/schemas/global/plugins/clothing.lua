@@ -89,6 +89,69 @@ function CAKE.SetClothing( ply, body, helmet, glove )
 	CAKE.SendClothingToClient( ply )
 		
 end
+
+function CAKE.TestClothing( ply, model, body, helmet, glove )
+
+	ply:RemoveClothing()
+	
+	if resourcex then
+		if CAKE.ItemData[ body ] and CAKE.ItemData[ body ].Content then
+			for k, v in ipairs( CAKE.ItemData[ body ].Content ) do
+				print( "Adding " .. v )
+				resourcex.AddFile( v, true )
+			end
+		end
+		if CAKE.ItemData[ helmet ] and CAKE.ItemData[ helmet ].Content then
+			for k, v in ipairs( CAKE.ItemData[ helmet ].Content ) do
+				print( "Adding " .. v )
+				resourcex.AddFile( v, true )
+			end
+		end
+	end
+	
+	if !ply:ItemHasFlag( body, "nogloves" ) then
+		glove = body
+	end
+	if helmet == "none" then
+		helmet = model
+	else
+		helmet = CAKE.ItemData[ helmet ].Model
+	end
+	if glove == "none" then
+		glove = model
+	else
+		glove = CAKE.ItemData[ glove ].Model
+	end
+	if body == "none" then
+		body = model
+	else
+		body = CAKE.ItemData[ body ].Model
+	end
+	
+	ply:SetNWString( "model", helmet )
+	
+	helmet = helmet or body
+	glove = glove or body
+	
+	if body == helmet or body == glove then
+		if body == helmet and body != glove then --If the same model is used for the head but not for the hands
+			CAKE.HandleClothing( ply, body , 4 )
+			CAKE.HandleClothing( ply, glove, 3 )
+		elseif body != helmet and body == glove then
+			CAKE.HandleClothing( ply, body , 5 )
+			CAKE.HandleClothing( ply, helmet, 2 )
+		elseif body == helmet and body == glove then
+			CAKE.HandleClothing( ply, body , 0 )
+		end
+	else
+		CAKE.HandleClothing( ply, body , 1 )
+		CAKE.HandleClothing( ply, helmet, 2 )
+		CAKE.HandleClothing( ply, glove, 3 )
+	end
+
+	CAKE.SendClothingToClient( ply )
+		
+end
 	
 function meta:RemoveClothing()
 		if self.Clothing then
@@ -128,7 +191,7 @@ function CAKE.HandleClothing( ply, model, type )
 		ply.Clothing[ type ] = ents.Create( "player_part" )
 		ply.Clothing[ type ]:SetDTInt( 1, type )
 		ply.Clothing[ type ]:SetDTInt( 2, ply:EntIndex() )
-		ply.Clothing[ type ]:SetDTInt( 3, CAKE.GetCharField( ply, "headratio" ) or 1 )
+		ply.Clothing[ type ]:SetDTInt( 3, 1 )
 		ply.Clothing[ type ]:SetModel( model )
 		ply.Clothing[ type ]:SetParent( ply )
 		ply.Clothing[ type ]:SetPos( ply:GetPos() )

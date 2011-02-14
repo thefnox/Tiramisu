@@ -34,14 +34,6 @@ function CAKE.LoadSchema( schema )
 		
 	end
 	
-	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/currency/*.lua" );
-	
-	for k, v in pairs( list ) do
-	
-		CAKE.LoadCurrency( schema, v );
-		
-	end
-	
 	-- Load right click files.
 	
 	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua" );
