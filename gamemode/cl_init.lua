@@ -33,6 +33,11 @@ CAKE.MyGroup = {}
 CAKE.models = {  };
 readysent = false;
 
+CAKE.MenuTabs = {}
+CAKE.ActiveTab = nil
+CAKE.MenuOpen = false
+CAKE.DisplayMenu = false
+
 require( "datastream" )
 
 -- Client Includes
@@ -40,8 +45,6 @@ include( "shared.lua" );
 include( "player_shared.lua" );
 include( "cl_hud.lua" );
 include( "cl_binds.lua" );
-include( "cl_charactercreate.lua" );
-include( "cl_playermenu.lua" );
 include( "animations.lua" )
 include( "resourcex.lua" ) -- Resource downloading
 
@@ -98,6 +101,8 @@ usermessage.Hook( "runconcommand", function( um ) --Simple fix to garry's fuckup
 	
 end)
 
+CurrencyTable = {}
+
 usermessage.Hook( "addcurrency", function( um )
 	local currencydata = {}
 	currencydata.name = um:ReadString()
@@ -125,3 +130,86 @@ function AddRclicks(schema)
 			table.insert(RclickTable, RCLICK);
 		end
 end
+
+CAKE.CLPlugin = {}
+
+function AddCLPlugins(schema)
+
+		local list = file.FindInLua( "tiramisu/gamemode/schemas/" .. schema .. "/clplugin/*.lua" )	
+		for k,v in pairs( list ) do
+			local path = "tiramisu/gamemode/schemas/" .. schema .. "/clplugin/" .. v
+			CLPLUGIN = { }
+			include( path )
+			CAKE.CLPlugin[CLPLUGIN.Name] = {}
+			if CLPLUGIN.Init then
+				CAKE.CLPlugin[CLPLUGIN.Name].Init = CLPLUGIN.Init
+				CAKE.CLPlugin[CLPLUGIN.Name].Init()
+			end
+		end
+end
+
+function CAKE.RegisterCharCreate( passedfunc )
+
+	CAKE.CharCreate = passedfunc
+
+end
+
+TeamTable = {};
+
+
+ExistingChars = {  }
+
+function ReceiveChar( data )
+
+	local n = data:ReadLong( );
+	ExistingChars[ n ] = {  }
+	ExistingChars[ n ][ 'name' ] = data:ReadString( );
+	ExistingChars[ n ][ 'model' ] = data:ReadString( );
+	ExistingChars[ n ][ 'title' ] = data:ReadString( );
+	ExistingChars[ n ][ 'title2' ] = data:ReadString( );
+	
+end
+usermessage.Hook( "ReceiveChar", ReceiveChar );
+
+usermessage.Hook( "characterselection",  function( )
+
+	CAKE.SetActiveTab( "Characters" )
+	InitHUDMenu()
+	
+end );
+
+usermessage.Hook( "charactercreation", function()
+	
+	CAKE.CharCreate()
+
+end)
+
+function CAKE.RegisterMenuTab( name, func, closefunc ) --The third argument is the function used for closing your panel.
+	print( "Registering Menu Tab " .. name )
+	CAKE.MenuTabs[ name ] = {}
+	CAKE.MenuTabs[ name ][ "function" ] = func or function() end
+	CAKE.MenuTabs[ name ][ "closefunc" ] = closefunc or function() end
+end
+
+function CAKE.CloseTabs()
+	for k, v in pairs( CAKE.MenuTabs ) do
+		v[ "closefunc" ]()
+	end
+	CAKE.ActiveTab = nil
+end
+
+function CAKE.SetActiveTab( name )
+	--CAKE.MenuOpen = true
+	CAKE.CloseTabs()
+	if CAKE.MenuTabs and CAKE.MenuTabs[ name ] then
+		CAKE.MenuTabs[ name ][ "function" ]()
+	else
+		timer.Simple( 1, function()
+			if CAKE.MenuTabs and CAKE.MenuTabs[ name ] then
+				CAKE.MenuTabs[ name ][ "function" ]()
+			end
+		end)
+	end
+	CAKE.ActiveTab = name
+end
+

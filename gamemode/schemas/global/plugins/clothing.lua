@@ -95,13 +95,13 @@ function CAKE.TestClothing( ply, model, body, helmet, glove )
 	ply:RemoveClothing()
 	
 	if resourcex then
-		if CAKE.ItemData[ body ] and CAKE.ItemData[ body ].Content then
+		if body and CAKE.ItemData[ body ] and CAKE.ItemData[ body ].Content then
 			for k, v in ipairs( CAKE.ItemData[ body ].Content ) do
 				print( "Adding " .. v )
 				resourcex.AddFile( v, true )
 			end
 		end
-		if CAKE.ItemData[ helmet ] and CAKE.ItemData[ helmet ].Content then
+		if helmet and CAKE.ItemData[ helmet ] and CAKE.ItemData[ helmet ].Content then
 			for k, v in ipairs( CAKE.ItemData[ helmet ].Content ) do
 				print( "Adding " .. v )
 				resourcex.AddFile( v, true )
@@ -112,17 +112,17 @@ function CAKE.TestClothing( ply, model, body, helmet, glove )
 	if !ply:ItemHasFlag( body, "nogloves" ) then
 		glove = body
 	end
-	if helmet == "none" then
+	if !helmet or helmet == "none" then
 		helmet = model
 	else
 		helmet = CAKE.ItemData[ helmet ].Model
 	end
-	if glove == "none" then
+	if !glove or glove == "none" then
 		glove = model
 	else
 		glove = CAKE.ItemData[ glove ].Model
 	end
-	if body == "none" then
+	if !body or body == "none" then
 		body = model
 	else
 		body = CAKE.ItemData[ body ].Model

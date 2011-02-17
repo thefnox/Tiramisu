@@ -8,7 +8,7 @@
 -------------------------------	
 
 -- Set Model
-function ccSetModel( ply, cmd, args )
+local function ccSetModel( ply, cmd, args )
 
 	local mdl = args[ 1 ];
 	
@@ -22,7 +22,7 @@ function ccSetModel( ply, cmd, args )
 end
 concommand.Add( "rp_setmodel", ccSetModel );
 
-function ccSetAge( ply, cmd, args )
+local function ccSetAge( ply, cmd, args )
 	
 	local age = args[ 1 ];
 	
@@ -32,8 +32,22 @@ function ccSetAge( ply, cmd, args )
 end
 concommand.Add( "rp_setage", ccSetAge );
 
+local function ccSetClothing( ply, cmd, args )
+	if( ply:GetNWInt( "charactercreate" ) == 1 ) then
+		if CAKE.ConVars[ "Default_Clothing" ][ ply:GetNWString( "gender", "Male" ) ] then
 
-function ccSetGender( ply, cmd, args )
+			if table.HasValue( CAKE.ConVars[ "Default_Clothing" ][ ply:GetNWString( "gender", "Male" ) ], args[1] ) then
+				ply:GiveItem( args[1] )
+				CAKE.SetCharField(ply, "clothing", args[1] )
+			end
+
+		end
+
+	end
+end
+concommand.Add( "rp_setstartclothing", ccSetClothing )
+
+local function ccSetGender( ply, cmd, args )
 
 	local gender = args[ 1 ];
 	
@@ -47,7 +61,7 @@ end
 concommand.Add( "rp_setgender", ccSetGender );
 
 -- Start Creation
-function ccStartCreate( ply, cmd, args )
+local function ccStartCreate( ply, cmd, args )
 	
 	local PlyCharTable = CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ]
 	
@@ -72,12 +86,51 @@ function ccStartCreate( ply, cmd, args )
 	
 	ply:SetNWInt( "charactercreate", 1 );
 	CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ tostring(high) ] = {  }
+
+	umsg.Start( "charactercreation", ply )
+	umsg.End()
 	
 end
 concommand.Add( "rp_startcreate", ccStartCreate );
 
+local function ccEscapeCreate( ply, cmd, args )
+
+	if ply:GetNWInt( "charactercreate", 0 ) > 0 then
+		table.remove( CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ], ply:GetNWString( "uid" ) )
+		ply:SetNWInt( "charactercreate", 0 )
+	end
+
+end
+concommand.Add( "rp_escapecreate", ccEscapeCreate );
+
+local function ccTestClothing( ply, cmd, args )
+
+	if ply:GetNWInt( "charactercreate", 0 )> 0 then
+		if args[ 1 ] and args[ 1 ] != "none" then
+			if( args[1] == "Female" ) then
+				ply:SetModel( "models/Tiramisu/AnimationTrees/femaleanimtree.mdl" )
+				ply:SetNWString( "gender", "Female" )
+			else
+				ply:SetModel( "models/Tiramisu/AnimationTrees/maleanimtree.mdl" )
+				ply:SetNWString( "gender", "Male" )
+			end
+		end
+		if args[ 2 ] and args[ 2 ] != "none" then
+			CAKE.TestClothing( ply, args[ 2 ] )
+		end
+		if args[ 3 ] and args[ 3 ] != "none" then
+			CAKE.TestClothing( ply, args[ 2 ], args[ 3 ] )
+		end
+		if args[ 4 ] and args[ 4 ] != "none" then
+			CAKE.TestClothing( ply, args[ 2 ], args[ 3 ], args[ 4 ] )
+		end
+	end
+
+end
+concommand.Add( "rp_testclothing", ccTestClothing );
+
 -- Finish Creation
-function ccFinishCreate( ply, cmd, args )
+local function ccFinishCreate( ply, cmd, args )
 
 	if( ply:GetNWInt( "charactercreate" ) == 1 ) then
 		
@@ -95,16 +148,13 @@ function ccFinishCreate( ply, cmd, args )
 			
 		end
 		
-		CAKE.ResendCharData( ply );
-
 		ply:RefreshInventory( )
 		ply:RefreshBusiness( )
 		
 		ply:SetTeam( 1 );
 		
-		ply:Spawn( );
-		
-		ply:ConCommand( "fadein" );
+		CAKE.ResendCharData( ply );
+
 		
 	end
 	
@@ -209,7 +259,7 @@ function ccReady( ply, cmd, args )
 		
 		ply:SetNWInt( "charactercreate", 1 )
 		
-		umsg.Start( "charactercreate", ply );
+		umsg.Start( "characterselection", ply );
 		umsg.End( );
 		
 	end

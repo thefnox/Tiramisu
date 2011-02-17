@@ -26,9 +26,10 @@ CAKE.ConVars[ "Default_Flags" ] = {  }; -- What flags can the character select w
 CAKE.ConVars[ "Default_Inventory" ] = {  }; -- What inventory do characters start out with when they are first made. This cannot be setconvar'd
 CAKE.ConVars[ "Default_Weapons" ] = {  }; -- What inventory do characters start out with when they are first made. This cannot be setconvar'd
 CAKE.ConVars[ "Default_Ammo" ] = {  };
+CAKE.ConVars[ "Default_Clothing" ] = { };--Clothing you can choose on startup
 CAKE.ConVars[ "Respawn_Timer" ] = 5 --Time in seconds that it takes for people to be allowed to respawn.
 CAKE.ConVars[ "Schema" ] = "rlrp"; -- What folder is schema data being loaded from?
 
 CAKE.ConVars[ "ContentDownload" ] = true --Set this to true if you want new playermodels to download dynamically ( Like toybox ).
 
-CAKE.ConVars[ "Tiramisu" ] = "1.0 b3";
+CAKE.ConVars[ "Tiramisu" ] = "1.0";

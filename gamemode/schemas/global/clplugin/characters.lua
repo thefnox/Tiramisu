@@ -1,7 +1,7 @@
 CLPLUGIN.Name = "Character Menu"
 CLPLUGIN.Author = "F-Nox/Big Bang"
 
-CAKE.SelectedChar = 0
+CAKE.SelectedChar = false
 
 local x,y 
 local charpanel
@@ -169,10 +169,14 @@ function CreateMenuButtons()
 		end
 	end
 	spawnlabel.DoClick = function()
-		RunConsoleCommand( "rp_spawnchar", tostring( CAKE.SelectedChar ))
-		if CharacterMenu then
-			CharacterMenu:Remove()
-			CharacterMenu = nil
+		if CAKE.SelectedChar then
+			RunConsoleCommand( "rp_spawnchar", tostring( CAKE.SelectedChar ))
+			if CharacterMenu then
+				CharacterMenu:Remove()
+				CharacterMenu = nil
+			end
+		else
+			CAKE.Message( "You need to select a character first!", "Warning", "OK", Color( 140, 100, 100) )
 		end
 	end
 
@@ -218,12 +222,12 @@ function CreateMenuButtons()
 		end
 	end
 	createcharacter.DoClick = function()
-		CAKE.CharCreate()
 		spawnlabel.SlideOut = true
 		disconnectlabel.SlideOut = true
 		createcharacter.SlideOut = true
 		charpanel.SlideOut = true
 		PlayerModel.SlideOut = true
+		RunConsoleCommand( "rp_startcreate" )
 	end
 
 end
@@ -245,10 +249,13 @@ usermessage.Hook( "ConfirmCharRemoval", function( um )
 		"Confirm", function()
 			LocalPlayer():ConCommand("rp_removechar " .. tostring( id ))
 			table.remove( ExistingChars, id )
-			CreateCharList( )
 		end,  
 		"Cancel", function()
 		 end )
+end)
+
+usermessage.Hook( "DisplayCharacterList", function( um )
+	CreateCharList( )
 end)
 
 function CLPLUGIN.Init()

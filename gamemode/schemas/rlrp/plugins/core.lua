@@ -27,6 +27,19 @@ function PLUGIN.Init()
 	CAKE.AddCType("models/items/ammocrate_grenade.mdl", 10)
 	CAKE.AddCType("models/weapons/w_suitcase_passenger.mdl", 5)
 
+	CAKE.ConVars[ "Default_Clothing" ][ "Male" ] = {
+		"clothing_formal",
+		"clothing_formal2",
+		"clothing_labcoat",
+		"clothing_combat"
+	}
+
+	CAKE.ConVars[ "Default_Clothing" ][ "Female" ] = {
+		"clothing_formalf",
+		"clothing_labcoat",
+		"clothing_combatf"
+	}
+
 	CURRENCY = {}
 	CURRENCY.Name        = "Dollars";
 	CURRENCY.Slang       = "dollar"

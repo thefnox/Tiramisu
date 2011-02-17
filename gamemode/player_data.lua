@@ -223,6 +223,9 @@ function CAKE.ResendCharData( ply ) -- Network all of the player's character dat
 				umsg.End( );
 			end
 		end
+
+		umsg.Start( "DisplayCharacterList" , ply )
+		umsg.End()
 end
 
 function CAKE.SetPlayerField( ply, fieldname, data )

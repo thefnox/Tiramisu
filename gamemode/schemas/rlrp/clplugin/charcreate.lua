@@ -1,8 +1,8 @@
 CLPLUGIN.Name = "Charcreation Menu"
-CLPLUGIN.Author = "Matt/Ryaga"
+CLPLUGIN.Author = "FNox"
 
 local models = {}
-models[ "male" ] = {
+models[ "Male" ] = {
 
 	"models/humans/group01/male_01.mdl",
 	"models/humans/group01/male_02.mdl",
@@ -15,7 +15,7 @@ models[ "male" ] = {
 	"models/humans/group01/male_09.mdl"
 
 }
-models[ "female" ] = {
+models[ "Female" ] = {
 
 	"models/Humans/Group01/Female_01.mdl",
 	"models/Humans/Group01/Female_02.mdl",
@@ -26,230 +26,221 @@ models[ "female" ] = {
 
 }
 
+local clothing = {}
+clothing[ "Male" ] = {
+	"none",
+	"clothing_formal",
+	"clothing_formal2",
+	"clothing_labcoat",
+	"clothing_combat"
+}
+clothing[ "Female" ] = {
+	"none",
+	"clothing_formalf",
+	"clothing_labcoat",
+	"clothing_combatf"
+}
+
+local x, y
 local Age = "30"
 local Gender = "Male"
 local Title1 = "Title1"
 local Title2 = "Title2"
-local FirstName = "Set Your"
-local LastName = "Name"
+local CharName = "Set Your Name"
+local SelectedClothing = "none"
+local SelectedModel = "models/humans/group01/male_01.mdl"
 
-local function firststep()
-	Step1 = vgui.Create( "DFrameTransparent" )
-	Step1:SetSize( 675, 410 )
-	Step1:SetPos( ScrW() / 2 - Step1:GetWide() / 2, ScrH() / 2 - Step1:GetTall() / 2 )
-	Step1:SetTitle( "Create your Character" )
-	Step1:SetVisible( true )
-	Step1:SetDraggable( true )
-	Step1:ShowCloseButton( false )
-	Step1:MakePopup()
+local function CharacterCreation()
 
-	local mdlPanel = vgui.Create( "DModelPanel", Step1 )
-	mdlPanel:SetSize( 300, 300 )
-	mdlPanel:SetPos( 360, 28 )
-	mdlPanel:SetAnimSpeed( 0.0 )
-	mdlPanel:SetAnimated( false )
-	mdlPanel:SetModel( models[ "male" ][1] )
-	mdlPanel:SetAmbientLight( Color( 50, 50, 50 ) )
-	mdlPanel:SetDirectionalLight( BOX_TOP, Color( 255, 255, 255 ) )
-	mdlPanel:SetDirectionalLight( BOX_FRONT, Color( 255, 255, 255 ) )
-	mdlPanel:SetCamPos( Vector( 50, 0, 50 ) )
-	mdlPanel:SetLookAt( Vector( 0, 0, 50 ) )
-	mdlPanel:SetFOV( 70 )
-
-	local RotateSlider = vgui.Create("DNumSlider", Step1);
-	RotateSlider:SetMax(360);
-	RotateSlider:SetMin(0);
-	RotateSlider:SetText("Rotate");
-	RotateSlider:SetDecimals( 0 );
-	RotateSlider:SetWidth(300);
-	RotateSlider:SetPos(360, 290);
-
-	function mdlPanel:LayoutEntity(Entity)
-
-		Entity:SetAngles( Angle( 0, RotateSlider:GetValue(), 0) )
-
-	end
-
-	local i = 1;
-
-	local LastMdl = vgui.Create( "DSysButton", Step1 )
-	LastMdl:SetPos( 355, 128 )
-	LastMdl:SetSize( 30, 30)
-	LastMdl:SetType("left");
-	LastMdl.DoClick = function()
-		i = i - 1;
-		
-		if(i == 0) then
-			i = #models[ string.lower( Gender ) ];
-		end
-		
-		mdlPanel:SetModel(models[ string.lower( Gender ) ][i]);
-		
-	end
-
-	local NextMdl = vgui.Create( "DSysButton", Step1 )
-	NextMdl:SetPos( 635, 128 )
-	NextMdl:SetSize( 30,30 )
-	NextMdl:SetType("right");
-	NextMdl.DoClick = function()
-
-		i = i + 1;
-
-		if(i > #models[ string.lower( Gender ) ]) then
-			i = 1;
-		end
-		
-		mdlPanel:SetModel(models[ string.lower( Gender ) ][i]);
-		
-	end
-
-	NewPanel = vgui.Create( "DPanelList", Step1 )
-	NewPanel:SetPos( 5,28 )
-	NewPanel:SetSize( 340, 375 )
-	NewPanel:SetSpacing( 5 ) -- Spacing between items
-	NewPanel:EnableHorizontal( false ) -- Only vertical items
-	NewPanel:EnableVerticalScrollbar( false ) -- Allow scrollbar if you exceed the Y axis
-
-	local info = vgui.Create( "DForm" );
-	info:SetName("Personal Information");
-	info:SetSpacing( 3 )
-	info.Paint = function() end
-	NewPanel:AddItem(info);
-
-	local label = vgui.Create("DLabel");
-	info:AddItem(label);
-	label:SetSize(30,25);
-	label:SetPos(150, 50);
-	label:SetText("First: ");
-
-	local firstname = vgui.Create("DTextEntry");
-	info:AddItem(firstname);
-	firstname:SetSize(100,25);
-	firstname:SetPos(185, 50);
-	firstname:SetText(FirstName);
-
-	local label = vgui.Create("DLabel");
-	info:AddItem(label);
-	label:SetSize(30,25);
-	label:SetPos(5, 50);
-	label:SetText("Last: ");
-
-	local lastname = vgui.Create("DTextEntry");
-	info:AddItem(lastname);
-	lastname:SetSize(100,25);
-	lastname:SetPos(40, 50);
-	lastname:SetText(LastName);
-
-	local label = vgui.Create("DLabel");
-	info:AddItem(label);
-	label:SetSize(100,25);
-	label:SetPos(5, 80);
-	label:SetText("Title: ");
-
-	local title = vgui.Create("DTextEntry");
-	info:AddItem(title);
-	title:SetSize(205, 25);
-	title:SetPos(80, 80);
-	title:SetText(Title1);
-
-	local label = vgui.Create("DLabel");
-	info:AddItem(label);
-	label:SetSize(100,25);
-	label:SetPos(5, 80);
-	label:SetText("Title 2: ");
-
-	local title2 = vgui.Create("DTextEntry");
-	info:AddItem(title2);
-	title2:SetSize(205, 25);
-	title2:SetPos(80, 80);
-	title2:SetText(Title2);
-
-	local label = vgui.Create("DLabel");
-	info:AddItem(label);
-	label:SetSize(30,25);
-	label:SetPos(150, 50);
-	label:SetText("Gender");
-
-	local MenuButton = vgui.Create("DButton")
-	MenuButton:SetText( "Gender" )
-	MenuButton:SetPos(25, 50)
-	MenuButton:SetSize( 190, 25 )
-	MenuButton.DoClick = function ( btn )
-		local MenuButtonOptions = DermaMenu()
-		MenuButtonOptions:AddOption( "Male", function() 
-			Gender = "Male"
-			mdlPanel:SetModel( models[ "male" ][1] )
-		end)
-		MenuButtonOptions:AddOption( "Female", function() 
-			Gender = "Female"
-			mdlPanel:SetModel( models[ "female" ][1] )
-		end )
-		MenuButtonOptions:Open()
-	end 
-	info:AddItem(MenuButton);
-
-	local label = vgui.Create("DLabel");
-	info:AddItem(label);
-	label:SetSize(30,25);
-	label:SetPos(150, 50);
-	label:SetText("Age: ");
-
-	local numberwang = vgui.Create( "DNumberWang" )
-	info:AddItem(numberwang);
-	numberwang:SetSize(30,25);
-	numberwang:SetMin( 8 )
-	numberwang:SetMax( 89 )
-	numberwang:SetDecimals( 0 )
-
-	local GoBackButton = vgui.Create( "DButton", Step1 )
-	GoBackButton:SetSize( 150, 40)
-	GoBackButton:SetText( "Go back to Selection" )
-	GoBackButton:SetPos( 355, 355 )
-	GoBackButton.DoClick = function ( btn )
-		OpenCharacterMenu()
-		Step1:Remove()
-		Step1 = nil
-	end
-
-	local AcceptButton = vgui.Create( "DButton", Step1 )
-	AcceptButton:SetSize( 150, 40)
-	AcceptButton:SetText( "Create Character" )
-	AcceptButton:SetPos( 515, 355 )
-	AcceptButton.DoClick = function ( btn )
-		if(firstname:GetValue() == "" ) then
-			CAKE.Message("You must enter a first name!", "Error!", "OK", Color( 140, 100, 100))
-			return;
+	if CharacterMenu then
+		local panel = vgui.Create( "DPanelList", CharacterMenu)
+		panel:SetSize( 230, 500 )
+		panel:SetPos( ScrW() / 2  , ScrH() / 2 - 250 )
+		panel:SetPadding( 0 )
+		panel:SetSpacing( 5 )
+		panel.Paint = function()
+			x,y = panel:GetPos()
+			if panel.SlideOut then
+				panel:SetPos( Lerp( 0.1, x, ScrW() + 500 ) , ScrH() / 2 - 250)
+				if x > ScrW() then
+					panel:Remove()
+					panel = nil
+				end
+			else
+				--panel:SetPos( Lerp( 0.1, x, ScrW() / 2 ) , ScrH() / 2 - 250)
+			end
 		end
 
-		if(numberwang:GetValue() < 1 ) then
-			CAKE.Message("You must enter a valid age!", "Error!", "OK", Color( 140, 100, 100))
-			return;
+		local label
+
+		label = vgui.Create( "DLabel" )
+		label:SetText( "Create your character" )
+		label:SetFont( "TiramisuTimeFont" )
+		panel:AddItem( label )
+
+		label = vgui.Create( "DLabel" )
+		label:SetText( "Name:" )
+		panel:AddItem( label )
+
+		local nametext = vgui.Create( "DTextEntry" )
+		nametext:SetText( CharName )
+		nametext:SetTooltip( "Click to edit" )
+		panel:AddItem( nametext )
+
+		label = vgui.Create( "DLabel" )
+		label:SetText( "Title:" )
+		panel:AddItem( label )
+
+		local titletext = vgui.Create( "DTextEntry" )
+		titletext:SetText( Title1 )
+		titletext:SetTooltip( "Click to edit" )
+		panel:AddItem( titletext )
+
+		label = vgui.Create( "DLabel" )
+		label:SetText( "Title 2:" )
+		panel:AddItem( label )
+
+		local title2text = vgui.Create( "DTextEntry" )
+		title2text:SetText( Title2 )
+		title2text:SetTooltip( "Click to edit" )
+		panel:AddItem( title2text )
+		local modellist = vgui.Create( "DMultiChoice" )
+		for k, v in pairs( models[ Gender ] ) do
+			modellist:AddChoice( v )
+		end
+		modellist.OnSelect = function( panel,index,value )
+			RunConsoleCommand( "rp_testclothing", "none", value, SelectedClothing )
+			SelectedModel = value
+		end
+		modellist:ChooseOptionID( 1 )
+
+		local clothinglist = vgui.Create( "DMultiChoice" )
+		for k, v in pairs( clothing[ Gender ] ) do
+			clothinglist:AddChoice( v )
+		end
+		clothinglist.OnSelect = function( panel,index,value )
+			RunConsoleCommand( "rp_testclothing", "none", SelectedModel, value )
+			SelectedClothing = value
+		end
+		clothinglist:ChooseOption( "none", 1 )
+
+		local genderlist = vgui.Create( "DMultiChoice" )
+		genderlist:AddChoice( "Male" )
+		genderlist:AddChoice( "Female" )
+		genderlist.OnSelect = function( panel,index,value )
+			Gender = value
+			RunConsoleCommand( "rp_testclothing", value, models[ value ][1] )
+			clothinglist:Clear()
+			modellist:Clear()
+			for k, v in pairs( clothing[ Gender ] ) do
+				clothinglist:AddChoice( v )
+			end
+			for k, v in pairs( models[ Gender ] ) do
+				modellist:AddChoice( v )
+			end
+			SelectedClothing = "none"
+			SelectedModel = models[ value ][1]
+			modellist:ChooseOptionID( 1 )
+			clothinglist:ChooseOption( "none", 1 )
+		end
+		genderlist:ChooseOptionID( 1 )
+
+		label = vgui.Create( "DLabel" )
+		label:SetText( "Gender:" )
+		panel:AddItem( label )
+		panel:AddItem( genderlist )
+
+		label = vgui.Create( "DLabel" )
+		label:SetText( "Model:" )
+		panel:AddItem( label )
+		panel:AddItem( modellist )
+
+		label = vgui.Create( "DLabel" )
+		label:SetText( "Clothing:" )
+		panel:AddItem( label )
+		panel:AddItem( clothinglist )
+
+		label = vgui.Create( "DLabel" )
+		label:SetText( "Age:" )
+		panel:AddItem( label )
+
+		local numberwang = vgui.Create( "DNumberWang" )
+		numberwang:SetMin( 18 )
+		numberwang:SetMax( 89 )
+		numberwang:SetValue( 30 )
+		numberwang:SetDecimals( 0 )
+		numberwang.OnValueChanged = function( panel, value )
+			Age = tostring( value )
+		end
+		panel:AddItem( numberwang )
+
+		local gobacklabel = vgui.Create( "DButton", CharacterMenu )
+		gobacklabel:SetSize( 80, 26 )
+		gobacklabel:SetText( "" )
+		gobacklabel:SetPos( (ScrW() / 2 )- 160, ScrH() + 500  )
+		gobacklabel.Paint = function() end
+		gobacklabel.PaintOver = function()
+			draw.SimpleText( "Go Back", "TiramisuTimeFont", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
+			x,y = gobacklabel:GetPos()
+			if !gobacklabel.SlideOut then
+				gobacklabel:SetPos( (ScrW() / 2 )- 160, Lerp( 0.1, y, ScrH() / 2 + 230 ))
+			else
+				gobacklabel:SetPos( (ScrW() / 2 )- 160, Lerp( 0.1, y, ScrH() + 500  ))
+				if y > ScrH() then
+					gobacklabel:Remove()
+					gobacklabel = nil
+				end
+			end
+		end
+		gobacklabel.DoClick = function()
+			RunConsoleCommand( "rp_escapecreate" )
+			panel.SlideOut = true
+			gobacklabel.SlideOut = true
+			createlabel.SlideOut = true
+			OpenCharacterMenu()
 		end
 
-		Age = tostring( numberwang:GetValue() )
-		Title1 = string.sub(title:GetValue(), 1, 64)
-		Title2 = string.sub(title2:GetValue(), 1, 64)
-		FirstName = string.sub(firstname:GetValue(), 1, 64)
-		LastName = string.sub(lastname:GetValue(), 1, 64)
+		local createlabel = vgui.Create( "DButton", CharacterMenu )
+		createlabel:SetSize( 200, 26 )
+		createlabel:SetText( "" )
+		createlabel:SetPos( ScrW() / 2 + 20, ScrH() + 500  )
+		createlabel.Paint = function() end
+		createlabel.PaintOver = function()
+			draw.SimpleText( "Finish Creation", "TiramisuTimeFont", 70, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
+			x,y = createlabel:GetPos()
+			if !createlabel.SlideOut then
+				createlabel:SetPos( ScrW() / 2 + 20, Lerp( 0.1, y, ScrH() / 2 + 230 ))
+			else
+				createlabel:SetPos( ScrW() / 2 + 20, Lerp( 0.1, y, ScrH() + 500  ))
+				if y > ScrH() then
+					createlabel:Remove()
+					createlabel = nil
+				end
+			end
+		end
+		createlabel.DoClick = function()
+			Title1 = string.sub(titletext:GetValue(), 1, 64)
+			Title2 = string.sub(title2text:GetValue(), 1, 64)
+			CharName = string.sub(nametext:GetValue(), 1, 64)
 
-		LocalPlayer():ConCommand("rp_startcreate");
-		LocalPlayer():ConCommand("rp_setmodel \"" .. mdlPanel.Entity:GetModel() .. "\"");
-		LocalPlayer():ConCommand("rp_changename \"" .. FirstName .. " " .. LastName .. "\"");
-		LocalPlayer():ConCommand("rp_title " .. Title1 );
-		LocalPlayer():ConCommand("rp_title2 " .. Title2 );
-		LocalPlayer():ConCommand("rp_setage " .. Age )
-		LocalPlayer():ConCommand("rp_setgender " .. Gender )
-		LocalPlayer().MyModel = ""
-		LocalPlayer():ConCommand("rp_finishcreate");
+			RunConsoleCommand("rp_setmodel", SelectedModel );
+			RunConsoleCommand("rp_setstartclothing", SelectedClothing );
+			RunConsoleCommand("rp_changename", CharName );
+			RunConsoleCommand("rp_title", Title1 );
+			RunConsoleCommand("rp_title2", Title2 );
+			RunConsoleCommand("rp_setage", Age )
+			RunConsoleCommand("rp_setgender", Gender )
+			RunConsoleCommand( "rp_finishcreate" )
+			panel.SlideOut = true
+			createlabel.SlideOut = true
+			gobacklabel.SlideOut = true
+			OpenCharacterMenu()
+		end
 
-		OpenCharacterMenu()
-		Step1:Remove();
-		Step1 = nil;
 	end
 end
-
 function CLPLUGIN.Init()
 
-	CAKE.RegisterCharCreate(firststep)
+	CAKE.RegisterCharCreate(CharacterCreation)
 	
 end

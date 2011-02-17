@@ -50,10 +50,8 @@ end)
 -- LUA Files
 AddResource( "lua", "shared.lua" ); -- Shared Functions
 AddResource( "lua", "cl_binds.lua" ); -- Binds
-AddResource( "lua", "cl_charactercreate.lua" ); -- Character Creation functions
 AddResource( "lua", "cl_hud.lua"); -- The HUD
 AddResource( "lua", "cl_init.lua"); -- The initialization of clientside gamemode
-AddResource( "lua", "cl_playermenu.lua"); -- The playermenu functions
 AddResource( "lua", "player_shared.lua"); -- Shared player functions
 AddResource( "lua", "animations.lua"); -- Animations
 AddResource( "lua", "resourcex.lua"); -- Resource downloading
