@@ -174,7 +174,7 @@ local function CharacterCreation()
 		end
 		panel:AddItem( numberwang )
 
-		local gobacklabel = vgui.Create( "DButton", CharacterMenu )
+		gobacklabel = vgui.Create( "DButton", CharacterMenu )
 		gobacklabel:SetSize( 80, 26 )
 		gobacklabel:SetText( "" )
 		gobacklabel:SetPos( (ScrW() / 2 )- 160, ScrH() + 500  )
@@ -200,7 +200,7 @@ local function CharacterCreation()
 			OpenCharacterMenu()
 		end
 
-		local createlabel = vgui.Create( "DButton", CharacterMenu )
+		createlabel = vgui.Create( "DButton", CharacterMenu )
 		createlabel:SetSize( 200, 26 )
 		createlabel:SetText( "" )
 		createlabel:SetPos( ScrW() / 2 + 20, ScrH() + 500  )
@@ -223,6 +223,7 @@ local function CharacterCreation()
 			Title2 = string.sub(title2text:GetValue(), 1, 64)
 			CharName = string.sub(nametext:GetValue(), 1, 64)
 
+			RunConsoleCommand("rp_startcreate")
 			RunConsoleCommand("rp_setmodel", SelectedModel );
 			RunConsoleCommand("rp_setstartclothing", SelectedClothing );
 			RunConsoleCommand("rp_changename", CharName );

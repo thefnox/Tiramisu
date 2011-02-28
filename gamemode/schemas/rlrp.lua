@@ -45,7 +45,8 @@ function SCHEMA.SetUp( )
 		[ "ispolice" ] = true,
 		[ "radiogroup" ] = 1
 	},
-	1
+	1,
+	"The City's elite police force."
 	)
 	
 	CAKE.RLRPFaction( "Mafia",
@@ -65,7 +66,9 @@ function SCHEMA.SetUp( )
 		[ "ispolice" ] = false,
 		[ "radiogroup" ] = 2
 	},
-	2)
+	2,
+	"Baddest and biggest criminal group around. Booyakasha."
+	)
 	
 	CAKE.RLRPFaction( "Syndicate",
 	"The Workers",
@@ -84,6 +87,7 @@ function SCHEMA.SetUp( )
 		[ "ispolice" ] = false,
 		[ "radiogroup" ] = 1
 	},
-	3)
+	3,
+	"The main provider of jobs to the whole City.")
 	
 end

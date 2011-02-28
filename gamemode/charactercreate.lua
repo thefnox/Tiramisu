@@ -60,43 +60,49 @@ local function ccSetGender( ply, cmd, args )
 end
 concommand.Add( "rp_setgender", ccSetGender );
 
+local function ccBeginCreate( ply, cmd, args )
+
+	ply:SetNWInt( "charactercreate", 1 );
+	umsg.Start( "charactercreation", ply )
+	umsg.End()
+
+end
+concommand.Add( "rp_begincreate", ccBeginCreate )
+
 -- Start Creation
 local function ccStartCreate( ply, cmd, args )
 	
-	local PlyCharTable = CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ]
-	
-	-- Find the highest Unique ID
-	local high = 0;
-	
-	for k, v in pairs( PlyCharTable ) do
-	
-		k = tonumber( k );
-		high = tonumber( high );
+	if ply:GetNWInt( "charactercreate", 0 )> 0 then
+		local PlyCharTable = CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ]
 		
-		if( k > high ) then 
+		-- Find the highest Unique ID
+		local high = 0;
 		
-			high = k;
+		for k, v in pairs( PlyCharTable ) do
+		
+			k = tonumber( k );
+			high = tonumber( high );
+			
+			if( k > high ) then 
+			
+				high = k;
+				
+			end
 			
 		end
 		
-	end
-	
-	high = high + 1;
-	ply:SetNWString( "uid", tostring(high) );
-	
-	ply:SetNWInt( "charactercreate", 1 );
-	CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ tostring(high) ] = {  }
+		high = high + 1;
+		ply:SetNWString( "uid", tostring(high) );
 
-	umsg.Start( "charactercreation", ply )
-	umsg.End()
-	
+		CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ tostring(high) ] = {  }
+	end
+
 end
 concommand.Add( "rp_startcreate", ccStartCreate );
 
 local function ccEscapeCreate( ply, cmd, args )
 
 	if ply:GetNWInt( "charactercreate", 0 ) > 0 then
-		table.remove( CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ], ply:GetNWString( "uid" ) )
 		ply:SetNWInt( "charactercreate", 0 )
 	end
 
