@@ -6,23 +6,26 @@ function PLUGIN.Init( )
 	
 end
 
-function CAKE.RLRPFaction( name, founder, ranks, flags, doorgroup )
+function CAKE.RLRPFaction( name, founder, ranks, flags, doorgroup, desc )
 
-	local tbl = {
-	[ "Name" ]		= name,
-	[ "Type" ]		= "faction",
-	[ "Founder" ]	= founder,
-	[ "Members" ]	= {},
-	[ "Inventory" ]	= {},
-	[ "Flags" ]		= flags,
-	[ "Ranks" ]		= ranks
-	}
-	
-	local doorgroups = {
-		["doorgroups"] = doorgroup
-	}
-	table.Merge( flags, doorgroups )
-	
-	CAKE.CreateGroup( name, tbl )
+	if !CAKE.GroupExists( name ) then
+		local tbl = {
+		[ "Name" ]		= name,
+		[ "Type" ]		= "faction",
+		[ "Founder" ]	= founder,
+		[ "Members" ]	= {},
+		[ "Inventory" ]	= {},
+		[ "Flags" ]		= flags,
+		[ "Ranks" ]		= ranks,
+		[ "Description" ] = desc or "None available."
+		}
+		
+		local doorgroups = {
+			["doorgroups"] = doorgroup
+		}
+		table.Merge( flags, doorgroups )
+		
+		CAKE.CreateGroup( name, tbl )
+	end
 	
 end

@@ -293,6 +293,24 @@ function CAKE.RestoreGear( ply )
 	
 end
 
+function CAKE.TestGear( ply, tbl )
+
+	CAKE.RemoveAllGear( ply )
+	for k, v in pairs( tbl ) do
+		CAKE.HandleGear( ply, v[ "item" ], v[ "bone" ], v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )
+		timer.Simple( 1, function()
+			if resourcex and CAKE.ItemData[ v["item"] ].Content then
+				for k, v in ipairs( CAKE.ItemData[ v["item"] ].Content ) do
+					resourcex.AddFile( v, true )
+				end
+			end
+		end)
+	end
+	
+	CAKE.SendGearToClient( ply )
+	
+end
+
 function CAKE.SendGearToClient( ply )
 	
 	local newtable = {}

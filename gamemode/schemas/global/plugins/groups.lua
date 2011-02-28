@@ -1,5 +1,5 @@
 PLUGIN.Name = "Groups"; -- What is the plugin name
-PLUGIN.Author = "Ryaga/BadassMC"; -- Author of the plugin
+PLUGIN.Author = "FNox/Ryaga"; -- Author of the plugin
 PLUGIN.Description = "Handles creation destruction and use of groups."; -- The description or purpose of the plugin
 
 CAKE.Groups = {}
@@ -29,6 +29,8 @@ function CAKE.CreateGroup( name, tbl )
 	else
 		table.Merge(CAKE.Groups[name], tbl)
 	end
+
+	print( name )
 end
 
 function CAKE.GroupExists( name )
@@ -61,28 +63,28 @@ end
 
 function CAKE.GetGroupFlag( name, flag )
 	if CAKE.Groups[name] then
-		return CAKE.Groups[name]["flags"][flag] or false
+		return CAKE.Groups[name]["Flags"][flag] or false
 	end
 	
 	return false
 end
 
 function CAKE.GetRankField( name, rank, field )
-	if CAKE.Groups[name] and CAKE.Groups[name]["ranks"][rank] then
-		return CAKE.Groups[name]["ranks"][rank][field] or false
+	if CAKE.Groups[name] and CAKE.Groups[name]["Ranks"][rank] then
+		return CAKE.Groups[name]["Ranks"][rank][field] or false
 	end
 	
 	return false
 end
 
 function CAKE.SetRankField(name, rank, field, value)
-	if CAKE.Groups[name] and CAKE.Groups[name]["ranks"][rank] then
-		CAKE.Groups[name]["ranks"][rank][field] = value
+	if CAKE.Groups[name] and CAKE.Groups[name]["Ranks"][rank] then
+		CAKE.Groups[name]["Ranks"][rank][field] = value
 	end
 end
 
 function CAKE.RankExists( group, rank )
-	if CAKE.GroupExists( group ) and CAKE.Groups[name]["ranks"][rank] then
+	if CAKE.GroupExists( group ) and CAKE.Groups[group]["Ranks"][rank] then
 		return true
 	end
 	return false
@@ -90,7 +92,7 @@ end
 
 function CAKE.CreateRank( group, rank, table )
 	if CAKE.GroupExists( group ) and !CAKE.RankExists( group, rank ) then
-		CAKE.Groups[name]["ranks"][rank] = table
+		CAKE.Groups[name]["Ranks"][rank] = table
 	end
 end
 
@@ -98,15 +100,15 @@ function CAKE.GroupHasMember(name, ply)
 
 	if CAKE.Groups[name] then
 		if ValidEntity( ply ) then
-			if CAKE.Groups[name]["members"][CAKE.GetCharSignature(ply)] and CAKE.GetCharField(ply, "group") == name then
+			if CAKE.Groups[name]["Members"][CAKE.GetCharSignature(ply)] and CAKE.GetCharField(ply, "group") == name then
 				return true
-			elseif CAKE.Groups[name]["members"][CAKE.GetCharSignature(ply)] and !CAKE.GetCharField(ply, "group") == name then
+			elseif CAKE.Groups[name]["Members"][CAKE.GetCharSignature(ply)] and !CAKE.GetCharField(ply, "group") == name then
 				CAKE.SetCharField(ply, "group", name)
-			elseif !CAKE.Groups[name]["members"][CAKE.GetCharSignature(ply)] and CAKE.GetCharField(ply, "group") == name then
+			elseif !CAKE.Groups[name]["Members"][CAKE.GetCharSignature(ply)] and CAKE.GetCharField(ply, "group") == name then
 				CAKE.SetCharField(ply, "group", "none")
 			end
 		elseif type( ply ) == "string" then
-			if CAKE.Groups[name]["members"][ply] then
+			if CAKE.Groups[name]["Members"][ply] then
 				return true
 			end
 		end
@@ -153,44 +155,62 @@ function CAKE.JoinGroup( ply, name )
 		end
 		CAKE.SetCharField( ply, "group", name )
 		CAKE.SetCharField( ply, "grouprank", CAKE.GetGroupField( name, "DefaultRank" ))
-		local roster = CAKE.GetGroupField( name, "members" )
+		local roster = CAKE.GetGroupField( name, "Members" )
 		local tbl = {}
 		tbl.Name = ply:Nick()
 		tbl.SteamID = ply:SteamID()
 		tbl.Signature = CAKE.GetCharSignature(ply)
 		tbl.Rank = CAKE.GetGroupField( name, "DefaultRank" )
-		CAKE.Groups[name]["members"][CAKE.GetCharSignature(ply)] = tbl
+		CAKE.Groups[name]["Members"][CAKE.GetCharSignature(ply)] = tbl
+		CAKE.SaveGroupData( name )
 	end
 end
 
-function CAKE.LeaveGroup( ply )
+
+function CAKE.LeaveGroup( ply, group )
 
 	if ValidEntity( ply ) then
 		local name = CAKE.GetCharField( ply, "group" )
-		if CAKE.Groups[name] then
-			local roster = CAKE.GetGroupField( name, "members" )
-			CAKE.Groups[name]["members"][CAKE.GetCharSignature(ply)] = nil
+		if name != "none" then
+			if CAKE.Groups[name] then
+				local roster = CAKE.GetGroupField( name, "Members" )
+				CAKE.Groups[name]["Members"][CAKE.GetCharSignature(ply)] = nil
+			end
+			CAKE.SetCharField( ply, "group", "none" )
+			CAKE.SetCharField( ply, "grouprank", "none")
+			CAKE.SendError( ply, "You have left: " .. name )
+			CAKE.SendGroupToClient( ply )
+			CAKE.SaveGroupData( name )
 		end
-		CAKE.SetCharField( ply, "group", "none" )
-		CAKE.SetCharField( ply, "grouprank", "none")
 	elseif type( ply ) == "string" then
-		local roster = CAKE.GetGroupField( name, "members" )
-		if CAKE.Groups[name]["members"][ply] then
-			if CAKE.FindPlayer( CAKE.Groups[name]["members"][ply].Name ) then
-				local ent = CAKE.FindPlayer( CAKE.Groups[name]["members"][ply].Name )
+		local roster = CAKE.GetGroupField( group, "Members" )
+		if CAKE.Groups[group]["Members"][ply] then
+			if CAKE.FindPlayer( CAKE.Groups[group]["Members"][ply].Name ) then
+				local ent = CAKE.FindPlayer( CAKE.Groups[group]["Members"][ply].Name )
 				CAKE.SetCharField( ent, "group", "none" )
 				CAKE.SetCharField( ent, "grouprank", "none")
 			end
-			CAKE.Groups[name]["members"][ply] = nil
+			CAKE.Groups[group]["Members"][ply] = nil
 		end
 	end
 end
 
 function CAKE.SetCharRank( ply, name, rank )
-	if CAKE.GroupExists( name ) and CAKE.GroupHasMember(name, ply) and CAKE.RankExists( name, rank ) then
-		local roster = CAKE.GetGroupField( name, "members" )
-		CAKE.Groups[name]["members"][CAKE.GetCharSignature(ply)].Rank = rank
-		CAKE.SetCharField( ply, "grouprank", rank )
+
+	if ValidEntity( ply ) then
+		if CAKE.GroupExists( name ) and CAKE.GroupHasMember(name, ply) and CAKE.RankExists( name, rank ) then
+			local roster = CAKE.GetGroupField( name, "Members" )
+			CAKE.Groups[name]["Members"][CAKE.GetCharSignature(ply)].Rank = rank
+			CAKE.SetCharField( ply, "grouprank", rank )
+			CAKE.SendGroupToClient( ply )
+			CAKE.SaveGroupData( name )
+		end
+	elseif type( ply ) == "string" then
+		if CAKE.GroupExists( name ) and CAKE.GroupHasMember(name, ply) and CAKE.RankExists( name, rank ) then
+			local roster = CAKE.GetGroupField( name, "Members" )
+			CAKE.Groups[name]["Members"][ply].Rank = rank
+			CAKE.SaveGroupData( name )
+		end	
 	end
 end
 
@@ -202,6 +222,8 @@ concommand.Add( "rp_joingroup", function( ply, cmd, args )
 		if type == "faction" or type == "public" or ply.AuthorizedToJoin == group then
 			ply.AuthorizedToJoin = "none"
 			CAKE.JoinGroup( ply, group )
+			CAKE.SendError( ply, "You have joined: " .. group )
+			CAKE.SendGroupToClient( ply )
 		end
 	else
 		CAKE.LeaveGroup( ply )
@@ -213,11 +235,14 @@ concommand.Add( "rp_sendinvite", function( ply, cmd, args )
 	
 	local group = CAKE.GetCharField( ply, "group" )
 	local rank = CAKE.GetCharField( ply, "grouprank")
-	local target = args[1]
+	local target = CAKE.FindPlayer( args[1] )
 
-	if ( CAKE.GroupHasMember(group, ply) and CAKE.GetRankField( group, rank, "caninvite" ) ) then
+	if ( CAKE.GroupHasMember(group, ply) and CAKE.GetRankField( group, rank, "canpromote" ) ) then
 		if !CAKE.GroupHasMember(group, target) then
 			target.AuthorizedToJoin = group
+			umsg.Start( "DisplayInvite", target )
+				umsg.String( group )
+			umsg.End() 
 		end
 	end
 
@@ -231,7 +256,7 @@ concommand.Add( "rp_setgroupfield", function( ply, cmd, args )
 	table.remove( args, 1 )
 	local data = table.concat( args, " ")
 
-	if CAKE.GroupHasMember(group, ply) and CAKE.GetRankField( group, rank, "canedit" ) then
+	if CAKE.GroupHasMember(group, ply) and CAKE.GetRankField( group, rank, "canedit" ) and field != "Name" then
 		if type( CAKE.GetGroupField( group, field ) ) != "table" then
 			if type( CAKE.GetGroupField( group, field ) ) == "number" then
 				CAKE.SetGroupField( group, field, tonumber( data ) )
@@ -239,6 +264,33 @@ concommand.Add( "rp_setgroupfield", function( ply, cmd, args )
 				CAKE.SetGroupField( group, field, data )
 			elseif type( CAKE.GetGroupField( group, field ) ) == "boolean" then
 				CAKE.SetGroupField( group, field, util.tobool( data ) )
+			end
+			CAKE.SendError( ply, "Field " .. field .. " set to " .. tostring( data ))
+			CAKE.SendGroupToClient( ply )
+		end
+	end
+
+end)
+
+concommand.Add( "rp_promote", function( ply, cmd, args )
+	
+	local group = CAKE.GetCharField( ply, "group" )
+	local rank = CAKE.GetCharField( ply, "grouprank")
+	local targetname = args[1]
+	local target = CAKE.FindPlayer( args[1] )
+	table.remove( args, 1 )
+	local targetrank = table.concat( args, " ")
+
+	if CAKE.GroupHasMember(group, ply) and CAKE.GroupHasMember(group, target or targetname ) and CAKE.GetRankField( group, rank, "canpromote" ) then
+		if target then
+			if CAKE.RankExists( group, targetrank ) and ( CAKE.GetRankField( name, rank, "level" ) or 0 ) >= ( CAKE.GetRankField( name, targetrank, "level" ) or 0 ) then
+				CAKE.SetCharRank( target, group, targetrank )
+				CAKE.SendError( target, "You have been promoted to " .. targetrank  )
+				CAKE.SendGroupToClient( target )
+			end
+		else
+			if CAKE.RankExists( group, targetrank ) and ( CAKE.GetRankField( name, rank, "level" ) or 0 ) >= ( CAKE.GetRankField( name, targetrank, "level" ) or 0 ) then
+				CAKE.SetCharRank( target, group, targetrank )
 			end
 		end
 	end
@@ -249,11 +301,20 @@ concommand.Add( "rp_kickfromgroup", function( ply, cmd, args )
 	
 	local group = CAKE.GetCharField( ply, "group" )
 	local rank = CAKE.GetCharField( ply, "grouprank")
-	local target = args[1]
+	local target = CAKE.FindPlayer( args[1] )
+	local targetrank = CAKE.GetCharField( target, "grouprank")
 
-	if ( CAKE.GroupHasMember(group, ply) and CAKE.GetRankField( group, rank, "cankick" ) ) then
-		if CAKE.GroupHasMember(group, target) then
-			CAKE.LeaveGroup( target )
+	if ( CAKE.GroupHasMember(group, ply) and CAKE.GroupHasMember(group, target or targetname ) and CAKE.GetRankField( group, rank, "cankick" ) ) then
+		if target then
+			if ( CAKE.GetRankField( name, rank, "level" ) or 0 ) >= ( CAKE.GetRankField( name, targetrank, "level" ) or 0 ) then
+				CAKE.LeaveGroup( target )
+				CAKE.SendError( target, "You have been kicked from group: " .. group  )
+				CAKE.SendGroupToClient( target )
+			end
+		else
+			if ( CAKE.GetRankField( name, rank, "level" ) or 0 ) >= ( CAKE.GetRankField( name, targetrank, "level" ) or 0 ) then
+				CAKE.LeaveGroup( targetname )
+			end
 		end
 	end
 
@@ -281,20 +342,73 @@ concommand.Add( "rp_creategroup", function( ply, cmd, args)
 
 end)
 
+function CAKE.SendGroupToClient( ply )
+
+	local group = CAKE.GetCharField( ply, "group" )
+	local rank = CAKE.GetCharField( ply, "grouprank")
+	
+	if CAKE.GroupExists( group ) then
+		datastream.StreamToClients( ply, "ReceiveGroup", {
+			[ "Name" ]		= CAKE.GetGroupField( group, "Name" ),
+			[ "Type" ]		= CAKE.GetGroupField( group, "Type" ),
+			[ "Founder" ]	= CAKE.GetGroupField( group, "Founder" ),
+			[ "Rank" ]		= CAKE.GetRankField( group, rank, "formalname" ) or "None",
+			[ "RankPermissions" ] = {
+				["canpromote"] = CAKE.GetRankField( group, rank, "canpromote" ),
+				["canedit"] = CAKE.GetRankField( group, rank, "canedit" ),
+				["cankick"] = CAKE.GetRankField( group, rank, "cankick" )
+			},
+			[ "Description" ] = CAKE.GetGroupField( group, "Description" ) or "None."
+		})
+	else
+		datastream.StreamToClients( ply, "ReceiveGroup", {
+			[ "Name" ]		= "none",
+			[ "Type" ]		= "",
+			[ "Founder" ]	= "",
+			[ "Rank" ]		= "",
+			[ "RankPermissions" ] = {
+				["canpromote"] = false,
+				["cankick"] = false,
+				["canedit"] = false
+			},
+			[ "Description" ] = ""
+		})
+	end
+	CAKE.SavePlayerData( ply )
+
+end
+
 local function GroupSpawnHook( ply )
 
 	if ply:IsCharLoaded() then
-		local group = CAKE.GetCharField( ply, "group" )
+		timer.Simple( 3, function()
+			local group = CAKE.GetCharField( ply, "group" )
 
-		if group != none and !CAKE.GroupHasMember(group, ply) then
-			CAKE.LeaveGroup( ply )
-		end
+			if group != "none" and !CAKE.GroupHasMember(group, ply) then
+				CAKE.LeaveGroup( ply )
+			end
+			CAKE.SendGroupToClient( ply )
+		end)
 	end
 
 end
 hook.Add( "PlayerSpawn", "TiramisuGroupSpawnHook", GroupSpawnHook )
 
+
+function Admin_ForceJoin( ply, cmd, args )
+
+	local target = CAKE.FindPlayer( args[1] )
+
+	if args[ 2 ] and args[ 2 ] != "none" then CAKE.JoinGroup( target, args[ 2 ] ) end
+	if args[ 3 ] and args[ 3 ] != "none" then CAKE.SetCharRank( target, CAKE.GetCharField( target, "group" ), args[ 3 ] ) end
+
+	CAKE.SendError( target, "You have been forced into group: " .. CAKE.GetCharField( target, "group" ) )
+	CAKE.SendGroupToClient( ply )
+
+end
+
 function PLUGIN.Init( )
 
+	CAKE.AdminCommand( "forcejoin", Admin_ForceJoin, "Force a player into a group at a set rank.", true, true, 3 );
 
 end

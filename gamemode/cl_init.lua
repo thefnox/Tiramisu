@@ -159,7 +159,7 @@ TeamTable = {};
 
 ExistingChars = {  }
 
-function ReceiveChar( data )
+local function ReceiveChar( data )
 
 	local n = data:ReadLong( );
 	ExistingChars[ n ] = {  }
@@ -181,6 +181,13 @@ end );
 usermessage.Hook( "charactercreation", function()
 	
 	CAKE.CharCreate()
+
+end)
+
+usermessage.Hook( "senderror", function( um )
+	
+	local text = um:ReadString()
+	CAKE.Message( text, "Message", "OK" )
 
 end)
 

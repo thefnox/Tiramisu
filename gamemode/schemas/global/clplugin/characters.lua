@@ -9,12 +9,14 @@ local charpanel
 
 function OpenCharacterMenu()
 
+	RunConsoleCommand( "rp_thirdperson", 1 )
+
 	if !CharacterMenu then
 		CharacterMenu = vgui.Create( "DFrame" )
 		CharacterMenu:SetSize( ScrW(), ScrH() )
 		CharacterMenu:Center()
 		CharacterMenu:SetDraggable( false )
-		CharacterMenu:ShowCloseButton( false )
+		CharacterMenu:ShowCloseButton( true )
 		CharacterMenu:SetTitle( "" )
 		CharacterMenu.Paint = function()
 

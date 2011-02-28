@@ -34,6 +34,17 @@ function CAKE.SendConsole( ply, msg )
 	
 end
 
+function CAKE.SendError( ply, msg )
+
+	if ply:IsPlayer() then
+		umsg.Start( "senderror", ply )
+			umsg.String( msg )
+		umsg.End()
+	else
+		print( msg )
+	end
+end
+
 DecayingRagdolls = {};
 
 function CAKE.DeathMode( ply )

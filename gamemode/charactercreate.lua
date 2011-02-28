@@ -177,6 +177,8 @@ function ccSelectChar( ply, cmd, args )
 		end
 	
 		CAKE.TestClothing( ply, CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "model" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "clothing" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "helmet" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "gloves" ] )
+
+		--CAKE.TestGear( ply, CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "gear" ] )
 		
 	else
 		

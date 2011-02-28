@@ -32,8 +32,8 @@ function SCHEMA.SetUp( )
 		["officer"] = { [ "formalname" ] = "Police Officer", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 2 },
 		["sergeant"] = { [ "formalname" ] = "Police Sergeant", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 3 },
 		["lieutenant"] = { [ "formalname" ] = "Police Lieutenant", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 4 },
-		["captain"] = { [ "formalname" ] = "Police Captain", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 5, ["caninvite"] = true },
-		["chief"] = { [ "formalname" ] = "Police Chief", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 6, ["caninvite"] = true, ["canpromote"] = true  }
+		["captain"] = { [ "formalname" ] = "Police Captain", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 5, ["cankick"] = true },
+		["chief"] = { [ "formalname" ] = "Police Chief", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 6, ["cankick"] = true, ["canpromote"] = true, ["canedit"] = true  }
 	},
 	{
 		[ "soundgroup" ] = 2,
@@ -53,7 +53,7 @@ function SCHEMA.SetUp( )
 	{ 	["recruit"] = { [ "formalname" ] = "Mafia Recruit", [ "loadout" ] = { "clothing_combat", "clothing_combatf", "weapon_glock" }, [ "level" ] = 1 },
 		["thug"] = { [ "formalname" ] = "Mafia Thug", [ "loadout" ] = { "clothing_combat", "clothing_combatf", "weapon_ak47", "helmet_balaclava" }, [ "level" ] = 2 },
 		["dealer"] = { [ "formalname" ] = "Mafia Dealer", [ "loadout" ] = { "clothing_formal2", "weapon_glock", "helmet_balaclava" }, [ "level" ] = 3, ["buygroups"] = { 2, 3 } },
-		["boss"] = { [ "formalname" ] = "Mafia Boss", [ "loadout" ] = { "clothing_combat", "clothing_formal", "weapon_ak47", "helmet_balaclava", "weapon_zipties" }, [ "level" ] = 4, ["caninvite"] = true, ["canpromote"] = true  }
+		["boss"] = { [ "formalname" ] = "Mafia Boss", [ "loadout" ] = { "clothing_combat", "clothing_formal", "weapon_ak47", "helmet_balaclava", "weapon_zipties" }, [ "level" ] = 4, ["canedit"] = true, ["canpromote"] = true, ["cankick"] = true  }
 	},
 	{
 		[ "soundgroup" ] = 1,

@@ -65,6 +65,9 @@ function GM:Initialize( ) -- Initialize the gamemode
 	CAKE.DayLog( "script.txt", "Plugins Initializing" );
 	CAKE.InitPlugins( );
 	
+	CAKE.DayLog( "script.txt", "Loading all groups")
+	CAKE.LoadAllGroups()
+
 	CAKE.DayLog( "script.txt", "Schemas Initializing" );
 	CAKE.InitSchemas( );
 	
@@ -184,7 +187,6 @@ function GM:PlayerSpawn( ply )
 	ply:ChangeMaxRunSpeed(CAKE.ConVars[ "RunSpeed" ] - ply:MaxRunSpeed());
 	ply:SetAiming( false )
 	
-	ply:SetColor(0, 0, 0, 0) 
 	self.BaseClass:PlayerSpawn( ply )
 	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] );
 	

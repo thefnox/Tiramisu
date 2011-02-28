@@ -114,13 +114,12 @@ local function WeaponsLoadout( ply )
 		
 		timer.Simple( 1, function()
 			if CAKE.GetGroupFlag( group, "loadouts" ) then
-				for k, v in pairs( CAKE.GetRankPermission( group, rank, "loadout" ) or {} ) do
+				for k, v in pairs( CAKE.GetRankField( group, rank, "loadout" ) or {} ) do
 					if !ply:HasItem( v ) then
 						ply:GiveItem( v )
 						if string.match( v, "weapon" ) then
 							ply:Give( v )
 						end
-						CAKE.HandleGear( ply, v )
 					end
 				end
 			end
