@@ -230,7 +230,7 @@ function CreateMenuButtons()
 		charpanel.SlideOut = true
 		PlayerModel.SlideOut = true
 		RunConsoleCommand( "rp_begincreate" )
-	end
+	end 
 
 end
 

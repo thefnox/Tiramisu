@@ -33,8 +33,6 @@ local BoneList = {
 
 local function HandleGearEditing( entity, bone, item )
 
-	CloseGear()
-
 	if entity and ValidEntity( entity ) then
 		StartGearEditor( entity, item, bone, entity:GetDTVector( 1 ), entity:GetDTAngle( 1 ), entity:GetDTVector( 2 ), entity:GetSkin() )
 	else
@@ -75,19 +73,55 @@ local function HandleGearEditing( entity, bone, item )
 
 end
 
-function EditGear() 
+function EditGear()
 
-	PlayerMenu = vgui.Create( "DFrameTransparent" )
-	PlayerMenu:SetSize( 330, 570 )
+	RunConsoleCommand( "rp_thirdperson", 1 )
+
+	PlayerMenu = vgui.Create( "DFrame" )
+	PlayerMenu:SetSize( ScrW(), ScrH() )
 	PlayerMenu:Center()
-	PlayerMenu:SetTitle( "Character Editor" )
+	PlayerMenu:SetDraggable( false )
+	PlayerMenu:ShowCloseButton( false )
+	PlayerMenu:SetTitle( "" )
+	PlayerMenu.Paint = function()
 
-	local PropertySheet = vgui.Create( "DPropertySheet", PlayerMenu )
+		Derma_DrawBackgroundBlur( PlayerMenu, 0 )
+
+	end
+	PlayerMenu:MakePopup()
+
+	local x, y 
+	local closelabel = vgui.Create( "DButton", PlayerMenu )
+	closelabel:SetSize( 80, 26 )
+	closelabel:SetText( "" )
+	closelabel:SetPos( (ScrW() / 2 )- 60, ScrH() + 500  )
+	closelabel.Paint = function() end
+	closelabel.PaintOver = function()
+		draw.SimpleText( "Close Menu", "TiramisuTimeFont", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
+		x,y = closelabel:GetPos()
+		closelabel:SetPos( (ScrW() / 2 )- 40, Lerp( 0.1, y, ScrH() / 2 + 230 ))
+	end
+	closelabel.DoClick = function()
+		CloseGear()
+	end
+
+	PlayerModel = vgui.Create( "PlayerPanel", PlayerMenu )
+	PlayerModel:SetSize( 500, 500 )
+	PlayerModel:SetPos( ScrW() / 2 - 150, ScrH() / 2 - 300 )
+
+
+	EditMenu = vgui.Create( "DFrameTransparent", PlayerMenu )
+	EditMenu:SetSize( 210, 450 )
+	EditMenu:ShowCloseButton( false )
+	EditMenu:SetPos( ScrW() / 2 - 330, ScrH() / 2 - 285 )
+	EditMenu:SetTitle( "Character Editor" )
+
+	local PropertySheet = vgui.Create( "DPropertySheet", EditMenu )
 	PropertySheet:SetPos( 5, 28 )
-	PropertySheet:SetSize( 320, 537 )
+	PropertySheet:SetSize( 200, 417 )
 
 	local ClothingList = vgui.Create( "DPanelList" )
-	ClothingList:SetSize( 300, 527 )
+	ClothingList:SetSize( 300, 432  )
 	PropertySheet:AddSheet( "Clothing", ClothingList, "gui/silkicons/user", false, false, "Edit your clothes" )
 
 	local ClothesCategory = vgui.Create("DCollapsibleCategory")
@@ -162,31 +196,38 @@ function EditGear()
 	hlist:AddItem( button )
 
 	local GearList = vgui.Create( "DPanelList" )
-	GearList:SetSize( 300, 527 )
+	GearList:SetSize( 300, 432 )
 	PropertySheet:AddSheet( "Gear/Accessories", GearList, "gui/silkicons/wrench", false, false, "Edit your gear" )
 
-	local GearTree = vgui.Create( "DTree" )
+	GearTree = vgui.Create( "DTree" )
 	GearTree:SetPadding( 5 )
-	GearTree:SetSize( 290, 517 )
+	GearTree:SetSize( 290, 412  )
 
-	local bones = GearTree:AddNode("Bones")
-	local node
-	local node2
-	for _, bone in pairs( BoneList ) do
-		node = bones:AddNode( bone )
-		if CAKE.Gear and CAKE.Gear[ string.lower( bone ) ] then
-			for __, tbl in pairs( CAKE.Gear[ string.lower( bone ) ] ) do
-				node2 = node:AddNode( tbl.item )
+	function RefreshGearTree()
+		if GearTree then
+			GearTree:Clear( true )
+			local bones = GearTree:AddNode("Bones")
+			local node
+			local node2
+			for _, bone in pairs( BoneList ) do
+				node = bones:AddNode( bone )
+				if CAKE.Gear and CAKE.Gear[ string.lower( bone ) ] then
+					for __, tbl in pairs( CAKE.Gear[ string.lower( bone ) ] ) do
+						node2 = node:AddNode( tbl.item )
+						node2.DoClick = function()
+							HandleGearEditing( tbl.entity, tbl.item, string.lower( bone ) )
+						end
+					end
+				end
+				node2 = node:AddNode( "Create New Gear..." )
 				node2.DoClick = function()
-					HandleGearEditing( tbl.entity, tbl.item, string.lower( bone ) )
+					HandleGearEditing( false, string.lower( bone ) )
 				end
 			end
 		end
-		node2 = node:AddNode( "Create New Gear..." )
-		node2.DoClick = function()
-			HandleGearEditing( false, string.lower( bone ) )
-		end
 	end
+
+	RefreshGearTree()
 
 	GearList:AddItem( GearTree )
 
@@ -194,239 +235,238 @@ end
 
 function StartGearEditor( entity, item, bone, offset, angle, scale, skin )
 
-	CloseGear()
+	if PlayerMenu then
+		EditorFrame = vgui.Create( "DFrameTransparent", PlayerMenu ) -- Creates the frame itself
+		EditorFrame:Center() -- Position on the players screen
+		EditorFrame:SetSize( 300, 300 ) -- Size of the frame
+		EditorFrame:SetDeleteOnClose( true )
+		EditorFrame:SetTitle( "Editing gear in bone " .. bone ) -- Title of the frame
+		EditorFrame:SetVisible( true )
+		EditorFrame:SetDraggable( true ) -- Draggable by mouse?
+		EditorFrame:ShowCloseButton( true ) -- Show the close button?
+		EditorFrame:MakePopup() -- Show the frame
 
-	EditorFrame = vgui.Create( "DFrameTransparent" ) -- Creates the frame itself
-	EditorFrame:Center() -- Position on the players screen
-	EditorFrame:SetSize( 300, 300 ) -- Size of the frame
-	EditorFrame:SetDeleteOnClose( true )
-	EditorFrame:SetTitle( "Editing gear in bone " .. bone ) -- Title of the frame
-	EditorFrame:SetVisible( true )
-	EditorFrame:SetDraggable( true ) -- Draggable by mouse?
-	EditorFrame:ShowCloseButton( true ) -- Show the close button?
-	EditorFrame:MakePopup() -- Show the frame
+		local PropertySheet = vgui.Create( "DPropertySheet" )
+		PropertySheet:SetParent( EditorFrame )
+		PropertySheet:SetPos( 5, 28 )
+		PropertySheet:SetSize( 290, 267 )
 
-	local PropertySheet = vgui.Create( "DPropertySheet" )
-	PropertySheet:SetParent( EditorFrame )
-	PropertySheet:SetPos( 5, 28 )
-	PropertySheet:SetSize( 290, 267 )
-
-	local EditList = vgui.Create( "DPanelList" )
-	EditList:SetPos( 25,25 )
-	EditList:SetSize( 275, 375 )
-	EditList:SetSpacing( 10 ) -- Spacing between items
-	EditList:EnableHorizontal( false ) -- Only vertical items
-	EditList:EnableVerticalScrollbar( false ) -- Allow scrollbar if you exceed the Y axis
-	
-	local itemlabel = vgui.Create( "DLabel" )
-	itemlabel:SetText( "Item:" )
-	EditList:AddItem( itemlabel )
-	
-	itemlist= vgui.Create( "DMultiChoice" )
-	itemlist:SetText( item or "-None-" )
-	itemlist:SetPos(2,32)
-	itemlist:SetSize( 295, 20 )
-	function itemlist:OnSelect(index,value,data)
-		RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", "none", "none", "none", value )
-	end
-	for k, v in pairs( InventoryTable ) do
-		itemlist:AddChoice( v.Class )
-	end
-	EditList:AddItem( itemlist )
-	
-	local skinlabel = vgui.Create( "DLabel" )
-	skinlabel:SetText( "Skin:" )
-	EditList:AddItem( skinlabel )
-	
-	local skinnumber = vgui.Create( "DNumberWang" )
-	skinnumber:SetMax( 20 )
-	skinnumber:SetMin( 0 )
-	skinnumber:SetDecimals( 0 )
-	function skinnumber:OnValueChanged( val )
-		RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", "none", "none", tostring( val ))
-	end
-	EditList:AddItem( skinnumber )
-	
-	local removebutton = vgui.Create( "DButton" )
-	removebutton:SetSize( 100, 30 )
-	removebutton:SetText( "Remove Gear" )
-	removebutton.DoClick = function( button )
-		RunConsoleCommand( "rp_removegear", entity:EntIndex() )
-		EditorFrame:Remove()
-		EditorFrame = nil
-	end
-	EditList:AddItem( removebutton )
-	
-	PropertySheet:AddSheet( "General", EditList, "gui/silkicons/group", false, false, "Edit general settings");
-
-	local PosList = vgui.Create( "DPanelList" )
-	PosList:SetPos( 25,25 )
-	PosList:SetSize( 175, 375 )
-	PosList:SetSpacing( 10 ) -- Spacing between items
-	PosList:EnableHorizontal( false ) -- Only vertical items
-	PosList:EnableVerticalScrollbar( false ) -- Allow scrollbar if you exceed the Y axis
-
-	local xslider = vgui.Create( "DNumSlider" )
-	xslider:SetText( "X Position" )
-	xslider:SetValue( offset.x )
-	xslider:SetMinMax( -40, 40 )
-	xslider.ValueChanged = function(self, value)
-		if  ValidEntity( entity ) then
-			RunConsoleCommand( "rp_editgear", entity:EntIndex(), tostring( value ) .. "," .. tostring( entity:GetDTVector( 1 ).y ) .. "," .. tostring( entity:GetDTVector( 1 ).z ) )
+		local EditList = vgui.Create( "DPanelList" )
+		EditList:SetPos( 25,25 )
+		EditList:SetSize( 275, 375 )
+		EditList:SetSpacing( 10 ) -- Spacing between items
+		EditList:EnableHorizontal( false ) -- Only vertical items
+		EditList:EnableVerticalScrollbar( false ) -- Allow scrollbar if you exceed the Y axis
+		
+		local itemlabel = vgui.Create( "DLabel" )
+		itemlabel:SetText( "Item:" )
+		EditList:AddItem( itemlabel )
+		
+		itemlist= vgui.Create( "DMultiChoice" )
+		itemlist:SetText( item or "-None-" )
+		itemlist:SetPos(2,32)
+		itemlist:SetSize( 295, 20 )
+		function itemlist:OnSelect(index,value,data)
+			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", "none", "none", "none", value )
 		end
-	end
-	PosList:AddItem( xslider )
-
-	local yslider = vgui.Create( "DNumSlider" )
-	yslider:SetText( "Y Position" )
-	yslider:SetValue( offset.y )
-	yslider:SetMinMax( -40, 40 )
-	yslider.ValueChanged = function(self, value)
-		if  ValidEntity( entity ) then
-			RunConsoleCommand( "rp_editgear", entity:EntIndex(), tostring( entity:GetDTVector( 1 ).x ) .. "," .. tostring( value ) .. "," .. tostring( entity:GetDTVector( 1 ).z ) )
+		for k, v in pairs( InventoryTable ) do
+			itemlist:AddChoice( v.Class )
 		end
-	end
-	PosList:AddItem( yslider )
-
-	local zslider = vgui.Create( "DNumSlider" )
-	zslider:SetText( "Z Position" )
-	zslider:SetMinMax( -40, 40 )
-	zslider:SetValue( offset.z )
-	zslider.ValueChanged = function(self, value)
-		if  ValidEntity( entity ) then
-			RunConsoleCommand( "rp_editgear", entity:EntIndex(), tostring( entity:GetDTVector( 1 ).x ) .. "," .. tostring( entity:GetDTVector( 1 ).z ) .. "," .. tostring( value ) )
+		EditList:AddItem( itemlist )
+		
+		local skinlabel = vgui.Create( "DLabel" )
+		skinlabel:SetText( "Skin:" )
+		EditList:AddItem( skinlabel )
+		
+		local skinnumber = vgui.Create( "DNumberWang" )
+		skinnumber:SetMax( 20 )
+		skinnumber:SetMin( 0 )
+		skinnumber:SetDecimals( 0 )
+		function skinnumber:OnValueChanged( val )
+			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", "none", "none", tostring( val ))
 		end
-	end
-	PosList:AddItem( zslider )
-
-	local setbutton = vgui.Create( "DButton" )
-	setbutton:SetText( "Set Coordinates" )
-	setbutton.DoClick = function( button )
-		RunConsoleCommand( "rp_editgear", entity:EntIndex(), tostring( xslider:GetValue() ) .. "," .. tostring( yslider:GetValue() ) .. "," .. tostring( zslider:GetValue() ) )
-	end
-	PosList:AddItem( setbutton )
-	
-	local resetbutton = vgui.Create( "DButton" )
-	resetbutton:SetText( "Reset Coordinates" )
-	resetbutton.DoClick = function( button )
-		RunConsoleCommand( "rp_editgear", entity:EntIndex(), "0,0,0" )
-	end
-	PosList:AddItem( resetbutton )
-	
-	PropertySheet:AddSheet( "Position", PosList, "gui/silkicons/anchor", false, false, "Edit gear's position");
-
-		local AngList = vgui.Create( "DPanelList" )
-	AngList:SetPos( 25,25 )
-	AngList:SetSize( 175, 375 )
-	AngList:SetSpacing( 10 ) -- Spacing between items
-	AngList:EnableHorizontal( false ) -- Only vertical items
-	AngList:EnableVerticalScrollbar( false ) -- Allow scrollbar if you exceed the Y axis
-	
-	local pslider = vgui.Create( "DNumSlider" )
-	pslider:SetText( "Pitch" )
-	pslider:SetValue( angle.p )
-	pslider:SetMinMax( -180, 180 ) 
-	pslider.ValueChanged = function(self, value)
-		if ValidEntity( entity ) then
-			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none" ,tostring( value ).. "," ..tostring( entity:GetDTAngle( 1 ).y ) .. "," .. tostring( entity:GetDTAngle( 1 ).r ) )
+		EditList:AddItem( skinnumber )
+		
+		local removebutton = vgui.Create( "DButton" )
+		removebutton:SetSize( 100, 30 )
+		removebutton:SetText( "Remove Gear" )
+		removebutton.DoClick = function( button )
+			RunConsoleCommand( "rp_removegear", entity:EntIndex() )
+			EditorFrame:Remove()
+			EditorFrame = nil
 		end
-	end
-	AngList:AddItem( pslider )
+		EditList:AddItem( removebutton )
+		
+		PropertySheet:AddSheet( "General", EditList, "gui/silkicons/group", false, false, "Edit general settings");
 
-	local yslider = vgui.Create( "DNumSlider" )
-	yslider:SetText( "Yaw" )
-	yslider:SetValue( angle.y )
-	yslider:SetMinMax( -180, 180 )
-	yslider.ValueChanged = function(self, value)
-		if ValidEntity( entity ) then
-			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none" , tostring( entity:GetDTAngle( 1 ).p ).. "," .. tostring( value ) .. "," .. tostring( entity:GetDTAngle( 1 ).r ) )
+		local PosList = vgui.Create( "DPanelList" )
+		PosList:SetPos( 25,25 )
+		PosList:SetSize( 175, 375 )
+		PosList:SetSpacing( 10 ) -- Spacing between items
+		PosList:EnableHorizontal( false ) -- Only vertical items
+		PosList:EnableVerticalScrollbar( false ) -- Allow scrollbar if you exceed the Y axis
+
+		local xslider = vgui.Create( "DNumSlider" )
+		xslider:SetText( "X Position" )
+		xslider:SetValue( offset.x )
+		xslider:SetMinMax( -40, 40 )
+		xslider.ValueChanged = function(self, value)
+			if  ValidEntity( entity ) then
+				RunConsoleCommand( "rp_editgear", entity:EntIndex(), tostring( value ) .. "," .. tostring( entity:GetDTVector( 1 ).y ) .. "," .. tostring( entity:GetDTVector( 1 ).z ) )
+			end
 		end
-	end
-	AngList:AddItem( yslider )
+		PosList:AddItem( xslider )
 
-	local rslider = vgui.Create( "DNumSlider" )
-	rslider:SetText( "Roll" )
-	rslider:SetValue( angle.r )
-	rslider:SetMinMax( -180, 180 )
-	rslider.ValueChanged = function(self, value)
-		if ValidEntity( entity ) then
-			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none" , tostring( entity:GetDTAngle( 1 ).p ).. "," .. tostring( entity:GetDTAngle( 1 ).y ) .. "," .. tostring( value ) )
+		local yslider = vgui.Create( "DNumSlider" )
+		yslider:SetText( "Y Position" )
+		yslider:SetValue( offset.y )
+		yslider:SetMinMax( -40, 40 )
+		yslider.ValueChanged = function(self, value)
+			if  ValidEntity( entity ) then
+				RunConsoleCommand( "rp_editgear", entity:EntIndex(), tostring( entity:GetDTVector( 1 ).x ) .. "," .. tostring( value ) .. "," .. tostring( entity:GetDTVector( 1 ).z ) )
+			end
 		end
-	end
-	AngList:AddItem( rslider )
+		PosList:AddItem( yslider )
 
-	local setbutton = vgui.Create( "DButton" )
-	setbutton:SetText( "Set Angles" )
-	setbutton.DoClick = function( button )
-		RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", tostring( pslider:GetValue() ) .. "," .. tostring( yslider:GetValue() ) .. "," .. tostring( rslider:GetValue() ) )
-	end
-	AngList:AddItem( setbutton )
-	
-	local resetbutton = vgui.Create( "DButton" )
-	resetbutton:SetText( "Reset Angles" )
-	resetbutton.DoClick = function( button )
-		RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "0,0,0" )
-	end
-	AngList:AddItem( resetbutton )
-
-	PropertySheet:AddSheet( "Angles", AngList, "gui/silkicons/application_view_detail", false, false, "Edit gear's angles");
-
-	local ScaleList = vgui.Create( "DPanelList" )
-	ScaleList:SetPos( 25,25 )
-	ScaleList:SetSize( 175, 375 )
-	ScaleList:SetSpacing( 10 ) -- Spacing between items
-	ScaleList:EnableHorizontal( false ) -- Only vertical items
-	ScaleList:EnableVerticalScrollbar( false ) -- Allow scrollbar if you exceed the Y axis
-	
-	local xslider = vgui.Create( "DNumSlider" )
-	xslider:SetValue( scale.x )
-	xslider:SetText( "X Scale" )
-	xslider:SetMinMax( 0, 10 ) 
-	xslider.ValueChanged = function(self, value)
-		if ValidEntity( entity ) then
-			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", tostring( value ) .. "," .. tostring( entity:GetDTVector( 2 ).y ) .. "," .. tostring( entity:GetDTVector( 2 ).z ) )
+		local zslider = vgui.Create( "DNumSlider" )
+		zslider:SetText( "Z Position" )
+		zslider:SetMinMax( -40, 40 )
+		zslider:SetValue( offset.z )
+		zslider.ValueChanged = function(self, value)
+			if  ValidEntity( entity ) then
+				RunConsoleCommand( "rp_editgear", entity:EntIndex(), tostring( entity:GetDTVector( 1 ).x ) .. "," .. tostring( entity:GetDTVector( 1 ).z ) .. "," .. tostring( value ) )
+			end
 		end
-	end
-	ScaleList:AddItem( xslider )
+		PosList:AddItem( zslider )
 
-	local yslider = vgui.Create( "DNumSlider" )
-	yslider:SetText( "Y Scale" )
-	yslider:SetValue( scale.y )
-	yslider:SetMinMax( 0, 10 )
-	yslider.ValueChanged = function(self, value)
-		if ValidEntity( entity ) then
-			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", tostring( entity:GetDTVector( 2 ).x ) .. "," .. tostring( value ) .. "," .. tostring( entity:GetDTVector( 2 ).z ) )
+		local setbutton = vgui.Create( "DButton" )
+		setbutton:SetText( "Set Coordinates" )
+		setbutton.DoClick = function( button )
+			RunConsoleCommand( "rp_editgear", entity:EntIndex(), tostring( xslider:GetValue() ) .. "," .. tostring( yslider:GetValue() ) .. "," .. tostring( zslider:GetValue() ) )
 		end
-	end
-	ScaleList:AddItem( yslider )
-
-	local zslider = vgui.Create( "DNumSlider" )
-	zslider:SetValue( scale.z )
-	zslider:SetText( "Z Scale" )
-	zslider:SetMinMax( 0, 10 )
-	zslider.ValueChanged = function(self, value)
-		if ValidEntity( entity ) then
-			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", tostring( entity:GetDTVector( 2 ).x ) .. "," .. tostring( entity:GetDTVector( 2 ).y ) .. "," .. tostring( value) )
+		PosList:AddItem( setbutton )
+		
+		local resetbutton = vgui.Create( "DButton" )
+		resetbutton:SetText( "Reset Coordinates" )
+		resetbutton.DoClick = function( button )
+			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "0,0,0" )
 		end
-	end
-	ScaleList:AddItem( zslider )
+		PosList:AddItem( resetbutton )
+		
+		PropertySheet:AddSheet( "Position", PosList, "gui/silkicons/anchor", false, false, "Edit gear's position");
 
-	local setbutton = vgui.Create( "DButton" )
-	setbutton:SetText( "Set Angles" )
-	setbutton.DoClick = function( button )
-		RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", tostring( xslider:GetValue() ) .. "," .. tostring( yslider:GetValue() ) .. "," .. tostring( zslider:GetValue() ) )
-	end
-	ScaleList:AddItem( setbutton )
-	
-	local resetbutton = vgui.Create( "DButton" )
-	resetbutton:SetText( "Reset Coordinates" )
-	resetbutton.DoClick = function( button )
-		RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", "1,1,1" )
-	end
-	ScaleList:AddItem( resetbutton )
+			local AngList = vgui.Create( "DPanelList" )
+		AngList:SetPos( 25,25 )
+		AngList:SetSize( 175, 375 )
+		AngList:SetSpacing( 10 ) -- Spacing between items
+		AngList:EnableHorizontal( false ) -- Only vertical items
+		AngList:EnableVerticalScrollbar( false ) -- Allow scrollbar if you exceed the Y axis
+		
+		local pslider = vgui.Create( "DNumSlider" )
+		pslider:SetText( "Pitch" )
+		pslider:SetValue( angle.p )
+		pslider:SetMinMax( -180, 180 ) 
+		pslider.ValueChanged = function(self, value)
+			if ValidEntity( entity ) then
+				RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none" ,tostring( value ).. "," ..tostring( entity:GetDTAngle( 1 ).y ) .. "," .. tostring( entity:GetDTAngle( 1 ).r ) )
+			end
+		end
+		AngList:AddItem( pslider )
 
-	PropertySheet:AddSheet( "Scale", ScaleList, "gui/silkicons/magnifier", false, false, "Edit gear's scale");
+		local yslider = vgui.Create( "DNumSlider" )
+		yslider:SetText( "Yaw" )
+		yslider:SetValue( angle.y )
+		yslider:SetMinMax( -180, 180 )
+		yslider.ValueChanged = function(self, value)
+			if ValidEntity( entity ) then
+				RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none" , tostring( entity:GetDTAngle( 1 ).p ).. "," .. tostring( value ) .. "," .. tostring( entity:GetDTAngle( 1 ).r ) )
+			end
+		end
+		AngList:AddItem( yslider )
 
+		local rslider = vgui.Create( "DNumSlider" )
+		rslider:SetText( "Roll" )
+		rslider:SetValue( angle.r )
+		rslider:SetMinMax( -180, 180 )
+		rslider.ValueChanged = function(self, value)
+			if ValidEntity( entity ) then
+				RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none" , tostring( entity:GetDTAngle( 1 ).p ).. "," .. tostring( entity:GetDTAngle( 1 ).y ) .. "," .. tostring( value ) )
+			end
+		end
+		AngList:AddItem( rslider )
+
+		local setbutton = vgui.Create( "DButton" )
+		setbutton:SetText( "Set Angles" )
+		setbutton.DoClick = function( button )
+			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", tostring( pslider:GetValue() ) .. "," .. tostring( yslider:GetValue() ) .. "," .. tostring( rslider:GetValue() ) )
+		end
+		AngList:AddItem( setbutton )
+		
+		local resetbutton = vgui.Create( "DButton" )
+		resetbutton:SetText( "Reset Angles" )
+		resetbutton.DoClick = function( button )
+			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "0,0,0" )
+		end
+		AngList:AddItem( resetbutton )
+
+		PropertySheet:AddSheet( "Angles", AngList, "gui/silkicons/application_view_detail", false, false, "Edit gear's angles");
+
+		local ScaleList = vgui.Create( "DPanelList" )
+		ScaleList:SetPos( 25,25 )
+		ScaleList:SetSize( 175, 375 )
+		ScaleList:SetSpacing( 10 ) -- Spacing between items
+		ScaleList:EnableHorizontal( false ) -- Only vertical items
+		ScaleList:EnableVerticalScrollbar( false ) -- Allow scrollbar if you exceed the Y axis
+		
+		local xslider = vgui.Create( "DNumSlider" )
+		xslider:SetValue( scale.x )
+		xslider:SetText( "X Scale" )
+		xslider:SetMinMax( 0, 10 ) 
+		xslider.ValueChanged = function(self, value)
+			if ValidEntity( entity ) then
+				RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", tostring( value ) .. "," .. tostring( entity:GetDTVector( 2 ).y ) .. "," .. tostring( entity:GetDTVector( 2 ).z ) )
+			end
+		end
+		ScaleList:AddItem( xslider )
+
+		local yslider = vgui.Create( "DNumSlider" )
+		yslider:SetText( "Y Scale" )
+		yslider:SetValue( scale.y )
+		yslider:SetMinMax( 0, 10 )
+		yslider.ValueChanged = function(self, value)
+			if ValidEntity( entity ) then
+				RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", tostring( entity:GetDTVector( 2 ).x ) .. "," .. tostring( value ) .. "," .. tostring( entity:GetDTVector( 2 ).z ) )
+			end
+		end
+		ScaleList:AddItem( yslider )
+
+		local zslider = vgui.Create( "DNumSlider" )
+		zslider:SetValue( scale.z )
+		zslider:SetText( "Z Scale" )
+		zslider:SetMinMax( 0, 10 )
+		zslider.ValueChanged = function(self, value)
+			if ValidEntity( entity ) then
+				RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", tostring( entity:GetDTVector( 2 ).x ) .. "," .. tostring( entity:GetDTVector( 2 ).y ) .. "," .. tostring( value) )
+			end
+		end
+		ScaleList:AddItem( zslider )
+
+		local setbutton = vgui.Create( "DButton" )
+		setbutton:SetText( "Set Angles" )
+		setbutton.DoClick = function( button )
+			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", tostring( xslider:GetValue() ) .. "," .. tostring( yslider:GetValue() ) .. "," .. tostring( zslider:GetValue() ) )
+		end
+		ScaleList:AddItem( setbutton )
+		
+		local resetbutton = vgui.Create( "DButton" )
+		resetbutton:SetText( "Reset Coordinates" )
+		resetbutton.DoClick = function( button )
+			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", "1,1,1" )
+		end
+		ScaleList:AddItem( resetbutton )
+
+		PropertySheet:AddSheet( "Scale", ScaleList, "gui/silkicons/magnifier", false, false, "Edit gear's scale");
+	end
 end
 
 function CloseGear()
@@ -434,6 +474,31 @@ function CloseGear()
 		PlayerMenu:Remove()
 		PlayerMenu = nil
 	end
+	if EditMenu then
+		EditMenu:Remove()
+		EditMenu = nil
+	end
+		LocalPlayer():SetNoDraw( false )
+
+        if CAKE.ClothingTbl then
+            for k, v in pairs( CAKE.ClothingTbl ) do
+                if ValidEntity( v ) then
+                    v:SetNoDraw( false )
+                end
+            end
+        end
+
+        if CAKE.Gear then
+            for _, bone in pairs( CAKE.Gear ) do
+                if bone then
+                    for k, v in pairs( bone ) do
+                        if ValidEntity( v.entity ) then
+                            v.entity:SetNoDraw( false )
+                        end
+                    end
+                end
+            end
+        end
 end
 CAKE.RegisterMenuTab( "Character Editor", EditGear, CloseGear )
 
@@ -477,6 +542,7 @@ usermessage.Hook( "editgear", function( um )
 	local ent = ents.GetByIndex( um:ReadShort() )
 
 	StartGearEditor( ent, um:ReadString(), um:ReadString(), ent:GetDTVector( 1 ), ent:GetDTAngle( 1 ), ent:GetDTVector( 2 ), ent:GetSkin() )
+	RefreshGearTree()
 
 end)
 

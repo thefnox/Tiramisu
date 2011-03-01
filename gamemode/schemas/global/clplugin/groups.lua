@@ -124,6 +124,7 @@ local function OpenGroups()
 
         label = vgui.Create( "DLabel" )
         label:SetText( "Description: " .. CAKE.Group[ "Description" ] )
+        label:SizeToContents()
         panel:AddItem( label )
 
         button = vgui.Create( "DButton" )

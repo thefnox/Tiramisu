@@ -28,12 +28,12 @@ function SCHEMA.SetUp( )
 	
 	CAKE.RLRPFaction( "Police",
 	"The State Government",
-	{ 	["recruit"] = { [ "formalname" ] = "Police Recruit", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 1 },
-		["officer"] = { [ "formalname" ] = "Police Officer", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 2 },
-		["sergeant"] = { [ "formalname" ] = "Police Sergeant", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 3 },
-		["lieutenant"] = { [ "formalname" ] = "Police Lieutenant", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 4 },
-		["captain"] = { [ "formalname" ] = "Police Captain", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 5, ["cankick"] = true },
-		["chief"] = { [ "formalname" ] = "Police Chief", [ "loadout" ] = { "weapon_mad_stunstick", "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 6, ["cankick"] = true, ["canpromote"] = true, ["canedit"] = true  }
+	{ 	["recruit"] = { [ "formalname" ] = "Police Recruit", [ "loadout" ] = { "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 1 },
+		["officer"] = { [ "formalname" ] = "Police Officer", [ "loadout" ] = { "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 2 },
+		["sergeant"] = { [ "formalname" ] = "Police Sergeant", [ "loadout" ] = { "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 3 },
+		["lieutenant"] = { [ "formalname" ] = "Police Lieutenant", [ "loadout" ] = { "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 4 },
+		["captain"] = { [ "formalname" ] = "Police Captain", [ "loadout" ] = {  "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 5, ["cankick"] = true },
+		["chief"] = { [ "formalname" ] = "Police Chief", [ "loadout" ] = { "clothing_police", "weapon_pistol", "helmet_police", "weapon_smg1", "weapon_zipties" }, [ "level" ] = 6, ["cankick"] = true, ["canpromote"] = true, ["canedit"] = true  }
 	},
 	{
 		[ "soundgroup" ] = 2,

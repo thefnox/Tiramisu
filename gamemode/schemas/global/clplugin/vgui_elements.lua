@@ -340,7 +340,18 @@ function PANEL:StartDraw()
                 end
             end
         end
-        
+
+        if CAKE.Gear then
+            for _, bone in pairs( CAKE.Gear ) do
+                if bone then
+                    for k, v in pairs( bone ) do
+                        if ValidEntity( v.entity ) then
+                            v.entity:SetNoDraw( true )
+                        end
+                    end
+                end
+            end
+        end
         
 end
 
@@ -355,6 +366,18 @@ function PANEL:EndDraw()
             for k, v in pairs( CAKE.ClothingTbl ) do
                 if ValidEntity( v ) then
                     v:SetNoDraw( false )
+                end
+            end
+        end
+
+        if CAKE.Gear then
+            for _, bone in pairs( CAKE.Gear ) do
+                if bone then
+                    for k, v in pairs( bone ) do
+                        if ValidEntity( v.entity ) then
+                            v.entity:SetNoDraw( false )
+                        end
+                    end
                 end
             end
         end
@@ -399,6 +422,18 @@ function PANEL:Paint()
                 end
             end
 
+            if CAKE.Gear then
+                for _, bone in pairs( CAKE.Gear ) do
+                    if bone then
+                        for k, v in pairs( bone ) do
+                            if ValidEntity( v.entity ) then
+                                v.entity:DrawModel()
+                            end
+                        end
+                    end
+                end
+            end
+
             render.SuppressEngineLighting( false )
             cam.IgnoreZ( false )
         cam.End3D()
@@ -409,15 +444,18 @@ function PANEL:Paint()
         
 end
 
+local angle
+local distance = -80
 function PANEL:OnCursorMoved(x, y)
-    if input.IsMouseDown( MOUSE_LEFT ) or input.IsMouseDown( MOUSE_RIGHT ) then
-        newpos = ( LocalPlayer():GetForward() * 80 ) + ( LocalPlayer():GetUp() * 40 ) 
+    if input.IsMouseDown( MOUSE_LEFT ) then
         angle = LocalPlayer():GetAngles()
         angle:RotateAroundAxis(angle:Up(), math.NormalizeAngle( 180 - ( x - self:GetWide()/ 2 ) / 2 ) )
         angle:RotateAroundAxis(angle:Right(), math.NormalizeAngle( 0 - ( y - self:GetTall()/ 2 ) / 2 ) )
-        newpos:Rotate( angle )
-        self:SetCamPos( angle:Forward() * -80 + Vector( 0, 0, 40 ))
+        self:SetCamPos( angle:Forward() * distance + Vector( 0, 0, 40))
         self:SetCamAngle( angle )
+    elseif input.IsMouseDown( MOUSE_RIGHT ) then
+        distance =  ( y - self:GetTall()/ 2 ) + -80
+        self:SetCamPos( Vector( 0, 0, 40) + self.CamAngle:Forward() * distance )
     end
 end
 
@@ -563,7 +601,7 @@ function CAKE.Message( strText, strTitle, strButtonText, color )
         Window:MakePopup()
  
 end
- 
+
 /*
         Ask a question with multiple answers..
         

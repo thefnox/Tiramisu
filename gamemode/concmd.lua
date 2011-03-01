@@ -382,6 +382,8 @@ local function ccRemoveChar( ply, cmd, args )
 	
 	local id = args[1]
 	CAKE.RemoveCharacter( ply, id )
+	umsg.Start( "DisplayCharacterList", ply )
+	umsg.End()
 	
 end
 concommand.Add( "rp_removechar", ccRemoveChar )
