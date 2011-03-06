@@ -132,7 +132,7 @@ function CAKE.FindPlayer(name)
 	
 		if(string.find(v:Nick(), name) != nil) then
 			
-				ply = v;
+			ply = v;
 				
 		end
 			
@@ -141,7 +141,12 @@ function CAKE.FindPlayer(name)
 			ply = v;
 				
 		end
+
+		if( string.find(v:SteamID(), name) != nil ) then
+		
+			ply = v;
 			
+		end	
 	end
 	
 	return ply;
@@ -149,4 +154,17 @@ function CAKE.FindPlayer(name)
 end
 
 function CAKE.GetCharSignature( ply )
-	return ply:Nick() .. CAKE.FormatText(ply:SteamID()) end
+	return ply:Nick() .. "@" .. ply:SteamID()
+end
+
+function CAKE.SignatureToPlayer( signature )
+
+	local exp = string.Explode( signature, "@" )
+	local ply = CAKE:FindPlayer( exp[2] )
+	if ply then
+		return ply
+	end
+
+	return false
+
+end

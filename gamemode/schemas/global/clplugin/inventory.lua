@@ -124,52 +124,54 @@ local function OpenInventory()
 		label:SetText( "Available space: " .. tostring( math.Clamp( availablespace, 0, 100 ) ) .. ".kg" )
 	end
 	drawinventoryicons()
-	
-	BusinessSheet = vgui.Create( "DPanelList" )
-	BusinessSheet:SetPadding(20);
-	BusinessSheet:SetSpacing(20);
-	BusinessSheet:EnableHorizontal(true);
-	BusinessSheet:EnableVerticalScrollbar(true);
-
-	for k, v in pairs(BusinessTable) do
-		local spawnicon = vgui.Create( "SpawnIcon");
-		spawnicon:SetSize( 32, 32 );
-		spawnicon:SetIconSize( 32 )
-		spawnicon:SetModel(v.Model);
-		spawnicon:SetToolTip(v.Description);
-				
-		spawnicon.DoClick = function ( btn )
-				
-			local ContextMenu = DermaMenu()
-			if(tonumber(LocalPlayer():GetNWInt("money")) >= v.Price) then
-				ContextMenu:AddOption("Purchase", function() LocalPlayer():ConCommand("rp_buyitem " .. v.Class); end);
-			else
-				ContextMenu:AddOption("Not Enough Tokens!");
-			end
-				
-			ContextMenu:Open();
-					
-		end
-				
-		spawnicon.PaintOver = function()
-			surface.SetTextColor(Color(255,255,255,255));
-			surface.SetFont("DefaultSmall");
-			surface.SetTextPos(64 - surface.GetTextSize(v.Name .. " (" .. v.Price .. ")") / 2, 5);
-			surface.DrawText(v.Name .. " (" .. v.Price .. ")")
-		end
-				
-		spawnicon.PaintOverHovered = function()
-			surface.SetTextColor(Color(255,255,255,255));
-			surface.SetFont("DefaultSmall");
-			surface.SetTextPos(64 - surface.GetTextSize(v.Name .. " (" .. v.Price .. ")") / 2, 5);
-			surface.DrawText(v.Name .. " (" .. v.Price .. ")")
-		end
-				
-		BusinessSheet:AddItem(spawnicon);
-	end
-	
 	Inventory:AddSheet( "Backpack", InventorySheet, "gui/silkicons/box", false, false, "View your inventory.")
-	Inventory:AddSheet( "Business", BusinessSheet, "gui/silkicons/box", false, false, "View your store.")
+	
+
+	if CAKE.GetRankPermission( "canbuy" ) then
+		BusinessSheet = vgui.Create( "DPanelList" )
+		BusinessSheet:SetPadding(20);
+		BusinessSheet:SetSpacing(20);
+		BusinessSheet:EnableHorizontal(true);
+		BusinessSheet:EnableVerticalScrollbar(true);
+
+		for k, v in pairs(BusinessTable) do
+			local spawnicon = vgui.Create( "SpawnIcon");
+			spawnicon:SetSize( 32, 32 );
+			spawnicon:SetIconSize( 32 )
+			spawnicon:SetModel(v.Model);
+			spawnicon:SetToolTip(v.Description);
+					
+			spawnicon.DoClick = function ( btn )
+					
+				local ContextMenu = DermaMenu()
+				if(tonumber(LocalPlayer():GetNWInt("money")) >= v.Price) then
+					ContextMenu:AddOption("Purchase", function() LocalPlayer():ConCommand("rp_buyitem " .. v.Class); end);
+				else
+					ContextMenu:AddOption("Not Enough Tokens!");
+				end
+					
+				ContextMenu:Open();
+						
+			end
+					
+			spawnicon.PaintOver = function()
+				surface.SetTextColor(Color(255,255,255,255));
+				surface.SetFont("DefaultSmall");
+				surface.SetTextPos(64 - surface.GetTextSize(v.Name .. " (" .. v.Price .. ")") / 2, 5);
+				surface.DrawText(v.Name .. " (" .. v.Price .. ")")
+			end
+					
+			spawnicon.PaintOverHovered = function()
+				surface.SetTextColor(Color(255,255,255,255));
+				surface.SetFont("DefaultSmall");
+				surface.SetTextPos(64 - surface.GetTextSize(v.Name .. " (" .. v.Price .. ")") / 2, 5);
+				surface.DrawText(v.Name .. " (" .. v.Price .. ")")
+			end
+					
+			BusinessSheet:AddItem(spawnicon);
+		end
+		Inventory:AddSheet( "Business", BusinessSheet, "gui/silkicons/box", false, false, "View your store.")
+	end
 
 end
 

@@ -348,12 +348,12 @@ function meta:RefreshBusiness( )
 	if !self:IsCharLoaded() then return; end -- Team not assigned
 	local group = CAKE.GetCharField( self, "group" )
 	local rank = CAKE.GetCharField( self, "grouprank" )
-	
-	/*
-	local buygroups = CAKE.GetRankPermission( group, rank, "buygroups" ) or {}
-	for k, v in pairs( CAKE.ItemData ) do
-		if v.Purchaseable then
-			if table.HasValue( buygroups, v.ItemGroup ) then
+
+	if CAKE.GroupExists( group ) and CAKE.GetRankField( group, rank, "canbuy" ) and CAKE.GetRankField( group, rank, "buygroups" ) then
+		local buygroups = CAKE.GetRankField( group, rank, "buygroups" ) or {}
+		for k, v in pairs( CAKE.ItemData ) do
+			if v.Purchaseable then
+				if table.HasValue( buygroups, v.ItemGroup ) then
 					umsg.Start( "addbusiness", self );
 					umsg.String( v.Name );
 					umsg.String( v.Class );
@@ -361,9 +361,10 @@ function meta:RefreshBusiness( )
 					umsg.String( v.Model );
 					umsg.Long( v.Price );
 					umsg.End( )		
+				end
 			end
 		end
-	end*/
+	end
 end
 
 function meta:ItemHasFlag( item, flag )
