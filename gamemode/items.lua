@@ -77,11 +77,11 @@ function ccBuyItem( ply, cmd, args )
 	
 	local group = CAKE.GetCharField( ply, "group" )
 	local rank = CAKE.GetCharField( ply, "grouprank" )
-	local canBuy = CAKE.GetRankPermission( group, rank, "canbuy" )
+	local canBuy = CAKE.GetRankField( group, rank, "canbuy" )
 	local itemgroup = CAKE.ItemData[ args[ 1 ] ].ItemGroup
 	if( CAKE.ItemData[ args[ 1 ] ] != nil ) then
 		if( canBuy ) then --Let's make business
-			local buygroups = CAKE.GetRankPermission( group, rank, "buygroups" )
+			local buygroups = CAKE.GetRankField( group, rank, "buygroups" )
 			if( table.HasValue( buygroups, itemgroup ) ) then
 				if( CAKE.ItemData[ args[ 1 ] ].Purchaseable and tonumber(CAKE.GetCharField(ply, "money" )) >= CAKE.ItemData[ args[ 1 ] ].Price ) then
 					

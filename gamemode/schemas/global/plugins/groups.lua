@@ -508,6 +508,8 @@ function CAKE.SendGroupToClient( ply )
 		})
 	end
 	CAKE.SavePlayerData( ply )
+	ply:ClearBusiness( )
+	ply:RefreshBusiness( )
 
 end
 
