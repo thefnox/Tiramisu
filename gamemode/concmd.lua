@@ -83,14 +83,7 @@ end
 function ccSetTitle( ply, cmd, args )
 
 	local title = table.concat( args, " " )
-	
-	if( string.len( title ) > 63 ) then
-	
-		CAKE.SendChat( ply, "Title is too long! Max 32 characters" );
-		return;
-		
-	end
-	
+
 	CAKE.SetCharField( ply, "title", title );
 	ply:SetNWString("title", title);
 	
@@ -98,25 +91,6 @@ function ccSetTitle( ply, cmd, args )
 	
 end
 concommand.Add( "rp_title", ccSetTitle );
-
-function ccSetTitle2( ply, cmd, args )
-
-	local title = table.concat( args, " " )
-	
-	if( string.len( title ) > 63 ) then
-	
-		CAKE.SendChat( ply, "Title is too long! Max 32 characters" );
-		return;
-		
-	end
-	
-	CAKE.SetCharField( ply, "title2", title );
-	ply:SetNWString("title2", title);
-	
-	return;
-	
-end
-concommand.Add( "rp_title2", ccSetTitle2 );
 
 -- Change IC Name
 function ccChangeName( ply, cmd, args )
@@ -368,8 +342,6 @@ function ccConfirmRemoval( ply, cmd, args )
 	local SteamID = CAKE.FormatText( ply:SteamID() );
 	local name = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "name" ]
 	local age = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "age" ]
-	local title = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "title" ]
-	local title2 = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "title2" ]
 	local model = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "model" ]
 	umsg.Start("ConfirmCharRemoval", ply)
 		umsg.String( name )

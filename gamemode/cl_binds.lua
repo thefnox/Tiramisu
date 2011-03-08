@@ -125,15 +125,12 @@ function GM:ScoreboardShow( )
 
 	local DataList2 = vgui.Create( "DPanelList" )
 
-	local label2 = vgui.Create("DLabel");
+	local label2 = vgui.Create("MarkupLabel");
+	label2:SetMaxWidth( 140 )
 	label2:SetText("Title: " .. LocalPlayer():GetNWString("title", ""));
 	DataList2:AddItem(label2);
 
-	local label3 = vgui.Create("DLabel");
-	label3:SetText("Title 2: " .. LocalPlayer():GetNWString("title2", ""));
-	DataList2:AddItem(label3);
-
-	local label4 = vgui.Create("DLabel");
+	local label4 = vgui.Create("MarkupLabel");
 	label4:SetText( CurrencyTable.name .. ": " .. LocalPlayer():GetNWString("money", "0" ));
 	DataList2:AddItem(label4);
 
@@ -164,13 +161,14 @@ function GM:ScoreboardShow( )
 	local hp = LocalPlayer():Health();
 
 	if(!LocalPlayer():Alive()) then healthstatus = "Dead";
-	elseif(hp > 95) then healthstatus = "Healthy";
+	elseif(hp > 95) then healthstatus = "<color=green>Healthy</color>";
 	elseif(hp > 50 and hp < 95) then healthstatus = "OK";
-	elseif(hp > 30 and hp < 50) then healthstatus = "Near Death";
-	elseif(hp > 1 and hp < 30) then healthstatus = "Death Imminent"; end
+	elseif(hp > 30 and hp < 50) then healthstatus = "<color=ltred>Near Death</color>";
+	elseif(hp > 1 and hp < 30) then healthstatus = "<color=red>Death Imminent</color>"; end
 
-	local health = vgui.Create("DLabel");
+	local health = vgui.Create("MarkupLabel");
 	health:SetText("Vitals: " .. healthstatus);
+	health:SetMaxWidth( 200 )
 	VitalData:AddItem(health);
 
 	PlayerInfo:AddItem(icdata)
@@ -208,17 +206,5 @@ function GM:ScoreboardHide( )
 		VitalsMenu:Remove()
 		VitalsMenu = nil
 	end
-	
-end
-
-function GM:StartChat( )
-
-	LocalPlayer( ):ConCommand( "rp_openedchat" );
-	
-end
-
-function GM:FinishChat( )
-
-	LocalPlayer( ):ConCommand( "rp_closedchat" );
 	
 end

@@ -107,15 +107,10 @@ function CreateCharList( )
 				plist2:EnableHorizontal( true )
 				plist2:SetAutoSize( true )
 
-				local title = vgui.Create("DLabel");
+				local title = vgui.Create("MarkupLabel");
 				title:SetText(v['title'])
-				title:SetSize( 120, 26 )
+				title:SetSize( 135, 30 )
 				plist2:AddItem(title)
-
-				local title2 = vgui.Create("DLabel")
-				title2:SetText( v['title2'])
-				title2:SetSize( 120, 20 )
-				plist2:AddItem(title2)
 
 				local selectchar = vgui.Create( "DButton" )
 				selectchar:SetSize( 61, 20 )

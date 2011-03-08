@@ -1,3 +1,4 @@
+
 -------------------------------
 -- CakeScript Generation 2
 -- Author: LuaBanana ( Aka Jake )
@@ -7,16 +8,20 @@
 -- Useful functions for players.
 -------------------------------
 
-function CAKE.SendChat( ply, msg, font )
-	
-	font = font or "ChatFont"
+function CAKE.SendChat( ply, msg, font, channel )
 	
 	if ply:IsPlayer() then
-		ply:PrintMessage( 3, msg );
+		--ply:PrintMessage( 3, msg );
+		datastream.StreamToClients( ply, "TiramisuAddToChat", {
+			["text"] = msg,
+			["font"] = font or "ChatFont",
+			["channel"] = channel or false 
+		})
+		/*
 		umsg.Start( "tiramisuaddtochat", ply )
 			umsg.String( msg )
 			umsg.String( font )
-		umsg.End()
+		umsg.End()*/
 		--CAKE.SendConsole( ply, msg )
 	else
 		print( msg )

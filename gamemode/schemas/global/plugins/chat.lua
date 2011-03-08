@@ -38,19 +38,22 @@ function CAKE.OOCAdd( ply, text )
 			umsg.Vector( Vector( color.r, color.b, color.g ) )
 			umsg.Float( color.a )
 		umsg.End()*/
+
+		CAKE.SendChat( ply, "<color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">" .. playername .. "</color><color=white> :" .. text .. "</color>", "ChatFont", "OOC" )
 		
+		/*
 		datastream.StreamToClients( player.GetAll( ), "AddOOCLine", {
 			[ "text" ] = tostring( text ),
 			[ "playername" ] = tostring( playername ),
 			[ "color" ] = color
-		})
+		})*/
 		
 		ply.LastOOC = CurTime();
 		
 	else
 	
 		local TimeLeft = math.ceil(ply.LastOOC + CAKE.ConVars[ "OOCDelay" ] - CurTime());
-		CAKE.SendChat( ply, "Please wait " .. TimeLeft .. " seconds before using OOC chat again!");
+		CAKE.SendChat( ply, "Please wait " .. TimeLeft .. " seconds before using OOC chat again!", "ChatFont", "OOC");
 		
 	end
 end
@@ -91,7 +94,7 @@ local function ccRoll( ply, cmd, args )
 		
 			if( v:EyePos():Distance( ply:EyePos() ) <= 300 ) then
 			
-				CAKE.SendChat( v, "[Roll] " .. ply:Nick() .. " rolled a " .. roll .. " out of " .. Min .. "-" .. Max .. ".");
+				CAKE.SendChat( v, "[Roll] " .. ply:Nick() .. " rolled a " .. roll .. " out of " .. Min .. "-" .. Max .. ".", "ChatFont", "IC");
 			
 			end
 		
@@ -106,7 +109,7 @@ local function Report( ply, text )
 		
 		if( v:IsAdmin() or v:IsSuperAdmin() ) then
 		
-			CAKE.SendChat( v, ply:Nick() .. " | " .. ply:Name() .. " [" .. ply:SteamID()  .. "] [REPORT]:" .. text );
+			CAKE.SendChat( v, ply:Nick() .. " | " .. ply:Name() .. " [" .. ply:SteamID()  .. "] [REPORT]:" .. text, "ChatFont", "Reports" );
 			
 		end
 	
@@ -131,7 +134,7 @@ local function Broadcast( ply, text )
 		
 		for k, v in pairs( player.GetAll( ) ) do
 		
-			CAKE.SendChat( v, "[BROADCAST]: " .. text );
+			CAKE.SendChat( v, "[BROADCAST]: " .. text, "ChatFont", "IC" );
 			
 		end
 	
@@ -148,7 +151,7 @@ local function Event( ply, text )
 		
 		for k, v in pairs( player.GetAll( ) ) do
 		
-			CAKE.SendChat( v, "[EVENT]: " .. text );
+			CAKE.SendChat( v, "[EVENT]: " .. text, "ChatFont", "IC" );
 			
 		end
 	
@@ -165,8 +168,8 @@ local function PersonalMessage( ply, text )
 	local target = CAKE.FindPlayer( exp[1] )
 	table.remove( exp, 1)
 	if target then
-		CAKE.SendChat( target, "[FROM:" .. ply:Nick() .. "]" .. table.concat( exp, " " ) )
-		CAKE.SendChat( ply, "[TO:" .. target:Nick() .. "]" .. table.concat( exp, " " ) )
+		CAKE.SendChat( target, "[FROM:" .. ply:Nick() .. "]" .. table.concat( exp, " " ), "ChatFont", ply:Name() )
+		CAKE.SendChat( ply, "[TO:" .. target:Nick() .. "]" .. table.concat( exp, " " ), "ChatFont", target:Name() )
 	else
 		CAKE.SendChat( ply, "Target not found!" )
 	end
@@ -192,7 +195,7 @@ local function RemoveHelmet( ply, text )
 			
 		if( v:EyePos( ):Distance( ply:EyePos( ) ) <= range ) then
 			
-			CAKE.SendChat( v, "*** " .. ply:Nick() .. " removed " .. article .. " helmet." );
+			CAKE.SendChat( v, "*** " .. ply:Nick() .. " removed " .. article .. " helmet.", "ChatFont", "IC" );
 				
 		end
 			
@@ -214,7 +217,7 @@ local function Advertise( ply, text )
 		
 			for _, pl in pairs(player.GetAll()) do
 			
-				CAKE.SendChat(pl, "[AD] " .. ply:Nick() .. ": " .. text)
+				CAKE.SendChat(pl, "[AD] " .. ply:Nick() .. ": " .. text, "ChatFont", "IC" )
 		
 			end
 			
@@ -269,7 +272,7 @@ local function Radio( ply, text )
 			
 			if( v:EyePos( ):Distance( ply:EyePos( ) ) <= range ) then
 			
-				CAKE.SendChat( v, ply:Nick() .. ": " .. text );
+				CAKE.SendChat( v, ply:Nick() .. ": " .. text, "ChatFont", "IC" );
 				
 			end
 			
@@ -286,11 +289,6 @@ local function Title( ply, text )
 	return "";
 end
 
-local function Title2( ply, text )
-	ply:ConCommand( "rp_title2 " .. text )
-	return "";
-end
-
 local function DoorTitle( ply, text )
 	ply:ConCommand( "rp_doortitle " .. text)
 	return "";
@@ -300,7 +298,7 @@ local function Yell( ply, text )
 	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "YellRange" ] )
 	for k, v in pairs( players ) do
 		if v:IsPlayer() then
-			CAKE.SendChat( v, "[YELL]" .. ply:Nick() .. ": " .. text, "Trebuchet24" )
+			CAKE.SendChat( v, "[YELL]" .. ply:Nick() .. ": " .. text, "Trebuchet24", "IC" )
 		end
 	end
 	return "";
@@ -310,7 +308,7 @@ local function Whisper( ply, text )
 	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "WhisperRange" ] )
 	for k, v in pairs( players ) do
 		if v:IsPlayer() then
-			CAKE.SendChat( v, "[WHISPER]" ..  ply:Nick() .. ": " .. text, "DefaultSmallDropShadow" )
+			CAKE.SendChat( v, "[WHISPER]" ..  ply:Nick() .. ": " .. text, "DefaultSmallDropShadow", "IC" )
 		end
 	end
 	return "";
@@ -320,7 +318,7 @@ local function Emote( ply, text )
 	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "MeRange" ] )
 	for k, v in pairs( players ) do
 		if v:IsPlayer() then
-			CAKE.SendChat( v, "*** " ..  ply:Nick() .. " " .. text, "ChatFont" )
+			CAKE.SendChat( v, "*** " ..  ply:Nick() .. " " .. text, "ChatFont", "IC" )
 		end
 	end
 	return "";
@@ -346,8 +344,8 @@ function PLUGIN.Init( ) -- We run this in init, because this is called after the
 	CAKE.SimpleChatCommand( "/anon", CAKE.ConVars[ "MeRange" ], "???: $3" ); -- It chat
 	--CAKE.SimpleChatCommand( "/y", CAKE.ConVars[ "YellRange" ], "<font=DefaultLarge>$1 [YELL]: $3</font>" ); -- Yell chat
 	--CAKE.SimpleChatCommand( "/w", CAKE.ConVars[ "WhisperRange" ], "<font=DefaultSmall>$1 [WHISPER]: $3</font>" ); -- Whisper chat
-	CAKE.SimpleChatCommand( ".//", CAKE.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3" ); -- Local OOC Chat
-	CAKE.SimpleChatCommand( "[[", CAKE.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3" ); -- Local OOC Chat
+	CAKE.SimpleChatCommand( ".//", CAKE.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3", "OOC" ); -- Local OOC Chat
+	CAKE.SimpleChatCommand( "[[", CAKE.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3", "OOC" ); -- Local OOC Chat
 
 	CAKE.ChatCommand( "/ad", Advertise );
 	CAKE.ChatCommand( "/y", Yell);
@@ -359,7 +357,6 @@ function PLUGIN.Init( ) -- We run this in init, because this is called after the
 	CAKE.ChatCommand( "/removehelmet", RemoveHelmet );
 	CAKE.ChatCommand( "/pm", PersonalMessage );
 	CAKE.ChatCommand( "/title", Title );
-	CAKE.ChatCommand( "/title2", Title2 );
 	CAKE.ChatCommand( "/report", Report );
 	
 end

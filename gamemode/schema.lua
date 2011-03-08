@@ -72,7 +72,7 @@ end
 
 function CAKE.InitSchemas( )
 
-	for _, SCHEMA in pairs( CAKE.Schemas ) do
+	for _, SCHEMA in ipairs( CAKE.Schemas ) do
 
 		SCHEMA.SetUp( );
 		

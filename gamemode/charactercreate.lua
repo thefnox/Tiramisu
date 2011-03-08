@@ -260,7 +260,6 @@ function ccReady( ply, cmd, args )
 				umsg.String( v[ "name" ] );
 				umsg.String( v[ "model" ] );
 				umsg.String( v[ "title" ] );
-				umsg.String( v[ "title2" ] );
 			umsg.End( );
 			
 		end

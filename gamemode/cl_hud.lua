@@ -11,7 +11,7 @@ CAKE.TitleDrawDistance = CreateClientConVar( "rp_titledrawdistance", 600, true, 
 
 LocalPlayer( ).MyModel = "" -- Has to be blank for the initial value, so it will create a spawnicon in the first place.
 
-surface.CreateFont(CAKE.MenuFont, 32, 500, true, false, "TiramisuTitlesFont")
+surface.CreateFont(CAKE.MenuFont, 32, 500, true, false, "TiramisuTitlesFont", false, true)
 surface.CreateFont(CAKE.MenuFont, 18, 500, true, false, "TiramisuTimeFont")
 surface.CreateFont(CAKE.MenuFont, 12, 400, true, false, "TiramisuTabsFont", true )
 
@@ -84,6 +84,7 @@ local position
 local angle
 local closeents
 local tracedata = {}
+local mlabel
 local trace
 local ent
 
@@ -99,6 +100,7 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 	    for k, v in pairs( closeents ) do
 	    	if ValidEntity( v ) then
 		        if v:IsPlayer() and LocalPlayer() != v and v:Alive() and !v:GetNWBool( "observe" ) and !v:GetNWBool( "unconciousmode", false ) then
+		        	mlabel = markup.Parse( "<font=TiramisuTitlesFont>" .. v:Nick() .. "\n" .. v:GetNWString( "title", "Connecting..." ) .. "</font>", 550 )
 		            position = v:GetPos()
 		            if v:GetBonePosition( v:LookupBone("ValveBiped.Bip01_Head1") ) then
 		                position = v:GetBonePosition( v:LookupBone("ValveBiped.Bip01_Head1") )
@@ -112,24 +114,12 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 		            
 		            position = position - angle:Right() * 16
 		            cam.Start3D2D( position, angle, 0.12 )
-		                surface.SetFont( "TiramisuTitlesFont" )
-		                if v:GetNWInt( "chatopen", 0 ) == 1 then
-		                	draw.SimpleTextOutlined( "Typing...", "TiramisuTitlesFont", 0, -50, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,200) )
-		                end
-		                draw.SimpleTextOutlined( v:Nick(), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,200) )
-		                draw.SimpleTextOutlined( v:GetNWString( "title", "Connecting.." ), "TiramisuTitlesFont", 0, 30, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,200) )
-		                draw.SimpleTextOutlined( v:GetNWString( "title2", "Connecting.." ), "TiramisuTitlesFont", 0, 60, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,200) )
+		                mlabel:Draw( 0, 0, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 230 )
 		            cam.End3D2D()
 		            angle:RotateAroundAxis( angle:Forward(), 180 )
 		            angle:RotateAroundAxis( angle:Up(), 180 )
 		            cam.Start3D2D( position, angle, 0.12 )
-		                surface.SetFont( "TiramisuTitlesFont" )
-		                if v:GetNWInt( "chatopen", 0 ) == 1 then
-		                	draw.SimpleTextOutlined( "Typing...", "TiramisuTitlesFont", 0, -50, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,200) )
-		                end
-		                draw.SimpleTextOutlined( v:Nick(), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
-		                draw.SimpleTextOutlined( v:GetNWString( "title", "Connecting.." ), "TiramisuTitlesFont", 0, 30, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,200) )
-		                draw.SimpleTextOutlined( v:GetNWString( "title2", "Connecting.." ), "TiramisuTitlesFont", 0, 60, Color( 255, 255, 255, 255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,200) )
+		                mlabel:Draw( 0, 0, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 230 )
 		            cam.End3D2D()
 		        elseif CAKE.IsDoor( v ) and CAKE.GetDoorTitle( v ) != "" then
 		      	  	position = v:LocalToWorld(v:OBBCenter())

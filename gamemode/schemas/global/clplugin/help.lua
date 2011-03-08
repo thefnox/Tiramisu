@@ -28,7 +28,6 @@ Tab+Right click on an item/door/player- Context menu
 /removehelmet - Removes your current helmet
 /pm - Send a personal message
 /title - Set your title
-/title2 - Set your second title
 /?,/anon - Say an anonymous message
 // - OOC
 .//, [[ - Local OOC

@@ -10,7 +10,7 @@
 
 CAKE.ChatCommands = {  };
 
-function CAKE.SimpleChatCommand( prefix, range, form )
+function CAKE.SimpleChatCommand( prefix, range, form, channel )
 
 	-- This is for simple chat commands like /me, /y, /w, etc
 	-- This isn't useful for radio, broadcast, etc.
@@ -33,6 +33,7 @@ function CAKE.SimpleChatCommand( prefix, range, form )
 	cc.cmd = cmd;
 	cc.range = range;
 	cc.form = form;
+	cc.channel = channel
 	
 	CAKE.ChatCommands[ prefix ] = cc;
 	
@@ -49,7 +50,15 @@ function CAKE.ChatCommand( prefix, callback )
 	
 end
 
-hook.Add( "PlayerSay", "TiramisuChatHandling", function( ply, text, toall )
+hook.Add( "AcceptStream", "TiramisuAcceptChatStream", function( pl, handler, id )
+	if handler == "TiramisuChatHandling" then
+		return true
+	end
+end)
+
+datastream.Hook( "TiramisuChatHandling", function( ply, handler, id, encoded, decoded )
+
+	local text = decoded.text or ""
 
 	CAKE.DayLog("chat.txt", ply:SteamID() .. ": " .. text); -- we be spyins.
 	
@@ -61,9 +70,12 @@ hook.Add( "PlayerSay", "TiramisuChatHandling", function( ply, text, toall )
 	end
 	
 	if( string.sub( text, 1, 2) == "//" or string.sub( text, 1, 4) == "/ooc" ) then --OOC override, to add colors.
-		
-		CAKE.OOCAdd( ply, text )
-		return "";
+		for _, ply in pairs( player.GetAll( ) ) do
+			if ValidEntity( ply ) then
+				CAKE.OOCAdd( ply, text )
+				return "";
+			end
+		end
 	end
 	
 	for prefix, cc in pairs( CAKE.ChatCommands ) do
@@ -103,7 +115,7 @@ hook.Add( "PlayerSay", "TiramisuChatHandling", function( ply, text, toall )
 			
 				if( pl:EyePos( ):Distance( ply:EyePos( ) ) <= range ) then
 				
-					CAKE.SendChat( pl, s );
+					CAKE.SendChat( pl, s, "ChatFont", cc.channel or "IC" );
 				
 				end
 			
@@ -130,7 +142,7 @@ hook.Add( "PlayerSay", "TiramisuChatHandling", function( ply, text, toall )
 		
 			if( pl:EyePos( ):Distance( ply:EyePos( ) ) <= range ) then
 			
-				CAKE.SendChat( pl, ply:Nick() .. ": " .. text );
+				CAKE.SendChat( pl, ply:Nick() .. ": " .. text, "ChatFont", "IC" );
 			
 			end
 		

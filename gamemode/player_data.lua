@@ -209,7 +209,6 @@ function CAKE.ResendCharData( ply ) -- Network all of the player's character dat
 
 		ply:SetNWString( "name", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "name" ] or "" )
 		ply:SetNWString( "title", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "title" ] or "" )
-		ply:SetNWString( "title2", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "title2" ] or "" )
 		ply:SetNWInt( "money", tonumber( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "money" ] ) or 0 )
 
 		for k, v in pairs( CAKE.PlayerData[ SteamID ][ "characters" ] ) do -- Send them all their characters for selection
@@ -219,7 +218,6 @@ function CAKE.ResendCharData( ply ) -- Network all of the player's character dat
 					umsg.String( v[ "name" ] );
 					umsg.String( v[ "model" ] );
 					umsg.String( v[ "title" ] );
-					umsg.String( v[ "title2" ] );
 				umsg.End( );
 			end
 		end

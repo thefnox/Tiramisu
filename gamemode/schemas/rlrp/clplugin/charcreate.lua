@@ -96,14 +96,6 @@ local function CharacterCreation()
 		titletext:SetTooltip( "Click to edit" )
 		panel:AddItem( titletext )
 
-		label = vgui.Create( "DLabel" )
-		label:SetText( "Title 2:" )
-		panel:AddItem( label )
-
-		local title2text = vgui.Create( "DTextEntry" )
-		title2text:SetText( Title2 )
-		title2text:SetTooltip( "Click to edit" )
-		panel:AddItem( title2text )
 		local modellist = vgui.Create( "DMultiChoice" )
 		for k, v in pairs( models[ Gender ] ) do
 			modellist:AddChoice( v )
@@ -219,8 +211,7 @@ local function CharacterCreation()
 			end
 		end
 		createlabel.DoClick = function()
-			Title1 = string.sub(titletext:GetValue(), 1, 64)
-			Title2 = string.sub(title2text:GetValue(), 1, 64)
+			Title1 = string.sub(titletext:GetValue(), 1, 255)
 			CharName = string.sub(nametext:GetValue(), 1, 64)
 
 			RunConsoleCommand("rp_startcreate")
@@ -228,7 +219,6 @@ local function CharacterCreation()
 			RunConsoleCommand("rp_setstartclothing", SelectedClothing );
 			RunConsoleCommand("rp_changename", CharName );
 			RunConsoleCommand("rp_title", Title1 );
-			RunConsoleCommand("rp_title2", Title2 );
 			RunConsoleCommand("rp_setage", Age )
 			RunConsoleCommand("rp_setgender", Gender )
 			RunConsoleCommand( "rp_finishcreate" )
