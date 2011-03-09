@@ -132,6 +132,26 @@ function ccUnLockDoor( ply, cmd, args )
 end
 concommand.Add( "rp_unlockdoor", ccUnLockDoor );
 
+function ccOpenDoor( ply, cmd, args )
+
+	local entity = ply:GetEyeTrace( ).Entity
+	local group = CAKE.GetCharField( ply, "group" )
+	local doorgroup = CAKE.GetGroupFlag( group, "doorgroups" ) or 0
+	
+	if( entity != nil and entity:IsValid( ) and CAKE.IsDoor( entity ) and ply:GetPos( ):Distance( entity:GetPos( ) ) < 200 ) then
+		local pos = entity:GetPos( );
+		for k, v in pairs( CAKE.Doors ) do
+			if( tonumber( v[ "x" ] ) == math.ceil( tonumber( pos.x ) ) and tonumber( v[ "y" ] ) == math.ceil( tonumber( pos.y ) ) and tonumber( v[ "z" ] ) == math.ceil( tonumber( pos.z ) ) ) then
+				if( tonumber( v[ "group" ] ) == doorgroup ) then
+					entity:Fire( "toggle", "", 0 );
+				end
+			end
+		end
+	end
+	
+end
+concommand.Add( "rp_opendoor", ccOpenDoor );
+
 function ccPurchaseDoor( ply, cmd, args )
 	local door = ents.GetByIndex( tonumber( args[ 1 ] ) );
 	

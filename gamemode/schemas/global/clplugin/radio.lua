@@ -17,7 +17,6 @@ function CAKE.CreateRadioMenu()
 		RadioList = vgui.Create( "DPanelList", RadioPanel )
 		RadioList:SetPos( 0,25 )
 		RadioList:SetSize( 500, 277 )
-		RadioList:SetSpacing( 1 ) -- Spacing between items
 		RadioList:SetPadding( 0 ) -- Spacing between items
 		RadioList:EnableHorizontal( false ) -- Only vertical items
 		RadioList:EnableVerticalScrollbar( false ) -- Allow scrollbar if you exceed the Y axis
@@ -26,19 +25,11 @@ function CAKE.CreateRadioMenu()
 	end
 end
 
-function CAKE.AddRadioLine( text, color )
+function CAKE.AddRadioLine( text )
 	if RadioList then
-		local label= vgui.Create("DLabel" )
+		local label= vgui.Create("MarkupLabel" )
 		label:SetText( text )
-		label:SetWrap(true)
-		label:SetFont( "BudgetLabel" )
-		label:SetTextColor( color )
-		local count = string.len( text )
-		if count > 50 then
-			label:SetSize( 500, 13 * math.ceil( ( count / 50 ) ) )
-		else
-			label:SetSize( 500, 13 )
-		end
+		label:SetMaxWidth( 500 )
 		RadioList:AddItem( label )
 		timer.Simple( 10, function()
 			label:Remove()
@@ -47,18 +38,11 @@ function CAKE.AddRadioLine( text, color )
 	end
 end
 
-local function AddRadioMsg( um )
-	local text = um:ReadString()
-	local color = Color( um:ReadShort(), um:ReadShort(), um:ReadShort() )
+datastream.Hook( "TiramisuAddToRadio", function( handler, id, encoded, decoded )
 	CAKE.CreateRadioMenu()
-	CAKE.AddRadioLine( text, color )
-end
-usermessage.Hook( "AddRadioLine", AddRadioMsg )
-
-local function CreateRadio()
-	CAKE.CreateRadioMenu()
-end
-usermessage.Hook( "CreateRadio", CreateRadio )
+	CAKE.Chatbox:AddLine( "<font=BudgetLabel>" .. decoded.text .. "</font>", "Radio" )
+	CAKE.AddRadioLine( "<font=BudgetLabel>" .. decoded.text .. "</font>" )
+end)
 
 function CLPLUGIN.Init()
 

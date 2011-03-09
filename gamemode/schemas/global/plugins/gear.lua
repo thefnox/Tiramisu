@@ -315,8 +315,8 @@ function CAKE.SendGearToClient( ply )
 	
 	local newtable = {}
 	local num
-	if ply:IsCharLoaded() and ply.Gear then
-		timer.Simple( 1, function()
+	if ply.Gear then
+		timer.Simple( 2, function()
 			if ply.Gear then
 				umsg.Start( "cleargear", ply )
 				umsg.End()

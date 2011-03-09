@@ -177,7 +177,9 @@ function GM:PlayerSpawn( ply )
 	end
 	
 	timer.Create( ply:SteamID() .. "savetimer", 10, 0, function()
-		CAKE.SavePlayerData( ply )
+		if ValidEntity( ply ) then
+			CAKE.SavePlayerData( ply )
+		end
 	end)
 	
 	-- Reset all the variables

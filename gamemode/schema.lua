@@ -23,6 +23,14 @@ function CAKE.LoadSchema( schema )
 	CAKE.DayLog( "script.txt", "Loading schema " .. SCHEMA.Name .. " by " .. SCHEMA.Author .. " ( " .. SCHEMA.Description .. " )" );
 	
 	table.insert( CAKE.Schemas, SCHEMA );
+
+	-- Load the base, first.
+
+	if( SCHEMA.Base != nil ) then
+	
+		CAKE.LoadSchema( SCHEMA.Base )
+		
+	end
 	
 	-- Load the plugins
 	
@@ -59,12 +67,6 @@ function CAKE.LoadSchema( schema )
 	for k, v in pairs( list ) do
 	
 		CAKE.LoadItem( schema, v );
-		
-	end
-	
-	if( SCHEMA.Base != nil ) then
-	
-		CAKE.LoadSchema( SCHEMA.Base )
 		
 	end
 	

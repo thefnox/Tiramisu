@@ -73,7 +73,7 @@ function PANEL:Init()
             
             if self.Open then
                 draw.RoundedBox( 2, 2, 2, self.TextEntry:GetWide(), self.TextEntry:GetTall(), Color( 50, 50, 50, self.Alpha ) )
-                self.TextEntry:DrawTextEntryText( self.TextEntry.m_colText, self.TextEntry.m_colHighlight, self.TextEntry.m_colCursor )
+                self.TextEntry:DrawTextEntryText( Color( 200, 200, 200, 240 ), self.TextEntry.m_colHighlight, self.TextEntry.m_colCursor )
             end
 
         end

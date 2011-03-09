@@ -6,11 +6,26 @@ local function FixSlashes( str )
 	return str:gsub( "\\" , "/" )
 end
 
+-- ConVars
+
+resourcex_debug = CreateConVar( "resourcex_debug", "0" )
+
 -- Globals
 
 TRANSFER_QUEUE = {}
+
+-- Shared helpers
+
+local function DebugPrint( ... )
+	if ( resourcex_debug:GetInt() == 0 ) then return end
 	
+	print( ... )
+end
+
 if SERVER then
+	-- Client resources
+
+	AddCSLuaFile( "autorun/resourcex.lua" )
 
 	-- Server includes
 
@@ -98,6 +113,25 @@ if SERVER then
 		end
 	end
 
+	local function CheckPendingQueue( netchan )
+		local ply = PlayerFromChannel( netchan )
+			
+		if ( ValidEntity( ply ) && ply.PendingFiles ) then
+			local entry = ply.PendingFiles[1]
+			
+			if ( entry ) then
+				umsg.Start( "resourcex_offerfile", ply )
+					umsg.String( RemoveBZ2( entry.name ) )
+					umsg.Bool( entry.display )
+				umsg.End()
+					
+				table.remove( ply.PendingFiles, 1 )
+			else
+				ply.PendingFiles = nil
+			end
+		end	
+	end
+
 	local function FileStreamFinish( netchan, filename, id )
 		if ( !HistoryExists( history.finish, netchan:GetAddress(), filename ) ) then
 			hook.Call( "FileStreamFinish", nil, netchan, filename, id )
@@ -105,6 +139,8 @@ if SERVER then
 			FileStreamNotification( "resourcex_filestreamfinish", netchan, filename )
 
 			AddHistory( history.finish, netchan:GetAddress(), filename )
+			
+			CheckPendingQueue( netchan )
 		end
 	end
 
@@ -138,7 +174,8 @@ if SERVER then
 
 	-- server->client
 
-	TRANSFER_ID = 10000
+	TRANSFER_ID = 10000 -- Base transfer ID (shouldn't need changing)
+	MAX_FILES = 10 -- Amount of transfers the client should be aware of at once
 
 	local function QueueFile( netchan, filename )
 		if ( netchan:SendFile( filename, TRANSFER_ID ) ) then
@@ -158,13 +195,25 @@ if SERVER then
 
 		ply.RequestedFiles = true
 
+		local safeguard = 0
+
 		for k, v in pairs( TRANSFER_QUEUE ) do
-			umsg.Start( "resourcex_offerfile", ply )
-				umsg.String( RemoveBZ2( v.name ) )
-				umsg.Bool( v.display )
-			umsg.End()
+			if ( safeguard >= MAX_FILES ) then
+				ply.PendingFiles = ply.PendingFiles || {}
+				
+				--DebugPrint( "[ResourceX] Adding '" .. v.name .. "' to pending queue" )
+
+				table.insert( ply.PendingFiles, v )
+			else
+				safeguard = safeguard + 1
+
+				umsg.Start( "resourcex_offerfile", ply )
+					umsg.String( RemoveBZ2( v.name ) )
+					umsg.Bool( v.display )
+				umsg.End()
+			end
 			
-			--print( "[ResourceX] Offered client '" .. v.name .. "' (display=" .. tostring(v.display) .. ")" )
+			--DebugPrint( "[ResourceX] Offered client '" .. v.name .. "' (display=" .. tostring(v.display) .. ")" )
 		end
 	end )
 
@@ -181,8 +230,18 @@ if SERVER then
 		if ( ValidTransferFile( args[1] ) ) then
 			QueueFile( netchan, args[1] )
 			
-			--print( "[ResourceX] Client accepted '" .. args[1] .. "'" )
+			--DebugPrint( "[ResourceX] Client accepted '" .. args[1] .. "'" )
 		end
+	end )
+	
+	concommand.Add( "resourcex_skipfile", function( ply, cmd, args )
+		if ( !ValidEntity( ply ) ) then return end
+	
+		local netchan = CNetChan( ply:EntIndex() )
+		
+		if ( !netchan ) then return end
+
+		CheckPendingQueue( netchan )
 	end )
 	
 	-- Resource hacks
@@ -236,13 +295,13 @@ if SERVER then
 				if ( !ValidTransferFile( name ) ) then
 					table.insert( TRANSFER_QUEUE, { name = name, display = display } )
 					
-					print( "[ResourceX] Added '" .. name .. "' to resource queue" )
+					DebugPrint( "[ResourceX] Added '" .. name .. "' to resource queue" )
 				end
 			else
-				print( "[ResourceX] File '" .. name .. "' doesn't exist" )
+				DebugPrint( "[ResourceX] File '" .. name .. "' doesn't exist" )
 			end
 		else
-			print( "[ResourceX] File '" .. name .. "' exceeds net_maxfilesize" )
+			DebugPrint( "[ResourceX] File '" .. name .. "' exceeds net_maxfilesize" )
 		end
 	end
 
@@ -265,9 +324,6 @@ if SERVER then
 		resourcex.AddSingleFile( name, display )
 	end
 else
-
-	print( "whoopsie" )
-	
 	-- Resource hacks
 
 	-- Models
@@ -299,7 +355,7 @@ else
 		
 		if ( !mdl ) then return end
 
-		print( "[ResourceX] Setting " .. tostring(ent) .. "'s model to '" .. mdl .. "'" )
+		DebugPrint( "[ResourceX] Setting " .. tostring(ent) .. "'s model to '" .. mdl .. "'" )
 		
 		ent:SetModel( mdl )
 	end )
@@ -576,7 +632,7 @@ else
 		
 		for k, v in pairs( TRANSFER_QUEUE ) do
 			if ( v.name == name ) then
-				print( "[ResourceX] Downloading " .. v.name )
+				DebugPrint( "[ResourceX] Downloading " .. v.name )
 				
 				v.start_time = CurTime()
 				
@@ -592,7 +648,7 @@ else
 
 		for k, v in pairs( TRANSFER_QUEUE ) do
 			if ( v.name == name ) then
-				print( "[ResourceX] Downloaded " .. v.name .. " after " .. math.floor( CurTime() - v.start_time ) .. " seconds" )
+				DebugPrint( "[ResourceX] Downloaded " .. v.name .. " after " .. math.floor( CurTime() - v.start_time ) .. " seconds" )
 
 				if ( v.display ) then
 					UpdatePackageDownloadStatus( v.id, v.name, 255, "success", 0 )
@@ -631,12 +687,14 @@ else
 			TRANSFER_ID = TRANSFER_ID + 1
 
 			table.insert( TRANSFER_QUEUE, { id = TRANSFER_ID, name = name, display = display } )
+		else
+			RunConsoleCommand( "resourcex_skipfile" )
 		end
 	end )
 	
 	hook.Add( "InitPostEntity", "ClientReady", function()
 		timer.Create( "LocalPlayerRequestFileTimer", 20, 0, function()
 			RunConsoleCommand( "resourcex_requestfiles" )
-		end)
+		end )
 	end )
 end

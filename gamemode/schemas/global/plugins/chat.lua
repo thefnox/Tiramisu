@@ -2,14 +2,10 @@ PLUGIN.Name = "Chat Commands"; -- What is the plugin name
 PLUGIN.Author = "LuaBanana"; -- Author of the plugin
 PLUGIN.Description = "A set of default chat commands"; -- The description or purpose of the plugin
 
-function CAKE.AddRadioLine( ply, text, color )
-	umsg.Start( "AddRadioLine", ply )
-		umsg.String( text )
-		umsg.Short( color.r )
-		umsg.Short( color.b )
-		umsg.Short( color.g )
-	umsg.End()
-	CAKE.SendConsole( ply, text )
+function CAKE.AddRadioLine( ply, text )
+	datastream.StreamToClients( ply, "TiramisuAddToRadio", {
+		["text"] = text,
+	})
 end
 
 local function ccChangeOOCColor( ply, cmd, args )
@@ -128,13 +124,13 @@ end
 local function Broadcast( ply, text )
 
 	-- Check to see if the player's team allows broadcasting
-	local team = CAKE.GetCharField( ply, "group" )
+	local group = CAKE.GetCharField( ply, "group" )
 	
-	if( CAKE.GetGroupFlag( team, "canbroadcast" ) ) then
+	if( CAKE.GetGroupFlag( group, "canbroadcast" ) ) then
 		
 		for k, v in pairs( player.GetAll( ) ) do
 		
-			CAKE.SendChat( v, "[BROADCAST]: " .. text, "ChatFont", "IC" );
+			CAKE.SendChat( v, "[BROADCAST]: " .. text, "BudgetLabel", "IC" );
 			
 		end
 	
@@ -242,24 +238,25 @@ local function Radio( ply, text )
 	local players = player.GetAll();
 	local heardit = {};
 	local group = CAKE.GetCharField( ply, "group" )
+	local color = CAKE.GetGroupField( group, "radiocolor" ) or Color( 255, 255, 255 )
 
 	if !ply:IsCharLoaded() then return ""; end
-	if !CAKE.GroupExists( name ) then return ""; end
+	if !CAKE.GroupExists( group ) then return ""; end
 
-	if(group != 0) then
-		for k2, v2 in pairs(player.GetAll()) do
-			if v2:IsCharLoaded() then
-				if( CAKE.GetCharField( v2, "group" ) == group or CAKE.GetGroupFlag( CAKE.GetCharField( v2, "group" ), "radiogroup" ) == CAKE.GetGroupFlag( group, "radiogroup" ) ) then
-					/*
-					if v2 != ply then
-						CAKE.AddRadioLine( v2, "[RADIO] " .. ply:Nick() .. ": " .. text, CAKE.GetGroupFlag( group, "radiocolor" ) or Color( 255, 255, 255 ) );
+	for _, target in pairs(player.GetAll()) do
+		if target:IsCharLoaded() then
+			if( CAKE.GetCharField( target, "group" ) == group ) then
+				/*
+				if v2 != ply then
+					CAKE.AddRadioLine( v2, "[RADIO] " .. ply:Nick() .. ": " .. text, CAKE.GetGroupFlag( group, "radiocolor" ) or Color( 255, 255, 255 ) );
 					else
-						CAKE.AddRadioLine( v2, "[RADIO] " .. ply:Nick() .. ": " .. text, Color( 255, 0, 0 ) );
+					CAKE.AddRadioLine( v2, "[RADIO] " .. ply:Nick() .. ": " .. text, Color( 255, 0, 0 ) );
 						
 					end*/
-					CAKE.AddRadioLine( v2, "[RADIO] " .. ply:Nick() .. ": " .. text, CAKE.GetGroupFlag( group, "radiocolor" ) or Color( 255, 255, 255 ) );
-					table.insert(heardit, v2);
-				end
+				datastream.StreamToClients( target, "TiramisuAddToRadio", {
+					["text"] = "<color=white>[RADIO]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.b ) .. "," .. tostring( color.g ) .. ">" .. ply:Nick() .. "</color><color=white>: " .. text .. "</color>" 
+				})
+				table.insert(heardit, target);
 			end
 		end
 	end
@@ -298,7 +295,7 @@ local function Yell( ply, text )
 	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "YellRange" ] )
 	for k, v in pairs( players ) do
 		if v:IsPlayer() then
-			CAKE.SendChat( v, "[YELL]" .. ply:Nick() .. ": " .. text, "Trebuchet24", "IC" )
+			CAKE.SendChat( v, "[YELL]" .. ply:Nick() .. ": " .. text, "TiramisuYellFont", "IC" )
 		end
 	end
 	return "";
@@ -308,7 +305,7 @@ local function Whisper( ply, text )
 	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "WhisperRange" ] )
 	for k, v in pairs( players ) do
 		if v:IsPlayer() then
-			CAKE.SendChat( v, "[WHISPER]" ..  ply:Nick() .. ": " .. text, "DefaultSmallDropShadow", "IC" )
+			CAKE.SendChat( v, "[WHISPER]" ..  ply:Nick() .. ": " .. text, "TiramisuWhisperFont", "IC" )
 		end
 	end
 	return "";
@@ -354,6 +351,7 @@ function PLUGIN.Init( ) -- We run this in init, because this is called after the
 	CAKE.ChatCommand( "/event", Event );	-- Advertisements
 	CAKE.ChatCommand( "/bc", Broadcast ); -- Broadcast
 	CAKE.ChatCommand( "/r", Radio ); -- Radio
+	CAKE.ChatCommand( "/radio", Radio );
 	CAKE.ChatCommand( "/removehelmet", RemoveHelmet );
 	CAKE.ChatCommand( "/pm", PersonalMessage );
 	CAKE.ChatCommand( "/title", Title );

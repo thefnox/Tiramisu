@@ -92,7 +92,7 @@ function CreateCharList( )
 
 				local plist = vgui.Create("DPanelList");
 				plist:SetAutoSize( false )
-				plist:SetSize( 200, 75 )
+				plist:SetSize( 200, 85 )
 
 				local ccategory = vgui.Create("DCollapsibleCategory")
 				ccategory:SetExpanded( 1 )
@@ -109,7 +109,8 @@ function CreateCharList( )
 
 				local title = vgui.Create("MarkupLabel");
 				title:SetText(v['title'])
-				title:SetSize( 135, 30 )
+				title:SetMaxWidth( 100 )
+				title:SetSize( 110, 64 )
 				plist2:AddItem(title)
 
 				local selectchar = vgui.Create( "DButton" )

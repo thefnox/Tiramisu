@@ -279,14 +279,15 @@ function CAKE.SendClothingToClient( ply )
 	if ply.Clothing then
 		umsg.Start( "clearclothing", ply )
 		umsg.End()
-
-		for k, v in pairs( ply.Clothing ) do
-			if ValidEntity( v ) then
-				umsg.Start( "addclothing", ply )
-					umsg.Short( v:EntIndex() )
-				umsg.End()
+		timer.Simple( 2, function()
+			for k, v in pairs( ply.Clothing ) do
+				if ValidEntity( v ) then
+					umsg.Start( "addclothing", ply )
+						umsg.Short( v:EntIndex() )
+					umsg.End()
+				end
 			end
-		end
+		end)
 	end
 
 end

@@ -14,6 +14,8 @@ LocalPlayer( ).MyModel = "" -- Has to be blank for the initial value, so it will
 surface.CreateFont(CAKE.MenuFont, 32, 500, true, false, "TiramisuTitlesFont", false, true)
 surface.CreateFont(CAKE.MenuFont, 18, 500, true, false, "TiramisuTimeFont")
 surface.CreateFont(CAKE.MenuFont, 12, 400, true, false, "TiramisuTabsFont", true )
+surface.CreateFont("DefaultSmallDropShadow", ScreenScale(5), 500, true, false, "TiramisuWhisperFont", true )
+surface.CreateFont("Trebuchet18", ScreenScale(8), 500, true, false, "TiramisuYellFont", true )
 
 local function DrawTime( )
 
@@ -100,7 +102,7 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 	    for k, v in pairs( closeents ) do
 	    	if ValidEntity( v ) then
 		        if v:IsPlayer() and LocalPlayer() != v and v:Alive() and !v:GetNWBool( "observe" ) and !v:GetNWBool( "unconciousmode", false ) then
-		        	mlabel = markup.Parse( "<font=TiramisuTitlesFont>" .. v:Nick() .. "\n" .. v:GetNWString( "title", "Connecting..." ) .. "</font>", 550 )
+		        	mlabel = markup.Parse( "<font=TiramisuTitlesFont>\n" .. v:GetNWString( "title", "Connecting..." ) .. "</font>", 550 )
 		            position = v:GetPos()
 		            if v:GetBonePosition( v:LookupBone("ValveBiped.Bip01_Head1") ) then
 		                position = v:GetBonePosition( v:LookupBone("ValveBiped.Bip01_Head1") )
@@ -114,13 +116,17 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 		            
 		            position = position - angle:Right() * 16
 		            cam.Start3D2D( position, angle, 0.12 )
-		                mlabel:Draw( 0, 0, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 230 )
+		            	draw.DrawText( v:Nick(), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+		                mlabel:Draw( 0, 0, TEXT_ALIGN_CENTER )
 		            cam.End3D2D()
+
 		            angle:RotateAroundAxis( angle:Forward(), 180 )
 		            angle:RotateAroundAxis( angle:Up(), 180 )
 		            cam.Start3D2D( position, angle, 0.12 )
-		                mlabel:Draw( 0, 0, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 230 )
+		            	draw.DrawText( v:Nick(), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+		                mlabel:Draw( 0, 0, TEXT_ALIGN_CENTER )
 		            cam.End3D2D()
+
 		        elseif CAKE.IsDoor( v ) and CAKE.GetDoorTitle( v ) != "" then
 		      	  	position = v:LocalToWorld(v:OBBCenter())
 				    angle = v:GetAngles()

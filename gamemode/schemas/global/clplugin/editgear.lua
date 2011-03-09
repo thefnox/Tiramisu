@@ -41,11 +41,10 @@ local function HandleGearEditing( entity, bone, item )
 			frame = nil
 		end
 
-		local frame = vgui.Create( "DFrameTransparent" )
+		local frame = vgui.Create( "DFrameTransparent", PlayerMenu )
 		frame:SetSize( 360, 423 )
 		frame:Center()
 		frame:SetTitle( "Choose the item you want to use for your gear" )
-		frame:MakePopup()
 
 		local panel = vgui.Create( "DPanelList", frame )
 		panel:SetSize( 350, 390 )
@@ -244,7 +243,6 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin )
 		EditorFrame:SetVisible( true )
 		EditorFrame:SetDraggable( true ) -- Draggable by mouse?
 		EditorFrame:ShowCloseButton( true ) -- Show the close button?
-		EditorFrame:MakePopup() -- Show the frame
 
 		local PropertySheet = vgui.Create( "DPropertySheet" )
 		PropertySheet:SetParent( EditorFrame )
@@ -545,7 +543,6 @@ usermessage.Hook( "editgear", function( um )
 	RefreshGearTree()
 
 end)
-
 
 function CLPLUGIN.Init()
 
