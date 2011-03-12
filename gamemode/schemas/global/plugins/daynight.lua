@@ -20,7 +20,7 @@ local LIGHT_LOW		= string.byte( 'b' );
 local LIGHT_HIGH	= string.byte( 'z' );
 
 // convars.
-daylight.dayspeed = CreateConVar( 'daytime_speed', '30', { FCVAR_REPLICATED , FCVAR_ARCHIVE , FCVAR_NOTIFY } );
+daylight.dayspeed = CreateConVar( 'rp_daytime_speed', '30', { FCVAR_REPLICATED , FCVAR_ARCHIVE , FCVAR_NOTIFY } );
 
 
 // precache sounds.

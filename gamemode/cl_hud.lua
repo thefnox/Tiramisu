@@ -15,7 +15,7 @@ surface.CreateFont(CAKE.MenuFont, 32, 500, true, false, "TiramisuTitlesFont", fa
 surface.CreateFont(CAKE.MenuFont, 18, 500, true, false, "TiramisuTimeFont")
 surface.CreateFont(CAKE.MenuFont, 12, 400, true, false, "TiramisuTabsFont", true )
 surface.CreateFont("DefaultSmallDropShadow", ScreenScale(5), 500, true, false, "TiramisuWhisperFont", true )
-surface.CreateFont("Trebuchet18", ScreenScale(8), 500, true, false, "TiramisuYellFont", true )
+surface.CreateFont("Trebuchet18", ScreenScale(10), 700, true, false, "TiramisuYellFont", true )
 
 local function DrawTime( )
 
@@ -116,14 +116,14 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 		            
 		            position = position - angle:Right() * 16
 		            cam.Start3D2D( position, angle, 0.12 )
-		            	draw.DrawText( v:Nick(), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+		            	draw.DrawText( v:Nick(), "TiramisuTitlesFont", 0, -30, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 		                mlabel:Draw( 0, 0, TEXT_ALIGN_CENTER )
 		            cam.End3D2D()
 
 		            angle:RotateAroundAxis( angle:Forward(), 180 )
 		            angle:RotateAroundAxis( angle:Up(), 180 )
 		            cam.Start3D2D( position, angle, 0.12 )
-		            	draw.DrawText( v:Nick(), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+		            	draw.DrawText( v:Nick(), "TiramisuTitlesFont", 0, -30, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 		                mlabel:Draw( 0, 0, TEXT_ALIGN_CENTER )
 		            cam.End3D2D()
 

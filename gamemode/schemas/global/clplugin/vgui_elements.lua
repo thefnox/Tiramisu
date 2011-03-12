@@ -181,12 +181,8 @@ function PANEL:Paint()
 
     surface.SetDrawColor( 50, 50, 50, 80 ) 
 
-    for i = 1, y + 5 do
-        surface.DrawLine( 0, ( i * 5 ) + 23, (y * 5) - (i * 5), self:GetTall() + 23 )
-    end
-
-    for i = 0, x + 5 do
-        surface.DrawLine( i * 5 , 23, self:GetWide(), ( x * 5 ) - ( i * 5 ) + 23 )
+    for i = 1, self:GetWide() / 5 * 2  do
+        surface.DrawLine( ( i * 5 ), 23, 0, ( i * 5 ) + 23 )
     end
 
     // and some gradient shit for additional overkill
@@ -579,11 +575,26 @@ function PANEL:SetMaxWidth( w )
 
 end
 
+function PANEL:SetMaxHeight( h )
+
+    self.MaxHeight = tonumber( h ) or self.MaxHeight
+    self:SetText( self.Text )
+
+end
+
+function PANEL:SetMaxSize( w, h )
+
+    self.MaxWidth = tonumber(w) or self.MaxWidth
+    self.MaxHeight = tonumber( h ) or self.MaxHeight
+    self:SetText( self.Text )
+
+end
+
 function PANEL:SetText( s )
 
     self.Text = s
     self.Str = markup.Parse(tostring(s), self.MaxWidth or self:GetSize() )
-    self:SetSize( self.MaxWidth or self:GetSize(), self.Str:GetHeight() + 2 )
+    self:SetSize( self.MaxWidth or self:GetSize(), ( self.MaxHeight or self.Str:GetHeight() ) + 2 )
 
 end
 

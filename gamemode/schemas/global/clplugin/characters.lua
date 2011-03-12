@@ -92,7 +92,7 @@ function CreateCharList( )
 
 				local plist = vgui.Create("DPanelList");
 				plist:SetAutoSize( false )
-				plist:SetSize( 200, 85 )
+				plist:SetSize( 185, 85 )
 
 				local ccategory = vgui.Create("DCollapsibleCategory")
 				ccategory:SetExpanded( 1 )
@@ -109,26 +109,31 @@ function CreateCharList( )
 
 				local title = vgui.Create("MarkupLabel");
 				title:SetText(v['title'])
-				title:SetMaxWidth( 100 )
-				title:SetSize( 110, 64 )
+				title:SetMaxSize( 100, 58 )
 				plist2:AddItem(title)
 
+				local plist3 = vgui.Create( "DPanelList" )
+				plist3:SetSpacing( 5 )
+				plist3:SetPadding( 3 )
+				plist3:EnableHorizontal( true )
+				plist3:SetAutoSize( true )
+
 				local selectchar = vgui.Create( "DButton" )
-				selectchar:SetSize( 61, 20 )
+				selectchar:SetSize( 100, 20 )
 				selectchar:SetText( "Select" )
 				selectchar.DoClick = function()
 					LocalPlayer():ConCommand("rp_selectchar " .. tostring( k ))
 					CAKE.SelectedChar = k
 				end
-				plist2:AddItem( selectchar )
+				plist3:AddItem( selectchar )
 
 				local deletechar = vgui.Create( "DButton" )
-				deletechar:SetSize( 61, 20 )
+				deletechar:SetSize( 100, 20 )
 				deletechar:SetText( "Delete")
 				deletechar.DoClick = function()
 					LocalPlayer():ConCommand("rp_confirmremoval " .. tostring( k ))
 				end
-				plist2:AddItem( deletechar )
+				plist3:AddItem( deletechar )
 
 				local divider = vgui.Create("DHorizontalDivider");
 				divider:SetLeft(spawnicon);
@@ -136,9 +141,16 @@ function CreateCharList( )
 				divider:SetLeftWidth(64);
 				divider:SetHeight(64);
 
+				local vdivider = vgui.Create("DVerticalDivider");
+				vdivider:SetTop(divider);
+				vdivider:SetBottom(plist3);
+				vdivider:SetTopHeight(68);
+
 				plist:AddItem(spawnicon);
+				plist:AddItem(plist3)
 				plist:AddItem(plist2);
 				plist:AddItem(divider);
+				plist:AddItem(vdivider);
 
 				ccategory:SetContents(plist);
 				charpanel:AddItem(ccategory)

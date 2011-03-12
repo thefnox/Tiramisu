@@ -7,6 +7,7 @@ datastream.Hook( "TiramisuAddToChat", function( handler, id, encoded, decoded )
     else
         CAKE.Chatbox:AddLine(  "<font=" .. decoded.font .. ">" .. decoded.text .. "</font>", decoded.channel )
     end
+    print( decoded.text )
 end)
 
 /*
@@ -249,19 +250,15 @@ function PANEL:Paint()
     surface.SetDrawColor( color.r, color.g, color.b, self.Alpha or 0 ) 
     surface.DrawRect( x, y, ScrW(), ScrH() ) 
 
+    surface.SetDrawColor( 50, 50, 50, math.Clamp( self.Alpha or 0 - 50, 0, 255 ) ) 
+
+    for i = 1, self:GetWide() / 5 * 2  do
+        surface.DrawLine( ( i * 5 ), 0, 0, ( i * 5 ) )
+    end
+
     // Pretentious line bullshit :P
     x = math.floor( self:GetWide() / 5 )
     y = math.floor( self:GetTall() / 5 )
-
-    surface.SetDrawColor( 50, 50, 50, math.Clamp( self.Alpha or 0 - 50, 0, 255 ) ) 
-
-    for i = 1, y + 5 do
-        surface.DrawLine( 0, ( i * 5 ), (y * 5) - (i * 5), self:GetTall() + 23 )
-    end
-
-    for i = 0, x + 5 do
-        surface.DrawLine( i * 5 , 0, self:GetWide(), ( x * 5 ) - ( i * 5 ) + 23 )
-    end
 
     // and some gradient shit for additional overkill
 
