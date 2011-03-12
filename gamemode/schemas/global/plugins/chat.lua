@@ -15,6 +15,22 @@ local function ccChangeOOCColor( ply, cmd, args )
 end
 concommand.Add( "rp_ooccolor", ccChangeOOCColor )
 
+function CAKE.ICAdd( ply, text )
+
+	local range = CAKE.ConVars[ "TalkRange" ]
+		
+	for _, pl in pairs( player.GetAll( ) ) do
+		
+		if( pl:EyePos( ):Distance( ply:EyePos( ) ) <= range ) then
+			
+			CAKE.SendChat( pl, text, "ChatFont", "IC" );
+			
+		end
+		
+	end
+
+end
+
 function CAKE.OOCAdd( ply, text )
 
 	if( ply.LastOOC + CAKE.ConVars[ "OOCDelay" ] < CurTime() or CAKE.PlayerRank(ply) > 2 ) then

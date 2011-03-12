@@ -184,8 +184,8 @@ Anims.Male[ "smg" ] = {
                 },
         [ "aim" ] = {
                 [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_IDLE_ANGRY_SMG1",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_RIFLE",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN_RIFLE"
+                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_AIM_RIFLE",
+                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN_AIM_RIFLE"
         },
 		[ "fire" ] = "ACT_GESTURE_RANGE_ATTACK_SMG1",
         [ "reload" ] = "ACT_GESTURE_RELOAD_SMG1"

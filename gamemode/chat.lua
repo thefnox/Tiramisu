@@ -131,18 +131,8 @@ datastream.Hook( "TiramisuChatHandling", function( ply, handler, id, encoded, de
 	else
 	
 		-- Hurr, IC Chat..
-		
-		local range = CAKE.ConVars[ "TalkRange" ]
-		
-		for _, pl in pairs( player.GetAll( ) ) do
-		
-			if( pl:EyePos( ):Distance( ply:EyePos( ) ) <= range ) then
-			
-				CAKE.SendChat( pl, ply:Nick() .. ": " .. text, "ChatFont", "IC" );
-			
-			end
-		
-		end
+
+		CAKE.ICAdd( ply, ply:Nick() .. ": " .. text )
 		
 		return "";
 		
