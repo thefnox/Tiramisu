@@ -344,14 +344,14 @@ concommand.Add( "rp_givemoney", ccGiveMoney );
 
 function ccOpenChat( ply, cmd, args )
 
-	ply:SetNWInt( "chatopen", 1 )
+	ply:SetNWBool( "chatopen", true )
 	
 end
 concommand.Add( "rp_openedchat", ccOpenChat );
 
 function ccCloseChat( ply, cmd, args )
 
-	ply:SetNWInt( "chatopen", 0 )
+	ply:SetNWBool( "chatopen", false )
 	
 end
 concommand.Add( "rp_closedchat", ccCloseChat );

@@ -136,7 +136,7 @@ end
 
 function PANEL:AddLine( text, channel )
 
-    local label = MarkupLabel( text, self.Width - 10 )
+    local label = MarkupLabel( text, self.Width - 20 )
     local number = #self.Lines + 1
     self.Lines[ number ] = {}
     self.Lines[ number ][ "panel" ] = label
@@ -334,14 +334,6 @@ end)
 
 CAKE.Chatbox = vgui.Create( "TiramisuChatBox" )
 CAKE.Chatbox:Init()
-
-usermessage.Hook( "tiramisuaddtochat", function( um )
-    local string = um:ReadString()
-    local font = um:ReadString()
-    if CAKE.Chatbox then
-        CAKE.Chatbox:AddLine(  "<color=135,209,255,255><font=" .. font .. ">" .. string .. "</font></color>" )
-    end
-end)
 
 function CLPLUGIN.Init()
 

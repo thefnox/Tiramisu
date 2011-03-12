@@ -123,7 +123,7 @@ function GM:PlayerInitialSpawn( ply )
 	
 	-- Set some default variables
 	ply.Ready = false;
-	ply:SetNWInt( "chatopen", 0 );
+	ply:SetNWBool( "chatopen", false );
 	ply:SetModel( "models/kleiner.mdl" )
 	ply:ChangeMaxHealth(CAKE.ConVars[ "DefaultHealth" ]);
 	ply:ChangeMaxArmor(0);

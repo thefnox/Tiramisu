@@ -26,23 +26,12 @@ function CAKE.OOCAdd( ply, text )
 		else
 			text = string.sub( text, 3 )
 		end
-		
-		/*
-		umsg.Start("AddOOCLine")
-			umsg.String( tostring( text ) )
-			umsg.String( tostring( playername ) )
-			umsg.Vector( Vector( color.r, color.b, color.g ) )
-			umsg.Float( color.a )
-		umsg.End()*/
 
-		CAKE.SendChat( ply, "<color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">" .. playername .. "</color><color=white> :" .. text .. "</color>", "ChatFont", "OOC" )
-		
-		/*
-		datastream.StreamToClients( player.GetAll( ), "AddOOCLine", {
-			[ "text" ] = tostring( text ),
-			[ "playername" ] = tostring( playername ),
-			[ "color" ] = color
-		})*/
+		for _, target in pairs( player.GetAll( ) ) do
+			if ValidEntity( target ) then
+				CAKE.SendChat( target, "<color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">" .. playername .. "</color><color=white> :" .. text .. "</color>", "ChatFont", "OOC" )
+			end
+		end
 		
 		ply.LastOOC = CurTime();
 		

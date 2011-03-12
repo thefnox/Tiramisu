@@ -70,12 +70,8 @@ datastream.Hook( "TiramisuChatHandling", function( ply, handler, id, encoded, de
 	end
 	
 	if( string.sub( text, 1, 2) == "//" or string.sub( text, 1, 4) == "/ooc" ) then --OOC override, to add colors.
-		for _, target in pairs( player.GetAll( ) ) do
-			if ValidEntity( target ) then
-				CAKE.OOCAdd( ply, text )
-				return "";
-			end
-		end
+		CAKE.OOCAdd( ply, text )
+		return "";
 	end
 	
 	for prefix, cc in pairs( CAKE.ChatCommands ) do
