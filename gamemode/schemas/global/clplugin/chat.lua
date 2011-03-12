@@ -7,7 +7,10 @@ datastream.Hook( "TiramisuAddToChat", function( handler, id, encoded, decoded )
     else
         CAKE.Chatbox:AddLine(  "<font=" .. decoded.font .. ">" .. decoded.text .. "</font>", decoded.channel )
     end
-    print( decoded.text )
+
+    for i = 0, decoded.text:len() / 255 do
+        LocalPlayer():PrintMessage( HUD_PRINTCONSOLE, string.sub( decoded.text, i * 255 + 1, i * 255 + 255 ) .. "\n" )
+    end
 end)
 
 /*

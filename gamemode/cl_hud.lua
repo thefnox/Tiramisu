@@ -114,17 +114,17 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 		            angle:RotateAroundAxis( angle:Up(), 90 )
 		            angle:RotateAroundAxis( angle:Forward(), 90 )
 		            
-		            position = position - angle:Right() * 16
+		            position = position - angle:Right() * 19
 		            cam.Start3D2D( position, angle, 0.12 )
-		            	draw.DrawText( v:Nick(), "TiramisuTitlesFont", 0, -30, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
-		                mlabel:Draw( 0, 0, TEXT_ALIGN_CENTER )
+		            	draw.DrawText( v:Nick(), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+		                mlabel:Draw( 0, 30, TEXT_ALIGN_CENTER )
 		            cam.End3D2D()
 
 		            angle:RotateAroundAxis( angle:Forward(), 180 )
 		            angle:RotateAroundAxis( angle:Up(), 180 )
 		            cam.Start3D2D( position, angle, 0.12 )
-		            	draw.DrawText( v:Nick(), "TiramisuTitlesFont", 0, -30, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
-		                mlabel:Draw( 0, 0, TEXT_ALIGN_CENTER )
+		            	draw.DrawText( v:Nick(), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+		                mlabel:Draw( 0, 30, TEXT_ALIGN_CENTER )
 		            cam.End3D2D()
 
 		        elseif CAKE.IsDoor( v ) and CAKE.GetDoorTitle( v ) != "" then
