@@ -9,7 +9,7 @@ datastream.Hook( "TiramisuAddToChat", function( handler, id, encoded, decoded )
     end
 
     for i = 0, decoded.text:len() / 255 do
-        LocalPlayer():PrintMessage( HUD_PRINTCONSOLE, string.sub( decoded.text, i * 255 + 1, i * 255 + 255 ) .. "\n" )
+        chat.AddText(string.sub( decoded.text, i * 255 + 1, i * 255 + 255 ) )
     end
 end)
 
@@ -136,7 +136,7 @@ end
 
 function PANEL:AddLine( text, channel )
 
-    local label = MarkupLabel( text, self.Width - 20 )
+    local label = MarkupLabel( text, self.Width - 25 )
     local number = #self.Lines + 1
     self.Lines[ number ] = {}
     self.Lines[ number ][ "panel" ] = label
@@ -145,7 +145,7 @@ function PANEL:AddLine( text, channel )
 
     if channel then
         self:AddChannel( channel )
-        label = MarkupLabel( text, self.Width - 10 )
+        label = MarkupLabel( text, self.Width - 25 )
         local number = #self.Lines + 1
         self.Lines[ number ] = {}
         self.Lines[ number ][ "panel" ] = label
@@ -304,8 +304,12 @@ end
 vgui.Register( "TiramisuChatBox", PANEL, "DFrame")
 
 --I feel bad for borrowing this from achat, this is Averice's code, credits to him.
+local oldchat = chat.AddText
 function chat.AddText(...)
     if( CAKE.Chatbox ) then
+        local pass = {...}
+        local color = false;
+        local line = "";
         for k,v in pairs(pass) do
             if( type(v) == "table" && color ) then
                 pass[k] = "</color><color="..v.r..","..v.g..","..v.b..",255>";
@@ -320,7 +324,8 @@ function chat.AddText(...)
         for k,v in pairs(pass) do
             line = "<font=ChatFont>"..line .. v.."</font>" or "<font=ChatFont>"..v.."</font>";
         end
-       	CAKE.Chatbox:AddLine( line )
+        oldchat(...)
+       	--CAKE.Chatbox:AddLine( line )
     end
 end
 
@@ -332,8 +337,12 @@ hook.Add("PlayerBindPress", "TiramisuChatOverride", function(ply, bind, pressed)
     end
 end)
 
-CAKE.Chatbox = vgui.Create( "TiramisuChatBox" )
-CAKE.Chatbox:Init()
+hook.Add( "InitPostEntity", "TiramisuChatInitialize", function()
+    gamemode.Call( "StartChat" )
+    gamemode.Call( "FinishChat" )
+    CAKE.Chatbox = vgui.Create( "TiramisuChatBox" )
+    CAKE.Chatbox:Init()
+end)
 
 function CLPLUGIN.Init()
 

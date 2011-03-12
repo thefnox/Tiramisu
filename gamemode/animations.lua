@@ -34,6 +34,7 @@ if SERVER then
 
 	--Weapons that are never aimed
 	NeverAimed = {
+                "hands"
 	}
 	
 	function meta:SetAiming( bool )
@@ -821,12 +822,12 @@ function GM:HandlePlayerDriving( ply ) --Handles sequences while in vehicles.
 	local class
  
         if ply:InVehicle() then
-			vehicle = ply:GetVehicle()
-            class = vehicle:GetClass()
-			if ( class == "prop_vehicle_prisoner_pod" and vehicle:GetModel() == "models/vehicles/prisoner_pod_inner.mdl" ) then
-					ply.CalcIdeal = HandleSequence( ply, "ACT_IDLE" )
+                vehicle = ply:GetVehicle()
+                class = vehicle:GetClass()
+	if ( class == "prop_vehicle_prisoner_pod" and vehicle:GetModel() == "models/vehicles/prisoner_pod_inner.mdl" ) then
+			ply.CalcIdeal = HandleSequence( ply, "ACT_IDLE" )
             else
-					ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "sit" ] )
+			ply.CalcIdeal = HandleSequence( ply, "&switch:models/Tiramisu/AnimationTrees/playeranimtree.mdl;ACT_DRIVE_JEEP" )
             end
 
             return true

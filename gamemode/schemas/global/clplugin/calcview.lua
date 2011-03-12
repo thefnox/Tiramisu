@@ -65,23 +65,31 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 		end
 					
 		if( ply:GetNWBool( "aiming", false ) ) then
-            tracedata.start = pos
-            tracedata.endpos = pos - ( angles:Forward() * CAKE.ThirdpersonDistance:GetInt() ) + ( angles:Right()* 30 )
-            tracedata.filter = ignoreent
-            trace = util.TraceLine(tracedata)
-            
-            pos = newpos
-			newpos = LerpVector( 0.3, pos, trace.HitPos )
+			if !LocalPlayer():InVehicle() then
+	            tracedata.start = pos
+	            tracedata.endpos = pos - ( angles:Forward() * CAKE.ThirdpersonDistance:GetInt() ) + ( angles:Right()* 30 )
+	            tracedata.filter = ignoreent
+	            trace = util.TraceLine(tracedata)
+	            
+	            pos = newpos
+				newpos = LerpVector( 0.3, pos, trace.HitPos )
+			else
+				newpos = LocalPlayer():EyePos()
+			end
 
 			return GAMEMODE:CalcView(ply, newpos , angles ,fov)
 		else
-            tracedata.start = pos
-            tracedata.endpos = pos - ( angles:Forward() * CAKE.ThirdpersonDistance:GetInt() * 2 ) + ( angles:Up()* 20 )
-            tracedata.filter = ignoreent
-            trace = util.TraceLine(tracedata)
-            
-            pos = newpos
-			newpos = LerpVector( 0.3, pos, trace.HitPos )
+			if !LocalPlayer():InVehicle() then
+	            tracedata.start = pos
+	            tracedata.endpos = pos - ( angles:Forward() * CAKE.ThirdpersonDistance:GetInt() * 2 ) + ( angles:Up()* 20 )
+	            tracedata.filter = ignoreent
+	            trace = util.TraceLine(tracedata)
+	            
+	            pos = newpos
+				newpos = LerpVector( 0.3, pos, trace.HitPos )
+			else
+				newpos = LocalPlayer():EyePos()
+			end
 
 			return GAMEMODE:CalcView(ply, newpos , angles ,fov)
 

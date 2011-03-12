@@ -79,7 +79,7 @@ function GM:StartChat()
         return true -- That's what the chatbox is there for.
 end
 
-function GM:EndChat()
+function GM:FinishChat()
 end
 
 function GM:ChatTextChanged()
