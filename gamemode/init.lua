@@ -152,6 +152,9 @@ end
 
 function GM:PlayerSpawn( ply )
 
+	umsg.Start( "TiramisuInitChat", ply )
+	umsg.End()
+
 	if( !ply:IsCharLoaded() ) then
 		return; -- Player data isn't loaded. This is an initial spawn.
 	end

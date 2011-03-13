@@ -21,7 +21,7 @@ function CAKE.ICAdd( ply, text )
 		
 	for _, pl in pairs( player.GetAll( ) ) do
 		
-		if( pl:EyePos( ):Distance( ply:EyePos( ) ) <= range ) then
+		if( pl:EyePos( ):Distance( ply:EyePos( ) ) <= range ) and pl:IsCharLoaded() then
 			
 			CAKE.SendChat( pl, text, "ChatFont", "IC" );
 			
@@ -44,8 +44,12 @@ function CAKE.OOCAdd( ply, text )
 		end
 
 		for _, target in pairs( player.GetAll( ) ) do
-			if ValidEntity( target ) then
-				CAKE.SendChat( target, "<color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">" .. playername .. "</color><color=white> :" .. text .. "</color>", "ChatFont", "OOC" )
+			if ValidEntity( target ) and target:IsCharLoaded() then
+				datastream.StreamToClients( target, "TiramisuAddToOOC", {
+					["text"] = text,
+					["color"] = color,
+					["name"] = playername 
+				})
 			end
 		end
 		

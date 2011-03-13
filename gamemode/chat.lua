@@ -65,13 +65,13 @@ datastream.Hook( "TiramisuChatHandling", function( ply, handler, id, encoded, de
 	if( string.sub( text, 1, 1 ) == "!" ) then -- All rp_ commands can be executed with /
 	
 		ply:ConCommand("rp_" .. string.sub( text, 2, string.len(text) ));
-		return "";
+		return
 		
 	end
 	
 	if( string.sub( text, 1, 2) == "//" or string.sub( text, 1, 4) == "/ooc" ) then --OOC override, to add colors.
 		CAKE.OOCAdd( ply, text )
-		return "";
+		return
 	end
 	
 	for prefix, cc in pairs( CAKE.ChatCommands ) do
@@ -117,7 +117,7 @@ datastream.Hook( "TiramisuChatHandling", function( ply, handler, id, encoded, de
 			
 			end
 			
-			return "";
+			return
 			
 		end
 		
@@ -126,7 +126,7 @@ datastream.Hook( "TiramisuChatHandling", function( ply, handler, id, encoded, de
 	if( string.sub( text, 1, 1 ) == "/" ) then
 	
 		CAKE.SendChat( ply, "That is not a valid command" );
-		return "";
+		return
 	
 	else
 	
@@ -134,8 +134,12 @@ datastream.Hook( "TiramisuChatHandling", function( ply, handler, id, encoded, de
 
 		CAKE.ICAdd( ply, ply:Nick() .. ": " .. text )
 		
-		return "";
+		return
 		
 	end
 	
-end)	
+end)
+
+function GM:PlayerChat( ply, text )
+	return "";
+end

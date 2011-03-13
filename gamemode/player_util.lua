@@ -24,7 +24,9 @@ function CAKE.SendChat( ply, msg, font, channel )
 		umsg.End()*/
 		--CAKE.SendConsole( ply, msg )
 	else
-		print( msg )
+		for i = 0, msg:len() / 255 do
+			MsgN(string.sub( msg, i * 255 + 1, i * 255 + 255 ) )
+		end
 	end
 	
 end
