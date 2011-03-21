@@ -2,69 +2,59 @@ PLUGIN.Name = "Doorgroups"; -- What is the plugin name
 PLUGIN.Author = "Ryaga/BadassMC"; -- Author of the plugin
 PLUGIN.Description = "Handles doors"; -- The description or purpose of the plugin
 
-function GM:PlayerUse(ply, entity)
-
-	if(CAKE.IsDoor(entity)) then
-		local doorgroups = CAKE.GetDoorGroup(entity)
-		local groupdoor = CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or 0
-		for k, v in pairs(doorgroups) do
-			if( tonumber( CAKE.GetCharField( ply, "doorgroup" ) ) == tonumber( v ) or tonumber( groupdoor ) == tonumber( v ) ) then
+hook.Add( "KeyPress", "TiramisuHandleDoors", function( ply, key )
+	if( key == IN_USE ) then
+		local entity = ply:GetEyeTrace( ).Entity
+		if(CAKE.IsDoor(entity)) then
+			local doorgroup = CAKE.GetDoorGroup(entity) or 0
+			local groupdoor = CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or 0
+			if type( groupdoor ) == "table" then groupdoor = groupdoor[1] end
+			if doorgroup == groupdoor then --lol
 				entity:Fire( "open", "", 0 );
 			end
 		end
-	end
-	return self.BaseClass:PlayerUse(ply, entity);
-end
-
-local function usepressed(ply, key) --Override for City 8 doors.
-	if( key == IN_USE ) then
-		local trace = ply:GetEyeTrace( )
-		if( trace.HitNonWorld ) then
-			local entity = trace.Entity
-			if(CAKE.IsDoor(entity)) then
-				local doorgroups = CAKE.GetDoorGroup(entity)
-				local groupdoor = CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or 0
-				for k, v in pairs(doorgroups) do
-					if( tonumber( groupdoor ) == tonumber( v ) ) then
-						entity:Fire( "open", "", 0 );
-					end
-				end
-			end
-			if( entity:GetClass() == "item_prop" ) then
-				ply:ConCommand( "rp_pickup " .. tostring( entity:EntIndex() ) )
-			end
+		if( entity:GetClass() == "item_prop" ) then
+			ply:ConCommand( "rp_pickup " .. tostring( entity:EntIndex() ) )
 		end
 	end
-end
-hook.Add( "KeyPress", "usepressedoverride", usepressed )
+end)
 
-function Admin_SetDoorGroup( ply, cmd, args )
+function Admin_AddDoor(ply, cmd, args)
+	
+	local tr = ply:GetEyeTrace()
+	local trent = tr.Entity;
+	
+	if(!CAKE.IsDoor(trent)) then ply:PrintMessage(3, "You must be looking at a door!"); return; end
 
-	   if( #args != 2 ) then
-	   
-		   CAKE.SendChat( ply, "Invalid number of arguments! ( rp_admin setdoorgroup \"name\" doorgroup )" );
-		   return;
-		   
-	   end
-	   
-	   local plyname = args[ 1 ];
-	   local doorgroup = args[ 2 ];
-	   local pl = CAKE.FindPlayer( plyname );
-	   if( pl != nil and pl:IsValid( ) and pl:IsPlayer( ) ) then
-	   
-		   CAKE.SetCharField( pl, "doorgroup", doorgroup )
-		   CAKE.SendChat( pl, "Your doorgroup has been set to " .. tostring( doorgroup ) )
-	   
-	   else
-	   
-		   CAKE.SendChat( ply, "Cannot find " .. plyname .. "!" );
-		   
-	   end
+	if(table.getn(args) < 1) then ply:PrintMessage(3, "Specify a doorgroup!"); return; end
+	
+	local pos = trent:GetPos()
+	local Door = {}
+	Door["pos"] = trent:GetPos()
+	Door["class"] = trent:GetClass()
+	Door["title"] = args[2] or ""
+	Door["doorgroup"] = tonumber(args[1])
+	Door["building"] = tonumber(args[3])
+	Door["purchaseable"] = util.tobool( args[4] )
+
+	
+	table.insert(CAKE.Doors, Door);
+	
+	CAKE.SendChat(ply, "Door added");
+
+	trent.doorgroup = Door["doorgroup"]
+	trent.building = Door["building"]
+	trent.purchaseable = Door["purchaseable"]
+	trent.title = Door["title"]
+	CAKE.SetDoorTitle( trent, Door["title"] )
+	
+	local keys = glon.encode(CAKE.Doors);
+	file.Write(CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt", keys);
+	
 end
-CAKE.AdminCommand( "setdoorgroup", Admin_SetDoorGroup, "Set a players doorgroup", true, true, 3 );
 
 function PLUGIN.Init()
-	
-	CAKE.AddDataField( 2, "doorgroup", 0 );
+
+	CAKE.AdminCommand( "adddoor", Admin_AddDoor, "Add group permissions to a door", true, true, 4 );
 	
 end

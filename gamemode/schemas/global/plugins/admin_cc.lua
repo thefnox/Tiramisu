@@ -2,31 +2,6 @@ PLUGIN.Name = "Admin Commands"; -- What is the plugin name
 PLUGIN.Author = "LuaBanana"; -- Author of the plugin
 PLUGIN.Description = "A set of default admin commands"; -- The description or purpose of the plugin
 
-function Admin_AddDoor(ply, cmd, args)
-	
-	local tr = ply:GetEyeTrace()
-	local trent = tr.Entity;
-	
-	if(!CAKE.IsDoor(trent)) then ply:PrintMessage(3, "You must be looking at a door!"); return; end
-
-	if(table.getn(args) < 1) then ply:PrintMessage(3, "Specify a doorgroup!"); return; end
-	
-	local pos = trent:GetPos()
-	local Door = {}
-	Door["x"] = math.ceil(pos.x);
-	Door["y"] = math.ceil(pos.y);
-	Door["z"] = math.ceil(pos.z);
-	Door["group"] = args[1];
-	
-	table.insert(CAKE.Doors, Door);
-	
-	CAKE.SendChat(ply, "Door added");
-	
-	local keys = util.TableToKeyValues(CAKE.Doors);
-	file.Write(CAKE.Name .. "/MapData/" .. game.GetMap() .. ".txt", keys);
-	
-end
-
 -- rp_admin kick "name" "reason"
 function Admin_Kick( ply, cmd, args )
 
@@ -514,7 +489,6 @@ function PLUGIN.Init( )
 	CAKE.AdminCommand( "setconvar", Admin_SetConVar, "Set a Convar", true, true, 4 );
 	CAKE.AdminCommand( "listvars", Admin_ListVars, "List convars", true, true, 4 );
 	--CAKE.AdminCommand( "setflags", Admin_SetFlags, "Set a players flags", true, true, 3 );
-	CAKE.AdminCommand( "adddoor", Admin_AddDoor, "Add group permissions to a door", true, true, 4 );
 	CAKE.AdminCommand( "createitem", Admin_CreateItem, "Creates an item", true, true, 4 );
 	CAKE.AdminCommand( "setmoney", Admin_SetMoney, "Set the money of another player", true, true, 4 )
 	CAKE.AdminCommand( "addspawn", Admin_AddSpawn, "Add a new spawn point on your position.", true, true, 4 )

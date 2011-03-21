@@ -64,7 +64,14 @@ function CAKE.HandleGear( ply, item, bone, offset, angle, scale, skin )
 		ply.Gear[ id ] = ents.Create( "player_gear" )
 		ply.Gear[ id ].bone = bone
 		ply.Gear[ id ]:SetModel( model )
-		ply.Gear[ id ]:SetParent( ply )
+		if bonemerge then
+			ply.Gear[ id ]:SetParent( ply )
+		else
+			if ply.BonemergeGearEntity then
+				ply.Gear[ id ]:SetParent( ply.BonemergeGearEntity )
+			end
+		end
+		--ply.Gear[ id ]:SetParent( ply )
 		ply.Gear[ id ]:SetPos( ply:GetPos() )
 		ply.Gear[ id ]:SetAngles( ply:GetAngles() )
 		ply.Gear[ id ]:SetDTInt( 1, ply:LookupBone( CAKE.BoneShorttoFull( bone ) ) )
@@ -73,7 +80,7 @@ function CAKE.HandleGear( ply, item, bone, offset, angle, scale, skin )
 		ply.Gear[ id ]:SetDTVector( 1, offset )
 		ply.Gear[ id ]:SetDTVector( 2, scale )
 		ply.Gear[ id ]:SetDTBool( 1, true )
-		ply.Gear[ id ]:SetDTBool( 2, bonemerge )
+		ply.Gear[ id ]:SetDTBool( 2, true )
 		if ValidEntity( ply.Gear[ id ]:GetPhysicsObject( ) ) then
 			ply.Gear[ id ]:GetPhysicsObject( ):EnableCollisions( false )
 		end
@@ -109,7 +116,6 @@ function CAKE.RemoveAllGear( ply )
 	end
 		
 	ply.Gear = {}
-	CAKE.SaveGear( ply )
 
 end
 
@@ -123,6 +129,7 @@ function CAKE.RemoveGearItem( ply, item )
 			break
 		end
 	end
+	CAKE.SaveGear( ply )
 	
 end
 
@@ -274,8 +281,8 @@ end
 function CAKE.RestoreGear( ply )
 	
 	if ply:IsCharLoaded() then
-		CAKE.RemoveAllGear( ply )
 		local tbl = CAKE.GetCharField( ply, "gear" )
+		CAKE.RemoveAllGear( ply )
 		for k, v in pairs( tbl ) do
 			if ply.HasItem( v["item"] ) then
 				CAKE.HandleGear( ply, v[ "item" ], v[ "bone" ], v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )

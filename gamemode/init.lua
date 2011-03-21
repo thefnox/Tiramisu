@@ -78,8 +78,7 @@ function GM:Initialize( ) -- Initialize the gamemode
 	
 	CAKE.InitSpawns()
 	CAKE.InitStashes()
-	CAKE.InitTime();
-	CAKE.LoadDoors();
+	CAKE.InitTime()
 	
 	timer.Create( "timesave", 120, 0, CAKE.SaveTime );
 	timer.Create( "sendtime", 1, 0, CAKE.SendTime );
@@ -157,6 +156,16 @@ function GM:PlayerSpawn( ply )
 
 	if( !ply:IsCharLoaded() ) then
 		return; -- Player data isn't loaded. This is an initial spawn.
+	end
+
+	if !ply.BonemergeGearEntity or ply.BonemergeGearEntity:GetParent() != ply then
+		ply.BonemergeGearEntity = ents.Create( "prop_physics" )
+		ply.BonemergeGearEntity:SetPos( ply:GetPos() + Vector( 0, 0, 80 ) )
+		ply.BonemergeGearEntity:SetAngles( ply:GetAngles() )
+		ply.BonemergeGearEntity:SetModel("models/Tiramisu/Tools/blank_model.mdl")
+		ply.BonemergeGearEntity:SetParent( ply )
+		ply.BonemergeGearEntity:SetSolid( SOLID_NONE )
+		ply.BonemergeGearEntity:Spawn()
 	end
 	
 	CAKE.SpawnPointHandle(ply)

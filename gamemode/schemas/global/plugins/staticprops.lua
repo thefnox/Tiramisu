@@ -40,7 +40,7 @@ end
 
 function CAKE.CreatePermaProp( id )
 	if CAKE.PermaProps[ game.GetMap( ) ][ id ] then
-		local prop = ents.Create( "prop_physics" )
+		local prop = ents.Create( "prop_static" )
 		prop:SetModel( CAKE.PermaProps[ game.GetMap( ) ][ id ][ "model" ] )
 		prop:SetPos( CAKE.PermaProps[ game.GetMap( ) ][ id ][ "position" ] )
 		prop:SetAngles( CAKE.PermaProps[ game.GetMap( ) ][ id ][ "angles" ] )

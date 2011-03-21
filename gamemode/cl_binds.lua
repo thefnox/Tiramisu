@@ -34,18 +34,6 @@ function GM:PlayerBindPress( ply, bind, pressed )
 		if( bind == "+forward" or bind == "+back" or bind == "+moveleft" or bind == "+moveright" or bind == "+jump" or bind == "+duck" ) then return true; end -- Disable ALL movement keys.
 	
 	end
-	
-	if( bind == "+use" ) then
-	
-		local trent = LocalPlayer( ):GetEyeTrace( ).Entity;
-		
-		if( trent != nil and trent:IsValid( ) and CAKE.IsDoor( trent ) ) then
-		
-			LocalPlayer( ):ConCommand( "rp_opendoor" );
-			
-		end
-		
-	end
 
 end
 

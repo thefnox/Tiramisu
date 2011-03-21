@@ -80,7 +80,7 @@ function EditGear()
 	PlayerMenu:SetSize( ScrW(), ScrH() )
 	PlayerMenu:Center()
 	PlayerMenu:SetDraggable( false )
-	PlayerMenu:ShowCloseButton( false )
+	PlayerMenu:ShowCloseButton( true )
 	PlayerMenu:SetTitle( "" )
 	PlayerMenu.Paint = function()
 
@@ -194,17 +194,22 @@ function EditGear()
 	end
 	hlist:AddItem( button )
 
-	local GearList = vgui.Create( "DPanelList" )
+	GearList = vgui.Create( "DPanelList" )
 	GearList:SetSize( 300, 432 )
 	PropertySheet:AddSheet( "Gear/Accessories", GearList, "gui/silkicons/wrench", false, false, "Edit your gear" )
 
-	GearTree = vgui.Create( "DTree" )
-	GearTree:SetPadding( 5 )
-	GearTree:SetSize( 290, 412  )
-
 	function RefreshGearTree()
-		if GearTree then
+		if GearList then
+			if GearTree then
+				GearTree:Remove()
+				GearTree = nil
+
+			end
+			GearTree = vgui.Create( "DTree" )
+			GearTree:SetPadding( 5 )
+			GearTree:SetSize( 290, 412  )
 			GearTree:Clear( true )
+			GearTree:Rebuild()
 			local bones = GearTree:AddNode("Bones")
 			local node
 			local node2
@@ -223,12 +228,11 @@ function EditGear()
 					HandleGearEditing( false, string.lower( bone ) )
 				end
 			end
+			GearList:AddItem( GearTree )
 		end
 	end
 
 	RefreshGearTree()
-
-	GearList:AddItem( GearTree )
 
 end
 

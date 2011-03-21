@@ -23,8 +23,8 @@ function CAKE.CreateGroup( name, tbl )
 				CAKE.SaveGroupData( name )
 			else
 				timer.Destroy( name .. "GroupSaveTimer" )
+
 			end
-			CAKE.RemoveGroup( name )
 		end)
 		return true
 	else
@@ -54,7 +54,7 @@ end
 
 function CAKE.RemoveGroup( name )
 	if CAKE.GroupExists( name ) and CAKE.GetGroupField( name, "Type" ) == "public" then
-		if CAKE.GetGroupField( name, "Members" ) and #CAKE.GetGroupField( name, "Members" ) <= 0 then
+		if CAKE.GetGroupField( name, "Members" ) and 	table.Count(CAKE.GetGroupField( name, "Members" )) == 0 then
 			file.Delete( CAKE.Name .. "/GroupData/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( name ) .. ".txt" )
 			CAKE.Groups[name] = nil
 		end
@@ -416,6 +416,7 @@ concommand.Add( "rp_creategroup", function( ply, cmd, args)
 		CAKE.JoinGroup( ply, name )
 		CAKE.SetCharRank( ply, name, "owner" )
 		CAKE.SendGroupToClient( ply )
+		CAKE.SaveGroupData( name )
 	else
 		umsg.Start( "DenyGroupCreation", ply )
 			umsg.String( name )
@@ -507,7 +508,6 @@ function CAKE.SendGroupToClient( ply )
 			[ "Description" ] = ""
 		})
 	end
-	CAKE.SavePlayerData( ply )
 	ply:ClearBusiness( )
 	ply:RefreshBusiness( )
 
@@ -522,9 +522,9 @@ local function GroupSpawnHook( ply )
 			local rank = CAKE.GetCharField( ply, "grouprank" )
 			if CAKE.GroupExists( group ) then
 				if rank != CAKE.Groups[group]["Members"][CAKE.GetCharSignature(ply)][ "Rank" ] then
-					CAKE.SetCharRank( ply, group, CAKE.Groups[name]["Members"][CAKE.GetCharSignature(ply)][ "Rank" ] )
+					CAKE.SetCharRank( ply, group, CAKE.Groups[group]["Members"][CAKE.GetCharSignature(ply)][ "Rank" ] )
 				end
-				if group != "none" and !CAKE.GroupHasMember(group, ply) then
+				if !CAKE.GroupHasMember(group, ply) then
 					CAKE.LeaveGroup( ply )
 				end
 				timer.Create( ply:SteamID() .. "groupsendtimer", 10, 0, function()

@@ -102,7 +102,7 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 	    for k, v in pairs( closeents ) do
 	    	if ValidEntity( v ) then
 		        if v:IsPlayer() and LocalPlayer() != v and v:Alive() and !v:GetNWBool( "observe" ) and !v:GetNWBool( "unconciousmode", false ) then
-		        	mlabel = markup.Parse( "<font=TiramisuTitlesFont>\n" .. v:GetNWString( "title", "Connecting..." ) .. "</font>", 550 )
+		        	mlabel = markup.Parse( "<font=TiramisuTitlesFont>\n" .. v:GetNWString( "title", "Connecting..." ) .. "</font>", 570 )
 		            position = v:GetPos()
 		            if v:GetBonePosition( v:LookupBone("ValveBiped.Bip01_Head1") ) then
 		                position = v:GetBonePosition( v:LookupBone("ValveBiped.Bip01_Head1") )
@@ -114,7 +114,7 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 		            angle:RotateAroundAxis( angle:Up(), 90 )
 		            angle:RotateAroundAxis( angle:Forward(), 90 )
 		            
-		            position = position - angle:Right() * 22
+		            position = position - angle:Right() * 24
 		            cam.Start3D2D( position, angle, 0.12 )
 		            	if v:GetNWBool( "chatopen", false ) then
 		            		draw.DrawText( "Typing...", "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )

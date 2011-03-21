@@ -5,6 +5,14 @@ local lolpos
 
 function ENT:Draw()
 
+	if ValidEntity( self.Entity:GetParent() ) and ValidEntity( self.Entity:GetDTEntity( 1 ) ) then
+		local position, angles = self.Entity:GetDTEntity( 1 ):GetBonePosition(self.Entity:GetDTInt(1))
+		local newposition, newangles = LocalToWorld( self.Entity:GetDTVector(1), self.Entity:GetDTAngle(1), position, angles )
+		self.Entity:SetPos(newposition)
+		self.Entity:SetAngles(newangles)
+		self.Entity:SetModelScale( self.Entity:GetDTVector(2) )
+	end
+
 	if !self.Entity:GetDTInt(1) or !self.Entity:GetDTEntity( 1 ) then
 		--no shirt, no pants, no service
 		return
@@ -26,6 +34,8 @@ function ENT:Draw()
 	
 end
 
+/*
+
 function ENT:Think()
 	if ValidEntity( self.Entity:GetParent() ) and ValidEntity( self.Entity:GetDTEntity( 1 ) ) then
 		local position, angles = self.Entity:GetDTEntity( 1 ):GetBonePosition(self.Entity:GetDTInt(1))
@@ -34,7 +44,7 @@ function ENT:Think()
 		self.Entity:SetAngles(newangles)
 		self.Entity:SetModelScale( self.Entity:GetDTVector(2) )
 	end
-end
+end*/
 
 
 

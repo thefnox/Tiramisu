@@ -109,7 +109,7 @@ function CreateCharList( )
 
 				local title = vgui.Create("MarkupLabel");
 				title:SetText(v['title'])
-				title:SetMaxSize( 100, 58 )
+				title:SetMaxSize( 110, 58 )
 				plist2:AddItem(title)
 
 				local plist3 = vgui.Create( "DPanelList" )
@@ -119,7 +119,7 @@ function CreateCharList( )
 				plist3:SetAutoSize( true )
 
 				local selectchar = vgui.Create( "DButton" )
-				selectchar:SetSize( 100, 20 )
+				selectchar:SetSize( 90, 20 )
 				selectchar:SetText( "Select" )
 				selectchar.DoClick = function()
 					LocalPlayer():ConCommand("rp_selectchar " .. tostring( k ))
@@ -128,7 +128,7 @@ function CreateCharList( )
 				plist3:AddItem( selectchar )
 
 				local deletechar = vgui.Create( "DButton" )
-				deletechar:SetSize( 100, 20 )
+				deletechar:SetSize( 90, 20 )
 				deletechar:SetText( "Delete")
 				deletechar.DoClick = function()
 					LocalPlayer():ConCommand("rp_confirmremoval " .. tostring( k ))
