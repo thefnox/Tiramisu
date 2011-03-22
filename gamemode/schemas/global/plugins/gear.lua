@@ -102,8 +102,6 @@ function CAKE.RemoveGear( ply, id )
 		ply.Gear[ id ]:Remove()
 		ply.Gear[ id ] = nil
 	end
-
-	CAKE.SaveGear( ply )
 	
 end
 	
@@ -261,21 +259,26 @@ end
 
 function CAKE.SaveGear( ply )
 
+	local savedgear = {}
 	local tbl = {}
-	
-	for k, v in pairs( ply.Gear ) do
-		tbl[ k ] = {}
-		tbl[ k ][ "offset"] = v:GetDTVector( 1 )
-		tbl[ k ][ "angle" ] = v:GetDTAngle( 1 )
-		tbl[ k ][ "scale" ] = v:GetDTVector( 2 )
-		tbl[ k ][ "skin" ] = v:GetSkin()
-		tbl[ k ][ "item" ] = v.item
-		tbl[ k ][ "bone" ] = v.bone
+
+	if ply:IsCharLoaded() and ply.Gear then
+		for k, v in pairs( ply.Gear ) do
+			if ValidEntity( v ) then
+				tbl = {}
+				tbl["offset"] = v:GetDTVector(1)
+				tbl["item"] = v.item
+				tbl["bone"] = v.bone
+				tbl["scale"] = v:GetDTVector(2)
+				tbl["skin"] = v:GetSkin()
+				tbl["angle"] = v:GetDTAngle(1)
+				table.insert( savedgear, tbl )
+			end
+		end
 	end
-	
-	CAKE.SetCharField( ply, "gear", tbl )
-	
-	
+
+	CAKE.SetCharField( ply, "gear", savedgear )
+
 end
 
 function CAKE.RestoreGear( ply )
@@ -284,7 +287,7 @@ function CAKE.RestoreGear( ply )
 		local tbl = CAKE.GetCharField( ply, "gear" )
 		CAKE.RemoveAllGear( ply )
 		for k, v in pairs( tbl ) do
-			if ply.HasItem( v["item"] ) then
+			if ply:HasItem( v["item"] ) then
 				CAKE.HandleGear( ply, v[ "item" ], v[ "bone" ], v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )
 				timer.Simple( 1, function()
 					if resourcex and CAKE.ItemData[ v["item"] ].Content then
@@ -346,15 +349,8 @@ local function GearSpawnHook( ply )
 	timer.Create( ply:SteamID() .. "gunchecktimer", 0.1, 0, function()
 		ply:HideActiveWeapon()
 	end)
-	timer.Simple( 2, function()
+	timer.Simple( 2, function() 
 		CAKE.RestoreGear( ply )
 	end)
-
 end
 hook.Add( "PlayerSpawn", "TiramisuGearSpawnHook", GearSpawnHook )
-
-function PLUGIN.Init()
-	
-	CAKE.AddDataField( 2, "gear", {} ); --Whatever the fuck else you're wearing.
-	
-end

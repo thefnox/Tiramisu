@@ -23,3 +23,4 @@ CAKE.AddDataField( 2, "gender", "Male" ) -- MAN POWER
 CAKE.AddDataField( 2, "age", 30 ) --Can't think of any puns.
 CAKE.AddDataField( 2, "group", "None" )
 CAKE.AddDataField( 2, "grouprank", "None" )
+CAKE.AddDataField( 2, "gear", {} )

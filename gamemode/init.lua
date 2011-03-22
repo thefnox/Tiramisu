@@ -50,6 +50,7 @@ resource.AddFile( "models/Tiramisu/AnimationTrees/playeranimtree.mdl" )
 resource.AddFile( "models/Tiramisu/AnimationTrees/femaleanimtree.mdl" )
 resource.AddFile( "models/Tiramisu/AnimationTrees/policeanimtree.mdl" )
 resource.AddFile( "models/Tiramisu/AnimationTrees/barneyanimtree.mdl" )
+resource.AddFile( "models/Tiramisu/")
 resource.AddFile( "materials/tiramisu/tabbutton.vmt" )
 resource.AddFile( "resource/fonts/Harabara.ttf")
 
