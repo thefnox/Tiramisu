@@ -41,7 +41,7 @@ end
 
 function CAKE.GetDoorGroup( entity )
 
-	if entity.doorgroup then
+	if ValidEntity( entity ) and entity.doorgroup then
 		return entity.doorgroup
 	end
 

@@ -62,7 +62,7 @@ function CAKE.InitTime() -- Load the time from a text file or default value, thi
 		
 	else
 	
-		file.Write(CAKE.Name .. "/time.txt", "1 1 2011 1")
+		file.Write(CAKE.Name .. "/time.txt", clumpedtime )
 		
 	end
 
