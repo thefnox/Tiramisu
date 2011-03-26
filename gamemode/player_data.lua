@@ -42,8 +42,6 @@ end
 -- When fieldtype is 1, it adds it to the player table.
 -- When it is 2, it adds it to the character table.function CAKE.AddDataField( fieldtype, fieldname, default )
 function CAKE.AddDataField( fieldtype, fieldname, default )
-
-	local delay = 1
 	
 	if( fieldtype == 1 ) then
 	

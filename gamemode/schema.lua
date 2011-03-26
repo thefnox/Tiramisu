@@ -14,23 +14,23 @@ function CAKE.LoadSchema( schema )
 
 	local path = "schemas/" .. schema .. ".lua";
 	
-	table.insert( CAKE.Schemafile, schema )
-	
 	SCHEMA = {  };
 	
 	include( path );
-	
-	CAKE.DayLog( "script.txt", "Loading schema " .. SCHEMA.Name .. " by " .. SCHEMA.Author .. " ( " .. SCHEMA.Description .. " )" );
-	
-	table.insert( CAKE.Schemas, SCHEMA );
 
 	-- Load the base, first.
 
-	if( SCHEMA.Base != nil ) then
+	if( SCHEMA.Base ) then
 	
 		CAKE.LoadSchema( SCHEMA.Base )
 		
 	end
+	
+	table.insert( CAKE.Schemafile, schema )
+
+	CAKE.DayLog( "script.txt", "Loading schema " .. SCHEMA.Name .. " by " .. SCHEMA.Author .. " ( " .. SCHEMA.Description .. " )" );
+	
+	table.insert( CAKE.Schemas, SCHEMA );
 	
 	-- Load the plugins
 	
@@ -64,7 +64,7 @@ function CAKE.LoadSchema( schema )
 	-- Load the items
 	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/items/*.lua" );
 	
-	for k, v in pairs( list ) do
+	for k, v in pairs( list ) do 
 	
 		CAKE.LoadItem( schema, v );
 		

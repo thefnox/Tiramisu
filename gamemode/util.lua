@@ -9,20 +9,6 @@
 
 CAKE.ClockStarted = false
 
--- Oh, don't mind me.. just adding a useful function.
-function string.explode(str)
-
-	local rets = {};
-	
-	for i=1, string.len(str) do
-	
-		rets[i] = string.sub(str, i, i);
-		
-	end
-	
-	return rets;
-
-end
 
 function CAKE.ReferenceFix(data)
 

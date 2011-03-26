@@ -34,7 +34,7 @@ function CAKE.LoadPlugin( schema, filename )
 	
 	include( path );
 	
-	CAKE.DayLog( "script.txt", "Loading plugin " .. PLUGIN.Name .. " by " .. PLUGIN.Author .. " ( " .. PLUGIN.Description .. " )" );
+	CAKE.DayLog( "script.txt", "Loading plugin " .. PLUGIN.Name or "" .. " by " .. PLUGIN.Author or "None" .. " ( " .. PLUGIN.Description or "N/A" .. " )" );
 	
 	table.insert( CAKE.Plugins, PLUGIN );
 	

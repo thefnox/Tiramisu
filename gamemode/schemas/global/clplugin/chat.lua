@@ -318,9 +318,7 @@ end
  
 vgui.Register( "TiramisuChatBox", PANEL, "DFrame")
 
---I feel bad for borrowing this from achat, this is Averice's code, credits to him.
-local oldchat = chat.AddText
-function chat.AddText(...)
+function chat.AddText(...) --Overriding default chat text entry
 end
 
 

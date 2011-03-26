@@ -50,7 +50,8 @@ resource.AddFile( "models/Tiramisu/AnimationTrees/playeranimtree.mdl" )
 resource.AddFile( "models/Tiramisu/AnimationTrees/femaleanimtree.mdl" )
 resource.AddFile( "models/Tiramisu/AnimationTrees/policeanimtree.mdl" )
 resource.AddFile( "models/Tiramisu/AnimationTrees/barneyanimtree.mdl" )
-resource.AddFile( "models/Tiramisu/")
+resource.AddFile( "models/Tiramisu/Tools/blank_model.mdl")
+resource.AddFile( "materials/models/Tiramisu/invisible.vmt")
 resource.AddFile( "materials/tiramisu/tabbutton.vmt" )
 resource.AddFile( "resource/fonts/Harabara.ttf")
 
@@ -104,7 +105,7 @@ function GM:PlayerInitialSpawn( ply )
 		umsg.End( );
 	end
 	
-	for k, v in pairs( CAKE.Schemafile ) do
+	for k, v in ipairs( CAKE.Schemafile ) do
 		umsg.Start( "addschema", ply );
 			
 			print(v)

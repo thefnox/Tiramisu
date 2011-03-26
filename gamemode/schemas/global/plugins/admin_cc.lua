@@ -138,23 +138,25 @@ function Admin_Observe( ply, cmd, args )
 end
 
 function Admin_Noclip( ply, cmd, args )
-	   if( not ply:GetTable().Noclip ) then
+		
+		ply.Noclip = !ply.Noclip
+
+	  	if !ply.Noclip then
 
 
 
-		   ply:GodEnable();
+		   	ply:GodEnable();
+		   	ply:SetNotSolid( true );
+		   	ply:SetMoveType( 8 );
 		   
-		   ply:SetNotSolid( true );
-		   ply:SetMoveType( 8 );
-		   
-	   else
+	   	else
 
-		   ply:GodDisable();
+		   	ply:GodDisable();
 		   
-		   ply:SetNotSolid( false );
-		   ply:SetMoveType( 2 );
+		   	ply:SetNotSolid( false );
+		   	ply:SetMoveType( 2 );
 		   
-	   end
+	   	end
 end
 
 -- rp_admin superban "name" "reason" minutes
