@@ -160,6 +160,8 @@ function GM:PlayerSpawn( ply )
 		return; -- Player data isn't loaded. This is an initial spawn.
 	end
 
+	ply:SetNWBool( "specialmodel", false )
+
 	if !ply.BonemergeGearEntity or ply.BonemergeGearEntity:GetParent() != ply then
 		ply.BonemergeGearEntity = ents.Create( "prop_physics" )
 		ply.BonemergeGearEntity:SetPos( ply:GetPos() + Vector( 0, 0, 80 ) )

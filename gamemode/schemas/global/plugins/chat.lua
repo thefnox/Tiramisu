@@ -152,7 +152,7 @@ end
 local function Event( ply, text )
 
 	-- Check to see if the player's team allows broadcasting
-	if( CAKE.PlayerRank(ply) > 3 ) then
+	if( CAKE.PlayerRank(ply) > 0 ) then
 		
 		for k, v in pairs( player.GetAll( ) ) do
 		

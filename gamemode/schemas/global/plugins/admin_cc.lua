@@ -469,6 +469,20 @@ function Admin_AddSpawn( ply, cmd, args)
 	end
 	
 end
+
+function Admin_SetModel( ply, cmd, args )
+
+	target = CAKE.FindPlayer(args[1])
+
+	if !target then
+		CAKE.SendChat(ply, "Target not found!")
+	elseif ValidEntity( target ) then
+		target:RemoveClothing()
+		CAKE.RemoveAllGear( ply )
+		target:SetSpecialModel( args[2] or "models/kleiner.mdl" )
+	end
+
+end
 	
 -- Let's make some ADMIN COMMANDS!
 function PLUGIN.Init( )
@@ -486,6 +500,7 @@ function PLUGIN.Init( )
 	CAKE.AdminCommand( "observe", Admin_Observe, "Enter admin only observe mode", true, true, 1 );
 	CAKE.AdminCommand( "noclip", Admin_Noclip, "Enter admin only noclip mode", true, true, 1 );
 	CAKE.AdminCommand( "kick", Admin_Kick, "Kick someone on the server", true, true, 2 );
+	CAKE.AdminCommand( "setmodel", Admin_SetModel, "Set someone's model to something", true, true, 2 );
 	CAKE.AdminCommand( "ban", Admin_Ban, "Ban someone on the server", true, true, 3 );
 	CAKE.AdminCommand( "superban", Admin_SuperBan, "Ban someone on the server ( Permanent allowed )", true, true, 4 );
 	CAKE.AdminCommand( "setconvar", Admin_SetConVar, "Set a Convar", true, true, 4 );

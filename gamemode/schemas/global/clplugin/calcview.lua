@@ -44,12 +44,12 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 	
 	if CAKE.FreeScroll then
 		if ValidEntity( CAKE.ViewRagdoll ) then
-			newpos =  CAKE.ViewRagdoll:GetForward()*100
+			newpos =  Angle( 0, CAKE.ViewRagdoll:GetAngles().y, 0 ):Forward()*100
 			newpos:Rotate(mouserotate)
-			pos = CAKE.ViewRagdoll:GetPos()+Vector(0,0,60) + newpos
+			pos = CAKE.ViewRagdoll:GetPos()+Vector(0,0,10) + newpos
 			return GAMEMODE:CalcView(ply, pos , (CAKE.ViewRagdoll:GetPos()+Vector(0,0,60)-pos):Angle(),fov)
 		else
-			newpos = ply:GetForward()*100
+			newpos = Angle( 0, ply:GetAngles().y, 0 ):Forward()*100
 			newpos:Rotate(mouserotate)
 			pos = ply:GetPos()+Vector(0,0,60) + newpos
 			return GAMEMODE:CalcView(ply, pos , (ply:GetPos()+Vector(0,0,60)-pos):Angle(),fov)
@@ -62,6 +62,10 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 			ignoreent = CAKE.ViewRagdoll
 		else
 			ignoreent = ply
+		end
+
+		if CAKE.Headbob:GetBool() then
+			pos = ply:GetBonePosition( ply:LookupBone( "ValveBiped.Bip01_Head1" ) ) or ply:EyePos()
 		end
 					
 		if( ply:GetNWBool( "aiming", false ) ) then

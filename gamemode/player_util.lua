@@ -231,6 +231,13 @@ end
 
 local meta = FindMetaTable( "Player" );
 
+function meta:SetSpecialModel( model )
+
+	self:SetNWBool( "specialmodel", true )
+	self:SetModel( model )
+
+end
+
 function meta:ConCommand( cmd ) --Rewriting this due to Garry fucking it up.
 	umsg.Start( "runconcommand", self )
 		umsg.String( cmd ) 
