@@ -76,6 +76,11 @@ function CAKE.InitStashes()
 	
 end
 
+
+hook.Add( "Initialize", "TiramisuInitStashes", function()
+	CAKE.InitStashes()
+end)
+
 function PLUGIN.Init()
 	CAKE.AddStashItem("fake","Common") -- DO NOT REMOVE THIS LINE OR THE LINES FOLLOWING.
 	CAKE.AddStashItem("fake","Uncommon") -- THESE ARE SO THAT THE STASH SYSTEM DOES NOT ERROR IF THERE IS NOTHING IN THAT RARITY RANGE.

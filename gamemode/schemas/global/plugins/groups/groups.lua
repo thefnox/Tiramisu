@@ -541,6 +541,13 @@ local function GroupSpawnHook( ply )
 end
 hook.Add( "PlayerSpawn", "TiramisuGroupSpawnHook", GroupSpawnHook )
 
+hook.Add( "Initialize", "TiramisuGroupInit", function()
+
+	CAKE.DayLog( "script.txt", "Loading all groups")
+	CAKE.LoadAllGroups()
+	
+end)
+
 
 function Admin_ForceJoin( ply, cmd, args )
 

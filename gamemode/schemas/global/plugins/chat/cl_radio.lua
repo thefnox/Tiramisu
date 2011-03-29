@@ -1,6 +1,3 @@
-CLPLUGIN.Name = "Radio"
-CLPLUGIN.Author = "FNox"
-
 --Keeping shit neat.
 function CAKE.CreateRadioMenu()
 	if !RadioPanel then
@@ -43,7 +40,3 @@ datastream.Hook( "TiramisuAddToRadio", function( handler, id, encoded, decoded )
 	CAKE.Chatbox:AddLine( "<font=BudgetLabel>" .. decoded.text .. "</font>", "Radio" )
 	CAKE.AddRadioLine( "<font=BudgetLabel>" .. decoded.text .. "</font>" )
 end)
-
-function CLPLUGIN.Init()
-
-end

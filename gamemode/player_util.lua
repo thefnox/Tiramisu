@@ -1,13 +1,3 @@
-
--------------------------------
--- CakeScript Generation 2
--- Author: LuaBanana ( Aka Jake )
--- Project Start: 5/24/2008
---
--- player_util.lua
--- Useful functions for players.
--------------------------------
-
 function CAKE.SendChat( ply, msg, font, channel )
 	
 	if ply:IsPlayer() then
@@ -230,13 +220,6 @@ end
 
 
 local meta = FindMetaTable( "Player" );
-
-function meta:SetSpecialModel( model )
-
-	self:SetNWBool( "specialmodel", true )
-	self:SetModel( model )
-
-end
 
 function meta:ConCommand( cmd ) --Rewriting this due to Garry fucking it up.
 	umsg.Start( "runconcommand", self )

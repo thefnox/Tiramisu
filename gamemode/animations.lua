@@ -1,15 +1,8 @@
---Hey hey hey! It's fucking NPC animations version three! This time with no Rick Dark shit.
---Credits to Azuisleet ( Original hook ), Entoros( Holdtype thing -- Which is no more, since garry added that in :/ ), and well, me, Big Bang/F-Nox ( everything else )
-AddCSLuaFile( "animations.lua" )
-resource.AddFile( "models/Tiramisu/AnimationTrees/alyxanimtree.mdl" )
-resource.AddFile( "models/Tiramisu/AnimationTrees/combineanimtree.mdl" )
-resource.AddFile( "models/Tiramisu/AnimationTrees/maleanimtree.mdl" )
-resource.AddFile( "models/Tiramisu/AnimationTrees/femaleanimtree.mdl" )
-resource.AddFile( "models/Tiramisu/AnimationTrees/policeanimtree.mdl" )
-resource.AddFile( "models/Tiramisu/AnimationTrees/barneyanimtree.mdl" )
+--NPC Animations V4
 
 local meta = FindMetaTable( "Player" )
 local model
+
 function meta:GetGender()
 
 	model = self:GetModel()
@@ -36,6 +29,14 @@ if SERVER then
 	NeverAimed = {
                 "hands"
 	}
+
+        function meta:SetSpecialModel( model )
+
+                self:SetNWBool( "specialmodel", true )
+                self:SetModel( model )
+
+        end
+
 	
 	function meta:SetAiming( bool )
 		local wep = self:GetActiveWeapon()
@@ -65,7 +66,9 @@ if SERVER then
 	concommand.Add( "rp_toggleholster", HolsterToggle );
 	concommand.Add( "toggleholster", HolsterToggle );
 	
-	hook.Add( "PlayerSpawn", "BeginAimTimer", function( ply )
+	hook.Add( "PlayerSpawn", "TiramisuAnimSpawnHandle", function( ply )
+                ply:SetAiming( false )
+                ply:SetNWBool( "specialmodel", false )
 		timer.Create( ply:SteamID() .. "TiramisuAimTimer", 0.1, 0, function()
 			if ValidEntity( ply ) then
 				if ply.TiramisuLastWeapon and ValidEntity( ply:GetActiveWeapon() ) and ply:GetActiveWeapon():GetClass() != ply.TiramisuLastWeapon then
@@ -79,6 +82,25 @@ if SERVER then
 			end
 		end)
 	end)
+
+        hook.Add( "PlayerSetModel", "TiramisuSetAnimTrees", function( ply )
+                if !ply:GetNWBool( "specialmodel", false ) then
+                        if(ply:IsCharLoaded()) then
+                                        local m = ""
+                                        if( CAKE.GetCharField( ply, "gender" ) == "Female" ) then
+                                                m = "models/Tiramisu/AnimationTrees/femaleanimtree.mdl"
+                                                ply:SetNWString( "gender", "Female" )
+                                        else
+                                                m = "models/Tiramisu/AnimationTrees/maleanimtree.mdl"
+                                                ply:SetNWString( "gender", "Male" )
+                                        end
+                                        
+                                        ply:SetModel( m );
+                        else
+                                ply:SetModel("models/kleiner.mdl");
+                        end
+                end
+        end )
 
         hook.Add( "KeyPress", "TiramisuAimCheck", function(ply, key)
                 if ValidEntity( ply ) and ValidEntity( ply:GetActiveWeapon() ) then

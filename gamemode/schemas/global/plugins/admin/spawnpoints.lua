@@ -1,8 +1,6 @@
-PLUGIN.Name = "Sitting"; -- What is the plugin name
-PLUGIN.Author = "Ryaga/BadassMC"; -- Author of the plugin
-PLUGIN.Description = "Handles the process of putting your ass on top of something"; -- The description or purpose of the plugin
-
 CAKE.SpawnPoints = {}
+
+--Adds a spawnpoint
 
 function CAKE.AddSpawn(pos, ang, plyteam)
 	map = game.GetMap()
@@ -35,15 +33,21 @@ function CAKE.AddSpawn(pos, ang, plyteam)
 	end
 end
 
+--Destroys all spawnpoints
+
 function CAKE.ClearSpawns()
 	CAKE.SpawnPoints = {}
 	CAKE.SaveSpawns()
 end
 
+--Saves Spawnpoints to MapInfo
+
 function CAKE.SaveSpawns()
 		local gloncomspawns = glon.encode(CAKE.SpawnPoints)
 		file.Write( CAKE.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt" , gloncomspawns)
 end
+
+--Internal function used to determine where shall a player spawn
 
 function CAKE.SpawnPointHandle(ply)
 	map = game.GetMap()
@@ -64,6 +68,8 @@ function CAKE.SpawnPointHandle(ply)
   	
 end
 
+--Initializes all spawnpoints
+
 function CAKE.InitSpawns()
 
 	if(file.Exists(CAKE.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt")) then
@@ -75,5 +81,10 @@ function CAKE.InitSpawns()
 	
 end
 
-function PLUGIN.Init()
-end
+hook.Add( "Initialize", "TiramisuInitSpawns", function()
+	CAKE.InitSpawns()
+end)
+
+hook.Add( "PlayerSpawn", "TiramisuSpawnPlayer", function( ply )
+	CAKE.SpawnPointHandle(ply)
+end)

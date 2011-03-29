@@ -1,12 +1,3 @@
--------------------------------
--- CakeScript Generation 2
--- Author: LuaBanana ( Aka Jake )
--- Project Start: 5/24/2008
---
--- schema.lua
--- Loads and configures the schema
--------------------------------
-
 CAKE.Schemas = {  };
 CAKE.Schemafile = {  };
 
@@ -31,20 +22,30 @@ function CAKE.LoadSchema( schema )
 	CAKE.DayLog( "script.txt", "Loading schema " .. SCHEMA.Name .. " by " .. SCHEMA.Author .. " ( " .. SCHEMA.Description .. " )" );
 	
 	table.insert( CAKE.Schemas, SCHEMA );
+
+	-- Use the new plugin system
+
+	local list = file.FindDir( "gamemodes/" .. CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/*", true) or {}
+
+	for k, v in pairs( list ) do
+
+		CAKE.LoadPlugin( schema, v )
+
+	end
 	
-	-- Load the plugins
+	-- Load the plugins using the old system
 	
-	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/*.lua" );
+	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/*.lua" ) or {}
 	
 	for k, v in pairs( list ) do
 	
-		CAKE.LoadPlugin( schema, v );
+		CAKE.OldLoadPlugin( schema, v );
 		
 	end
 	
 	-- Load right click files.
 	
-	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua" );
+	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua" ) or {}
 	
 	for k, v in pairs( list ) do
 	
@@ -52,11 +53,11 @@ function CAKE.LoadSchema( schema )
 		
 	end
 	
-	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/clplugin/*.lua" );
+	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/clplugin/*.lua" ) or {}
 	
 	for k, v in pairs( list ) do
 	
-		CAKE.LoadClPlugin( schema, v );
+		CAKE.OldLoadClPlugin( schema, v );
 		
 	end
 	

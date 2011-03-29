@@ -1,11 +1,4 @@
--------------------------------
--- CakeScript Generation 2
--- Author: LuaBanana ( Aka Jake )
--- Project Start: 5/24/2008
---
--- cl_binds.lua
--- Changes what keys do.
--------------------------------
+
 
 CAKE.ContextEnabled = false;
 

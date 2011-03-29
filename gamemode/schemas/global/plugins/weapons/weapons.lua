@@ -138,6 +138,21 @@ local function StartTimer( ply )
 end
 hook.Add( "PlayerSpawn", "CakeAmmoSaveTimer", StartTimer )
 
+function ccDropWeapon( ply, cmd, args )
+	
+		local wep = ply:GetActiveWeapon( )
+		CAKE.DropWeapon( ply, wep )
+		if ply:HasItem( wep:GetClass() ) then
+			ply:TakeItem( wep:GetClass() )
+		end
+		CAKE.RemoveGearItem( ply, wep:GetClass() )
+
+		ply:RefreshInventory( )
+	
+end
+concommand.Add( "rp_dropweapon", ccDropWeapon );
+
+
 
 function PLUGIN.Init()
 

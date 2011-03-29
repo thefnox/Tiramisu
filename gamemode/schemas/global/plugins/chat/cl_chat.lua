@@ -1,6 +1,3 @@
-CLPLUGIN.Name = "Chat Utilities"
-CLPLUGIN.Author = "FNox"
-
 datastream.Hook( "TiramisuAddToChat", function( handler, id, encoded, decoded )
     if decoded.channel == "IC" then
         CAKE.Chatbox:AddLine(  "<color=135,209,255,255><font=" .. decoded.font .. ">" .. decoded.text .. "</font></color>", decoded.channel )
@@ -337,7 +334,3 @@ usermessage.Hook( "TiramisuInitChat", function( um )
         CAKE.Chatbox:Init()
     end
 end)
-
-function CLPLUGIN.Init()
-
-end

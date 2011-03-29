@@ -1,12 +1,3 @@
--------------------------------
--- CakeScript Generation 2
--- Author: LuaBanana ( Aka Jake )
--- Project Start: 5/24/2008
---
--- log.lua
--- A collection of logging functions
--------------------------------
-
 -- Anything that would be logged would be passed to this.
 function CAKE.DayLog( outputfile, text )
 

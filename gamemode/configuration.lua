@@ -1,12 +1,3 @@
--------------------------------
--- CakeScript Generation 2
--- Author: LuaBanana ( Aka Jake )
--- Project Start: 5/24/2008
---
--- configuration.lua
--- Set up the script here.
--------------------------------
-
 -- You can change these in the schema definition file as well.
 
 CAKE.ConVars = {  };

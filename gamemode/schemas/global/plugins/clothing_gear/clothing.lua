@@ -229,11 +229,24 @@ function CAKE.RestoreClothing( ply )
 end
 	
 local function SpawnClothingHook( ply )
+
+	--This is a kinda ridiculous override I use for gear that uses bonemerge. It's the only way to allow gear with bones to be rendered manually.
+	if !ply.BonemergeGearEntity or ply.BonemergeGearEntity:GetParent() != ply then
+		ply.BonemergeGearEntity = ents.Create( "prop_physics" )
+		ply.BonemergeGearEntity:SetPos( ply:GetPos() + Vector( 0, 0, 80 ) )
+		ply.BonemergeGearEntity:SetAngles( ply:GetAngles() )
+		ply.BonemergeGearEntity:SetModel("models/Tiramisu/Tools/blank_model.mdl")
+		ply.BonemergeGearEntity:SetParent( ply )
+		ply.BonemergeGearEntity:SetSolid( SOLID_NONE )
+		ply.BonemergeGearEntity:Spawn()
+	end
+
 	if ply:IsCharLoaded() then
 		timer.Simple( 0.4, function() 
 			CAKE.RestoreClothing( ply )
 		end)
 	end
+
 end
 hook.Add( "PlayerSetModel", "OldenSpawnClothing", SpawnClothingHook )
 

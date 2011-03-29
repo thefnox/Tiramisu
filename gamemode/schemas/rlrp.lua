@@ -22,7 +22,29 @@ SCHEMA.Base = "global";
 --The following argument is their doorgroup, AKA, the doors they can open, add them using rp_admin adddoor groupnumber while looking at a door
 --Then comes the image used by the group. This needs to point to a valid texture. Currently, all my textures are 128x128 pixels.
 --And you're done! You can look into the bliss schema for a more extensive example.
+function CAKE.RLRPFaction( name, founder, ranks, flags, doorgroup, desc )
 
+	if !CAKE.GroupExists( name ) then
+		local tbl = {
+		[ "Name" ]		= name,
+		[ "Type" ]		= "faction",
+		[ "Founder" ]	= founder,
+		[ "Members" ]	= {},
+		[ "Inventory" ]	= {},
+		[ "Flags" ]		= flags,
+		[ "Ranks" ]		= ranks,
+		[ "Description" ] = desc or "None available."
+		}
+		
+		local doorgroups = {
+			["doorgroups"] = doorgroup
+		}
+		table.Merge( flags, doorgroups )
+		
+		CAKE.CreateGroup( name, tbl )
+	end
+	
+end
 
 function SCHEMA.SetUp( )
 	

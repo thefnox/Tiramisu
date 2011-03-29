@@ -1,6 +1,4 @@
-PLUGIN.Name = "Doorgroups"; -- What is the plugin name
-PLUGIN.Author = "Ryaga/BadassMC"; -- Author of the plugin
-PLUGIN.Description = "Handles doors"; -- The description or purpose of the plugin
+--Override on GM:OnPlayerUse, in order to make it work wtih other kinds of doors
 
 hook.Add( "KeyPress", "TiramisuHandleDoors", function( ply, key )
 	if( key == IN_USE ) then

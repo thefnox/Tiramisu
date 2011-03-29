@@ -1,12 +1,3 @@
--------------------------------
--- CakeScript Generation 2
--- Author: LuaBanana ( Aka Jake )
--- Project Start: 5/24/2008
---
--- player_data.lua
--- Handles player data and such.
--------------------------------
-
 -- Define the table of player information.
 CAKE.PlayerData = {  };
 

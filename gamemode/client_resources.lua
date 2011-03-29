@@ -1,12 +1,3 @@
--------------------------------
--- CakeScript Generation 2
--- Author: LuaBanana ( Aka Jake )
--- Project Start: 5/24/2008
---
--- client_resources.lua
--- This will tell the server what needs to be downloaded to the client and log it.
--- This will NOT tell the client what needs to be included, though.
--------------------------------
 
 function AddResource( res_type, path )
 
@@ -50,8 +41,5 @@ end)
 -- LUA Files
 AddResource( "lua", "shared.lua" ); -- Shared Functions
 AddResource( "lua", "cl_binds.lua" ); -- Binds
-AddResource( "lua", "cl_hud.lua"); -- The HUD
 AddResource( "lua", "cl_init.lua"); -- The initialization of clientside gamemode
-AddResource( "lua", "player_shared.lua"); -- Shared player functions
 AddResource( "lua", "animations.lua"); -- Animations
-AddResource( "lua", "resourcex.lua"); -- Resource downloading

@@ -1,7 +1,3 @@
-PLUGIN.Name = "Admin Commands"; -- What is the plugin name
-PLUGIN.Author = "LuaBanana"; -- Author of the plugin
-PLUGIN.Description = "A set of default admin commands"; -- The description or purpose of the plugin
-
 -- rp_admin kick "name" "reason"
 function Admin_Kick( ply, cmd, args )
 

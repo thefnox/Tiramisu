@@ -1,11 +1,3 @@
-----------------------------
--- CakeScript (March 29, 2008)
--- by LuaBanana
---
--- Alpha Version
--- doors.lua
-----------------------------
-
 hook.Add( "InitPostEntity", "TiramisuLoadDoors", function()
 	CAKE.LoadDoors()
 end)

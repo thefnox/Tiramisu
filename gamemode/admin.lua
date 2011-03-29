@@ -1,12 +1,3 @@
--------------------------------
--- CakeScript Generation 2
--- Author: LuaBanana ( Aka Jake )
--- Project Start: 5/24/2008
---
--- admin.lua
--- Admin functions. Admin concommands are in admin_cc.lua
--------------------------------
-
 SuperAdmins = { };
 Admins = { };
 

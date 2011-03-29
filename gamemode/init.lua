@@ -1,12 +1,3 @@
--------------------------------
--- CakeScript Generation 2
--- Author: LuaBanana ( Aka Jake )
--- Project Start: 5/24/2008
---
--- init.lua
--- This file calls the rest of the script
--------------------------------
-
 -- Set up the gamemode
 DeriveGamemode( "sandbox" );
 GM.Name = "Tiramisu";
@@ -27,21 +18,15 @@ include( "shared.lua" ); -- Shared Functions
 include( "log.lua" ); -- Logging functions
 include( "configuration.lua" ); -- Configuration data
 include( "player_data.lua" ); -- Player data functions
-include( "player_shared.lua" ); -- Shared player functions
 include( "player_util.lua" ); -- Player functions
 include( "admin.lua" ); -- Admin functions
-include( "chat.lua" ); -- Chat Commands
 include( "concmd.lua" ); -- Concommands
 include( "util.lua" ); -- Functions
-include( "charactercreate.lua" ); -- Character Creation functions
 include( "items.lua" ); -- Items system
 include( "schema.lua" ); -- Schema system
 include( "plugins.lua" ); -- Plugin system
 include( "client_resources.lua" ); -- Sends files to the client
-include( "animations.lua" ); -- Animations
-include( "doors.lua" ); -- Doors
-include( "resourcex.lua" ) -- Resource downloading
-include( "sn3_base_sv.lua" )
+include( "animations.lua")
 
 resource.AddFile( "models/Tiramisu/AnimationTrees/alyxanimtree.mdl" )
 resource.AddFile( "models/Tiramisu/AnimationTrees/combineanimtree.mdl" )
@@ -67,22 +52,16 @@ function GM:Initialize( ) -- Initialize the gamemode
 	
 	CAKE.DayLog( "script.txt", "Plugins Initializing" );
 	CAKE.InitPlugins( );
-	
-	CAKE.DayLog( "script.txt", "Loading all groups")
-	CAKE.LoadAllGroups()
 
 	CAKE.DayLog( "script.txt", "Schemas Initializing" );
 	CAKE.InitSchemas( );
 	
 	CAKE.DayLog( "script.txt", "Gamemode Initializing" );
 	
-	game.ConsoleCommand( "exec cakevars.cfg\n" ) -- Put any configuration variables in cfg/cakevars.cfg, set it using rp_admin setconvar varname value
-	
-	CAKE.InitSpawns()
-	CAKE.InitStashes()
-	CAKE.InitTime()
-	
+	--Timer to save the current gamemode time
 	timer.Create( "timesave", 120, 0, CAKE.SaveTime );
+
+	--Timer to send the time to the player
 	timer.Create( "sendtime", 1, 0, CAKE.SendTime );
 	
 	CAKE.Running = true;
@@ -153,26 +132,9 @@ end
 
 function GM:PlayerSpawn( ply )
 
-	umsg.Start( "TiramisuInitChat", ply )
-	umsg.End()
-
 	if( !ply:IsCharLoaded() ) then
 		return; -- Player data isn't loaded. This is an initial spawn.
 	end
-
-	ply:SetNWBool( "specialmodel", false )
-
-	if !ply.BonemergeGearEntity or ply.BonemergeGearEntity:GetParent() != ply then
-		ply.BonemergeGearEntity = ents.Create( "prop_physics" )
-		ply.BonemergeGearEntity:SetPos( ply:GetPos() + Vector( 0, 0, 80 ) )
-		ply.BonemergeGearEntity:SetAngles( ply:GetAngles() )
-		ply.BonemergeGearEntity:SetModel("models/Tiramisu/Tools/blank_model.mdl")
-		ply.BonemergeGearEntity:SetParent( ply )
-		ply.BonemergeGearEntity:SetSolid( SOLID_NONE )
-		ply.BonemergeGearEntity:Spawn()
-	end
-	
-	CAKE.SpawnPointHandle(ply)
 	
 	CAKE.SavePlayerData( ply )
 	
@@ -204,33 +166,14 @@ function GM:PlayerSpawn( ply )
 	ply:ChangeMaxArmor(0 - ply:MaxArmor());
 	ply:ChangeMaxWalkSpeed(CAKE.ConVars[ "WalkSpeed" ] - ply:MaxWalkSpeed());
 	ply:ChangeMaxRunSpeed(CAKE.ConVars[ "RunSpeed" ] - ply:MaxRunSpeed());
-	ply:SetAiming( false )
 	
 	self.BaseClass:PlayerSpawn( ply )
 	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] );
-	
 	
 end
 
 
 function GM:PlayerSetModel(ply)
-	if !ply:GetNWBool( "specialmodel", false ) then
-		if(ply:IsCharLoaded()) then
-				local m = ""
-				if( CAKE.GetCharField( ply, "gender" ) == "Female" ) then
-					m = "models/Tiramisu/AnimationTrees/femaleanimtree.mdl"
-					ply:SetNWString( "gender", "Female" )
-				else
-					m = "models/Tiramisu/AnimationTrees/maleanimtree.mdl"
-					ply:SetNWString( "gender", "Male" )
-				end
-				
-				ply:SetModel( m );
-		else
-			ply:SetModel("models/kleiner.mdl");
-		end
-	end
-
 end
 
 function GM:PlayerDisconnected( ply )
@@ -272,9 +215,72 @@ function GM:PlayerDeathThink(ply)
 	
 end
 
-
 function GM:DoPlayerDeath( ply, attacker, dmginfo )
 
 	-- We don't want kills, deaths, nor ragdolls being made. Kthx.
+	
+end
+
+function GM:PlayerSpawnSWEP( ply, class )
+
+	if( CAKE.PlayerRank( ply ) > 0 ) then return true; end
+	return false;
+	
+end
+
+function GM:PlayerGiveSWEP( ply )
+
+	if( CAKE.PlayerRank( ply ) > 0 ) then return true; end
+	return false; 
+	
+end
+
+-- This is the help menu
+function GM:ShowHelp( ply )
+	
+	umsg.Start( "showhelpmenu", ply )
+	umsg.End()
+
+end
+
+function GM:ShowTeam( ply )
+
+	umsg.Start( "toggleinventory", ply )
+	umsg.End()
+
+end
+
+function GM:ShowSpare1( ply )
+
+	ply:SetAiming( !ply:GetAiming() )
+
+end
+
+function GM:ShowSpare2( ply )
+
+	umsg.Start( "togglethirdperson", ply )
+	umsg.End()
+
+end
+
+-- NO SENT FOR YOU.
+function GM:PlayerSpawnSENT( ply, class )
+	
+	if( CAKE.PlayerRank( ply ) > 0 ) then return true; end
+	return false;
+	
+end
+
+-- Disallows suicide
+function GM:CanPlayerSuicide( ply )
+
+	if( CAKE.ConVars[ "SuicideEnabled" ] != "1" ) then
+	
+		ply:ChatPrint( "Suicide is disabled!" )
+		return false
+		
+	end
+	
+	return true;
 	
 end

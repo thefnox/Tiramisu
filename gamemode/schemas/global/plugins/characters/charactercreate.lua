@@ -1,12 +1,3 @@
--------------------------------
--- CakeScript Generation 2
--- Author: LuaBanana ( Aka Jake )
--- Project Start: 5/24/2008
---
--- charactercreate.lua
--- Contains the character creation concommands.
--------------------------------	
-
 -- Set Model
 local function ccSetModel( ply, cmd, args )
 
@@ -273,3 +264,27 @@ function ccReady( ply, cmd, args )
 	
 end
 concommand.Add( "rp_ready", ccReady );
+
+function ccConfirmRemoval( ply, cmd, args )
+	
+	local id = args[1]
+	local SteamID = CAKE.FormatText( ply:SteamID() );
+	local name = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "name" ]
+	local age = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "age" ]
+	local model = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "model" ]
+	umsg.Start("ConfirmCharRemoval", ply)
+		umsg.String( name )
+		umsg.Long( id )
+	umsg.End()
+end
+concommand.Add( "rp_confirmremoval", ccConfirmRemoval )
+
+local function ccRemoveChar( ply, cmd, args )
+	
+	local id = args[1]
+	CAKE.RemoveCharacter( ply, id )
+	umsg.Start( "DisplayCharacterList", ply )
+	umsg.End()
+	
+end
+concommand.Add( "rp_removechar", ccRemoveChar )
