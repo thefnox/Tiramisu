@@ -176,7 +176,9 @@ function GM:ScoreboardHide( )
 	CAKE.MenuOpen = false
 	CAKE.ContextEnabled = false;
 	gui.EnableScreenClicker( false );
-	HiddenButton:SetVisible( false );
+	if HiddenButton then
+		HiddenButton:SetVisible( false );
+	end
 
 	local posx, posy
 	if QuickMenu then

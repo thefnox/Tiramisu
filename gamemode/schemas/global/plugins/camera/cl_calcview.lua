@@ -4,13 +4,6 @@ CLPLUGIN.Author = "F-Nox/Big Bang"
 function CLPLUGIN.Init()
 end
 
-CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 0, true, true )
-CAKE.ThirdpersonDistance = CreateClientConVar( "rp_thirdpersondistance", 50, true, true )
-CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true )
-CAKE.HeadbobAmount = CreateClientConVar( "rp_headbob", 1, true, true )
-CAKE.FreeScroll = false
-CAKE.ForceFreeScroll = false
-
 local mouserotate = Angle( 0, 0, 0 )
 local mousex
 local newpos

@@ -6,7 +6,6 @@ GM.Name = "Tiramisu";
 CAKE = {  };
 CAKE.Running = false;
 CAKE.Loaded = false;
-CAKE.Name = GM.Name
 
 -- Server Includes
 require( "glon" )
@@ -21,8 +20,8 @@ include( "player_data.lua" ); -- Player data functions
 include( "player_util.lua" ); -- Player functions
 include( "admin.lua" ); -- Admin functions
 include( "concmd.lua" ); -- Concommands
+include( "items.lua" )
 include( "util.lua" ); -- Functions
-include( "items.lua" ); -- Items system
 include( "schema.lua" ); -- Schema system
 include( "plugins.lua" ); -- Plugin system
 include( "client_resources.lua" ); -- Sends files to the client
@@ -36,7 +35,8 @@ resource.AddFile( "models/Tiramisu/AnimationTrees/femaleanimtree.mdl" )
 resource.AddFile( "models/Tiramisu/AnimationTrees/policeanimtree.mdl" )
 resource.AddFile( "models/Tiramisu/AnimationTrees/barneyanimtree.mdl" )
 resource.AddFile( "models/Tiramisu/Tools/blank_model.mdl")
-resource.AddFile( "materials/models/Tiramisu/invisible.vmt")
+resource.AddFile( "materials/models/Tiramisu/Tools/invisible.vmt")
+resource.AddFile( "materials/models/Tiramisu/Tools/invisible.vtf")
 resource.AddFile( "materials/tiramisu/tabbutton.vmt" )
 resource.AddFile( "resource/fonts/Harabara.ttf")
 

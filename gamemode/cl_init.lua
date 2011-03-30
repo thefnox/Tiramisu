@@ -28,6 +28,13 @@ CAKE.ActiveTab = nil
 CAKE.MenuOpen = false
 CAKE.DisplayMenu = false
 
+CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 0, true, true )
+CAKE.ThirdpersonDistance = CreateClientConVar( "rp_thirdpersondistance", 50, true, true )
+CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true )
+CAKE.HeadbobAmount = CreateClientConVar( "rp_headbob", 1, true, true )
+CAKE.FreeScroll = false
+CAKE.ForceFreeScroll = false
+
 require( "datastream" )
 -- Client Includes
 include( "animations.lua" )
@@ -111,9 +118,9 @@ end )
 RclickTable = {}
 
 function AddRclicks(schema)
-	local list = file.FindInLua( "tiramisu/gamemode/schemas/" .. schema .. "/rclick/*.lua" )	
+	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua" )	
 	for k,v in pairs( list ) do
-		local path = "tiramisu/gamemode/schemas/" .. schema .. "/rclick/" .. v
+		local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/" .. v
 		RCLICK = { }
 		include( path )
 		table.insert(RclickTable, RCLICK);
@@ -121,36 +128,36 @@ function AddRclicks(schema)
 end
 
 function AddPlugins( schema, filename )
-        filename = filename or ""
-        local path = "gamemodes/tiramisu/gamemode/schemas/" .. schema .. "/plugins/" .. filename .. "/"
-        local list = file.Find( path .. "/*", true ) or {}
 
-        for k, v in pairs( list ) do
-                if string.GetExtensionFromFilename( v ) and string.GetExtensionFromFilename( v ) == "lua" then
-                        --It's a lua file! So it's time to include it according to what it actually is.
-                        if v:sub( 1, 3 ) == "cl_" or v:sub( 1, 3 ) == "sh_" then
-                                PLUGIN = {} -- Support for shared plugins. 
-                                CLPLUGIN = { }
-                                include( "tiramisu/gamemode/schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v )
-                                CAKE.CLPlugin[CLPLUGIN.Name or path .. "/" .. v ] = {}
-                                if CLPLUGIN.Init then
-                                        CAKE.CLPlugin[CLPLUGIN.Name].Init = CLPLUGIN.Init
-                                        CAKE.CLPlugin[CLPLUGIN.Name].Init()
-                                end
-                        end
-                else --It's a directory
-                        AddPlugins( schema, v ) -- So we recursively make it add all it's files
-                end
-        end
+	local tbl = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/*" ) 
+	local list = {}
+
+	for _, folder in pairs( tbl ) do
+	    if folder != "." and folder != ".." then
+	        for k, v in pairs( file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/" .. folder .. "/*.lua" )) do
+                if v:sub( 1, 3 ) == "cl_" or v:sub( 1, 3 ) == "sh_" then
+                   PLUGIN = {} -- Support for shared plugins. 
+                   CLPLUGIN = { }
+                   include( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/" .. folder .. "/" .. v )
+                   --print( "CLIENTSIDE: " .. CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/" .. folder .. "/" .. v )
+                   CAKE.CLPlugin[CLPLUGIN.Name or CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/" .. folder .. "/" .. v ] = {}
+                   if CLPLUGIN.Init then
+                       CAKE.CLPlugin[CLPLUGIN.Name].Init = CLPLUGIN.Init
+                       CAKE.CLPlugin[CLPLUGIN.Name].Init()
+                   end
+               end
+	        end
+	    end    
+	end
 end
 
 CAKE.CLPlugin = {}
 
 function AddCLPlugins(schema)
 
-		local list = file.FindInLua( "tiramisu/gamemode/schemas/" .. schema .. "/clplugin/*.lua" )	
+		local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/clplugin/*.lua" )	
 		for k,v in pairs( list ) do
-			local path = "tiramisu/gamemode/schemas/" .. schema .. "/clplugin/" .. v
+			local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/clplugin/" .. v
 			CLPLUGIN = { }
 			include( path )
 			CAKE.CLPlugin[CLPLUGIN.Name] = {}

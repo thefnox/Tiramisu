@@ -16,28 +16,26 @@ end
 
 function CAKE.LoadPlugin( schema, filename )
 
-	local path = "gamemodes/" .. CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/" .. filename
-	local list = file.Find( path .. "/*", true ) or {}
+	local filename = filename or ""
+	local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/" .. filename
+	local list = file.FindInLua( path .. "/*.lua" ) or {}
 
 	for k, v in pairs( list ) do
-		if string.GetExtensionFromFilename( path .. "/" .. v ) and string.GetExtensionFromFilename( path .. "/" .. v ) == "lua" then
-			--It's a lua file! So it's time to include it according to what it actually is.
-			PLUGIN = {}
-			if v:sub( 1, 3 ) == "cl_" then --It's a clientside file
-				AddResource("lua", "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v )
-				CAKE.DayLog( "script.txt", "Loading clientside plugin " .. filename .. "/" .. v );
-			elseif v:sub( 1,3 ) == "sh_" then --It's a shared file
-				AddResource("lua", "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v )
-				CAKE.DayLog( "script.txt", "Loading shared plugin " .. filename .. "/" .. v );
-				include( "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v  )
-			else --It doesn't have a prefix so we default it to be serverside only
-				CAKE.DayLog( "script.txt", "Loading serverside plugin " .. filename .. "/" .. v );
-				include( "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v  )
-				table.insert( CAKE.Plugins, PLUGIN );
-			end
-		else --It's a directory
-			CAKE.LoadPlugin( schema, path .. "/" .. v ) -- So we recursively make it add all it's files
+		--It's a lua file! So it's time to include it according to what it actually is.
+		PLUGIN = {}
+		if v:sub( 1, 3 ) == "cl_" then --It's a clientside file
+			AddResource("lua", "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v )
+			CAKE.DayLog( "script.txt", "Loading clientside plugin " .. filename .. "/" .. v );
+		elseif v:sub( 1,3 ) == "sh_" then --It's a shared file
+			AddResource("lua", "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v )
+			CAKE.DayLog( "script.txt", "Loading shared plugin " .. filename .. "/" .. v );
+			include( "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v  )
+		else --It doesn't have a prefix so we default it to be serverside only
+			CAKE.DayLog( "script.txt", "Loading serverside plugin " .. filename .. "/" .. v );
+			include( "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v  )
+			table.insert( CAKE.Plugins, PLUGIN );
 		end
+		print( "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v  )
 	end
 	
 end

@@ -1,3 +1,5 @@
+CAKE.Name = string.Replace( GM.Folder, "gamemodes/", "" );
+
 local meta = FindMetaTable( "Player" );
 
 function meta:CanTraceTo( ent ) -- Can the player and the entity "see" eachother?

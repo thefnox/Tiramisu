@@ -23,15 +23,19 @@ function CAKE.LoadSchema( schema )
 	
 	table.insert( CAKE.Schemas, SCHEMA );
 
-	-- Use the new plugin system
-
-	local list = file.FindDir( "gamemodes/" .. CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/*", true) or {}
+	local list = file.FindDir( GM.Folder .. "/gamemode/schemas/" .. schema .. "/plugins/*", true  )
 
 	for k, v in pairs( list ) do
 
-		CAKE.LoadPlugin( schema, v )
-
+		if v != "." and v != ".." then
+			CAKE.LoadPlugin( schema, v )
+		end
+		
 	end
+
+	-- Use the new plugin system
+
+	CAKE.LoadPlugin( schema )
 	
 	-- Load the plugins using the old system
 	

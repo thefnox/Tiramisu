@@ -3,6 +3,169 @@ CLPLUGIN.Author = "F-Nox/Big Bang"
 
 InventoryTable = {}
 
+local function RenderSpawnIcon_Prop( model, pos, middle, size )
+
+	size = size * (1 - ( size / 900 ))
+
+	local ViewAngle = Angle( 25, 40, 0 )
+	local ViewPos = pos + ViewAngle:Forward() * size * -15
+	local view = {}
+	
+	view.fov		= 4 + size * 0.04
+	view.origin 	= ViewPos + middle
+	view.znear		= 1
+	view.zfar		= ViewPos:Distance( pos ) + size * 2
+	view.angles		= ViewAngle
+
+	return view
+	
+end
+
+local function RenderSpawnIcon_Ragdoll( model, pos, middle, size )
+
+	local at = model:GetAttachment( model:LookupAttachment( "eyes" ) )
+
+	local ViewAngle = at.Ang + Angle( -10, 160, 0 )
+	local ViewPos = at.Pos + ViewAngle:Forward() * -60 + ViewAngle:Up() * -2
+	local view = {}
+	
+	view.fov		= 10
+	view.origin 	= ViewPos
+	view.znear		= 0.01
+	view.zfar		= 200
+	view.angles		= ViewAngle
+
+	return view
+	
+end
+
+//
+// For some TF2 ragdolls which do not have "eye" attachments
+//
+local function RenderSpawnIcon_Ragdoll_Head( model, pos, middle, size )
+
+	local at = model:GetAttachment( model:LookupAttachment( "head" ) )
+
+	local ViewAngle = at.Ang + Angle( -10, 160, 0 )
+	local ViewPos = at.Pos + ViewAngle:Forward() * -67 + ViewAngle:Up() * -7 + ViewAngle:Right() * 1.5
+	local view = {}
+	
+	view.fov		= 10
+	view.origin 	= ViewPos
+	view.znear		= 0.01
+	view.zfar		= 200
+	view.angles		= ViewAngle
+
+	return view
+	
+end
+
+
+function PositionSpawnIcon( model, pos )
+
+	local mn, mx = model:GetRenderBounds()
+	local middle = (mn + mx) * 0.5
+	local size = 0
+	size = math.max( size, math.abs(mn.x) + math.abs(mx.x) );
+	size = math.max( size, math.abs(mn.y) + math.abs(mx.y) );
+	size = math.max( size, math.abs(mn.z) + math.abs(mx.z) );
+	
+	model:SetPos( pos )
+	model:SetAngles( Angle( 0, 180, 0 ) )
+	
+	if ( model:LookupAttachment( "eyes" ) > 0 ) then
+		return RenderSpawnIcon_Ragdoll( model, pos, middle, size )
+	end
+	
+	if ( model:LookupAttachment( "head" ) > 0 ) then
+		return RenderSpawnIcon_Ragdoll_Head( model, pos, middle, size )
+	end
+
+	return RenderSpawnIcon_Prop( model, pos, middle, size )
+
+end
+
+local PANEL = {}
+
+/*---------------------------------------------------------
+   Name: Paint
+---------------------------------------------------------*/
+function PANEL:Init()
+
+    self:SetMouseInputEnabled( false )
+    self:SetKeyboardInputEnabled( false )
+
+end
+
+function PANEL:OnMousePressed( mcode )
+end
+
+function PANEL:OnMouseReleased()
+end
+
+function PANEL:DoClick()
+end
+
+function PANEL:OpenMenu()
+end
+
+function PANEL:OnCursorEntered()
+end
+
+function PANEL:OnCursorExited()
+end
+
+function PANEL:PerformLayout()
+end
+
+function PANEL:Paint()
+
+    if ( !IsValid( self.Entity ) ) then return end
+    
+    local x, y = self:LocalToScreen( 0, 0 )
+    
+    cam.Start3D( self.ViewCoords.origin, self.ViewCoords.angles, self.ViewCoords.fov, x, y, self:GetSize() )
+	    cam.IgnoreZ( true )
+	    
+	    render.SuppressEngineLighting( true )
+	    render.SetLightingOrigin( self.Entity:GetPos() )
+
+	    self.Entity:DrawModel()
+	    
+	    render.SuppressEngineLighting( false )
+	    cam.IgnoreZ( false )
+    cam.End3D()
+    
+end
+
+function PANEL:SetModel( mdl )
+
+    // Note - there's no real need to delete the old
+    // entity, it will get garbage collected, but this is nicer.
+    if ( IsValid( self.Entity ) ) then
+        self.Entity:Remove()
+        self.Entity = nil        
+    end
+    
+    // Note: Not in menu dll
+    if ( !ClientsideModel ) then return end
+    
+    self.Entity = ClientsideModel( mdl, RENDER_GROUP_OPAQUE_ENTITY )
+    if ( !IsValid(self.Entity) ) then return end
+
+    self.Entity:SetNoDraw( true )
+    self.ViewCoords = PositionSpawnIcon( self.Entity, self.Entity:GetPos() )
+
+end
+
+function PANEL:Think()
+
+end
+
+vgui.Register( "InventorySlot_Icon", PANEL, "Panel" )
+
+
+
 local function OpenInventory()
 	PlayerMenu = vgui.Create( "DFrameTransparent" )
 	--PlayerMenu:SetPos( ScrW() / 2 - 320, ScrH() / 2 - 240 )
