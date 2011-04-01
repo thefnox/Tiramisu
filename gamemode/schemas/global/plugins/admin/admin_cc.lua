@@ -247,7 +247,7 @@ end
 
 function Admin_ListVars( ply, cmd, args )
 
-	CAKE.SendChat( ply, "---List of CakeScript ConVars---" );
+	CAKE.SendChat( ply, "---List of Tiramisu ConVars---" );
 	
 	for k, v in pairs( CAKE.ConVars ) do
 		
@@ -279,7 +279,7 @@ end
 
 function Admin_Help( ply, cmd, args )
 
-	CAKE.SendChat( ply, "---List of CakeScript Admin Commands---" );
+	CAKE.SendChat( ply, "---List of Tiramisu Admin Commands---" );
 	
 	for cmdname, cmd in pairs( CAKE.AdminCommands ) do
 	
@@ -327,14 +327,6 @@ function Admin_AddSpawn( ply, cmd, args)
 		local ang = ply:EyeAngles( )
 		CAKE.AddSpawn(pos, ang)
 	end
-	
-end
-	
-function Admin_AddStash( ply, cmd, args)
-	
-		local pos = ply:GetPos()
-		local ang = ply:EyeAngles( )
-		CAKE.AddStash(pos, ang)
 	
 end
 
@@ -505,7 +497,6 @@ function PLUGIN.Init( )
 	CAKE.AdminCommand( "createitem", Admin_CreateItem, "Creates an item", true, true, 4 );
 	CAKE.AdminCommand( "setmoney", Admin_SetMoney, "Set the money of another player", true, true, 4 )
 	CAKE.AdminCommand( "addspawn", Admin_AddSpawn, "Add a new spawn point on your position.", true, true, 4 )
-	CAKE.AdminCommand( "addstash", Admin_AddStash, "Add a new container out of your targeted item", true, true, 4 )
 	CAKE.AdminCommand( "bring", Admin_Bring, "Brings a player to you", true, true, 3);
 	CAKE.AdminCommand( "goto", Admin_GoTo, "Takes you to a player", true, true, 3 );
 	CAKE.AdminCommand( "slay", Admin_Slay, "Kills a player", true, true, 3 );

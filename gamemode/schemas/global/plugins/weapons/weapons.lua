@@ -2,6 +2,13 @@ PLUGIN.Name = "Weapon Systems"; -- What is the plugin name
 PLUGIN.Author = "Big Bang"; -- Author of the plugin
 PLUGIN.Description = "Handles weapon saving, modification and such"; -- The description or purpose of the plugin
 
+CAKE.Undroppable = {
+	"hands",
+	"weapon_physcannon",
+	"gmod_tool",
+	"weapon_physgun"
+}
+
 local function WeaponEquipItem( wep )
 
 	timer.Simple(0.1, function() 
@@ -23,18 +30,20 @@ hook.Add( "WeaponEquip", "GetWeaponAsItem", WeaponEquipItem )
 
 function CAKE.DropWeapon( ply, wep )
 
-	if( CAKE.ItemData[ wep:GetClass( ) ] != nil ) then
-		CAKE.CreateItem( wep:GetClass( ), ply:CalcDrop( ), Angle( 0,0,0 ) );
-		ply:TakeItem( wep:GetClass() )
+	if( CAKE.ItemData[ wep ] != nil ) then
+		if ply:HasItem( wep) then
+			ply:TakeItem( wep )
+		end
+		CAKE.CreateItem( wep , ply:CalcDrop( ), Angle( 0,0,0 ) );
 		local weapons = CAKE.GetCharField( ply, "weapons" )
 		for k, v in pairs( weapons ) do
-			if v == wep:GetClass( ) then
-				v = nil
+			if v == wep then
+				table.remove( weapons, k )
 			end
 		end
 		CAKE.SetCharField( ply, "weapons", weapons )
 	end
-	ply:StripWeapon( wep:GetClass( ) );
+	ply:StripWeapon( wep );
 	
 end
 
@@ -82,33 +91,14 @@ end
 local function WeaponsLoadout( ply )
 	
 	if ply:IsCharLoaded() then
-		if !ply.CheatedDeath then
-			if(ply:GetNWInt("charactercreate") != 1) then
-				for k, v in pairs( CAKE.GetCharField( ply, "weapons" ) ) do
-					ply:Give( v )
-				end
-				ply:RemoveAllAmmo( )
-				ply:RestoreAmmo()
-				for k, v in pairs( CAKE.GetCharField( ply, "inventory" ) ) do
-					if string.match( v, "weapon" ) then 
-					ply:TakeItem( v )
-					end
-				end
-			end
-		else
+		if(ply:GetNWInt("charactercreate") != 1) then
 			for k, v in pairs( CAKE.GetCharField( ply, "weapons" ) ) do
-				ply:TakeItem( v )
-			end
-			for k, v in pairs( CAKE.GetCharField( ply, "inventory" ) ) do
-				if string.match( v, "weapon" ) then 
-					ply:TakeItem( v )
-				end
+				ply:Give( v )
 			end
 			ply:RemoveAllAmmo( )
-			CAKE.SetCharField( ply, "weapons", {} )
-			CAKE.SetCharField( ply, "ammo", {} )
+			ply:RestoreAmmo()
 		end
-		
+ 
 		local group = CAKE.GetCharField( ply, "group" )
 		local rank = CAKE.GetCharField( ply, "grouprank" )
 		
@@ -140,14 +130,18 @@ hook.Add( "PlayerSpawn", "CakeAmmoSaveTimer", StartTimer )
 
 function ccDropWeapon( ply, cmd, args )
 	
-		local wep = ply:GetActiveWeapon( )
-		CAKE.DropWeapon( ply, wep )
-		if ply:HasItem( wep:GetClass() ) then
-			ply:TakeItem( wep:GetClass() )
-		end
+	local wep = ply:GetActiveWeapon( )
+	if !table.HasValue( CAKE.Undroppable, wep:GetClass() ) then 
+		CAKE.DropWeapon( ply, wep:GetClass() )
 		CAKE.RemoveGearItem( ply, wep:GetClass() )
+		if wep:Clip1() > 0 then
+			ply:SetAmmo( math.Clamp( ply:GetAmmoCount( wep:GetPrimaryAmmoType( ) ) - wep:Clip1( ), 0, ply:GetAmmoCount( wep:GetPrimaryAmmoType( ) ) ), wep:GetPrimaryAmmoType( ) )
+			ply:SaveAmmo()
+		end
+	end
 
-		ply:RefreshInventory( )
+	ply:SelectWeapon( "hands" )
+	ply:RefreshInventory( )
 	
 end
 concommand.Add( "rp_dropweapon", ccDropWeapon );

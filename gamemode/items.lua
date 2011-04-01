@@ -47,16 +47,10 @@ function ccDropItem( ply, cmd, args )
 		for k, v in pairs( inv ) do
 			if( v == args[ 1 ] ) then
 				if( string.match( v, "weapon" ) )then
-					ply:StripWeapon( v )
-					if( table.HasValue( CAKE.GetCharField( ply, "weapons" ), v ) ) then
-						local weapons = CAKE.GetCharField( ply, "weapons" )
-						for k2, v2 in pairs( weapons ) do
-							if v2 == v then
-								table.remove( weapons, k2 )
-							end
-						end
-						CAKE.SetCharField( ply, "weapons", weapons )
-					end
+					CAKE.DropWeapon( ply, args[ 1 ] )
+					CAKE.RemoveGearItem( ply, args[ 1 ] )
+					ply:RefreshInventory( )
+					return
 				end
 				CAKE.RestoreClothing( ply )
 				CAKE.RestoreGear( ply )

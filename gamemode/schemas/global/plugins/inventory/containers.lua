@@ -25,7 +25,7 @@ end
 
 function CAKE.GetContainerSize( model )
 
-	return CAKE.Containers[model]
+	return CAKE.Containers[model] or 8
 
 end
 

@@ -76,12 +76,21 @@ function CAKE.InitStashes()
 	
 end
 
+function Admin_AddStash( ply, cmd, args)
+	
+		local pos = ply:GetPos()
+		local ang = ply:EyeAngles( )
+		CAKE.AddStash(pos, ang)
+	
+end
+
 
 hook.Add( "Initialize", "TiramisuInitStashes", function()
 	CAKE.InitStashes()
 end)
 
 function PLUGIN.Init()
+	CAKE.AdminCommand( "addstash", Admin_AddStash, "Adds a random item spawner, with 3 possible settings ( Common, Uncommon, Rare )", true, true, 4 )
 	CAKE.AddStashItem("fake","Common") -- DO NOT REMOVE THIS LINE OR THE LINES FOLLOWING.
 	CAKE.AddStashItem("fake","Uncommon") -- THESE ARE SO THAT THE STASH SYSTEM DOES NOT ERROR IF THERE IS NOTHING IN THAT RARITY RANGE.
 	CAKE.AddStashItem("fake","Rare") -- THE SCRIPT WILL NOT FUNCTION PROPERLY.

@@ -50,8 +50,21 @@ function CAKE.DeathMode( ply )
 		ply.deathrag:Remove()
 		ply.deathrag = nil
 	end
+
+	if CAKE.ConVars[ "LoseWeaponsOnDeath" ] then
+		if CAKE.ConVars[ "LoseItemsOnDeath" ] then
+			for k, v in pairs( CAKE.GetCharField( ply, "inventory" ) ) do
+				ply:TakeItem( v )
+			end
+		end
+		for k, v in pairs( CAKE.GetCharField( ply, "weapons" ) ) do
+			ply:TakeItem( v )
+		end
+		ply:RemoveAllAmmo( )
+		CAKE.SetCharField( ply, "weapons", {} )
+		CAKE.SetCharField( ply, "ammo", {} )
+	end
 	
-	ply.CheatedDeath = false
 	CAKE.DayLog( "script.txt", "Starting death mode for " .. ply:SteamID( ) );
 	local mdl = ply:GetModel( )
 	
@@ -227,54 +240,6 @@ function meta:ConCommand( cmd ) --Rewriting this due to Garry fucking it up.
 		--Yeah it just sends the command as a string which is then ran clientside. 2 usermessages sent, all because of
 		--A REALLY REALLY not well thought fix.
 	umsg.End()
-end
-
-function meta:MaxHealth( )
-
-	return self:GetNWFloat("MaxHealth");
-	
-end
-
-function meta:ChangeMaxHealth( amt )
-
-	self:SetNWFloat("MaxHealth", self:MaxHealth() + amt);
-	
-end
-
-function meta:MaxArmor( )
-
-	return self:GetNWFloat("MaxArmor");
-	
-end
-
-function meta:ChangeMaxArmor( amt )
-
-	self:SetNWFloat("MaxArmor", self:MaxArmor() + amt);
-	
-end
-
-function meta:MaxWalkSpeed( )
-
-	return self:GetNWFloat("MaxWalkSpeed");
-	
-end
-
-function meta:ChangeMaxWalkSpeed( amt )
-
-	self:SetNWFloat("MaxWalkSpeed", self:MaxWalkSpeed() + amt);
-	
-end
-
-function meta:MaxRunSpeed( )
-
-	return self:GetNWFloat("MaxRunSpeed");
-	
-end
-
-function meta:ChangeMaxRunSpeed( amt )
-
-	self:SetNWFloat("MaxRunSpeed", self:MaxRunSpeed() + amt);
-	
 end
 
 function meta:IsCharLoaded()

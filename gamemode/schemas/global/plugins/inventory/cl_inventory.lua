@@ -166,6 +166,8 @@ vgui.Register( "InventorySlot_Icon", PANEL, "Panel" )
 
 
 
+
+
 local function OpenInventory()
 	PlayerMenu = vgui.Create( "DFrameTransparent" )
 	--PlayerMenu:SetPos( ScrW() / 2 - 320, ScrH() / 2 - 240 )

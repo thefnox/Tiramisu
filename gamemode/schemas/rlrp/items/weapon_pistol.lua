@@ -22,7 +22,6 @@ end
 
 function ITEM:UseItem(ply)
 
-	ply:Give("weapon_mad_usp_match");
 	self:Remove();
 
 end

@@ -18,26 +18,26 @@ end
 local function AddContentFolder( filepath )
 
 
-	filepath = filepath or "gamemodes/" .. CAKE.Name .. "/content/*"
-	local exp
-	local list = file.Find( filepath, true )
+	local filepath = filepath or ""
+	local list = file.Find( "gamemodes/" .. CAKE.Name .. "/content" .. filepath  .. "/*", true ) or {}
 	for k, v in pairs( list ) do
-		if !file.IsDir( v, true ) then
-			exp = string.Explode( ".", v )
-			AddResource( exp[2] or "file", v )
+		if string.GetExtensionFromFilename(v) and string.GetExtensionFromFilename(v) != "dll" then
+			AddResource( string.GetExtensionFromFilename(v), string.sub( filepath .. "/" .. v, 2 ) ) --Starting from char 2 since char one is a slash.
 		else
-			AddContentFolder( filepath .. "*" )
+			if v:len() > 2 then --Filters out ".." and "." which are special folder names
+				AddContentFolder( filepath .. "/" .. v )
+			end
 		end
 	end
 
 end
-/*
+
 hook.Add( "Initialize", "TiramisuAddContent", function()
 	
 	AddContentFolder()
 
 end)
-*/
+
 -- LUA Files
 AddResource( "lua", "shared.lua" ); -- Shared Functions
 AddResource( "lua", "cl_binds.lua" ); -- Binds

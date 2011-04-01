@@ -40,11 +40,11 @@ end
 
 function CAKE.CreatePermaProp( id )
 	if CAKE.PermaProps[ game.GetMap( ) ][ id ] then
-		local prop = ents.Create( "prop_static" )
+		local prop = ents.Create( "prop_physics" )
 		prop:SetModel( CAKE.PermaProps[ game.GetMap( ) ][ id ][ "model" ] )
 		prop:SetPos( CAKE.PermaProps[ game.GetMap( ) ][ id ][ "position" ] )
 		prop:SetAngles( CAKE.PermaProps[ game.GetMap( ) ][ id ][ "angles" ] )
-		prop:SetUnFreezable( true )
+		prop:SetUnFreezable( false )
 		prop:SetMoveType( MOVETYPE_NONE )
 		prop.PermaID = id
 		prop:Spawn()

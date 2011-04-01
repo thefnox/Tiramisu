@@ -35,7 +35,6 @@ function CAKE.LoadPlugin( schema, filename )
 			include( "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v  )
 			table.insert( CAKE.Plugins, PLUGIN );
 		end
-		print( "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v  )
 	end
 	
 end

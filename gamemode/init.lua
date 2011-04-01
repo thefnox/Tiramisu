@@ -34,9 +34,9 @@ resource.AddFile( "models/Tiramisu/AnimationTrees/playeranimtree.mdl" )
 resource.AddFile( "models/Tiramisu/AnimationTrees/femaleanimtree.mdl" )
 resource.AddFile( "models/Tiramisu/AnimationTrees/policeanimtree.mdl" )
 resource.AddFile( "models/Tiramisu/AnimationTrees/barneyanimtree.mdl" )
-resource.AddFile( "models/Tiramisu/Tools/blank_model.mdl")
-resource.AddFile( "materials/models/Tiramisu/Tools/invisible.vmt")
-resource.AddFile( "materials/models/Tiramisu/Tools/invisible.vtf")
+resource.AddFile( "models/Tiramisu/blank_model.mdl")
+resource.AddFile( "materials/tiramisu/invisible.vmt")
+resource.AddFile( "materials/tiramisu/invisible.vtf")
 resource.AddFile( "materials/tiramisu/tabbutton.vmt" )
 resource.AddFile( "resource/fonts/Harabara.ttf")
 
@@ -106,11 +106,7 @@ function GM:PlayerInitialSpawn( ply )
 	ply.Ready = false;
 	ply:SetNWBool( "chatopen", false );
 	ply:SetModel( "models/kleiner.mdl" )
-	ply:ChangeMaxHealth(CAKE.ConVars[ "DefaultHealth" ]);
-	ply:ChangeMaxArmor(0);
-	ply:ChangeMaxWalkSpeed(CAKE.ConVars[ "WalkSpeed" ]);
-	ply:ChangeMaxRunSpeed(CAKE.ConVars[ "RunSpeed" ]);
-	
+
 	-- Load their data, or create a new datafile for them.
 	CAKE.LoadPlayerDataFile( ply );
 	
@@ -161,12 +157,6 @@ function GM:PlayerSpawn( ply )
 		end
 	end)
 	
-	-- Reset all the variables
-	ply:ChangeMaxHealth(CAKE.ConVars[ "DefaultHealth" ] - ply:MaxHealth());
-	ply:ChangeMaxArmor(0 - ply:MaxArmor());
-	ply:ChangeMaxWalkSpeed(CAKE.ConVars[ "WalkSpeed" ] - ply:MaxWalkSpeed());
-	ply:ChangeMaxRunSpeed(CAKE.ConVars[ "RunSpeed" ] - ply:MaxRunSpeed());
-	
 	self.BaseClass:PlayerSpawn( ply )
 	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] );
 	
@@ -206,7 +196,6 @@ function GM:PlayerDeathThink(ply)
 			ply:Spawn()
 			ply.deathtime = nil;
 			ply.nextsecond = nil;
-			ply:SetNWInt("deathmode", 0);
 			ply:SetNWInt("deathmoderemaining", 0);
 			
 		end
@@ -274,7 +263,7 @@ end
 -- Disallows suicide
 function GM:CanPlayerSuicide( ply )
 
-	if( CAKE.ConVars[ "SuicideEnabled" ] != "1" ) then
+	if( !CAKE.ConVars[ "SuicideEnabled" ] ) then
 	
 		ply:ChatPrint( "Suicide is disabled!" )
 		return false
