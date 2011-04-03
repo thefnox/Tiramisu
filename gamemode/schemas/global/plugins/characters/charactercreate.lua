@@ -244,21 +244,23 @@ function ccReady( ply, cmd, args )
 		high = high + 1;
 		ply:SetNWString( "uid", tostring(high) );
 		
-		for k, v in pairs( PlyCharTable ) do -- Send them all their characters for selection
-	
-			umsg.Start( "ReceiveChar", ply );
-				umsg.Long( tonumber(k) );
-				umsg.String( v[ "name" ] );
-				umsg.String( v[ "model" ] );
-				umsg.String( v[ "title" ] );
-			umsg.End( );
+		timer.Simple( 1, function()
+			for k, v in pairs( PlyCharTable ) do -- Send them all their characters for selection
+		
+				umsg.Start( "ReceiveChar", ply );
+					umsg.Long( tonumber(k) );
+					umsg.String( v[ "name" ] );
+					umsg.String( v[ "model" ] );
+					umsg.String( v[ "title" ] );
+				umsg.End( );
+				
+			end
+
+			ply:SetNWInt( "charactercreate", 1 )
 			
-		end
-		
-		ply:SetNWInt( "charactercreate", 1 )
-		
-		umsg.Start( "characterselection", ply );
-		umsg.End( );
+			umsg.Start( "characterselection", ply );
+			umsg.End( );
+		end)
 		
 	end
 	

@@ -212,11 +212,11 @@ function meta:TakeItem( class )
 		if( v == class ) then
 			inv[ k ] = nil;
 			CAKE.SetCharField( self, "inventory", inv);
-			self:RefreshInventory( );
 			CAKE.DayLog( "economy.txt", "Removing item '" .. class .. "' from " .. CAKE.FormatCharString( self ) .. " inventory" );
 			return;
 		end
 	end
+	self:RefreshInventory( );
 	CAKE.CalculateEncumberment( self )
 	
 end
@@ -228,16 +228,25 @@ end
 
 function meta:RefreshInventory( )
 	self:ClearInventory( )
+	local newtbl = {}
 	
 	for k, v in pairs( CAKE.GetCharField( self, "inventory" ) ) do
+		newtbl[k] = {}
+		newtbl[k].Name = CAKE.ItemData[ v ].Name or "Error Item"
+		newtbl[k].Class = CAKE.ItemData[ v ].Class or "error"
+		newtbl[k].Description = CAKE.ItemData[ v ].Description or "Grab a programmer!"
+		newtbl[k].Model = CAKE.ItemData[ v ].Model or "models/error.mdl"
+		/*
 		umsg.Start( "addinventory", self );
 			umsg.String( CAKE.ItemData[ v ].Name );
 			umsg.String( CAKE.ItemData[ v ].Class );
 			umsg.String( CAKE.ItemData[ v ].Description );
 			umsg.String( CAKE.ItemData[ v ].Model );
-			umsg.Short( CAKE.GetWeight( v ) )
-		umsg.End( );
+		umsg.End( );*/
 	end
+		
+	datastream.StreamToClients( self, "addinventory", newtbl )
+
 end
 
 function meta:ClearBusiness( )

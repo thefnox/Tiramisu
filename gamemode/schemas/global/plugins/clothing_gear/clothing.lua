@@ -27,8 +27,6 @@ hook.Add( "PlayerDeath", "PlayerRemoveClothing", PlayerDeath )
 local meta = FindMetaTable( "Player" );
 	
 function CAKE.SetClothing( ply, body, helmet, glove )
-	
-	CAKE.CalculateShields( ply, body, helmet )
 
 	if resourcex then
 		if CAKE.ItemData[ body ] and CAKE.ItemData[ body ].Content then

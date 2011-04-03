@@ -10,6 +10,7 @@ CAKE.Skin = "default"
 CAKE.CharCreate = function() end
 CAKE.MenuFont = "Harabara"
 CAKE.BaseColor = Color( 100, 100, 115, 150 ) --The schema's default frame color
+CAKE.DefaultTime = "1 1 2011 1"
 
 CAKE.ViewRagdoll = false
 

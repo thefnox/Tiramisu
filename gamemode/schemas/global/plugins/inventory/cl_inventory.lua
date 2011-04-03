@@ -2,6 +2,65 @@ CLPLUGIN.Name = "Inventory Menu"
 CLPLUGIN.Author = "F-Nox/Big Bang"
 
 InventoryTable = {}
+CAKE.InventorySlot = {}
+CAKE.SavedPositions = {}
+
+local function SavePositions()
+	if CAKE.InventorySlot then
+		for k, v in ipairs( CAKE.InventorySlot ) do
+			if v:GetItem() then
+				CAKE.SavedPositions[v:GetItem().Class] = k
+			end 
+		end
+	end
+	file.Write( CAKE.Name .. "/PersonalData/inventory.txt", glon.encode( CAKE.SavedPositions ) )
+end
+
+local function LoadPositions()
+	if file.Exists( CAKE.Name .. "/PersonalData/inventory.txt" ) then
+		CAKE.SavedPositions = glon.decode( file.Read( CAKE.Name .. "/PersonalData/inventory.txt"  ))
+	else
+		SavePositions()
+	end
+end
+
+local function AvailableSlot()
+	if CAKE.InventorySlot then
+		for k, v in ipairs( CAKE.InventorySlot ) do
+			if !v:GetItem() then
+				return k
+			end 
+		end
+	end
+	return false
+end
+
+local function ClearAllSlots()
+	if CAKE.InventorySlot then
+		for k, v in ipairs( CAKE.InventorySlot ) do
+			if v:GetItem() then
+				v:ClearItem()
+			end 
+		end
+	end
+end
+
+local function CalculateItemPosition( item )
+	local slot
+	if CAKE.SavedPositions[ item ] then
+		if CAKE.InventorySlot[ CAKE.SavedPositions[ item ] ]:GetItem() and CAKE.InventorySlot[ CAKE.SavedPositions[ item ] ]:GetItem().Class == item then
+			return CAKE.SavedPositions[ item ]
+		elseif !CAKE.InventorySlot[ CAKE.SavedPositions[ item ] ]:GetItem() then
+			return CAKE.SavedPositions[ item ]
+		else
+			return AvailableSlot()
+		end
+	else
+		return AvailableSlot()
+	end
+end
+
+--InventorySlot_Icon
 
 local function RenderSpawnIcon_Prop( model, pos, middle, size )
 
@@ -164,205 +223,277 @@ end
 
 vgui.Register( "InventorySlot_Icon", PANEL, "Panel" )
 
+--InventorySlot
+
+PANEL = {}
+
+AccessorFunc( PANEL, "m_bPaintBackground",              "PaintBackground" )
+AccessorFunc( PANEL, "m_bDisabled",                     "Disabled" )
+AccessorFunc( PANEL, "m_bgColor",               "BackgroundColor" )
+Derma_Hook( PANEL, "Paint", "Paint", "Panel" )
+
+/*---------------------------------------------------------
+   Name: Paint
+---------------------------------------------------------*/
+function PANEL:Init()
+    self:SetPaintBackground( true )
+        
+    // This turns off the engine drawing
+    self:SetPaintBackgroundEnabled( false )
+    self:SetPaintBorderEnabled( false )
+    self.Icon = vgui.Create( "InventorySlot_Icon", self )
+    self:SetIconSize( 64 )
+    self:SetToolTip( "Empty Slot")
+    self.DragDisabled = false
+
+end
+
+function PANEL:SetIconSize( size )
+
+	if self.Icon then
+		self.IconSize = size
+		self:SetSize( size + 4, size + 4 )
+		self.Icon:SetSize( size, size )
+		self.Icon:SetPos( 2, 2 )
+	end
+
+end
+
+function PANEL:SetAmount( amount )
+	self.Amount = amount or 1
+end
+
+function PANEL:SetItem( item, amount )
+	self.Item = item
+	if !self.Icon then
+		self.Icon = vgui.Create( "InventorySlot_Icon", self )
+		self:SetIconSize( self.IconSize )
+	end
+	self:SetToolTip( item.Name .. ":\n" .. item.Description )
+	self.Icon:SetModel( item.Model )
+	self:SetAmount( amount or 1 )
+	self:OnUseItem( item, amount )
+end
+
+function PANEL:AddItem( item )
+	if self:GetItem() and self:GetItem().Class == item.Class then
+		self:SetAmount( self:GetAmount() + 1 )
+	else
+		self:SetItem( item, 1 )
+	end
+end
+
+function PANEL:OnUseItem( item, amount )
+end
+
+function PANEL:GetItem()
+	return self.Item
+end
+
+function PANEL:GetAmount()
+	return self.Amount or 1
+end
+
+function PANEL:ClearItem()
+
+	if self.Icon then
+		self.Icon:Remove()
+		self.Icon = nil
+	end
+	self.Item = false
+	self:SetAmount()
+	self:SetToolTip( "Empty Slot" )
+
+end
+
+function PANEL:DisableDrag()
+	self.DragDisabled = !self.DragDisabled
+end
+
+function PANEL:DropItem()
+	if self.Item then
+		LocalPlayer():ConCommand("rp_dropitem " .. self:GetItem().Class )
+	end
+end
+
+function PANEL:UseItem()
+	if self.Item then
+		LocalPlayer():ConCommand("rp_useinventory " .. self:GetItem().Class )
+	end
+end
+
+/*---------------------------------------------------------
+   Name: OnMousePressed
+---------------------------------------------------------*/
+function PANEL:OnMousePressed( mcode )
+
+    if ( mcode == MOUSE_LEFT ) and self.Item then
+        self:StartDrag()
+    end
+    
+    if ( mcode == MOUSE_RIGHT ) and self.Item then
+        self:OpenMenu()
+    end
+
+end
+
+function PANEL:OnMouseReleased( mcode )
+
+	if ( mcode == MOUSE_LEFT ) then
+		self:EndDrag()
+	end
+
+end
+
+function PANEL:StartDrag()
+	if !LocalPlayer().OnDrag and !self.DragDisabled and self:GetItem() then
+		LocalPlayer().OnDrag = true
+		LocalPlayer().DragIcon = vgui.Create( "InventorySlot_Icon" )
+		LocalPlayer().DragIcon:SetSize( self.IconSize, self.IconSize )
+		LocalPlayer().DragIcon:MoveToFront( )
+		LocalPlayer().DragIcon:SetModel( self:GetItem().Model )
+		LocalPlayer().DragOrigin = self
+		LocalPlayer().DragAmount = self:GetAmount()
+		LocalPlayer().DragItem = self:GetItem()
+		LocalPlayer().DragIcon.Think = function()
+			LocalPlayer().DragIcon:SetPos( gui.MousePos() )
+		end
+		LocalPlayer().DragIcon.PaintOver = function()
+			surface.SetTextColor(Color(255,255,255,255));
+			surface.SetFont("TabLarge");
+			surface.SetTextPos( LocalPlayer().DragIcon:GetWide() - 12, LocalPlayer().DragIcon:GetTall() - 14);
+			surface.DrawText( LocalPlayer().DragAmount )
+		end
+		self:ClearItem()
+	end
+end
+
+function PANEL:EndDrag()
+	SavePositions()
+	if LocalPlayer().OnDrag and !self.DragDisabled then
+		LocalPlayer().OnDrag = false
+		LocalPlayer().DragIcon:Remove()
+		LocalPlayer().DragIcon = nil
+		if LocalPlayer().DragTarget then
+			if LocalPlayer().DragTarget:GetItem() then
+				--Trade items between the origin and target slots.
+				LocalPlayer().DragOrigin:SetItem( LocalPlayer().DragTarget:GetItem(), LocalPlayer().DragTarget:GetAmount() )
+				LocalPlayer().DragTarget:SetItem( LocalPlayer().DragItem, LocalPlayer().DragAmount )
+			else
+				--Just set the currently empty slot to the dragged item, and clear the origin.
+				LocalPlayer().DragOrigin:ClearItem()
+				LocalPlayer().DragTarget:SetItem( LocalPlayer().DragItem, LocalPlayer().DragAmount )
+			end
+		else
+			--Nothing resulted out of the drag, reverse to normal.
+			LocalPlayer().DragOrigin:SetItem( LocalPlayer().DragItem, LocalPlayer().DragAmount )
+		end
+	end
+end
+
+/*---------------------------------------------------------
+   Name: OpenMenu
+---------------------------------------------------------*/
+function PANEL:OpenMenu()
+	local ContextMenu = DermaMenu()
+		ContextMenu:AddOption("Drop", function() self:DropItem() end)
+		ContextMenu:AddOption("Use", function() self:UseItem() end)
+	ContextMenu:Open()
+end
+
+/*---------------------------------------------------------
+   Name: OnMouseReleased
+---------------------------------------------------------*/
+function PANEL:OnCursorEntered()
+
+	if LocalPlayer().OnDrag then
+		LocalPlayer().DragTarget = self
+	end
+
+end
+
+/*---------------------------------------------------------
+   Name: OnMouseReleased
+---------------------------------------------------------*/
+function PANEL:OnCursorExited()
+
+	if LocalPlayer().OnDrag then
+		LocalPlayer().DragTarget = nil
+	end
+
+end
+
+function PANEL:Paint()
+	x, y = self:ScreenToLocal( 0, 0 )
+	surface.SetDrawColor(50,50,50,255)
+	surface.DrawOutlinedRect( 0, 0, self:GetWide(), self:GetTall() )
+end
+
+function PANEL:PaintOver()
+	if self:GetAmount() > 1 then
+		surface.SetTextColor(Color(255,255,255,255));
+		surface.SetFont("TabLarge");
+		surface.SetTextPos( self:GetWide() - 16, self:GetTall() - 14);
+		surface.DrawText( self:GetAmount() )
+	end
+end
+
+/*---------------------------------------------------------
+   Name: Think
+---------------------------------------------------------*/
+function PANEL:Think()
+	if !input.IsMouseDown( MOUSE_LEFT ) and LocalPlayer().OnDrag then
+		self:EndDrag()
+	end
+end
 
 
-
+vgui.Register( "InventorySlot", PANEL, "Panel" )
 
 local function OpenInventory()
-	PlayerMenu = vgui.Create( "DFrameTransparent" )
-	--PlayerMenu:SetPos( ScrW() / 2 - 320, ScrH() / 2 - 240 )
-	PlayerMenu:SetSize( 640, 480 )
-	PlayerMenu:SetTitle( "Inventory" )
-	--PlayerMenu:SetBackgroundBlur( true )
-	PlayerMenu:SetVisible( true )
-	PlayerMenu:SetDraggable( true )
-	PlayerMenu:ShowCloseButton( true )
-	PlayerMenu:SetDeleteOnClose( true )
-	PlayerMenu:Center()
-	PlayerMenu:MakePopup()
-	
-	Inventory = vgui.Create( "DPropertySheet", PlayerMenu )
-	Inventory:SetSize( 630,448 )
-	Inventory:SetPos( 5, 28 )
-	
-	InventorySheet = vgui.Create( "DPanelList" )
-	InventorySheet:SetPadding(10);
-	InventorySheet:SetSpacing(10);
-	InventorySheet:EnableHorizontal(false);
-	InventorySheet:EnableVerticalScrollbar(false);
-	local elipsis = ""
-	
-	local availablespace = 10
-
-	local icons = {}
-	
-	local function drawinventoryicons()
-		availablespace = 10
-		InventorySheet:Clear()
-		
-		local label = vgui.Create( "DLabel" )
-		label:SizeToContents()
-		InventorySheet:AddItem(label);
-		
-		local grid = vgui.Create( "DGrid" )
-		grid:SetCols( 8 )
-		grid:SetColWide( 74 )
-		grid:SetRowHeight( 74 )
-		InventorySheet:AddItem(grid);
-		
-		for k, v in pairs(InventoryTable) do
-			
-			if !icons[ v.Class ] then
-			
-				if string.len( v.Name ) > 6 then
-					elipsis = "..."
-				else
-					elipsis = ""
-				end
-				
-				local spawnicon = vgui.Create( "SpawnIcon");
-				spawnicon:SetSize( 64, 64 );
-				spawnicon:SetIconSize( 64 )
-				spawnicon.count = 1
-				spawnicon:SetModel(v.Model);
-				spawnicon:SetToolTip(v.Description);
-				icons[ v.Class ] = spawnicon
-				
-				local function DeleteMyself()
-					spawnicon.count = spawnicon.count - 1
-					if spawnicon.count < 1 then
-						grid:RemoveItem( spawnicon )
-					end
-				end
-				
-				spawnicon.DoClick = function ( btn )
-				
-					local ContextMenu = DermaMenu()
-						ContextMenu:AddOption("Drop", function() LocalPlayer():ConCommand("rp_dropitem " .. v.Class); DeleteMyself(); end);
-						ContextMenu:AddOption("Use", function() LocalPlayer():ConCommand("rp_useinventory " .. v.Class); DeleteMyself(); end);
-					ContextMenu:Open();
-					
-				end
-				
-				spawnicon.PaintOver = function()
-					surface.SetTextColor(Color(255,255,255,255));
-					surface.SetFont("TabLarge");
-					surface.SetTextPos(32 - surface.GetTextSize( string.sub( v.Name, 1, 6 ) .. elipsis) / 2, 5);
-					surface.DrawText( string.sub( v.Name, 1, 6 ) .. elipsis )
-					
-					surface.SetTextColor(Color(255,100,100,255))
-					surface.SetTextPos(52, 50);
-					surface.DrawText( v.Weight or 1 )
-
-					if spawnicon.count and spawnicon.count > 1 then
-						surface.SetTextColor(Color(100,255,100,255))
-						surface.SetTextPos(5, 50);
-						surface.DrawText( tostring( spawnicon.count ) )
-					end
-				end
-				
-				spawnicon.PaintOverHovered = function()
-					surface.SetTextColor(Color(255,255,255,255));
-					surface.SetFont("TabLarge");
-					surface.SetTextPos(32 - surface.GetTextSize( string.sub( v.Name, 1, 6 ) .. elipsis) / 2, 5);
-					surface.DrawText( string.sub( v.Name, 1, 6 ) .. elipsis )
-					
-					surface.SetTextColor(Color(255,100,100,255))
-					surface.SetTextPos(52, 50);
-					surface.DrawText( v.Weight or 1 )
-
-					if spawnicon.count and spawnicon.count > 1 then
-						surface.SetTextColor(Color(100,255,100,255))
-						surface.SetTextPos(5, 50);
-						surface.DrawText( tostring( spawnicon.count ) )
-					end
-				end
-				
-				availablespace = availablespace - v.Weight
-				
-				grid:AddItem(spawnicon);
-			else
-				icons[ v.Class ].count = icons[ v.Class ].count + 1
-			end
-		end
-		
-		label:SetText( "Available space: " .. tostring( math.Clamp( availablespace, 0, 100 ) ) .. ".kg" )
+	CAKE.InventoryFrame.Display = !CAKE.InventoryFrame.Display
+	CAKE.InventoryFrame:MakePopup()
+    CAKE.InventoryFrame:SetVisible( true )
+    CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
+    CAKE.InventoryFrame:SetMouseInputEnabled( true )
+	CAKE.InventoryFrame.CloseButton:SetVisible(true)
+	if !CAKE.InventoryFrame.Display then
+		CAKE.InventoryFrame.Display = false
+     	CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
+    	CAKE.InventoryFrame:SetMouseInputEnabled( false )
+     	CAKE.InventoryFrame.CloseButton:SetVisible(false)
+     	CAKE.InventoryFrame:RequestFocus()
 	end
-	drawinventoryicons()
-	Inventory:AddSheet( "Backpack", InventorySheet, "gui/silkicons/box", false, false, "View your inventory.")
-	
-
-	if CAKE.GetRankPermission( "canbuy" ) then
-		BusinessSheet = vgui.Create( "DPanelList" )
-		BusinessSheet:SetPadding(20);
-		BusinessSheet:SetSpacing(20);
-		BusinessSheet:EnableHorizontal(true);
-		BusinessSheet:EnableVerticalScrollbar(true);
-
-		for k, v in pairs(BusinessTable) do
-			local spawnicon = vgui.Create( "SpawnIcon");
-			spawnicon:SetSize( 32, 32 );
-			spawnicon:SetIconSize( 32 )
-			spawnicon:SetModel(v.Model);
-			spawnicon:SetToolTip(v.Description);
-					
-			spawnicon.DoClick = function ( btn )
-					
-				local ContextMenu = DermaMenu()
-				if(tonumber(LocalPlayer():GetNWInt("money")) >= v.Price) then
-					ContextMenu:AddOption("Purchase", function() LocalPlayer():ConCommand("rp_buyitem " .. v.Class); end);
-				else
-					ContextMenu:AddOption("Not Enough Tokens!");
-				end
-					
-				ContextMenu:Open();
-						
-			end
-					
-			spawnicon.PaintOver = function()
-				surface.SetTextColor(Color(255,255,255,255));
-				surface.SetFont("DefaultSmall");
-				surface.SetTextPos(64 - surface.GetTextSize(v.Name .. " (" .. v.Price .. ")") / 2, 5);
-				surface.DrawText(v.Name .. " (" .. v.Price .. ")")
-			end
-					
-			spawnicon.PaintOverHovered = function()
-				surface.SetTextColor(Color(255,255,255,255));
-				surface.SetFont("DefaultSmall");
-				surface.SetTextPos(64 - surface.GetTextSize(v.Name .. " (" .. v.Price .. ")") / 2, 5);
-				surface.DrawText(v.Name .. " (" .. v.Price .. ")")
-			end
-					
-			BusinessSheet:AddItem(spawnicon);
-		end
-		Inventory:AddSheet( "Business", BusinessSheet, "gui/silkicons/box", false, false, "View your store.")
-	end
-
 end
 
 local function CloseInventory()
-	if PlayerMenu then
-		PlayerMenu:Remove()
-		PlayerMenu = nil
-	end
+	CAKE.InventoryFrame.Display = false
+    CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
+    CAKE.InventoryFrame:SetMouseInputEnabled( false )
+    CAKE.InventoryFrame.CloseButton:SetVisible(false)
+    CAKE.InventoryFrame:RequestFocus()
 end
 
-local function AddItem(data)
+datastream.Hook("addinventory", function(handler, id, encoded, decoded )
+	
+	/*
 	local itemdata = {}
 	itemdata.Name = data:ReadString();
 	itemdata.Class = data:ReadString();
 	itemdata.Description = data:ReadString();
-	itemdata.Model = data:ReadString();
-	itemdata.Weight = data:ReadShort();
+	itemdata.Model = data:ReadString();*/
+
+	for k, v in pairs( decoded ) do
+		if CalculateItemPosition( v.Class ) then
+			CAKE.InventorySlot[ CalculateItemPosition( v.Class ) ]:AddItem( v ) 
+		end
+	end
+	SavePositions()
 	
-	table.insert(InventoryTable, itemdata);
-end
-usermessage.Hook("addinventory", AddItem);
+end )
 
 local function ClearItems()
-	
-	InventoryTable = {}
-	
+	ClearAllSlots()
 end
 usermessage.Hook("clearinventory", ClearItems);
 
@@ -388,6 +519,113 @@ local function AddBusinessItem(data)
 	table.insert(BusinessTable, itemdata);
 end
 usermessage.Hook("addbusiness", AddBusinessItem);
+
+hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
+
+	LoadPositions()
+	CAKE.InventoryFrame = vgui.Create( "DFrameTransparent" )
+	CAKE.InventoryFrame:SetSize( 448, 200 )
+	CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, ScrH() - 79 )
+	CAKE.InventoryFrame.Display = false
+	CAKE.InventoryFrame:SetDeleteOnClose( false )
+	CAKE.InventoryFrame:SetMouseInputEnabled( true )
+	local x, y
+	local color = CAKE.BaseColor or Color( 100, 100, 115, 150 )
+	local alpha = 0
+	local matBlurScreen = Material( "pp/blurscreen" ) 
+	CAKE.InventoryFrame.Paint = function()
+		if CAKE.InventoryFrame.Display then
+			x,y = CAKE.InventoryFrame:GetPos()
+			if y != ScrH() - 172 then
+				CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 195 ))
+			end
+			alpha = Lerp( 0.1, alpha, 1 )
+
+			surface.SetDrawColor( color.r, color.g, color.b, alpha * 80 )
+    		surface.DrawRect( 0, 23 , CAKE.InventoryFrame:GetWide(), CAKE.InventoryFrame:GetTall() )
+
+		else
+			alpha = 0
+			x,y = CAKE.InventoryFrame:GetPos()
+			if y != ScrH() - 58 then
+				CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 79 ))
+			end
+		end
+	end
+
+	CAKE.InventoryFrame:SetTitle( "" )
+	CAKE.InventoryFrame:SetDraggable( false )
+	CAKE.InventoryFrame:ShowCloseButton( false )
+
+	CAKE.InventoryFrame.CloseButton = vgui.Create( "DSysButton", CAKE.InventoryFrame )
+    CAKE.InventoryFrame.CloseButton:SetType( "close" )
+    CAKE.InventoryFrame.CloseButton:SetSize(18,18)
+    CAKE.InventoryFrame.CloseButton:SetPos( CAKE.InventoryFrame:GetWide() - 22, 4 )
+    CAKE.InventoryFrame.CloseButton:SetVisible(false)
+    CAKE.InventoryFrame.CloseButton.DoClick = function()
+     	CAKE.InventoryFrame.Display = false
+     	CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
+    	CAKE.InventoryFrame:SetMouseInputEnabled( false )
+     	CAKE.InventoryFrame.CloseButton:SetVisible(false)
+     	CAKE.InventoryFrame:RequestFocus()
+ 	end
+    CAKE.InventoryFrame.CloseButton:SetDrawBorder( false )
+    CAKE.InventoryFrame.CloseButton:SetDrawBackground( false )
+
+	local grid = vgui.Create( "DGrid", CAKE.InventoryFrame )
+	grid:SetSize( CAKE.InventoryFrame:GetWide(), 55 )
+	grid:SetPos( 2, 23 )
+	grid:SetCols( 8 )
+	grid:SetColWide( 56 )
+	grid:SetRowHeight( 52 )
+
+	local icon
+	for i = 1, 8 do
+	    icon = vgui.Create( "InventorySlot" )
+	    icon:SetIconSize( 48 )
+	    CAKE.InventorySlot[ i ] = icon
+	    CAKE.InventorySlot[ i ].PaintOver = function()
+	        surface.SetTextColor(Color(255,255,255,255))
+	        surface.SetFont("TiramisuTabsFont")
+	        surface.SetTextPos( 3, 3);
+	        surface.DrawText( "ALT+" .. i )
+	        if CAKE.InventorySlot[ i ]:GetAmount() > 1 then
+	            surface.SetTextPos( CAKE.InventorySlot[ i ]:GetWide() - 16, CAKE.InventorySlot[ i ]:GetTall() - 14);
+	            surface.DrawText( CAKE.InventorySlot[ i ]:GetAmount() )
+	        end
+	    end
+	    grid:AddItem( CAKE.InventorySlot[ i ] )
+	end
+
+	local grid2 = vgui.Create( "DGrid", CAKE.InventoryFrame )
+	grid2:SetSize( CAKE.InventoryFrame:GetWide(), 110 )
+	grid2:SetPos( 2, 83 )
+	grid2:SetCols( 8 )
+	grid2:SetColWide( 56 )
+	grid2:SetRowHeight( 56 )
+
+	for i = 9, 24 do
+	    icon = vgui.Create( "InventorySlot" )
+	    icon:SetIconSize( 48 )
+	    CAKE.InventorySlot[ i ] = icon
+	    grid2:AddItem( CAKE.InventorySlot[ i ] )
+	end
+
+	local keydown = {}
+	hook.Add( "Think", "TiramisuCheckQuickBarKey", function()
+		if input.IsKeyDown( KEY_LALT )then
+			for i=1, 8 do
+				if input.IsKeyDown( i + 1 ) and !keydown[ i ] then
+					CAKE.InventorySlot[ i ]:UseItem()
+					keydown[ i ] = true
+				elseif !input.IsKeyDown( i + 1 ) and keydown[i] then
+					keydown[ i ] = false
+				end
+			end
+		end
+	end)
+
+end)
 
 function CLPLUGIN.Init()
 	CAKE.RegisterMenuTab( "Inventory", OpenInventory, CloseInventory )

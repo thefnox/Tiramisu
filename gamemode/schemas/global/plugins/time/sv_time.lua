@@ -8,7 +8,7 @@ Time - Pink Floyd */
 
 function CAKE.InitTime() -- Load the time from a text file or default value, this occurs on gamemode initialization.
 
-	local clumpedtime = "1 1 2011 1"
+	local clumpedtime = CAKE.DefaultTime
 	
 	if(file.Exists(CAKE.Name .. "/time.txt")) then
 	

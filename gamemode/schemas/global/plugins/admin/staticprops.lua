@@ -33,6 +33,8 @@ function CAKE.RemovePermaProp( ent )
 	if CAKE.PermaProps[ game.GetMap( ) ][ id ] then
 		CAKE.PermaProps[ game.GetMap( ) ][ id ] = nil
 	end
+
+	ent.PermaProp = false
 	
 	CAKE.SavePermaProps()
 	
@@ -47,6 +49,7 @@ function CAKE.CreatePermaProp( id )
 		prop:SetUnFreezable( false )
 		prop:SetMoveType( MOVETYPE_NONE )
 		prop.PermaID = id
+		prop.PermaProp = true
 		prop:Spawn()
 		local phys = prop:GetPhysicsObject()	 
 		if phys and phys:IsValid() then
@@ -95,6 +98,18 @@ local function Admin_RemovePermaProp( ply, cmd, args )
 	CAKE.RemovePermaProp( trent )
 	
 end
+
+hook.Add("OnPhysgunFreeze", "TiramisuPhysgunPermapropProtection", function(weapon, phys, ent, ply)
+	if ent.PermaProp then
+		return false
+	end
+end)
+
+hook.Add("CanTool", "TiramisuToolPermapropProtection", function(ply, tr, toolmode)
+	if ValidEntity( tr.Entity ) and tr.Entity.PermaProp then
+		return false
+	end
+end)
 
 function PLUGIN.Init()
 	CAKE.AdminCommand( "addpermaprop", Admin_AddPermaProp, "Add a permanent prop", true, true, 2 );
