@@ -306,6 +306,19 @@ function PANEL:ClearItem()
 
 end
 
+function PANEL:RemoveItem()
+
+	if self.Item then
+		local count = self:GetAmount() - 1
+		if count > 0 then
+			self:SetAmount( count - 1 )
+		else
+			self:ClearItem()
+		end
+	end
+
+end
+
 function PANEL:DisableDrag()
 	self.DragDisabled = !self.DragDisabled
 end
@@ -313,12 +326,14 @@ end
 function PANEL:DropItem()
 	if self.Item then
 		LocalPlayer():ConCommand("rp_dropitem " .. self:GetItem().Class )
+		self:RemoveItem()
 	end
 end
 
 function PANEL:UseItem()
 	if self.Item then
 		LocalPlayer():ConCommand("rp_useinventory " .. self:GetItem().Class )
+		self:RemoveItem()
 	end
 end
 
@@ -369,7 +384,6 @@ function PANEL:StartDrag()
 end
 
 function PANEL:EndDrag()
-	SavePositions()
 	if LocalPlayer().OnDrag and !self.DragDisabled then
 		LocalPlayer().OnDrag = false
 		LocalPlayer().DragIcon:Remove()
@@ -389,6 +403,7 @@ function PANEL:EndDrag()
 			LocalPlayer().DragOrigin:SetItem( LocalPlayer().DragItem, LocalPlayer().DragAmount )
 		end
 	end
+	SavePositions()
 end
 
 /*---------------------------------------------------------
@@ -526,7 +541,7 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 
 	LoadPositions()
 	CAKE.InventoryFrame = vgui.Create( "DFrameTransparent" )
-	CAKE.InventoryFrame:SetSize( 448, 200 )
+	CAKE.InventoryFrame:SetSize( 560, 260 )
 	CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, ScrH() - 79 )
 	CAKE.InventoryFrame.Display = false
 	CAKE.InventoryFrame:SetDeleteOnClose( false )
@@ -539,7 +554,7 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 		if CAKE.InventoryFrame.Display then
 			x,y = CAKE.InventoryFrame:GetPos()
 			if y != ScrH() - 172 then
-				CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 195 ))
+				CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 250 ))
 			end
 			alpha = Lerp( 0.1, alpha, 1 )
 
@@ -577,12 +592,12 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 	local grid = vgui.Create( "DGrid", CAKE.InventoryFrame )
 	grid:SetSize( CAKE.InventoryFrame:GetWide(), 55 )
 	grid:SetPos( 2, 23 )
-	grid:SetCols( 8 )
+	grid:SetCols( 10 )
 	grid:SetColWide( 56 )
 	grid:SetRowHeight( 52 )
 
 	local icon
-	for i = 1, 8 do
+	for i = 0, 9 do
 	    icon = vgui.Create( "InventorySlot" )
 	    icon:SetIconSize( 48 )
 	    CAKE.InventorySlot[ i ] = icon
@@ -602,11 +617,11 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 	local grid2 = vgui.Create( "DGrid", CAKE.InventoryFrame )
 	grid2:SetSize( CAKE.InventoryFrame:GetWide(), 110 )
 	grid2:SetPos( 2, 83 )
-	grid2:SetCols( 8 )
+	grid2:SetCols( 10 )
 	grid2:SetColWide( 56 )
 	grid2:SetRowHeight( 56 )
 
-	for i = 9, 24 do
+	for i = 10, 39 do
 	    icon = vgui.Create( "InventorySlot" )
 	    icon:SetIconSize( 48 )
 	    CAKE.InventorySlot[ i ] = icon
@@ -616,7 +631,7 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 	local keydown = {}
 	hook.Add( "Think", "TiramisuCheckQuickBarKey", function()
 		if input.IsKeyDown( KEY_LALT )then
-			for i=1, 8 do
+			for i=0, 9 do
 				if input.IsKeyDown( i + 1 ) and !keydown[ i ] then
 					CAKE.InventorySlot[ i ]:UseItem()
 					keydown[ i ] = true

@@ -156,6 +156,11 @@ function GM:PlayerSpawn( ply )
 			CAKE.SavePlayerData( ply )
 		end
 	end)
+
+	timer.Simple( 1, function()
+		ply:RefreshInventory( )
+		ply:RefreshBusiness( )
+	end)
 	
 	self.BaseClass:PlayerSpawn( ply )
 	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] );

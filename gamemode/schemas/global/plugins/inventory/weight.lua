@@ -49,6 +49,6 @@ end
 
 function PLUGIN.Init()
 	
-	CAKE.MaxItems = 24
+	CAKE.MaxItems = 40
 	
 end

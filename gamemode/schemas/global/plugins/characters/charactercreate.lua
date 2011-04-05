@@ -145,9 +145,6 @@ local function ccFinishCreate( ply, cmd, args )
 			
 		end
 		
-		ply:RefreshInventory( )
-		ply:RefreshBusiness( )
-		
 		ply:SetTeam( 1 );
 		
 		CAKE.ResendCharData( ply );
@@ -199,9 +196,6 @@ function ccSpawnChar( ply, cmd, args )
 		ply:SetNWInt( "charactercreate", 0 );
 	
 		ply:SetTeam( 1 );
-		
-		ply:RefreshInventory( )
-		ply:RefreshBusiness( )
 		
 		ply:ConCommand( "fadein" );
 		ply:SetNWBool( "charloaded", true )

@@ -50,13 +50,13 @@ function ccDropItem( ply, cmd, args )
 					CAKE.DropWeapon( ply, args[ 1 ] )
 					CAKE.RemoveGearItem( ply, args[ 1 ] )
 					ply:RefreshInventory( )
+					CAKE.CalculateEncumberment( ply )
 					return
 				end
 				CAKE.RestoreClothing( ply )
 				CAKE.RestoreGear( ply )
 				CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ) );
 				ply:TakeItem( args[ 1 ] );
-				return;
 			end
 		end
 	
@@ -200,8 +200,6 @@ function meta:GiveItem( class )
 			self:Give( class )
 		end 
 	end
-	
-	self:RefreshInventory( );
 
 end
 
@@ -216,7 +214,6 @@ function meta:TakeItem( class )
 			return;
 		end
 	end
-	self:RefreshInventory( );
 	CAKE.CalculateEncumberment( self )
 	
 end
