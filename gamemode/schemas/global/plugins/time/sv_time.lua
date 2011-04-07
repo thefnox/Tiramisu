@@ -48,35 +48,37 @@ function CAKE.SaveTime()
 end
 
 function CAKE.SendTime()
-
-	local nHours = string.format("%02.f", math.floor(CAKE.ClockMins / 60));
-	local nMins = string.format("%02.f", math.floor(CAKE.ClockMins - (nHours*60)));
 	
-	if(tonumber(nHours) > 12) then 
-	
-		nHours = nHours - 12
-		timez = "PM";
+	if CAKE.ClockYear
+		local nHours = string.format("%02.f", math.floor(CAKE.ClockMins / 60));
+		local nMins = string.format("%02.f", math.floor(CAKE.ClockMins - (nHours*60)));
 		
-	else
-	
-		timez = "AM";
+		if(tonumber(nHours) > 12) then 
 		
-	end
-	
-	if(tonumber(nHours) == 0) then
-	
-		nHours = 12
+			nHours = nHours - 12
+			timez = "PM";
+			
+		else
 		
+			timez = "AM";
+			
+		end
+		
+		if(tonumber(nHours) == 0) then
+		
+			nHours = 12
+			
+		end
+		
+		if string.sub(tostring(nHours),1,1) == "0" then
+			nHours = " " ..string.sub(tostring(nHours), 2, 2)
+		end
+		
+		SetGlobalString("time", CAKE.ClockMonth or 1 .. "/" .. CAKE.ClockDay or 1 .. "/" .. CAKE.ClockYear or 2011 .. " - " .. nHours .. ":" .. nMins .. timez)
 	end
-	
-	if string.sub(tostring(nHours),1,1) == "0" then
-		nHours = " " ..string.sub(tostring(nHours), 2, 2)
-	end
-	
-	SetGlobalString("time", CAKE.ClockMonth .. "/" .. CAKE.ClockDay .. "/" .. CAKE.ClockYear .. " - " .. nHours .. ":" .. nMins .. timez)
 	
 end
 
-hook.Add( "Initialize", "TiramisuInitTime", function()
+hook.Add( "InitPostEntity", "TiramisuInitTime", function()
 	CAKE.InitTime()
 end)
