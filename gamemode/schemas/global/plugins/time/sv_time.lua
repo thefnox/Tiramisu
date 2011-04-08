@@ -4,6 +4,7 @@ Kicking around on a piece of ground in your home town
 Waiting for someone or something to show you the way
 
 Time - Pink Floyd */
+CAKE.DefaultTime = "1 1 2011 1"
 
 
 function CAKE.InitTime() -- Load the time from a text file or default value, this occurs on gamemode initialization.
@@ -49,7 +50,7 @@ end
 
 function CAKE.SendTime()
 	
-	if CAKE.ClockYear
+	if CAKE.ClockYear then
 		local nHours = string.format("%02.f", math.floor(CAKE.ClockMins / 60));
 		local nMins = string.format("%02.f", math.floor(CAKE.ClockMins - (nHours*60)));
 		
@@ -74,11 +75,11 @@ function CAKE.SendTime()
 			nHours = " " ..string.sub(tostring(nHours), 2, 2)
 		end
 		
-		SetGlobalString("time", CAKE.ClockMonth or 1 .. "/" .. CAKE.ClockDay or 1 .. "/" .. CAKE.ClockYear or 2011 .. " - " .. nHours .. ":" .. nMins .. timez)
+		SetGlobalString("time", CAKE.ClockMonth.. "/" .. CAKE.ClockDay .. "/" .. CAKE.ClockYear.. " - " .. nHours .. ":" .. nMins .. timez)
 	end
 	
 end
 
-hook.Add( "InitPostEntity", "TiramisuInitTime", function()
+function PLUGIN.Init()
 	CAKE.InitTime()
-end)
+end
