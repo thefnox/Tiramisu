@@ -50,7 +50,7 @@ local function CalculateItemPosition( item )
 	if CAKE.SavedPositions[ item ] then
 		if CAKE.InventorySlot[ CAKE.SavedPositions[ item ] ]:GetItem() and CAKE.InventorySlot[ CAKE.SavedPositions[ item ] ]:GetItem().Class == item then
 			return CAKE.SavedPositions[ item ]
-		elseif !CAKE.InventorySlot[ CAKE.SavedPositions[ item ] ]:GetItem() then
+		elseif !CAKE.InventorySlot[ CAKE.SavedPositions[ item ] ]:GetItem() and CAKE.SavedPositions[ item ] < AvailableSlot() then
 			return CAKE.SavedPositions[ item ]
 		else
 			return AvailableSlot()
@@ -597,7 +597,7 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 	grid:SetRowHeight( 52 )
 
 	local icon
-	for i = 0, 9 do
+	for i = 1, 10 do
 	    icon = vgui.Create( "InventorySlot" )
 	    icon:SetIconSize( 48 )
 	    CAKE.InventorySlot[ i ] = icon
@@ -605,7 +605,7 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 	        surface.SetTextColor(Color(255,255,255,255))
 	        surface.SetFont("TiramisuTabsFont")
 	        surface.SetTextPos( 3, 3);
-	        surface.DrawText( "ALT+" .. i )
+	        surface.DrawText( "ALT+" .. i - 1 )
 	        if CAKE.InventorySlot[ i ]:GetAmount() > 1 then
 	            surface.SetTextPos( CAKE.InventorySlot[ i ]:GetWide() - 16, CAKE.InventorySlot[ i ]:GetTall() - 14);
 	            surface.DrawText( CAKE.InventorySlot[ i ]:GetAmount() )
@@ -621,7 +621,7 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 	grid2:SetColWide( 56 )
 	grid2:SetRowHeight( 56 )
 
-	for i = 10, 39 do
+	for i = 11, 40 do
 	    icon = vgui.Create( "InventorySlot" )
 	    icon:SetIconSize( 48 )
 	    CAKE.InventorySlot[ i ] = icon
@@ -631,11 +631,11 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 	local keydown = {}
 	hook.Add( "Think", "TiramisuCheckQuickBarKey", function()
 		if input.IsKeyDown( KEY_LALT )then
-			for i=0, 9 do
-				if input.IsKeyDown( i + 1 ) and !keydown[ i ] then
+			for i=1, 10 do
+				if input.IsKeyDown( i ) and !keydown[ i ] then
 					CAKE.InventorySlot[ i ]:UseItem()
 					keydown[ i ] = true
-				elseif !input.IsKeyDown( i + 1 ) and keydown[i] then
+				elseif !input.IsKeyDown( i ) and keydown[i] then
 					keydown[ i ] = false
 				end
 			end

@@ -468,6 +468,7 @@ function Admin_SetModel( ply, cmd, args )
 		target:RemoveClothing()
 		CAKE.RemoveAllGear( ply )
 		target:SetSpecialModel( args[2] or "models/kleiner.mdl" )
+		target:SetNWString( "model", args[2])
 	end
 
 end

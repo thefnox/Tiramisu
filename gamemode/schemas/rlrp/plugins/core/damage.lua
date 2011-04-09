@@ -4,7 +4,7 @@ PLUGIN.Description = "Calculates damage and damage effects"; -- The description 
 
 function CAKE.CalculateShields( ply, item, helmet )
 	
-	if CAKE.ItemData[ item ] and CAKE.ItemData[ helmet ] then
+	if CAKE.ItemData[ item ] then
 		if !ply.DamageProtection then
 			ply.DamageProtection = {}
 		end
@@ -45,7 +45,7 @@ function CAKE.CalculateShields( ply, item, helmet )
 			ply.DamageProtection.Hazmat = false
 		end
 		
-		if ply:ItemHasFlag( helmet, "headprotection" ) then
+		if CAKE.ItemData[ helmet ] and ply:ItemHasFlag( helmet, "headprotection" ) then
 			ply.DamageProtection.Head = tonumber( ply:GetFlagValue( helmet, "headprotection" ) )
 		end
 	else
@@ -107,6 +107,10 @@ end
 function GM:GravGunPunt( ply, ent )
     return false --Useless to RP
 end
+
+hook.Add( "PlayerSetModel", "TiramisuShieldCalc", function( ply )
+	CAKE.CalculateShields( ply, CAKE.GetCharField( ply, "clothing" ), CAKE.GetCharField( ply, "helmet" ) )
+end)
 
 function PLUGIN.Init()
 end

@@ -235,6 +235,7 @@ local function SpawnClothingHook( ply )
 		ply.BonemergeGearEntity:SetAngles( ply:GetAngles() )
 		ply.BonemergeGearEntity:SetModel("models/Tiramisu/blank_model.mdl")
 		ply.BonemergeGearEntity:SetParent( ply )
+		ply.BonemergeGearEntity:SetNoDraw( true )
 		ply.BonemergeGearEntity:SetSolid( SOLID_NONE )
 		ply.BonemergeGearEntity:Spawn()
 	end
@@ -246,7 +247,7 @@ local function SpawnClothingHook( ply )
 	end
 
 end
-hook.Add( "PlayerSetModel", "OldenSpawnClothing", SpawnClothingHook )
+hook.Add( "PlayerSetModel", "TiramisuSpawnClothing", SpawnClothingHook )
 
 local function ccSetClothing( ply, cmd, args )
 	

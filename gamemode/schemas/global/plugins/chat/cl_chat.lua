@@ -65,7 +65,7 @@ function PANEL:Init()
         self.Alpha = 0
         self.Lines = {}
         self:SetSize( self.Width, self.Height )
-        self:SetPos( 20, ScrH() - self.Height - 40 )
+        self:SetPos( 20, ScrH() - self.Height - 60 )
         self.Open = false
 
         // This turns off the engine drawing
