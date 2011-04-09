@@ -542,7 +542,11 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 	LoadPositions()
 	CAKE.InventoryFrame = vgui.Create( "DFrameTransparent" )
 	CAKE.InventoryFrame:SetSize( 560, 260 )
-	CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, ScrH() - 79 )
+	if CAKE.MinimalHUD:GetBool() then
+		CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, ScrH() )
+	else
+		CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, ScrH() - 79 )
+	end
 	CAKE.InventoryFrame.Display = false
 	CAKE.InventoryFrame:SetDeleteOnClose( false )
 	CAKE.InventoryFrame:SetMouseInputEnabled( true )
@@ -553,7 +557,7 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 	CAKE.InventoryFrame.Paint = function()
 		if CAKE.InventoryFrame.Display then
 			x,y = CAKE.InventoryFrame:GetPos()
-			if y != ScrH() - 172 then
+			if y != ScrH() - 250 then
 				CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 250 ))
 			end
 			alpha = Lerp( 0.1, alpha, 1 )
@@ -564,8 +568,14 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 		else
 			alpha = 0
 			x,y = CAKE.InventoryFrame:GetPos()
-			if y != ScrH() - 58 then
-				CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 79 ))
+			if CAKE.MinimalHUD:GetBool() then
+				if y != ScrH() then
+					CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() ))
+				end
+			else
+				if y != ScrH() - 79 then
+					CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 79 ))
+				end
 			end
 		end
 	end

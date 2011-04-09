@@ -43,7 +43,7 @@ function GM:ScoreboardShow( )
 	end
 
 	QuickMenu = vgui.Create("DFrame");
-	QuickMenu:SetSize( 130, 400 )
+	QuickMenu:SetSize( 260, 400 )
 	QuickMenu:SetPos( ScrW() + 130, 200 )
 	QuickMenu:SetTitle( "" )
 	QuickMenu:SetDraggable( false ) -- Draggable by mouse?
@@ -52,21 +52,23 @@ function GM:ScoreboardShow( )
 
 	local lastpos = 0
 	for k, v in pairs( CAKE.MenuTabs ) do
-		lastpos = lastpos + 27
+		lastpos = lastpos + 30
 		local label = vgui.Create( "DImageButton", QuickMenu )
-		label:SetMaterial( "tiramisu/tabbutton.vmt" )
-		label:SetText( k )
-		label:SetSize( 120, 25 )
-		label:SetTextColor( Color( 255, 255, 255 ) )
+		label:SetMaterial( "tiramisu/tabbutton2.vmt" )
+		label:SetColor( CAKE.BaseColor )
+		label:SetSize( 256, 28 )
 		label.DoClick = function()
 			CAKE.SetActiveTab(k)
 		end
+		label.Paint = function() end
 		label.PaintOver = function()
-			draw.DrawText(k, "TiramisuTabsFont", 60, 6, Color(255, 255, 255, 255),TEXT_ALIGN_CENTER)
+			draw.DrawText(k, "TiramisuTabsFont", 80, 8, Color(255, 255, 255, 255),TEXT_ALIGN_CENTER)
 		end
 		label:SetPos( 5, lastpos)
 		label:SetExpensiveShadow( 1, Color( 10, 10, 10, 255 ) )
 	end
+
+	/*
 
 	VitalsMenu = vgui.Create( "DFrame" )
 	VitalsMenu:SetSize( 340, 230 )
@@ -154,16 +156,12 @@ function GM:ScoreboardShow( )
 
 	PlayerInfo:AddItem(icdata)
 	PlayerInfo:AddItem(vitals)
-
+	*/
 	local posx, posy
 	timer.Create( "quickmenuscrolltimer", 0.01, 0, function()
 		if QuickMenu then
 			posx, posy = QuickMenu:GetPos( )
-			QuickMenu:SetPos( Lerp( 0.2, posx, ScrW() - 150 ), 200 )
-			if VitalsMenu then
-				posx, posy = VitalsMenu:GetPos( )
-				VitalsMenu:SetPos( Lerp( 0.2, posx, 20 ), 200)
-			end
+			QuickMenu:SetPos( Lerp( 0.2, posx, ScrW() - 128 ), 200 )
 		else
 			timer.Destroy( "quickmenuscrolltimer" )
 		end

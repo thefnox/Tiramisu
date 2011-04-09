@@ -1,6 +1,6 @@
 "VertexlitGeneric"
 {
-	"$baseTexture" "models/Tiramisu/Tools/invisible"
+	"$baseTexture" "models/tiramisu"
 	"$translucent" "1"
 }
 

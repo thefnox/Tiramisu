@@ -5,8 +5,8 @@ function CLPLUGIN.Init()
 	
 end
 
-local plydamaged = false
-local displaydamage = true
+LocalPlayer().IsDamaged = false
+LocalPlayer().DisplayDamage = true
 local alpha = 150
 local pos, ang
 local ent
@@ -20,23 +20,19 @@ local tracedata = {}
 
 hook.Add( "PostDrawOpaqueRenderables", "TiramisuHealthAmmoDisplay", function( )
 
-	if ValidEntity( LocalPlayer():GetEyeTrace().Entity ) and CAKE.IsDoor(LocalPlayer():GetEyeTrace().Entity) then
-		--Not yet lololol this is for door titles
-
+	if CAKE.MenuOpen then
+		LocalPlayer().IsDamaged = true
+		menuopened = true
+	elseif !CAKE.MenuOpen and menuopened then
+		LocalPlayer().IsDamaged = false
+		LocalPlayer().DisplayDamage = false
+		menuopened = false
 	end
 
 	if CAKE.Thirdperson:GetBool() and LocalPlayer():Alive() then
-		if CAKE.MenuOpen then
-			plydamaged = true
-			menuopened = true
-		elseif !CAKE.MenuOpen and menuopened then
-			plydamaged = false
-			displaydamage = false
-			menuopened = false
-		end
-		if plydamaged and !displaydamage then
-			displaydamage = true
-		elseif plydamaged and displaydamage then
+		if LocalPlayer().IsDamaged and !LocalPlayer().DisplayDamage then
+			LocalPlayer().DisplayDamage = true
+		elseif LocalPlayer().IsDamaged and LocalPlayer().DisplayDamage then
 			alpha = 150
 			pos, ang = LocalPlayer():GetBonePosition(LocalPlayer():LookupBone("ValveBiped.Bip01_Head1"))
 		    ang:RotateAroundAxis( ang:Up(), 90 )
@@ -53,7 +49,7 @@ hook.Add( "PostDrawOpaqueRenderables", "TiramisuHealthAmmoDisplay", function( )
 			        draw.SimpleTextOutlined(tostring( LocalPlayer():Armor() ), "Trebuchet19", 8, 8, Color(100, 100, 255, 200),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
 			    cam.End3D2D()
 			end
-		elseif !plydamaged and displaydamage then
+		elseif !LocalPlayer().IsDamaged and LocalPlayer().DisplayDamage then
 			if alpha > 5 then
 				alpha = Lerp( 0.2, alpha, 0 )
 				pos, ang = LocalPlayer():GetBonePosition(LocalPlayer():LookupBone("ValveBiped.Bip01_Head1"))
@@ -73,7 +69,7 @@ hook.Add( "PostDrawOpaqueRenderables", "TiramisuHealthAmmoDisplay", function( )
 				end
 			else
 				alpha = 150
-				displaydamage = false
+				LocalPlayer().DisplayDamage = false
 			end
 		end
 
@@ -123,10 +119,10 @@ hook.Add( "Think", "TiramisuDamageDetect",function()
 	end
 
 	if LocalPlayer().TiramisuHUDDamage != LocalPlayer():Health() and LocalPlayer():Health() < 100 then
-		plydamaged = true
+		LocalPlayer().IsDamaged = true
 		LocalPlayer().TiramisuHUDDamage = LocalPlayer():Health()
 		timer.Create("LocalDamageDisplayTimer", 3, 1, function()
-			plydamaged = false
+			LocalPlayer().IsDamaged = false
 		end)
 	end
 	
@@ -153,16 +149,6 @@ hook.Add( "HUDPaint", "TiramisuHUDDraw", function()
 	else
 		
 		surface.SetFont("HUDNumber")
-		textsizex, textsizey = surface.GetTextSize(tostring( LocalPlayer():Health() ) )
-		draw.RoundedBox( 4, 30, ScrH() - 70, textsizex, textsizey, Color( 60, 60, 60, 150 ) )
-        draw.SimpleTextOutlined(tostring( LocalPlayer():Health() ), "HUDNumber", 30 + textsizex / 2, ScrH() - 50, Color(255, 100, 100, 200),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
-
-        if LocalPlayer():Armor() > 0 then
-        	textsizex, textsizey = surface.GetTextSize(tostring( LocalPlayer():Armor() ) )
-	        draw.RoundedBox( 4, 100, ScrH() - 70, textsizex, textsizey, Color( 60, 60, 60, 150 ) )
-	        draw.SimpleTextOutlined(tostring( LocalPlayer():Armor() ), "HUDNumber", 80 + textsizex, ScrH() - 50, Color(100, 100, 255, 200),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200) )
-    	end
-
 		ent = LocalPlayer():GetActiveWeapon()
     
 	    if ( ValidEntity( ent ) and LocalPlayer():GetAiming() ) or ( CAKE.MenuOpen and ValidEntity( ent ) ) then
@@ -173,9 +159,8 @@ hook.Add( "HUDPaint", "TiramisuHUDDraw", function()
 	            else
 	                perc = 1
 	            end
-	            surface.SetFont("HUDNumber")
 	            textsizex, textsizey = surface.GetTextSize( ammotext )
-	            draw.RoundedBox( 4, ScrW() - 160, ScrH() - 50, textsizex * perc, textsizey / 2 , Color( 60, 60, 60, 150 ) )
+	            draw.RoundedBox( 4, ScrW() - 160, ScrH() - 50, math.Clamp( textsizex * perc, 6, 200 ), textsizey / 2 , Color( 60, 60, 60, 150 ) )
 	            draw.SimpleTextOutlined(ammotext, "HUDNumber", ( ScrW() - 160 ) + textsizex / 2, ScrH() - 50, Color(180, 255, 180, 200),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200))
 	        end
 	    end
