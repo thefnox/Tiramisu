@@ -45,6 +45,8 @@ function CAKE.SetClothing( ply, body, helmet, glove )
 	
 	if !ply:ItemHasFlag( body, "nogloves" ) then
 		glove = body
+	else
+		glove = "none"
 	end
 	if !ply:HasItem( helmet ) or helmet == "none" then
 		helmet = CAKE.GetCharField( ply, "model" )

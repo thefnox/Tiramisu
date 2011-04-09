@@ -454,7 +454,7 @@ concommand.Add( "rp_rostersearch", function( ply, cmd, args )
 		local searchresults = {}
 		local tbl = {}
 		for k, v in pairs( roster ) do
-			if string.match( searchstring, v.Name ) or string.match( searchstring, v.SteamID ) or string.match( searchstring, v.Rank ) or string.match( searchstring, CAKE.GetRankField( group, v.Rank, "formalname" ) or "None" ) then
+			if string.match( searchstring, v.Name ) or string.match( searchstring, v.SteamID ) or ((v.Rank != false) and(string.match( searchstring, v.Rank ))) or string.match( searchstring, CAKE.GetRankField( group, v.Rank, "formalname" ) or "None" ) then
 				tbl = {}
 				tbl.Name = v.Name
 				tbl.SteamID = v.SteamID
@@ -550,9 +550,12 @@ end)
 
 
 function Admin_ForceJoin( ply, cmd, args )
-
+	
+	if #args < 1 then CAKE.SendError( ply, "Must specify a player!") return end 
 	local target = CAKE.FindPlayer( args[1] )
 
+	if !target then CAKE.SendError( ply, "The target specified can not be found!") return end
+	
 	if args[ 2 ] and args[ 2 ] != "none" then CAKE.JoinGroup( target, args[ 2 ] ) end
 	if args[ 3 ] and args[ 3 ] != "none" then CAKE.SetCharRank( target, CAKE.GetCharField( target, "group" ), args[ 3 ] ) end
 
