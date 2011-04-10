@@ -109,6 +109,7 @@ hook.Add("HUDPaint","TiramisuCircleHealthDisplay", function()
 
 		surface.SetDrawColor( 20,20,20, 155 )
 		--Black border around the health bar.
+		surface.SetTexture()
 		for a = 0, 50 do
 			surface.DrawTexturedRectRotated( portraitpos.x + cos( rad( a * 7.2 ) ) * scale, portraitpos.y - sin( rad( a * 7.2 ) ) * scale, 12, 12, a * 7.2  )
 		end

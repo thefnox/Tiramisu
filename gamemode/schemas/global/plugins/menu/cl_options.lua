@@ -1,6 +1,13 @@
 CLPLUGIN.Name = "Options Menu"
 CLPLUGIN.Author = "F-Nox/Big Bang"
 
+hook.Add( "InitPostEntity", "TiramisuLoadSchemeColor", function()
+	if file.Exists( CAKE.Name .. "/PersonalData/schemecolor.txt" ) then
+		local tbl = glon.decode( file.Read( CAKE.Name .. "/PersonalData/schemecolor.txt" ))
+		CAKE.BaseColor = tbl.color
+	end
+end)
+
 
 local function OpenOptions()
 
@@ -14,8 +21,6 @@ local function OpenOptions()
 	PlayerMenu:Center()
 	
 	local Options = vgui.Create( "DPanelList", PlayerMenu )
-	Options:SetSize( 630, 448 )
-	Options:SetPos( 5, 28 )
 	Options:SetPadding(20);
 	Options:SetSpacing(5)
 	Options:EnableHorizontal(false);
@@ -33,6 +38,16 @@ local function OpenOptions()
 	HeadbobCheck:SetConVar( "rp_headbob" ) -- ConCommand must be a 1 or 0 value
 	Options:AddItem( HeadbobCheck )
 
+	local PortraitCheck = vgui.Create( "DCheckBoxLabel" )
+	PortraitCheck:SetText( "Toggle permanent view of character portrait" )
+	PortraitCheck:SetConVar( "rp_displaycharportrait" ) -- ConCommand must be a 1 or 0 value
+	Options:AddItem( PortraitCheck )
+
+	local MinimalCheck = vgui.Create( "DCheckBoxLabel" )
+	MinimalCheck:SetText( "Toggle minimal HUD" )
+	MinimalCheck:SetConVar( "rp_minimalhud" ) -- ConCommand must be a 1 or 0 value
+	Options:AddItem( MinimalCheck )
+
 	local ThirdpersonDistance = vgui.Create( "DNumSlider" )
 	ThirdpersonDistance:SetText( "Thirdperson Distance" )
 	ThirdpersonDistance:SetDecimals( 0 )
@@ -49,9 +64,39 @@ local function OpenOptions()
 	TitleDrawDistance:SetConVar( "rp_titledrawdistance")
 	Options:AddItem( TitleDrawDistance )
 	
+	local Custom = vgui.Create( "DPanelList", PlayerMenu )
+	Custom:SetPadding(20);
+	Custom:SetSpacing(5)
+	Custom:EnableHorizontal(false);
+	Custom:EnableVerticalScrollbar(true);
+	Custom:SetAutoSize(false)
+
+	local schemecolormixer = vgui.Create( "DColorMixer");
+	schemecolormixer:SetColor( Color( 0, 0, 255, 255 ) )
+	schemecolormixer:SetSize( 200, 150 )
+	
+	local SchemeColor = vgui.Create( "DLabel" )
+	SchemeColor:SetText( "Scheme Color" )
+	SchemeColor:SetFont( "Trebuchet24" )
+	function SchemeColor:PaintOver()
+		SchemeColor:SetTextColor( schemecolormixer:GetColor() )
+	end
+	
+	local SetSchemeColor = vgui.Create( "DButton" )
+	SetSchemeColor:SetText( "Set the scheme color" )
+	SetSchemeColor.DoClick = function()
+		local color = SchemeColor:GetColor()
+		CAKE.BaseColor = color
+		local tbl = { ["color"] = CAKE.BaseColor }
+		file.Write( CAKE.Name .. "/PersonalData/schemecolor.txt", glon.encode( tbl ) )
+	end
+	Custom:AddItem( SchemeColor )
+	Custom:AddItem( schemecolormixer )
+	Custom:AddItem( SetSchemeColor )
+
 	local colormixer = vgui.Create( "DColorMixer");
 	colormixer:SetColor( Color( 0, 0, 255, 255 ) )
-	colormixer:SetSize( 200, 200 )
+	colormixer:SetSize( 200, 150 )
 	
 	local OOCColor = vgui.Create( "DLabel" )
 	OOCColor:SetText( "OOC Color" )
@@ -64,11 +109,20 @@ local function OpenOptions()
 	SetOOCColor:SetText( "Set your OOC Color" )
 	SetOOCColor.DoClick = function()
 		local color = OOCColor:GetColor()
+		CAKE.BaseColor = color
 		RunConsoleCommand( "rp_ooccolor", tostring( color.r ), tostring( color.g ), tostring( color.b ), tostring( color.a ) )
 	end
-	Options:AddItem( OOCColor )
-	Options:AddItem( colormixer )
-	Options:AddItem( SetOOCColor )
+	Custom:AddItem( OOCColor )
+	Custom:AddItem( colormixer )
+	Custom:AddItem( SetOOCColor )
+
+	local hozdivider = vgui.Create( "DHorizontalDivider", PlayerMenu )
+	hozdivider:SetPos( 0, 23 )
+	hozdivider:SetSize( 640, 457)
+	hozdivider:SetLeftWidth(310)
+	hozdivider:SetLeft( Options )
+	hozdivider:SetRight( Custom )
+	hozdivider:SetDividerWidth( 4 )
 
 end
 

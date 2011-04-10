@@ -30,6 +30,13 @@ function GM:PlayerBindPress( ply, bind, pressed )
 
 end
 
+local params = {
+	["$basetexture"] = "tiramisu/tabbutton2",
+	["$translucent"] = 1,
+	["$color"] = "{" .. CAKE.BaseColor.r .. " " .. CAKE.BaseColor.g .. " " .. CAKE.BaseColor.b .. "}"
+}
+local tabmaterial = CreateMaterial("TabMaterial","UnlitGeneric",params);
+
 function GM:ScoreboardShow( )
 
 	CAKE.ContextEnabled = true;
@@ -54,8 +61,7 @@ function GM:ScoreboardShow( )
 	for k, v in pairs( CAKE.MenuTabs ) do
 		lastpos = lastpos + 30
 		local label = vgui.Create( "DImageButton", QuickMenu )
-		label:SetMaterial( "tiramisu/tabbutton2.vmt" )
-		label:SetColor( CAKE.BaseColor )
+		label.m_Image:SetMaterial( tabmaterial )
 		label:SetSize( 256, 28 )
 		label.DoClick = function()
 			CAKE.SetActiveTab(k)

@@ -54,7 +54,7 @@ datastream.Hook( "TiramisuChatHandling", function( ply, handler, id, encoded, de
 
 	CAKE.DayLog("chat.txt", ply:SteamID() .. ": " .. text); -- we be spyins.
 	
-	if( string.sub( text, 1, 1 ) == "!" ) then -- All rp_ commands can be executed with /
+	if( string.sub( text, 1, 1 ) == "@" ) then -- All rp_ commands can be executed with /
 	
 		ply:ConCommand("rp_" .. string.sub( text, 2, string.len(text) ));
 		return

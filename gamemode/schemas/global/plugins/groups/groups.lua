@@ -520,9 +520,13 @@ local function GroupSpawnHook( ply )
 		timer.Simple( 1, function()
 			local group = CAKE.GetCharField( ply, "group" )
 			local rank = CAKE.GetCharField( ply, "grouprank" )
-			if CAKE.GroupExists( group ) then
-				if rank != CAKE.Groups[group]["Members"][CAKE.GetCharSignature(ply)][ "Rank" ] then
-					CAKE.SetCharRank( ply, group, CAKE.Groups[group]["Members"][CAKE.GetCharSignature(ply)][ "Rank" ] )
+			if CAKE.GroupExists( group ) and CAKE.Groups[group]["Members"][CAKE.GetCharSignature(ply)] then
+				if CAKE.Groups[group]["Members"] and CAKE.Groups[group]["Members"][CAKE.GetCharSignature(ply)][ "Rank" ] then
+					if rank != CAKE.Groups[group]["Members"][CAKE.GetCharSignature(ply)][ "Rank" ] then
+						CAKE.SetCharRank( ply, group, CAKE.Groups[group]["Members"][CAKE.GetCharSignature(ply)][ "Rank" ] )
+					end
+				else
+					CAKE.SetCharRank( ply, group, CAKE.GetGroupField( group, "DefaultRank" ))
 				end
 				if !CAKE.GroupHasMember(group, ply) then
 					CAKE.LeaveGroup( ply )
@@ -533,6 +537,8 @@ local function GroupSpawnHook( ply )
 						timer.Destroy( ply:SteamID() .. "groupsendtimer" )
 					end
 				end)
+			else
+				CAKE.LeaveGroup( ply )
 			end
 			CAKE.SendGroupToClient( ply )
 		end)

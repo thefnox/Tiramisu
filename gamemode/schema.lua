@@ -3,11 +3,12 @@ CAKE.Schemafile = {  };
 
 function CAKE.LoadSchema( schema )
 
-	local path = "schemas/" .. schema .. ".lua";
+	local path = "schemas/" .. schema .. ".lua"
 	
-	SCHEMA = {  };
+	SCHEMA = {  }
 	
-	include( path );
+	include( path )
+	table.insert( CAKE.Schemas, SCHEMA )
 
 	-- Load the base, first.
 
@@ -18,10 +19,8 @@ function CAKE.LoadSchema( schema )
 	end
 	
 	table.insert( CAKE.Schemafile, schema )
-
 	CAKE.DayLog( "script.txt", "Loading schema " .. SCHEMA.Name .. " by " .. SCHEMA.Author .. " ( " .. SCHEMA.Description .. " )" );
-	
-	table.insert( CAKE.Schemas, SCHEMA );
+
 
 	local list = file.FindDir( GM.Folder .. "/gamemode/schemas/" .. schema .. "/plugins/*", true  )
 

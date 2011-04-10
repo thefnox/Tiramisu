@@ -3,50 +3,49 @@ SCHEMA.Author = "FNox";
 SCHEMA.Description = "Pretend you have a life!";
 SCHEMA.Base = "global";
 
-
---Ok, so a little explanation of what goes on, on this files
-
---First argument is the group's name.
---Second is the groups author/creator/founder
---Third is a table containing the ranks, the key is the "script name", or the name taht you're gonna use in the rp_admin forcejoin command.
---Each rank is a table containing a set of "flags", add more flags if you would like to do so, but the default ones are:
---formalname: The name that shows up on the group screen.
---loadout: The items ( PLEASE NOTE: ITEMS ) that are given to the player on spawn
---level: How high is this rank inside the group. Two ranks can have the same level. People can only promote other people up to their level (IE; a level two guy can't promote you to level 3)
---canpromote: Is this rank allowed to promote people within the group?
---caninvite: Is this rank allowed to invite new people?
---canbuy: Is this rank allowed to use the business menu?
---buygroups: Groups of items this rank is allowed to buy from.
-
---The next argument is flags. Most of them are self describing. You can add them, fetch them and edit them using the group commands defined in the global groups plugin.
---The following argument is their doorgroup, AKA, the doors they can open, add them using rp_admin adddoor groupnumber while looking at a door
---Then comes the image used by the group. This needs to point to a valid texture. Currently, all my textures are 128x128 pixels.
---And you're done! You can look into the bliss schema for a more extensive example.
-function CAKE.RLRPFaction( name, founder, ranks, flags, doorgroup, desc )
-
-	if !CAKE.GroupExists( name ) then
-		local tbl = {
-		[ "Name" ]		= name,
-		[ "Type" ]		= "faction",
-		[ "Founder" ]	= founder,
-		[ "Members" ]	= {},
-		[ "Inventory" ]	= {},
-		[ "Flags" ]		= flags,
-		[ "Ranks" ]		= ranks,
-		[ "Description" ] = desc or "None available."
-		}
-		
-		local doorgroups = {
-			["doorgroups"] = doorgroup
-		}
-		table.Merge( flags, doorgroups )
-		
-		CAKE.CreateGroup( name, tbl )
-	end
-	
-end
-
 function SCHEMA.SetUp( )
+
+	--Ok, so a little explanation of what goes on, on this files
+
+	--First argument is the group's name.
+	--Second is the groups author/creator/founder. It doesn't havet to be a real player.
+	--Third is a table containing the ranks, the key is the "script name", or the name taht you're gonna use in the rp_admin forcejoin command.
+	--Each rank is a table containing a set of "flags", add more flags if you would like to do so, but the default ones are:
+	--formalname: The name that shows up on the group screen.
+	--loadout: The items ( PLEASE NOTE: ITEMS ) that are given to the player on spawn
+	--level: How high is this rank inside the group. Two ranks can have the same level. People can only promote other people up to their level (IE; a level two guy can't promote you to level 3)
+	--canpromote: Is this rank allowed to promote people within the group?
+	--caninvite: Is this rank allowed to invite new people?
+	--canbuy: Is this rank allowed to use the business menu?
+	--buygroups: Groups of items this rank is allowed to buy from.
+
+	--The next argument is flags. Most of them are self describing. You can add them, fetch them and edit them using the group commands defined in the global groups plugin.
+	--The following argument is their doorgroup, AKA, the doors they can open, add them using rp_admin adddoor groupnumber while looking at a door
+	--After that there's a little description of the group you can see in game.
+	--And you're done!
+	function CAKE.RLRPFaction( name, founder, ranks, flags, doorgroup, desc )
+
+		if !CAKE.GroupExists( name ) then
+			local tbl = {
+			[ "Name" ]		= name,
+			[ "Type" ]		= "faction",
+			[ "Founder" ]	= founder,
+			[ "Members" ]	= {},
+			[ "Inventory" ]	= {},
+			[ "Flags" ]		= flags,
+			[ "Ranks" ]		= ranks,
+			[ "Description" ] = desc or "None available."
+			}
+			
+			local doorgroups = {
+				["doorgroups"] = doorgroup
+			}
+			table.Merge( flags, doorgroups )
+			
+			CAKE.CreateGroup( name, tbl )
+		end
+		
+	end
 	
 	CAKE.RLRPFaction( "Police",
 	"The State Government",

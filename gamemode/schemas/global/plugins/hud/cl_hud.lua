@@ -18,7 +18,11 @@ struc.color = Color(230,230,230,255 ) -- Red
 struc.font = "TiramisuTimeFont" -- Font
 struc.xalign = TEXT_ALIGN_RIGHT -- Horizontal Alignment
 struc.yalign = TEXT_ALIGN_RIGHT -- Vertical Alignment
-local markuplbl 
+local markuplbl = markup.Parse( "<color=230,230,230,255><font=TiramisuTimeFont>" .. LocalPlayer():GetNWString( "title", "Connecting..." ) .. "</font></color>", 300 )
+
+timer.Create( "TiramisuTitleMarkupRefresh", 1, 0, function()
+	markuplbl = markup.Parse( "<color=230,230,230,255><font=TiramisuTimeFont>" .. LocalPlayer():GetNWString( "title", "Connecting..." ) .. "</font></color>", 300 )
+end)
 
 local function DrawTime( )
 
@@ -37,8 +41,7 @@ local function DrawTime( )
 		struc.text = LocalPlayer():Nick()
 		struc.pos = { ScrW() - 10, 30 }
 		draw.Text( struc )
-		markuplbl = markup.Parse( "<color=230,230,230><font=TiramisuTimeFont>" .. LocalPlayer():GetNWString( "title", "Connecting..." ) .. "</font></color>", 300 )
-		markuplbl:Draw( ScrW() - 10, 50, TEXT_ALIGN_RIGHT, TEXT_ALIGN_RIGHT )
+		markuplbl:Draw( ScrW() - 10, 50, TEXT_ALIGN_RIGHT )
 	end
 	
 end

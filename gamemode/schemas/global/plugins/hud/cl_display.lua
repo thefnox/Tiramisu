@@ -147,24 +147,24 @@ hook.Add( "HUDPaint", "TiramisuHUDDraw", function()
 			end
 		end
 	else
-		
-		surface.SetFont("HUDNumber")
-		ent = LocalPlayer():GetActiveWeapon()
-    
-	    if ( ValidEntity( ent ) and LocalPlayer():GetAiming() ) or ( CAKE.MenuOpen and ValidEntity( ent ) ) then
-	        ammotext = tostring( ent:Clip1() ) .. "/" .. tostring( LocalPlayer():GetAmmoCount(ent:GetPrimaryAmmoType()) )
-	        if ent:Clip1() >= 0 and ent:GetClass() != "weapon_physcannon" then
-	            if ent.Primary and ent.Primary.ClipSize then
-	                perc = ent:Clip1() / ent.Primary.ClipSize
-	            else
-	                perc = 1
-	            end
-	            textsizex, textsizey = surface.GetTextSize( ammotext )
-	            draw.RoundedBox( 4, ScrW() - 160, ScrH() - 50, math.Clamp( textsizex * perc, 6, 200 ), textsizey / 2 , Color( 60, 60, 60, 150 ) )
-	            draw.SimpleTextOutlined(ammotext, "HUDNumber", ( ScrW() - 160 ) + textsizex / 2, ScrH() - 50, Color(180, 255, 180, 200),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200))
-	        end
-	    end
-
+		if !CAKE.MinimalHUD:GetBool() or CAKE.MenuOpen then
+			surface.SetFont("HUDNumber")
+			ent = LocalPlayer():GetActiveWeapon()
+	    
+		    if ( ValidEntity( ent ) and LocalPlayer():GetAiming() ) or ( CAKE.MenuOpen and ValidEntity( ent ) ) then
+		        ammotext = tostring( ent:Clip1() ) .. "/" .. tostring( LocalPlayer():GetAmmoCount(ent:GetPrimaryAmmoType()) )
+		        if ent:Clip1() >= 0 and ent:GetClass() != "weapon_physcannon" then
+		            if ent.Primary and ent.Primary.ClipSize then
+		                perc = ent:Clip1() / ent.Primary.ClipSize
+		            else
+		                perc = 1
+		            end
+		            textsizex, textsizey = surface.GetTextSize( ammotext )
+		            draw.RoundedBox( 4, ScrW() - 160, ScrH() - 50, math.Clamp( textsizex * perc, 6, 200 ), textsizey / 2 , Color( 60, 60, 60, 150 ) )
+		            draw.SimpleTextOutlined(ammotext, "HUDNumber", ( ScrW() - 160 ) + textsizex / 2, ScrH() - 50, Color(180, 255, 180, 200),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200))
+		        end
+		    end
+		end
 	end
 	
 end)
