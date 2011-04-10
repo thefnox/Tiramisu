@@ -29,133 +29,129 @@ function MakeContainerUp( um )
 	
 	end
 
-	ent = um:ReadEntity()
+	local ent = um:ReadEntity()
+	local size = um:ReadShort()
 
-	ContainerInfo = vgui.Create( "DFrame" )
-	ContainerInfo:SetPos( ScrW() / 2 - 268, ScrH() / 2 - 175 )
-	ContainerInfo:SetSize( 536, 350 )
+	local ContainerInfo = vgui.Create( "DFrameTransparent" )
+	ContainerInfo:SetSize( 540, 408 )
 	ContainerInfo:SetTitle( "The container holds inside..." )
 	ContainerInfo:SetVisible( true )
 	ContainerInfo:SetDraggable( true )
-	ContainerInfo:ShowCloseButton( true )
+	ContainerInfo:ShowCloseButton( false )
+	ContainerInfo:Center()
 	ContainerInfo:MakePopup()
-	ContainerPanel = vgui.Create( "DPanel", ContainerInfo )
-	ContainerPanel:SetPos( 2, 23 )
-	ContainerPanel:SetSize( 532, 325 )
-	ContainerPanel.Paint = function()
-		surface.SetDrawColor( 50, 50, 50, 255 )
-		surface.DrawRect( 0, 0, ContainerPanel:GetWide(), ContainerPanel:GetTall() )
-	end
-	
-	ContainerInventory = vgui.Create( "DPanelList", ContainerPanel )
-	ContainerInventory:SetPadding(10);
-	ContainerInventory:SetSpacing(10);
-	ContainerInventory:EnableHorizontal(true);
-	ContainerInventory:EnableVerticalScrollbar(true);
-	
-	for k, v in pairs(CONTAINER) do
-		local spawnicon = vgui.Create( "SpawnIcon");
-		spawnicon:SetSize( 32, 32 );
-		spawnicon:SetIconSize( 32 )
-		spawnicon:SetModel(v.Model);
-		spawnicon:SetToolTip(v.Description);
-		
-		local function DeleteMyself()
-			spawnicon:Remove()
-		end
-		
-		spawnicon.DoClick = function ( btn )
-		
-			local ContextMenu = DermaMenu()
-				ContextMenu:AddOption("Grab Item", function()
-				LocalPlayer():ConCommand("rp_intcont take " ..ent:EntIndex().. " " ..v.Class.. "")
 
-				LocalPlayer():ConCommand("rp_opencont " ..ent:EntIndex().. "")
-				end);
-			ContextMenu:Open();
-			
-		end
-		
-		spawnicon.PaintOver = function()
-			surface.SetTextColor(Color(255,255,255,255));
-			surface.SetFont("DefaultSmall");
-			surface.SetTextPos(64 - surface.GetTextSize(v.Name) / 2, 5);
-			surface.DrawText(v.Name)
-		end
-		
-		spawnicon.PaintOverHovered = function()
-			surface.SetTextColor(Color(255,255,255,255));
-			surface.SetFont("DefaultSmall");
-			surface.SetTextPos(64 - surface.GetTextSize(v.Name) / 2, 5);
-			surface.DrawText(v.Name)
-		end
-		
-		ContainerInventory:AddItem(spawnicon);
-		
-	end
-	
-	Inventory = vgui.Create( "DPanelList", ContainerPanel )
-	Inventory:SetPadding(10);
-	Inventory:SetSpacing(10);
-	Inventory:EnableHorizontal(true);
-	Inventory:EnableVerticalScrollbar(true);
-	
-	for k, v in pairs(InventoryTable) do
-		local spawnicon = vgui.Create( "SpawnIcon");
-		spawnicon:SetSize( 32, 32 );
-		spawnicon:SetIconSize( 32 )
-		spawnicon:SetModel(v.Model);
-		spawnicon:SetToolTip(v.Description);
-		
-		local function DeleteMyself()
-			spawnicon:Remove()
-		end
-		
-		spawnicon.DoClick = function ( btn )
-		
-			local ContextMenu = DermaMenu()
-				ContextMenu:AddOption("Drop", function() 
-				LocalPlayer():ConCommand("rp_intcont give " ..ent:EntIndex().. " " ..v.Class.. "")
-				LocalPlayer():ConCommand("rp_opencont " ..ent:EntIndex().. "")
-				end);
-			ContextMenu:Open();
-			
-		end
-		
-		spawnicon.PaintOver = function()
-			surface.SetTextColor(Color(255,255,255,255));
-			surface.SetFont("DefaultSmall");
-			surface.SetTextPos(64 - surface.GetTextSize(v.Name) / 2, 5);
-			surface.DrawText(v.Name)
-		end
-		
-		spawnicon.PaintOverHovered = function()
-			surface.SetTextColor(Color(255,255,255,255));
-			surface.SetFont("DefaultSmall");
-			surface.SetTextPos(64 - surface.GetTextSize(v.Name) / 2, 5);
-			surface.DrawText(v.Name)
-		end
-		
-		Inventory:AddItem(spawnicon);
-	end
-	
-	local Divider = vgui.Create("DHorizontalDivider", ContainerPanel );
-	Divider:SetPos(4, 4) //Set the top left corner of the Divider
-	Divider:SetSize(536, 275) //Set the overall size of the Divider
-	Divider:SetLeftWidth(263) //Set the starting width of the left item, the right item will be scaled appropriately.
-	Divider:SetDividerWidth(4) //Set the width of the dividing bar.
-	Divider:SetLeft( ContainerInventory );
-	Divider:SetRight( Inventory );
-	
-    local closebutton = vgui.Create( "DButton", ContainerPanel )
-    --closebutton:SetPos( 50, 100 )
-    closebutton:Dock( BOTTOM )
-    closebutton:SetSize( 150, 50 )
+	local closebutton = vgui.Create( "DButton", ContainerInfo )
+	closebutton:SetSize( 200, 30 )
+	closebutton:SetPos( 170, 372 )
 	closebutton:SetText( "Close the container" )
-	closebutton.DoClick = function( btn )
-		ContainerInfo:Remove()
-		ContainerInfo = nil;
-    end
+	closebutton.DoClick = function()
+	    ContainerInfo:Close()
+	end
+
+	local ContainerContents = vgui.Create( "DPanelList", ContainerInfo )
+	ContainerContents:SetSpacing( 5 )
+	ContainerContents:SetPadding( 5 )
+	ContainerContents:AddItem( Label( "Container:" ) )
+	local ContainerGrid = vgui.Create( "DGrid" )
+	local ContainerTable = {}
+	ContainerContents:AddItem( ContainerGrid )
+	ContainerGrid:SetCols( 6 )
+	ContainerGrid:SetColWide( 38 )
+	ContainerGrid:SetRowHeight( 40 )
+	for i = 1, size do
+	    icon = vgui.Create( "InventorySlot" )
+	    icon:SetIconSize( 32 )
+	    ContainerGrid:AddItem( icon )
+	    ContainerTable[i] = icon
+	    ContainerTable[i].ContainerItem = true
+		ContainerTable[i].OpenMenu = function() end
+		ContainerTable[i].EndDrag = function()
+			if LocalPlayer().OnDrag then
+				LocalPlayer().OnDrag = false
+				LocalPlayer().DragIcon:Remove()
+				LocalPlayer().DragIcon = nil
+				if LocalPlayer().DragTarget then
+					if LocalPlayer().DragTarget:GetItem() then
+						--Trade items between the origin and target slots.
+						if LocalPlayer().DragOrigin.ContainerItem then
+							LocalPlayer():ConCommand("rp_intcont take " ..ent:EntIndex().. " " ..LocalPlayer().DragTarget:GetItem().Class.. "")
+						else
+							LocalPlayer():ConCommand("rp_intcont give " ..ent:EntIndex().. " " ..LocalPlayer().DragTarget:GetItem().Class.. "")
+						end
+						LocalPlayer().DragOrigin:SetItem( LocalPlayer().DragTarget:GetItem(), LocalPlayer().DragTarget:GetAmount() )
+						LocalPlayer().DragTarget:SetItem( LocalPlayer().DragItem, LocalPlayer().DragAmount )
+					else
+						--Just set the currently empty slot to the dragged item, and clear the origin.
+						LocalPlayer().DragOrigin:ClearItem()
+						LocalPlayer().DragTarget:SetItem( LocalPlayer().DragItem, LocalPlayer().DragAmount )
+					end
+				else
+					--Nothing resulted out of the drag, reverse to normal.
+					LocalPlayer().DragOrigin:SetItem( LocalPlayer().DragItem, LocalPlayer().DragAmount )
+				end
+			end
+		end
+
+	end
+
+	for k, v in pairs(CONTAINER) do
+		ContainerTable[k]:SetItem( v )
+	end
+
+	local PlayerInventory = vgui.Create( "DPanelList", ContainerInfo )
+	PlayerInventory:SetSpacing( 5 )
+	PlayerInventory:SetPadding( 5 )
+	PlayerInventory:AddItem( Label( "Inventory:" ) )
+	local PlayerGrid = vgui.Create( "DGrid" )
+	PlayerInventory:AddItem( PlayerGrid )
+	PlayerGrid:SetCols( 6 )
+	PlayerGrid:SetColWide( 38 )
+	PlayerGrid:SetRowHeight( 40 )
+	for k, v in pairs( CAKE.InventorySlot ) do
+	    icon = vgui.Create( "InventorySlot" )
+	    icon:SetIconSize( 32 )
+		icon.OpenMenu = function() end
+		icon.EndDrag = function()
+		LocalPlayer().OnDrag = false
+		LocalPlayer().DragIcon:Remove()
+		LocalPlayer().DragIcon = nil
+		if LocalPlayer().DragTarget then
+			if LocalPlayer().DragTarget:GetItem() then
+				--Trade items between the origin and target slots.
+				if LocalPlayer().DragOrigin.ContainerItem then
+					LocalPlayer():ConCommand("rp_intcont take " ..ent:EntIndex().. " " ..LocalPlayer().DragTarget:GetItem().Class.. "")
+				else
+					LocalPlayer():ConCommand("rp_intcont give " ..ent:EntIndex().. " " ..LocalPlayer().DragTarget:GetItem().Class.. "")
+				end
+				LocalPlayer().DragOrigin:SetItem( LocalPlayer().DragTarget:GetItem(), LocalPlayer().DragTarget:GetAmount() )
+				LocalPlayer().DragTarget:SetItem( LocalPlayer().DragItem, LocalPlayer().DragAmount )
+			else
+				--Just set the currently empty slot to the dragged item, and clear the origin.
+				LocalPlayer().DragOrigin:ClearItem()
+				LocalPlayer().DragTarget:SetItem( LocalPlayer().DragItem, LocalPlayer().DragAmount )
+			end
+		else
+			--Nothing resulted out of the drag, reverse to normal.
+			LocalPlayer().DragOrigin:SetItem( LocalPlayer().DragItem, LocalPlayer().DragAmount )
+		end
+	end
+	if v:GetItem() then
+		icon:SetItem( v:GetItem(), v:GetAmount() )
+	end
+
+    PlayerGrid:AddItem( icon )
+end
+
+local hozdivider = vgui.Create( "DHorizontalDivider", ContainerInfo )
+hozdivider:SetPos( 5, 28 )
+hozdivider:SetSize( 530, 340)
+hozdivider:SetLeftWidth(260)
+hozdivider:SetLeft( ContainerContents )
+hozdivider:SetRight( PlayerInventory )
+hozdivider:SetDividerWidth( 12 )
+
+
 end
 usermessage.Hook("EndPopulate", MakeContainerUp);
 

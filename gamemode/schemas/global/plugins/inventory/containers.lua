@@ -131,6 +131,7 @@ function CAKE.GetContents( ply, cmd, args )
 
 	umsg.Start( "EndPopulate", ply)
 		umsg.Entity(args[1])
+		umsg.Short(CAKE.GetContainerSize(args[1]))
 	umsg.End()
 	print("End pop")
 	

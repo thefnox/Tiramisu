@@ -1,6 +1,6 @@
 "VertexlitGeneric"
 {
-	"$baseTexture" "models/tiramisu"
+	"$baseTexture" "tiramisu/gearhandler"
 	"$translucent" "1"
 }
 
