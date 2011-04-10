@@ -514,29 +514,6 @@ local function ClearItems()
 end
 usermessage.Hook("clearinventory", ClearItems);
 
-BusinessTable = {};
-
-local function ClearBusiness()
-	
-	BusinessTable = {}
-	
-end
-usermessage.Hook("clearbusiness", ClearBusiness);
-
-local function AddBusinessItem(data)
-	local itemdata = {}
-	itemdata.Name = data:ReadString();
-	itemdata.Class = data:ReadString();
-	itemdata.Description = data:ReadString();
-	itemdata.Model = data:ReadString();
-	itemdata.Price = data:ReadLong();
-	
-	--print( itemdata.Class )
-	
-	table.insert(BusinessTable, itemdata);
-end
-usermessage.Hook("addbusiness", AddBusinessItem);
-
 hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 
 	LoadPositions()

@@ -67,37 +67,6 @@ function ccDropItem( ply, cmd, args )
 end
 concommand.Add( "rp_dropitem", ccDropItem );
 
-function ccBuyItem( ply, cmd, args )
-	
-	local group = CAKE.GetCharField( ply, "group" )
-	local rank = CAKE.GetCharField( ply, "grouprank" )
-	local canBuy = CAKE.GetRankField( group, rank, "canbuy" )
-	local itemgroup = CAKE.ItemData[ args[ 1 ] ].ItemGroup
-	if( CAKE.ItemData[ args[ 1 ] ] != nil ) then
-		if( canBuy ) then --Let's make business
-			local buygroups = CAKE.GetRankField( group, rank, "buygroups" )
-			if( table.HasValue( buygroups, itemgroup ) ) then
-				if( CAKE.ItemData[ args[ 1 ] ].Purchaseable and tonumber(CAKE.GetCharField(ply, "money" )) >= CAKE.ItemData[ args[ 1 ] ].Price ) then
-					
-					CAKE.ChangeMoney( ply, 0 - CAKE.ItemData[ args[ 1 ] ].Price );
-					CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ) );
-					
-				else
-					
-					CAKE.SendChat( ply, "You do not have enough money to purchase this item!" );
-					
-				end
-			else
-				CAKE.SendChat( ply, "You cannot purchase this item!" );
-			end
-		else
-				CAKE.SendChat( ply, "You do not have access to Business!" );
-		end
-	
-	end
-end
-concommand.Add( "rp_buyitem", ccBuyItem );
-
 function ccPickupItem( ply, cmd, args )
 
 	local item = ents.GetByIndex( tonumber( args[ 1 ] ) );
@@ -182,7 +151,6 @@ concommand.Add( "rp_useinventory", ccUseOnInventory)
 
 local meta = FindMetaTable( "Player" );
 
-
 function meta:GiveItem( class )
 
 	CAKE.DayLog( "economy.txt", "Adding item '" .. class .. "' to " .. CAKE.FormatCharString( self ) .. " inventory" );
@@ -244,36 +212,6 @@ function meta:RefreshInventory( )
 		
 	datastream.StreamToClients( self, "addinventory", newtbl )
 
-end
-
-function meta:ClearBusiness( )
-	umsg.Start( "clearbusiness", self )
-	umsg.End( );
-end
-
-function meta:RefreshBusiness( )
-	self:ClearBusiness( )
-		
-	if !self:IsCharLoaded() then return; end -- Team not assigned
-	local group = CAKE.GetCharField( self, "group" )
-	local rank = CAKE.GetCharField( self, "grouprank" )
-
-	if CAKE.GroupExists( group ) and CAKE.GetRankField( group, rank, "canbuy" ) and CAKE.GetRankField( group, rank, "buygroups" ) then
-		local buygroups = CAKE.GetRankField( group, rank, "buygroups" ) or {}
-		for k, v in pairs( CAKE.ItemData ) do
-			if v.Purchaseable then
-				if table.HasValue( buygroups, v.ItemGroup ) then
-					umsg.Start( "addbusiness", self );
-					umsg.String( v.Name );
-					umsg.String( v.Class );
-					umsg.String( v.Description );
-					umsg.String( v.Model );
-					umsg.Long( v.Price );
-					umsg.End( )		
-				end
-			end
-		end
-	end
 end
 
 function meta:ItemHasFlag( item, flag )
