@@ -159,7 +159,6 @@ function GM:PlayerSpawn( ply )
 
 	timer.Simple( 1, function()
 		ply:RefreshInventory( )
-		ply:RefreshBusiness( )
 	end)
 	
 	self.BaseClass:PlayerSpawn( ply )

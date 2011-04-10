@@ -508,7 +508,6 @@ function CAKE.SendGroupToClient( ply )
 			[ "Description" ] = ""
 		})
 	end
-	ply:RefreshBusiness( )
 
 end
 

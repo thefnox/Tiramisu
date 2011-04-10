@@ -186,13 +186,8 @@ function meta:TakeItem( class )
 	
 end
 
-function meta:ClearInventory( )
-	umsg.Start( "clearinventory", self )
-	umsg.End( );
-end
-
 function meta:RefreshInventory( )
-	self:ClearInventory( )
+
 	local newtbl = {}
 	
 	for k, v in pairs( CAKE.GetCharField( self, "inventory" ) ) do
@@ -201,13 +196,7 @@ function meta:RefreshInventory( )
 		newtbl[k].Class = CAKE.ItemData[ v ].Class or "error"
 		newtbl[k].Description = CAKE.ItemData[ v ].Description or "Grab a programmer!"
 		newtbl[k].Model = CAKE.ItemData[ v ].Model or "models/error.mdl"
-		/*
-		umsg.Start( "addinventory", self );
-			umsg.String( CAKE.ItemData[ v ].Name );
-			umsg.String( CAKE.ItemData[ v ].Class );
-			umsg.String( CAKE.ItemData[ v ].Description );
-			umsg.String( CAKE.ItemData[ v ].Model );
-		umsg.End( );*/
+		newtbl[k].Unusable = CAKE.ItemData[ v ].Unusable or false
 	end
 		
 	datastream.StreamToClients( self, "addinventory", newtbl )

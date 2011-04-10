@@ -331,7 +331,7 @@ function PANEL:DropItem()
 end
 
 function PANEL:UseItem()
-	if self.Item then
+	if self.Item and !self:GetItem().Unusable then
 		LocalPlayer():ConCommand("rp_useinventory " .. self:GetItem().Class )
 		self:RemoveItem()
 	end
@@ -412,7 +412,9 @@ end
 function PANEL:OpenMenu()
 	local ContextMenu = DermaMenu()
 		ContextMenu:AddOption("Drop", function() self:DropItem() end)
-		ContextMenu:AddOption("Use", function() self:UseItem() end)
+		if !self:GetItem().Unusable then
+			ContextMenu:AddOption("Use", function() self:UseItem() end)
+		end
 	ContextMenu:Open()
 end
 
@@ -490,13 +492,8 @@ local function CloseInventory()
 end
 
 datastream.Hook("addinventory", function(handler, id, encoded, decoded )
-	
-	/*
-	local itemdata = {}
-	itemdata.Name = data:ReadString();
-	itemdata.Class = data:ReadString();
-	itemdata.Description = data:ReadString();
-	itemdata.Model = data:ReadString();*/
+
+	ClearAllSlots()
 
 	InventoryTable = decoded
 
@@ -508,11 +505,6 @@ datastream.Hook("addinventory", function(handler, id, encoded, decoded )
 	SavePositions()
 	
 end )
-
-local function ClearItems()
-	ClearAllSlots()
-end
-usermessage.Hook("clearinventory", ClearItems);
 
 hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 

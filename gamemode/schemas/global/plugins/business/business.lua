@@ -1,49 +1,73 @@
 CAKE.Business = {}
-print("BITCH IS LOADED ND READY TO FIRE")
+
 function CAKE.BuildItemGroups()
-	for k,v in pairs(CAKE.Items) do
+	local tbl = {}
+	for k,v in pairs(CAKE.ItemData) do
 		if !CAKE.Business[v.ItemGroup] then CAKE.Business[v.ItemGroup] = {} end
-		table.insert(CAKE.Business[v.ItemGroup], v.Class)
+		if v.Purchaseable then
+			tbl = {}
+			tbl.Class = v.Class
+			tbl.Model = v.Model
+			tbl.Name = v.Name
+			tbl.Description = v.Description .. "\nPrice: " .. v.Price
+			tbl.Price = v.Price
+			table.insert(CAKE.Business[v.ItemGroup], tbl)
+		end
 	end
 end
 
 function CAKE.BuyItem( ply, class )
-	group = CAKE.GetCharField(ply, "group")
-	rank = CAKE.GetCharField(ply, "grouprank")
+
+	local group = CAKE.GetCharField(ply, "group")
+	local rank = CAKE.GetCharField(ply, "grouprank")
 	
-	if !CAKE.Items[class] or !CAKE.Items[class].Purchaseable then return "Item not purchaseable!" end
-	if group == "none" or group == "None" then return "Not a member of a group!" end
-	if !CAKE.GetRankField(group, rank, "canbuy") then return "You're not allowed to buy that!" end
-	if !table.HasValue(CAKE.GetRankField(group, rank, "buygroups"), CAKE.Items[class].ItemGroup) then
+	if !CAKE.ItemData[class] or !CAKE.ItemData[class].Purchaseable then return "Item not purchaseable!" end
+	if !table.HasValue(CAKE.GetRankField(group, rank, "buygroups"), CAKE.ItemData[class].ItemGroup) then
 		return "You're not allowed to buy that!" 
 	end
-	if !(CAKE.GetCharField(ply, "money") > CAKE.Items[class].Price) then return "Not enough money!" end
-	
-	CAKE.ChangeMoney( ply, -CAKE.Items[class].Price)
+	if !(CAKE.GetCharField(ply, "money") > CAKE.ItemData[class].Price) then return "Not enough money!" end
+	CAKE.ChangeMoney( ply, - CAKE.ItemData[class].Price)
 	ply:GiveItem(class)
+	ply:RefreshInventory()
 	return true
 end
 
-function ccBuyItem(ply, class)
-	bought = CAKE.BuyItem(ply, class)
-	if !(bought == true) then
+function ccBuyItem(ply, cmd, args)
+
+	local class = args[1]
+	local bought = CAKE.BuyItem(ply, class)
+	if !bought then
 		CAKE.SendError(ply, bought)
 	end
+
 end
 concommand.Add( "rp_buyitem", ccBuyItem)	
 
 local meta = FindMetaTable( "Player" );
 
-function meta:ClearBusiness(ply)
-	--STUB BRO STUB
+function meta:RefreshBusiness()
+
+	local group = CAKE.GetCharField(self, "group")
+	local rank = CAKE.GetCharField(self, "grouprank")
+	if CAKE.GetRankField(group, rank, "buygroups") then
+		local tbl = {}
+		for k,v in pairs(CAKE.GetRankField(group, rank, "buygroups") or {}) do
+			if CAKE.Business[v] then
+				tbl[v] = CAKE.Business[v]
+			end
+		end
+		datastream.StreamToClients( self, "refreshbusiness", tbl )
+	else
+		datastream.StreamToClients( self, "refreshbusiness", false )
+	end
+
 end
 
-function meta:RefreshBusiness(ply)
-	group = CAKE.GetCharField(ply, "group")
-	rank = CAKE.GetCharField(ply, "grouprank")
-	for k,v in pairs(CAKE.GetRankField(group, rank, "buygroups") or {})
-		table.add
-end
+hook.Add( "PlayerSpawn", "TiramisuRefreshBusiness", function( ply )
+	if ply:IsCharLoaded() then
+		ply:RefreshBusiness( )
+	end
+end)
 
 function PLUGIN.Init()
 	CAKE.BuildItemGroups()

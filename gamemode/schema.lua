@@ -32,19 +32,18 @@ function CAKE.LoadSchema( schema )
 		
 	end
 
+	-- Load the items
+	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/items/*.lua" );
+	
+	for k, v in pairs( list ) do 
+	
+		CAKE.LoadItem( schema, v );
+		
+	end
+
 	-- Use the new plugin system
 
 	CAKE.LoadPlugin( schema )
-	
-	-- Load the plugins using the old system
-	
-	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/*.lua" ) or {}
-	
-	for k, v in pairs( list ) do
-	
-		CAKE.OldLoadPlugin( schema, v );
-		
-	end
 	
 	-- Load right click files.
 	
@@ -53,24 +52,6 @@ function CAKE.LoadSchema( schema )
 	for k, v in pairs( list ) do
 	
 		CAKE.LoadRClick( schema, v );
-		
-	end
-	
-	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/clplugin/*.lua" ) or {}
-	
-	for k, v in pairs( list ) do
-	
-		CAKE.OldLoadClPlugin( schema, v );
-		
-	end
-	
-	
-	-- Load the items
-	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/items/*.lua" );
-	
-	for k, v in pairs( list ) do 
-	
-		CAKE.LoadItem( schema, v );
 		
 	end
 	
