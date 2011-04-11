@@ -72,7 +72,7 @@ function Admin_Ban( ply, cmd, args )
 end
 function Admin_Observe( ply, cmd, args )
 
-	   if( not ply:GetNWBool( "observe" )) then
+	   if( !ply:GetNWBool( "observe" ) and ply:GetMoveType() != MOVETYPE_NOCLIP ) then
 
 		   ply:GodEnable();
 			if ply.Clothing then

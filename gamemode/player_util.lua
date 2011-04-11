@@ -86,10 +86,19 @@ function CAKE.DeathMode( ply )
 		end
 	end
 	
+	rag.BonemergeGearEntity = ents.Create( "prop_physics" )
+	rag.BonemergeGearEntity:SetPos( rag:GetPos() + Vector( 0, 0, 80 ) )
+	rag.BonemergeGearEntity:SetAngles( rag:GetAngles() )
+	rag.BonemergeGearEntity:SetModel("models/Tiramisu/gearhandler.mdl")
+	rag.BonemergeGearEntity:SetParent( rag )
+	rag.BonemergeGearEntity:SetNoDraw( true )
+	rag.BonemergeGearEntity:SetSolid( SOLID_NONE )
+	rag.BonemergeGearEntity:Spawn()
+			
 	if( ply.Gear ) then
 		for k, v in pairs( ply.Gear ) do
 			if( ValidEntity( v ) ) then
-				v:SetParent( rag )
+				v:SetParent( rag.BonemergeGearEntity )
 				v:SetDTEntity( 1, rag )
 				v:Initialize()
 			end
@@ -132,9 +141,27 @@ end
 function CAKE.UnconciousMode( ply )
 
 	if ply:Alive() then
-
 		if !ply:GetNWBool( "unconciousmode", false ) then
-		
+
+			ply.LastUnconcious = ply.LastUnconcious or 0
+
+			if ply:GetNWBool( "sittingchair", false ) or ply:GetNWBool( "sittingground", false ) and CAKE.PlayerRank(ply) < 1 then
+				--ADMIN ONLY BUTT RACING FUCK YEAH
+				CAKE.SendError( ply, "You must stand up to go unconcious!")
+				return
+			end
+
+			if ply:GetNWBool( "observe" ) then
+				CAKE.SendError( ply, "You can't go unconcious while on observe!")
+				return
+			end
+
+			if ply.LastUnconcious > CurTime() then
+				CAKE.SendError( ply, "You must wait " .. tostring( math.ceil( ply.LastUnconcious - CurTime() )) .. " seconds to go unconcious again!")
+				return
+			end
+
+			ply.LastUnconcious = CurTime() + 10
 			ply:GodEnable()
 			ply:SetAiming( false )
 
@@ -165,11 +192,20 @@ function CAKE.UnconciousMode( ply )
 					end
 				end
 			end
+
+			rag.BonemergeGearEntity = ents.Create( "prop_physics" )
+			rag.BonemergeGearEntity:SetPos( rag:GetPos() + Vector( 0, 0, 80 ) )
+			rag.BonemergeGearEntity:SetAngles( rag:GetAngles() )
+			rag.BonemergeGearEntity:SetModel("models/Tiramisu/gearhandler.mdl")
+			rag.BonemergeGearEntity:SetParent( rag )
+			rag.BonemergeGearEntity:SetNoDraw( true )
+			rag.BonemergeGearEntity:SetSolid( SOLID_NONE )
+			rag.BonemergeGearEntity:Spawn()
 			
 			if( ply.Gear ) then
 				for k, v in pairs( ply.Gear ) do
 					if( ValidEntity( v ) ) then
-						v:SetParent( rag )
+						v:SetParent( rag.BonemergeGearEntity )
 						v:SetDTEntity( 1, rag )
 						v:Initialize()
 					end
@@ -228,6 +264,29 @@ function CAKE.UnconciousMode( ply )
 			end
 		end
 
+	elseif !ply:Alive() and ply:GetNWBool( "unconciousmode", false ) then 
+		ply:SetNWBool( "unconciousmode", false )
+		ply:GodDisable()
+		ply:UnLock()
+		ply:SetViewEntity( ply )
+		if ply:GetActiveWeapon():IsValid() then
+			ply:GetActiveWeapon():SetNoDraw( false )
+		end
+		umsg.Start( "recieveragdoll", ply )
+			umsg.Short( nil )
+		umsg.End()
+		umsg.Start( "ToggleFreescroll", ply )
+			umsg.Bool( false )
+		umsg.End()
+		if ply.unconciousrag then
+			ply.unconciousrag:Remove()
+		end
+		if timer.IsTimer( ply:SteamID() .. "UnconciousActionTimer" ) then
+			timer.Destroy( ply:SteamID() .. "UnconciousActionTimer" )
+		end
+		if timer.IsTimer( ply:SteamID() .. "unconcioustimer" ) then
+			timer.Destroy( ply:SteamID() .. "unconcioustimer"  )
+		end
 	end
 end
 

@@ -240,6 +240,7 @@ local function SpawnClothingHook( ply )
 		ply.BonemergeGearEntity:SetNoDraw( true )
 		ply.BonemergeGearEntity:SetSolid( SOLID_NONE )
 		ply.BonemergeGearEntity:Spawn()
+		ply.BonemergeGearEntity:DrawShadow( false )
 	end
 
 	if ply:IsCharLoaded() then

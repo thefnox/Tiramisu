@@ -91,7 +91,7 @@ hook.Add( "PostDrawOpaqueRenderables", "TiramisuHealthAmmoDisplay", function( )
 		        	end
 		            surface.SetFont("Trebuchet24")
 		            textsizex, textsizey = surface.GetTextSize( ammotext )
-		            draw.RoundedBox( 4, 0, 0, textsizex * perc, textsizey / 2 , Color( 60, 60, 60, 150 ) )
+		            draw.RoundedBox( 4, 0, 0, math.Clamp( textsizex * perc, 6, 200 ), textsizey / 2 , Color( 60, 60, 60, 150 ) )
 		            draw.SimpleTextOutlined(ammotext, "Trebuchet24", textsizex / 2, 0, Color(180, 255, 180, 200),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(10,10,10,200))
 		            if LocalPlayer():GetAmmoCount(ent:GetSecondaryAmmoType()) > 0 then
 		                surface.SetFont("Trebuchet20")

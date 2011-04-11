@@ -4,7 +4,7 @@ local lolpos
 
 function ENT:Draw()
 
-	if ValidEntity( self.Entity:GetParent() ) and ValidEntity( self.Entity:GetDTEntity( 1 ) ) then
+	if ValidEntity( self.Entity:GetDTEntity( 1 ) ) then
 		local position, angles = self.Entity:GetDTEntity( 1 ):GetBonePosition(self.Entity:GetDTInt(1))
 		local newposition, newangles = LocalToWorld( self.Entity:GetDTVector(1), self.Entity:GetDTAngle(1), position, angles )
 		self.Entity:SetPos(newposition)
@@ -21,7 +21,7 @@ function ENT:Draw()
 		return
 	end
 
-	if self.Entity:GetParent() == LocalPlayer() then
+	if self.Entity:GetDTEntity( 1 )  == LocalPlayer() then
 		if !CAKE.Thirdperson:GetBool() and !CAKE.MiddleDown then
 			if !gamemode.Call( "ShouldDrawLocalPlayer" ) then
 				return
@@ -29,7 +29,7 @@ function ENT:Draw()
 		end
 	end
 	self.Entity:DrawModel()
-	self.Entity:DrawShadow( true )
+	self.Entity:DrawShadow( false )
 	
 end
 

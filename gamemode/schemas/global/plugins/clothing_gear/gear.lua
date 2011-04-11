@@ -245,7 +245,7 @@ function meta:HideActiveWeapon()
 			if self.Gear then
 				for k, v in pairs( self.Gear ) do
 					if ValidEntity( v ) then
-						if v.item == class and v:GetParent() == self then
+						if v.item == class and v:GetDTEntity( 1 ) == self then
 							v:SetDTBool( 1, false )
 						else
 							v:SetDTBool( 1, true)
