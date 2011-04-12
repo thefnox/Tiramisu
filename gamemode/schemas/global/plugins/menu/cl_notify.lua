@@ -216,6 +216,7 @@ function CAKE.StringRequest( strTitle, strText, strDefaultText, fnEnter, fnCance
  
 end
 
+--Same as the above, only that it takes a table, containing all the available choices.
 function CAKE.ChoiceRequest( strTitle, strText, tbl, fnEnter, fnCancel, strButtonText, strButtonCancelText, color )
         
         local choice

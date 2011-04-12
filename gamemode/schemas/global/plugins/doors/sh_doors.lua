@@ -7,6 +7,7 @@ local DoorTypes =
 
 }
 
+--Determines if an entity is an available door type.
 function CAKE.IsDoor( door )
 
 	if ValidEntity( door ) then

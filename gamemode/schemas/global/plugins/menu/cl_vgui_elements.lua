@@ -3,6 +3,8 @@ CLPLUGIN.Author = "FNox, Garry, Overv, et al"
 
 --Credits for Overv, who posted this on the WAYWO thread. I just added the pretentious line crap
 
+--DFrameTransparent. A copy of DFrame with a much better looking interface. Also, colourable.
+
 function CLPLUGIN.Init()
 	
 end
@@ -263,6 +265,8 @@ end
 
 derma.DefineControl( "DFrameTransparent", "Cool transparent DFrame", PANEL, "EditablePanel" )
 
+--PlayerPanel. A 3D panel that draws the player and his/her clothing and gear. With mouse rotation/zooming.
+
 PANEL = {}
  
 AccessorFunc( PANEL, "m_fAnimSpeed",    "AnimSpeed" )
@@ -441,6 +445,7 @@ function PANEL:Paint()
         
 end
 
+--The mouse angle calculations are all here.
 local angle
 local distance = -80
 function PANEL:OnCursorMoved(x, y)
@@ -458,90 +463,7 @@ end
 
 derma.DefineControl( "PlayerPanel", "A panel containing the player's model", PANEL, "DButton" )
 
-PANEL = {}
- 
-AccessorFunc( PANEL, "m_bPaintBackground",              "PaintBackground" )
-AccessorFunc( PANEL, "m_bDisabled",                     "Disabled" )
-AccessorFunc( PANEL, "m_bgColor",               "BackgroundColor" )
- 
-Derma_Hook( PANEL, "Paint", "Paint", "Panel" )
-Derma_Hook( PANEL, "ApplySchemeSettings", "Scheme", "Panel" )
-Derma_Hook( PANEL, "PerformLayout", "Layout", "Panel" )
- 
-/*---------------------------------------------------------
-        
----------------------------------------------------------*/
-function PANEL:Init()
- 
-        self:SetPaintBackground( true )
-        
-        // This turns off the engine drawing
-        self:SetPaintBackgroundEnabled( false )
-        self:SetPaintBorderEnabled( false )
- 
-end
-
-function PANEL:SetColor( color )
-    self.Color = color
-end
-
-function PANEL:GetColor()
-    return self.Color or CAKE.BaseColor or Color( 100, 100, 115, 150 )
-end
-
-function PANEL:Paint()
-
-        if ( !IsValid( LocalPlayer() ) ) then return end
-        
-        local color = self:GetColor()
-        local x, y = self:LocalToScreen( 0, 0 )
-
-        // Pretentious line bullshit :P
-        x = math.floor( self:GetWide() / 5 )
-        y = math.floor( self:GetTall() / 5 )
-
-        surface.SetDrawColor( 50, 50, 50, 80 ) 
-
-        for i = 1, y + 5 do
-            surface.DrawLine( 0, ( i * 5 ) + 23, (y * 5) - (i * 5), self:GetTall() + 23 )
-        end
-
-        for i = 0, x + 5 do
-            surface.DrawLine( i * 5 , 23, self:GetWide(), ( x * 5 ) - ( i * 5 ) + 23 )
-        end
-
-        // and some gradient shit for additional overkill
-
-        for i = 0, ( y + 5 ) do
-            surface.SetDrawColor( math.Clamp( color.r - 50, 0, 255 ), math.Clamp( color.g - 50,0, 255 ), math.Clamp( color.b - 50, 0, 255 ), Lerp( i / ( ( y + 5 ) ), color.a , 255 ) ) 
-            surface.DrawRect( 0, ( i * 5 ) , self:GetWide(), 5 )
-        end
-
-        // Border 
-        surface.SetDrawColor( math.Clamp( color.r - 50, 0, 255 ), math.Clamp( color.g - 50,0, 255 ), math.Clamp( color.b - 50, 0, 255 ), 255 ) 
-        surface.DrawOutlinedRect( 0, 0, self:GetWide(), self:GetTall() )
-
-end
- 
-/*---------------------------------------------------------
-        
----------------------------------------------------------*/
-function PANEL:SetDisabled( bDisabled )
- 
-        self.m_bDisabled = bDisabled
-        
-        if ( bDisabled ) then
-                self:SetAlpha( 75 )
-                self:SetMouseInputEnabled( false )
-        else
-                self:SetAlpha( 255 )
-                self:SetMouseInputEnabled( true )
-        end
- 
-end
- 
- 
-derma.DefineControl( "DPanelTransparent", "", PANEL, "Panel" )
+--MarkupLabel. Basically a regular label with markup.Parse support.
 
 PANEL = {}
  
@@ -624,10 +546,10 @@ vgui.Register( "MarkupLabel", PANEL, "Panel" )
  
  
 /*---------------------------------------------------------
-   Name: Convenience Function
+   Name: Convenience Function, creates a MarkupLabel and returns it.
 ---------------------------------------------------------*/
 function MarkupLabel( strText, width, parent )
- 
+    
         local lbl = vgui.Create( "MarkupLabel", parent )
         lbl:SetWidth( width )
         lbl:SetText( strText )

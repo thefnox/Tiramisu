@@ -5,6 +5,7 @@ InventoryTable = {}
 CAKE.InventorySlot = {}
 CAKE.SavedPositions = {}
 
+--Saves a player's icon positioning preferences.
 local function SavePositions()
 	if CAKE.InventorySlot then
 		for k, v in ipairs( CAKE.InventorySlot ) do
@@ -16,6 +17,7 @@ local function SavePositions()
 	file.Write( CAKE.Name .. "/PersonalData/inventory.txt", glon.encode( CAKE.SavedPositions ) )
 end
 
+--Loads a player's icon positioning preferences.
 local function LoadPositions()
 	if file.Exists( CAKE.Name .. "/PersonalData/inventory.txt" ) then
 		CAKE.SavedPositions = glon.decode( file.Read( CAKE.Name .. "/PersonalData/inventory.txt"  ))
@@ -24,6 +26,7 @@ local function LoadPositions()
 	end
 end
 
+--Determines which slots are available for item placement.
 local function AvailableSlot()
 	if CAKE.InventorySlot then
 		for k, v in ipairs( CAKE.InventorySlot ) do
@@ -35,6 +38,7 @@ local function AvailableSlot()
 	return false
 end
 
+--Eliminates all items from all slots.
 local function ClearAllSlots()
 	if CAKE.InventorySlot then
 		for k, v in ipairs( CAKE.InventorySlot ) do
@@ -45,6 +49,7 @@ local function ClearAllSlots()
 	end
 end
 
+--Determines on which slot should the item in question be placed.
 local function CalculateItemPosition( item )
 	local slot
 	if CAKE.SavedPositions[ item ] then
@@ -62,6 +67,7 @@ end
 
 --InventorySlot_Icon
 
+--Taken from Garry's spawnicon code. Calculates view position and angles for most things.
 local function RenderSpawnIcon_Prop( model, pos, middle, size )
 
 	size = size * (1 - ( size / 900 ))
@@ -80,6 +86,7 @@ local function RenderSpawnIcon_Prop( model, pos, middle, size )
 	
 end
 
+--Determines positioning for bipeds.
 local function RenderSpawnIcon_Ragdoll( model, pos, middle, size )
 
 	local at = model:GetAttachment( model:LookupAttachment( "eyes" ) )
@@ -119,7 +126,7 @@ local function RenderSpawnIcon_Ragdoll_Head( model, pos, middle, size )
 	
 end
 
-
+--Determines which of the above positioning schemes to use.
 function PositionSpawnIcon( model, pos )
 
 	local mn, mx = model:GetRenderBounds()
@@ -177,6 +184,7 @@ end
 function PANEL:PerformLayout()
 end
 
+--Does the actual 3D drawing.
 function PANEL:Paint()
 
     if ( !IsValid( self.Entity ) ) then return end
@@ -197,6 +205,7 @@ function PANEL:Paint()
     
 end
 
+--Sets the icon's model.
 function PANEL:SetModel( mdl )
 
     // Note - there's no real need to delete the old
@@ -223,7 +232,7 @@ end
 
 vgui.Register( "InventorySlot_Icon", PANEL, "Panel" )
 
---InventorySlot
+--InventorySlot. The square slots used on the inventory.
 
 PANEL = {}
 
@@ -248,6 +257,7 @@ function PANEL:Init()
 
 end
 
+--Sets the size of the slot.
 function PANEL:SetIconSize( size )
 
 	if self.Icon then
@@ -259,10 +269,12 @@ function PANEL:SetIconSize( size )
 
 end
 
+--If it has any items, sets the amount of them
 function PANEL:SetAmount( amount )
 	self.Amount = amount or 1
 end
 
+--Sets an item to be used on the inventory slot. The item thing is a table, not a string. Amount defaults to 1.
 function PANEL:SetItem( item, amount )
 	self.Item = item
 	if !self.Icon then
@@ -275,6 +287,7 @@ function PANEL:SetItem( item, amount )
 	self:OnUseItem( item, amount )
 end
 
+--Utility function. Allows you to set an item to a slot, and if that item already exists on that slot, add one to it.
 function PANEL:AddItem( item )
 	if self:GetItem() and self:GetItem().Class == item.Class then
 		self:SetAmount( self:GetAmount() + 1 )
@@ -283,17 +296,21 @@ function PANEL:AddItem( item )
 	end
 end
 
+--In case you need to hook anything on item usage.
 function PANEL:OnUseItem( item, amount )
 end
 
+--Returns the item table.
 function PANEL:GetItem()
 	return self.Item
 end
 
+--Returns the current item amount.
 function PANEL:GetAmount()
 	return self.Amount or 1
 end
 
+--Clears the item off the slot.
 function PANEL:ClearItem()
 
 	if self.Icon then
@@ -306,6 +323,7 @@ function PANEL:ClearItem()
 
 end
 
+--Discounts one item from the slot. If this reduces the count to 0, then it clears the slot.
 function PANEL:RemoveItem()
 
 	if self.Item then
@@ -319,10 +337,12 @@ function PANEL:RemoveItem()
 
 end
 
+--Disables dragging in and out on that slot.
 function PANEL:DisableDrag()
 	self.DragDisabled = !self.DragDisabled
 end
 
+--Utility to handle item dropping.
 function PANEL:DropItem()
 	if self.Item then
 		LocalPlayer():ConCommand("rp_dropitem " .. self:GetItem().Class )
@@ -330,6 +350,7 @@ function PANEL:DropItem()
 	end
 end
 
+--Utility to handle item using.
 function PANEL:UseItem()
 	if self.Item and !self:GetItem().Unusable then
 		LocalPlayer():ConCommand("rp_useinventory " .. self:GetItem().Class )
@@ -360,6 +381,7 @@ function PANEL:OnMouseReleased( mcode )
 
 end
 
+--Begins dragging operation. Creates icon display.
 function PANEL:StartDrag()
 	if !LocalPlayer().OnDrag and !self.DragDisabled and self:GetItem() then
 		LocalPlayer().OnDrag = true
@@ -383,6 +405,7 @@ function PANEL:StartDrag()
 	end
 end
 
+--Finishes dragging operation. Performs the actual transfer operation.
 function PANEL:EndDrag()
 	if LocalPlayer().OnDrag and !self.DragDisabled then
 		LocalPlayer().OnDrag = false
@@ -440,12 +463,14 @@ function PANEL:OnCursorExited()
 
 end
 
+--All of the drawing goes here.
 function PANEL:Paint()
 	x, y = self:ScreenToLocal( 0, 0 )
 	surface.SetDrawColor(50,50,50,255)
 	surface.DrawOutlinedRect( 0, 0, self:GetWide(), self:GetTall() )
 end
 
+--Draws the item count
 function PANEL:PaintOver()
 	if self:GetAmount() > 1 then
 		surface.SetTextColor(Color(255,255,255,255));
@@ -467,6 +492,7 @@ end
 
 vgui.Register( "InventorySlot", PANEL, "Panel" )
 
+--Internal to be hooked to the "Inventory" tab on the main menu.
 local function OpenInventory()
 	CAKE.InventoryFrame.Display = !CAKE.InventoryFrame.Display
 	CAKE.InventoryFrame:MakePopup()
@@ -483,6 +509,7 @@ local function OpenInventory()
 	end
 end
 
+--Same as above.
 local function CloseInventory()
 	CAKE.InventoryFrame.Display = false
     CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
@@ -507,6 +534,8 @@ datastream.Hook("addinventory", function(handler, id, encoded, decoded )
 end )
 
 hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
+	
+	--Everything related to the layout of the inventory goes here.
 
 	LoadPositions()
 	CAKE.InventoryFrame = vgui.Create( "DFrameTransparent" )

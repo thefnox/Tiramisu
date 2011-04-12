@@ -70,6 +70,8 @@ function Admin_Ban( ply, cmd, args )
 	end
 	
 end
+
+--rp_admin observe. No arguments.
 function Admin_Observe( ply, cmd, args )
 
 	   if( !ply:GetNWBool( "observe" ) and ply:GetMoveType() != MOVETYPE_NOCLIP ) then
@@ -133,6 +135,7 @@ function Admin_Observe( ply, cmd, args )
 
 end
 
+--rp admin noclip. No arguments.
 function Admin_Noclip( ply, cmd, args )
 		
 		ply.Noclip = !ply.Noclip
@@ -200,6 +203,7 @@ function Admin_SuperBan( ply, cmd, args )
 	
 end
 
+--rp_admin setconvar var value
 function Admin_SetConVar( ply, cmd, args )
 
 	if( #args != 2 ) then
@@ -238,6 +242,7 @@ function Admin_SetConVar( ply, cmd, args )
 	
 end
 
+--rp_admin oocdelay number
 function Admin_SetOOCDelay( ply, cmd, args )
 
 	CAKE.ConVars[ args[ 1 ] ] = tostring(args[ 1 ]);
@@ -245,6 +250,7 @@ function Admin_SetOOCDelay( ply, cmd, args )
 	
 end
 
+--rp_admin listvars, no argument.
 function Admin_ListVars( ply, cmd, args )
 
 	CAKE.SendChat( ply, "---List of Tiramisu ConVars---" );
@@ -257,26 +263,7 @@ function Admin_ListVars( ply, cmd, args )
 	
 end
 
-function Admin_SetFlags( ply, cmd, args)
-	
-	local target = CAKE.FindPlayer(args[1])
-	
-	if(target != nil and target:IsValid() and target:IsPlayer()) then
-		-- klol
-	else
-		CAKE.SendChat( ply, "Target not found!" );
-		return;
-	end
-	
-	table.remove(args, 1); -- Get rid of the name
-	
-	CAKE.SetCharField(target, "flags", args); -- KLOL!
-	
-	CAKE.SendChat( ply, target:Name() .. "'s flags were set to \"" .. table.concat(args, " ") .. "\"" );
-	CAKE.SendChat( target, "Your flags were set to \"" .. table.concat(args, " ") .. "\" by " .. ply:Name());
-	
-end
-
+--rp_admin help, no arguments.
 function Admin_Help( ply, cmd, args )
 
 	CAKE.SendChat( ply, "---List of Tiramisu Admin Commands---" );
@@ -315,6 +302,7 @@ function Admin_Help( ply, cmd, args )
 	
 end
 
+--rp_admin addspawn, while standing on the point you want the player to spawn on.
 function Admin_AddSpawn( ply, cmd, args)
 	
 	if #args == 1 then
@@ -330,6 +318,7 @@ function Admin_AddSpawn( ply, cmd, args)
 	
 end
 
+--rp_admin setmoney name money. This sets, not adds the money.
 function Admin_SetMoney( ply, cmd, args )
 
 	local target = CAKE.FindPlayer(args[1])
@@ -337,23 +326,25 @@ function Admin_SetMoney( ply, cmd, args )
 		
 end
 
-
+--rp_admin createitem item_class
 function Admin_CreateItem( ply, cmd, args ) -- Why the fuck wasn't this here on the first place...
 
 	CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ) );
 	
 end
 
+--rp_admin listitems, no arguments.
 function Admin_ListItems( ply, cmd, args )
 	
 	for k, v in pairs( CAKE.ItemData ) do
 	
-		CAKE.SendConsole( ply, v.Class .. "\n" )
+		CAKE.SendConsole( ply, v.Class .. "-" .. v.Name .. "\n" )
 	
 	end
 
 end
 
+--rp_admin bring name. Brings a player to your position.
 function Admin_Bring( ply, cmd, args )
 	
 		local target = CAKE.FindPlayer( args[1] )
@@ -372,7 +363,7 @@ function Admin_Bring( ply, cmd, args )
 	
 end
 
-
+--rp_admin goto name. Teleports you to a player.
 function Admin_GoTo( ply, cmd, args )
 	
 		local target = CAKE.FindPlayer( args[1] )
@@ -391,7 +382,7 @@ function Admin_GoTo( ply, cmd, args )
 	
 end
 	
-
+--rp_admin slay name. Kills a player.
 function Admin_Slay( ply, cmd, args )
 
 		local target = CAKE.FindPlayer( args[1] )
@@ -418,7 +409,7 @@ function Admin_Slay( ply, cmd, args )
 		
 end
 
-
+--rp_admin setrank name "rank". Sets a player to a particular admin rank.
 function Admin_SetRank( ply, cmd, args)
 
 	if #args != 2 then
@@ -443,6 +434,7 @@ function Admin_SetRank( ply, cmd, args)
 
 end
 
+--rp_admin addspawn. Adds a spawnpoint at your current position.
 function Admin_AddSpawn( ply, cmd, args)
 	
 	if #args == 1 then
@@ -458,6 +450,7 @@ function Admin_AddSpawn( ply, cmd, args)
 	
 end
 
+--rp_admin setmodel name model. Forces someone's model to the model specified ( DOES NOT WORK WITH CLOTHING )
 function Admin_SetModel( ply, cmd, args )
 
 	target = CAKE.FindPlayer(args[1])
@@ -494,7 +487,6 @@ function PLUGIN.Init( )
 	CAKE.AdminCommand( "superban", Admin_SuperBan, "Ban someone on the server ( Permanent allowed )", true, true, 4 );
 	CAKE.AdminCommand( "setconvar", Admin_SetConVar, "Set a Convar", true, true, 4 );
 	CAKE.AdminCommand( "listvars", Admin_ListVars, "List convars", true, true, 4 );
-	--CAKE.AdminCommand( "setflags", Admin_SetFlags, "Set a players flags", true, true, 3 );
 	CAKE.AdminCommand( "createitem", Admin_CreateItem, "Creates an item", true, true, 4 );
 	CAKE.AdminCommand( "setmoney", Admin_SetMoney, "Set the money of another player", true, true, 4 )
 	CAKE.AdminCommand( "addspawn", Admin_AddSpawn, "Add a new spawn point on your position.", true, true, 4 )

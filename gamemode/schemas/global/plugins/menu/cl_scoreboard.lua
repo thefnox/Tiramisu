@@ -41,11 +41,8 @@ local function OpenScoreboard()
 		local label = vgui.Create("DLabel");
 		label:SetText("OOC Name: " .. v:Name());
 		DataList2:AddItem(label);
-		
-		local label2 = vgui.Create("MarkupLabel");
-		label2:SetMaxWidth( 550 )
-		label2:SetText("Title: " .. v:GetNWString("title"));
-		DataList2:AddItem(label2);
+
+		DataList2:AddItem(MarkupLabel( "Title:" .. v:GetNWString("title"), 620, DataList2 ))
 		
 		local Divider = vgui.Create("DHorizontalDivider");
 		Divider:SetLeft(spawnicon);

@@ -1,39 +1,34 @@
 -- Set up the gamemode
 DeriveGamemode( "sandbox" );
-GM.Name = "Tiramisu";
 
--- Define global variables
+--Initializing global variables. Don't touch this
 CAKE = {  };
 CAKE.Running = false;
 CAKE.Loaded = false;
 CAKE.Skin = "default"
 CAKE.CharCreate = function() end
-CAKE.MenuFont = "Harabara"
-CAKE.BaseColor = Color( 100, 100, 115, 150 ) --The schema's default frame color
-
-CAKE.ViewRagdoll = false
-
 CAKE.Clothing = "none"
 CAKE.Helmet = "none"
 CAKE.Gear = {}
 CAKE.ClothingTbl = {}
-
 CAKE.MyGroup = {}
-
-CAKE.models = {  };
 readysent = false;
-
 CAKE.MenuTabs = {}
 CAKE.ActiveTab = nil
 CAKE.MenuOpen = false
 CAKE.DisplayMenu = false
-
-CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 0, true, true )
-CAKE.ThirdpersonDistance = CreateClientConVar( "rp_thirdpersondistance", 50, true, true )
-CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true )
-CAKE.HeadbobAmount = CreateClientConVar( "rp_headbob", 1, true, true )
+CAKE.ViewRagdoll = false
 CAKE.FreeScroll = false
 CAKE.ForceFreeScroll = false
+
+--Schema configuration options
+
+CAKE.MenuFont = "Harabara" -- The default font for the whole schema
+CAKE.BaseColor = Color( 100, 100, 115, 150 ) --The schema's default color. Can be set in game
+CAKE.Webpage = "http://www.facepunch.com/" --Set this to whatever you want to, it'll be accessible on the "Forums" tab
+CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 0, true, true ) -- Set this to 1 to have thirdperson enabled by default.
+CAKE.ThirdpersonDistance = CreateClientConVar( "rp_thirdpersondistance", 50, true, true ) --Maximum thirdperson distance
+CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true ) --Set this to 0 to have headbob disabled by default.
 
 require( "datastream" )
 -- Client Includes

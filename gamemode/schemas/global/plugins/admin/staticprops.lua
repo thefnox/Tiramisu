@@ -1,10 +1,6 @@
-PLUGIN.Name = "Static Props"; -- What is the plugin name
-PLUGIN.Author = "Ryaga/BadassMC"; -- Author of the plugin
-PLUGIN.Description = "Handles permanent props"; -- The description or purpose of the plugin
-
 CAKE.PermaProps = {}
 
-
+--Adds a permanent prop to the CAKE.PermaProps table. This is for storage only.
 function CAKE.AddPermaProp( mdl, pos, ang )
 
 	if !CAKE.PermaProps[ game.GetMap( ) ] then
@@ -22,6 +18,7 @@ function CAKE.AddPermaProp( mdl, pos, ang )
 
 end
 
+--Removes permaprop status from an entity.
 function CAKE.RemovePermaProp( ent )
 
 	if !CAKE.PermaProps[ game.GetMap( ) ] then
@@ -40,6 +37,7 @@ function CAKE.RemovePermaProp( ent )
 	
 end
 
+--Creates a new permaprop on the map based on it's ID on the CAKE.PermaProps table
 function CAKE.CreatePermaProp( id )
 	if CAKE.PermaProps[ game.GetMap( ) ][ id ] then
 		local prop = ents.Create( "prop_physics" )
@@ -58,6 +56,7 @@ function CAKE.CreatePermaProp( id )
 	end
 end
 
+--Saves all permaprops to file.
 function CAKE.SavePermaProps()
 
 	local keys = glon.encode(CAKE.PermaProps[ game.GetMap( ) ]);
@@ -65,6 +64,7 @@ function CAKE.SavePermaProps()
 
 end
 
+--Loads all permaprops on initialization.
 function CAKE.LoadPermaProps()
 	local map = game.GetMap()
 	if file.Exists( CAKE.Name .. "/PermaProps/" .. CAKE.ConVars[ "Schema" ] .. "/" .. map .. ".txt" ) then
@@ -78,11 +78,11 @@ function CAKE.LoadPermaProps()
 	end
 end
 
-local function LoadStaticProps()
+hook.Add( "InitPostEntity", "TiramisuPermaProps", function()
 	CAKE.LoadPermaProps()
-end
-hook.Add( "InitPostEntity", "TiramisuPermaProps", LoadStaticProps )
+end)
 
+--rp_admin addpermaprop. Must be looking at the entity you want to make permanent.
 local function Admin_AddPermaProp( ply, cmd, args )
 
 	local tr = ply:GetEyeTrace()
@@ -91,6 +91,7 @@ local function Admin_AddPermaProp( ply, cmd, args )
 
 end
 
+--rp_admin removepermaprop. Removes permaprop status from an entity you're looking at.
 local function Admin_RemovePermaProp( ply, cmd, args )
 	
 	local tr = ply:GetEyeTrace()

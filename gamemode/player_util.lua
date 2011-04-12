@@ -1,3 +1,4 @@
+--Sends a player a chat message using the enhanced message system.
 function CAKE.SendChat( ply, msg, font, channel )
 	
 	if ply:IsPlayer() then
@@ -21,6 +22,7 @@ function CAKE.SendChat( ply, msg, font, channel )
 	
 end
 
+--Sends a message to a player's console
 function CAKE.SendConsole( ply, msg )
 
 	if ply:IsPlayer() then
@@ -31,6 +33,7 @@ function CAKE.SendConsole( ply, msg )
 	
 end
 
+--Sends a popup message to a player.
 function CAKE.SendError( ply, msg )
 
 	if ply:IsPlayer() then
@@ -44,6 +47,7 @@ end
 
 DecayingRagdolls = {};
 
+--Handles death ragdoll creation.
 function CAKE.DeathMode( ply )
 	
 	if ValidEntity( ply.deathrag ) then
@@ -138,6 +142,7 @@ function CAKE.DeathMode( ply )
 	
 end
 
+--Toggles unconcious status.
 function CAKE.UnconciousMode( ply )
 
 	if ply:Alive() then
@@ -301,6 +306,7 @@ function meta:ConCommand( cmd ) --Rewriting this due to Garry fucking it up.
 	umsg.End()
 end
 
+--Does the player have a character currently loaded?
 function meta:IsCharLoaded()
 	
 	return self:GetNWBool( "charloaded", false )

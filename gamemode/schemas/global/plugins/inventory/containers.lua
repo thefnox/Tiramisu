@@ -4,6 +4,8 @@ PLUGIN.Description = "Containers,"; -- The description or purpose of the plugin
 
 CAKE.Containers = {}
 
+
+--Sets an item to be a container.
 function CAKE.AddContainer( ent )
 
 	ent.Size = CAKE.GetContainerSize( ent:GetModel() )
@@ -13,6 +15,7 @@ function CAKE.AddContainer( ent )
 
 end
 
+--Adds a container type.
 function CAKE.AddCType( model, size )
 
 	if model and size then
@@ -23,12 +26,14 @@ function CAKE.AddCType( model, size )
 
 end
 
+--Fetches a container's item limit.
 function CAKE.GetContainerSize( model )
 
 	return CAKE.Containers[model] or 8
 
 end
 
+--Adds an item to the container.
 function CAKE.AddContItem( ent, class )
 
 	count = 0
@@ -47,8 +52,9 @@ function CAKE.AddContItem( ent, class )
 		
 	end
 		
-end 
+end
 
+--Removes an item from the container.
 function CAKE.TakeContItem( ent, class )
 
 	for k,v in pairs(ent.Inv) do
@@ -64,6 +70,7 @@ function CAKE.TakeContItem( ent, class )
 
 end
 
+--Creates all containers.
 function CAKE.InitContainers(ply, model, ent)
 
 	if CAKE.Containers[model] then
@@ -75,6 +82,7 @@ function CAKE.InitContainers(ply, model, ent)
 end
 hook.Add("PlayerSpawnedProp", "containerSpawn", CAKE.InitContainers)
 
+--Gives the player an item currently on a container
 function CAKE.PlayerGiveCont( ply, ent, item )
 
 	ply:TakeItem(item)
@@ -82,6 +90,7 @@ function CAKE.PlayerGiveCont( ply, ent, item )
 
 end 
 
+--Opposite of the above.
 function CAKE.ContGivePlayer( ply, ent, item )
 
 	ply:GiveItem(item)
@@ -89,6 +98,7 @@ function CAKE.ContGivePlayer( ply, ent, item )
 
 end 
 
+--Handles all container interaction.
 function CAKE.InteractCont( ply, cmd, args )
 
 	if args[1] == "give" then
@@ -106,6 +116,7 @@ function CAKE.InteractCont( ply, cmd, args )
 end
 concommand.Add( "rp_intcont", CAKE.InteractCont );	
 
+--Sends all container contents to the player.
 function CAKE.GetContents( ply, cmd, args )
 
 	print("Recieved")

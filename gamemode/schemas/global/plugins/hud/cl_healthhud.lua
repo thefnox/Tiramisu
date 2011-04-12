@@ -16,6 +16,7 @@ local ang
 local newpos
 local fov = 85
 
+--Refreshes the character portrait on the circle HUD element.
 local function CreateCharPortrait()
 
 	CAKE.CharacterPortrait = ClientsideModel(LocalPlayer():GetNWString( "model", "models/kleiner.mdl" ), RENDERGROUP_OPAQUE)
@@ -48,6 +49,7 @@ timer.Create( "RefreshPortrait", 5, 0, function()
 	CreateCharPortrait()
 end)
 
+--Internal to see if the portrait should be displayed at some point. Also takes care of fading in/out the element.
 local function DisplayCharPortrait( bool )
 	if bool then
 		portraitpos = Vector( Lerp( 0.2, portraitpos.x, screenpos.x ), screenpos.y, screenpos.z )
@@ -63,6 +65,7 @@ local function DisplayCharPortrait( bool )
 	end
 end
 
+---Simple check to make the element display when damaged.
 hook.Add( "Think", "TiramisuDisplayPortrait",function()
 
 	if CAKE.DisplayCharPortrait:GetBool() then
@@ -73,7 +76,7 @@ hook.Add( "Think", "TiramisuDisplayPortrait",function()
 
 end)
 
-
+--Handles the entire drawing part.
 hook.Add("HUDPaint","TiramisuCircleHealthDisplay", function()
 
 	if displayportrait then

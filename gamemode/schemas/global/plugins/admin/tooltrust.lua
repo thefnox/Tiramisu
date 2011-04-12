@@ -1,7 +1,3 @@
-PLUGIN.Name = "Tool Trust"; -- What is the plugin name
-PLUGIN.Author = "LuaBanana"; -- Author of the plugin
-PLUGIN.Description = "Toolgun permissions, as well as physgun ban."; -- The description or purpose of the plugin
-
 SpawnTable = {};
 
 function CAKE.MaxProps(ply)

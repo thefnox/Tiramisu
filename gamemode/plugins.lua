@@ -14,6 +14,8 @@ function CAKE.LoadRClick( schema, filename )
 	
 end
 
+--Plugins on Tiramisu are really no different from a regular lua file. It is automatically included, and doesn't stop the loading of all other plugins if an error is detected in one. The file prefix is important, a cl_ file will be sent to the player, while a sh_ file will be included both client and serverside
+
 function CAKE.LoadPlugin( schema, filename )
 
 	local filename = filename or ""
@@ -39,42 +41,7 @@ function CAKE.LoadPlugin( schema, filename )
 	
 end
 
-function CAKE.OldLoadPlugin( schema, filename )
-	
-	local path = "schemas/" .. schema .. "/plugins/" .. filename;
-	
-	PLUGIN = {  };
-	
-	include( path );
-	
-	CAKE.DayLog( "script.txt", "Loading plugin " .. PLUGIN.Name or "" .. " by " .. PLUGIN.Author or "None" .. " ( " .. PLUGIN.Description or "N/A" .. " )" );
-	
-	table.insert( CAKE.Plugins, PLUGIN );
-	
-end
-
-function CAKE.ReRoute( )
-
-	for k, v in pairs( CAKE ) do
-	
-		if( type( v ) == "function" ) then
-		
-			GM[ k ] = CAKE[ k ];
-			
-		end
-		
-	end
-	
-end
-
-function CAKE.OldLoadClPlugin( schema, filename )
-
-	local path = "schemas/" .. schema .. "/clplugin/" .. filename;
-	AddResource("lua", path)
-	
-end
-	
-
+--Initializes plugins. This is the equivalent of hooking something to the Initialize hook
 function CAKE.InitPlugins( )
 
 	for _, PLUGIN in pairs( CAKE.Plugins ) do

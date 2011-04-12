@@ -72,17 +72,6 @@ end
 function GM:PlayerInitialSpawn( ply )
 	
 	ply.LastOOC = -100000; -- This is so people can talk for the first time without having to wait.
-
-	CAKE.SpawnPointHandle(ply)
-	
-	-- Send them valid models
-	for k, v in pairs( CAKE.ValidModels ) do
-		umsg.Start( "addmodel", ply );
-		
-			umsg.String( v );
-			
-		umsg.End( );
-	end
 	
 	for k, v in ipairs( CAKE.Schemafile ) do
 		umsg.Start( "addschema", ply );

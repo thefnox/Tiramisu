@@ -4,16 +4,20 @@ include( 'shared.lua' )
 
 function ENT:Initialize()
 
-	self.Entity:AddEffects( EF_BONEMERGE | EF_BONEMERGE_FASTCULL | EF_PARENT_ANIMATES )
+	self:AddEffects( EF_BONEMERGE | EF_BONEMERGE_FASTCULL )
 	self:SetSolid(SOLID_NONE)
 	self:SetNotSolid(true)
 	self:SetMoveType(MOVETYPE_NONE)
-	self:SetCollisionGroup( COLLISION_GROUP_PUSHAWAY )
+	self:SetCollisionGroup( COLLISION_GROUP_PLAYER )
 	self:SetCollisionBounds( Vector(0, 0, 0), Vector(0, 0, 0) )
 	local phy = self:GetPhysicsObject()
 	if phy:IsValid() then
-		phy:AddGameFlag(PLAYER_HELD)
+		phy:EnableCollisions(false)
+		phy:EnableDrag(false)
+		phy:SetMass( 0)
 	end
+	
+	self:SetSequence( ACT_IDLE )
 
 end
 

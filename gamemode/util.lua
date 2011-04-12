@@ -1,6 +1,6 @@
 CAKE.ClockStarted = false
 
-
+--Fix for certain tables not loading right.
 function CAKE.ReferenceFix(data)
 
 	if(type(data) == "table") then
@@ -15,6 +15,7 @@ function CAKE.ReferenceFix(data)
 	
 end
 
+--If the value provided to it is not valid, then it returns the default.
 function CAKE.NilFix(val, default)
 
 	if(val == nil) then
@@ -29,6 +30,7 @@ function CAKE.NilFix(val, default)
 	
 end
 
+--Finds a player based on its OOC name, its IC name or its SteamID
 function CAKE.FindPlayer(name)
 
 	local ply = nil;
@@ -59,18 +61,7 @@ function CAKE.FindPlayer(name)
 	
 end
 
+--Fetches a player's character signature.
 function CAKE.GetCharSignature( ply )
 	return ply:Nick() .. "@" .. ply:SteamID()
-end
-
-function CAKE.SignatureToPlayer( signature )
-
-	local exp = string.Explode( signature, "@" )
-	local ply = CAKE:FindPlayer( exp[2] )
-	if ply then
-		return ply
-	end
-
-	return false
-
 end

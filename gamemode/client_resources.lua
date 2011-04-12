@@ -1,4 +1,4 @@
-
+--Adds a resource file. It accepts lua files and regular data.
 function AddResource( res_type, path )
 
 	if( string.lower( res_type ) == "lua" ) then
@@ -15,7 +15,7 @@ function AddResource( res_type, path )
 	
 end
 
-local function AddContentFolder( filepath )
+local function AddContentFolder( filepath ) --Adds all of the files on the content folder to resource downloading.
 
 
 	local filepath = filepath or ""

@@ -4,6 +4,7 @@ Admins = { };
 CAKE.AdminCommands = {  }
 CAKE.AdminRanks = {  } 
 
+--Sends an admin message to all players.
 function CAKE.AnnounceAction( ply, action )
 
 	local s = "[ ADMIN ] " .. ply:Name( ) .. " " .. action;
@@ -30,6 +31,7 @@ function CAKE.AdminCommand( ccName, func, description, CanRunFromConsole, CanRun
 	
 end
 
+--Fetches a player's rank. Automatically compensates for administrators set outside of Tiramisu.
 function CAKE.PlayerRank(ply)
 
 	if ply:IsSuperAdmin() then
@@ -123,6 +125,7 @@ function ccAdmin( ply, cmd, args )
 end
 concommand.Add("rp_admin", ccAdmin) 
 
+--Creates a new administrative rank. int refers to it's hirearchical level.
 function CAKE.AddAdminRank(name, int)
 	
 	rank = {}

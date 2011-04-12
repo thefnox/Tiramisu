@@ -211,6 +211,7 @@ function ccSpawnChar( ply, cmd, args )
 end
 concommand.Add( "rp_spawnchar", ccSpawnChar );
 
+
 function ccReady( ply, cmd, args )
 
 	if( ply.Ready == false ) then

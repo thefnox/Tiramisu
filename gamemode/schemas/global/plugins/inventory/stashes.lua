@@ -8,6 +8,7 @@ CAKE.StashItems.Roll = {}
 CAKE.StashItems["Common"] = {}
 CAKE.StashItems["Uncommon"] = {}
 CAKE.StashItems["Rare"] = {}
+--Don't touch any of these.
 
 for i = 1, 60 do 
 	CAKE.StashItems.Roll[i] = "Common"
@@ -21,11 +22,13 @@ for i = 91, 100 do
 	CAKE.StashItems.Roll[i] = "Rare"
 end
 
+--Adds an item to a stash configuration. Keep in mind that the "class" part is the item's class.
 function CAKE.AddStashItem(class,itemrarity)
 	if !CAKE.StashItems[itemrarity] then print("No such rarity") return end
 	table.insert(CAKE.StashItems[itemrarity], class)
 end
-	
+
+--Adds a stash point on the position and angles provided. Randomly creates items depending on what stash configuration is provided to it.
 function CAKE.AddStash(pos, ang)
 	map = game.GetMap()
 	
@@ -42,16 +45,19 @@ function CAKE.AddStash(pos, ang)
 		
 end
 
+--Removes ALL stashes.
 function CAKE.ClearStashes()
 	CAKE.StashPoints = {}
 	CAKE.SaveStashes()
 end
 
+--Saves them all to file.
 function CAKE.SaveStashes()
 	local gloncomspawns = glon.encode(CAKE.StashPoints)
 	file.Write( CAKE.Name .. "/MapInfo/" ..game.GetMap().. "_stashes.txt" , gloncomspawns)
 end
 
+--Handles stash items creation.
 function CAKE.StashPointAuto()
 	if #CAKE.StashPoints > 0 then
 		
@@ -64,6 +70,7 @@ function CAKE.StashPointAuto()
 	end
 end
 
+--Initializes all stashes.
 function CAKE.InitStashes()
 
 	if(file.Exists(CAKE.Name .. "/MapInfo/" ..game.GetMap().. "_stashes.txt")) then
@@ -76,6 +83,7 @@ function CAKE.InitStashes()
 	
 end
 
+--rp_admin addstash. Adds a stash at your current position.
 function Admin_AddStash( ply, cmd, args)
 	
 		local pos = ply:GetPos()

@@ -1,5 +1,6 @@
 CAKE.Business = {}
 
+--Copies all buyable items on the CAKE.Business table.
 function CAKE.BuildItemGroups()
 	local tbl = {}
 	for k,v in pairs(CAKE.ItemData) do
@@ -16,6 +17,7 @@ function CAKE.BuildItemGroups()
 	end
 end
 
+--Buys an item.
 function CAKE.BuyItem( ply, class )
 
 	local group = CAKE.GetCharField(ply, "group")
@@ -32,6 +34,7 @@ function CAKE.BuyItem( ply, class )
 	return true
 end
 
+--Concommand for buying an item. Arguments: item_class
 function ccBuyItem(ply, cmd, args)
 
 	local class = args[1]
@@ -45,6 +48,7 @@ concommand.Add( "rp_buyitem", ccBuyItem)
 
 local meta = FindMetaTable( "Player" );
 
+--Sends a player's business data through Datastream.
 function meta:RefreshBusiness()
 
 	local group = CAKE.GetCharField(self, "group")

@@ -1,5 +1,4 @@
-CLPLUGIN.Name = "Charcreation Menu"
-CLPLUGIN.Author = "FNox"
+--Handles character creation. The steps are actually entirely up to you, so is the design. The most important part is the ending, where the player's data is set.
 
 local models = {}
 models[ "Male" ] = {
@@ -232,6 +231,6 @@ local function CharacterCreation()
 end
 function CLPLUGIN.Init()
 
-	CAKE.RegisterCharCreate(CharacterCreation)
+	CAKE.RegisterCharCreate(CharacterCreation) --THIS IS IMPORTANT. IF THIS IS NOT THERE THE WHOLE GAMEMODE WILL NOT WORK.
 	
 end

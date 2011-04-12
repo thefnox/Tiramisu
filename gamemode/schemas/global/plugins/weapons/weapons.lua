@@ -9,6 +9,7 @@ CAKE.Undroppable = {
 	"weapon_physgun"
 }
 
+--Calculates whether to give the equivalent item of a weapon to a player, or not.
 local function WeaponEquipItem( wep )
 
 	timer.Simple(0.1, function() 
@@ -28,6 +29,7 @@ local function WeaponEquipItem( wep )
 end
 hook.Add( "WeaponEquip", "GetWeaponAsItem", WeaponEquipItem )
 
+--Utility to drop the player's currently active weapon as an item, if possible
 function CAKE.DropWeapon( ply, wep )
 
 	if( CAKE.ItemData[ wep ] != nil ) then
@@ -49,6 +51,7 @@ end
 
 local meta = FindMetaTable( "Player" );
 
+--Saves the entire ammo list.
 function meta:SaveAmmo()
 	
 	local tbl = {}
@@ -80,6 +83,7 @@ function meta:SaveAmmo()
 	
 end
 
+--Gives the player all of his stored ammo.
 function meta:RestoreAmmo()
 
 	for k, v in pairs( CAKE.GetCharField( self, "ammo" ) ) do
@@ -88,12 +92,17 @@ function meta:RestoreAmmo()
 
 end
 
-local function WeaponsLoadout( ply )
+local function WeaponsLoadout( ply ) 
 	
 	if ply:IsCharLoaded() then
-		if(ply:GetNWInt("charactercreate") != 1) then
+		if(ply:GetNWInt("charactercreate", 0 ) != 1) then
 			for k, v in pairs( CAKE.GetCharField( ply, "weapons" ) ) do
 				ply:Give( v )
+			end
+			for k, v in pairs( CAKE.GetCharField( ply, "inventory")) do
+				if string.match( v, "weapon_" ) then
+					ply:Give( v )
+				end
 			end
 			ply:RemoveAllAmmo( )
 			ply:RestoreAmmo()
@@ -119,6 +128,7 @@ local function WeaponsLoadout( ply )
 end
 hook.Add( "PlayerLoadout", "CakeWeaponsLoadout", WeaponsLoadout )
 
+--AUtomatically saves a player's ammo.
 local function StartTimer( ply )
 	if ply:IsCharLoaded() then
 		timer.Create( "ammosavetimer" .. ply:Nick(), 15, 0, function()

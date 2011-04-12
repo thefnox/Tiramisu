@@ -1,6 +1,3 @@
-CLPLUGIN.Name = "Help Menu"
-CLPLUGIN.Author = "F-Nox/Big Bang"
-
 local commandtext = [[Hello, and welcome to Tiramisu, a new innovative roleplay experience. We hope you have a good stay on the server you are currently on!
 
 --------------
@@ -138,7 +135,3 @@ usermessage.Hook( "showhelpmenu", function( um )
 	OpenHelp()
 	
 end)
-
-function CLPLUGIN.Init()
-	
-end

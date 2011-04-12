@@ -1,9 +1,3 @@
-CLPLUGIN.Name = "Third Person Camera"
-CLPLUGIN.Author = "F-Nox/Big Bang"
-
-function CLPLUGIN.Init()
-end
-
 local mouserotate = Angle( 0, 0, 0 )
 local mousex
 local newpos
@@ -17,17 +11,13 @@ usermessage.Hook( "recieveragdoll", function( um )
 
 end)
 
-
-local function drawlocalplayer()
-
+hook.Add("ShouldDrawLocalPlayer","TiramisuDrawLocalPlayer", function()
 	if CAKE.Thirdperson:GetBool() or CAKE.FreeScroll then
 		return true
 	end
 
 	return false
-
-end
-hook.Add("ShouldDrawLocalPlayer","TiramisuDrawLocalPlayer", drawlocalplayer )
+end)
 
 hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 
@@ -35,7 +25,7 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 		newpos = pos
 	end
 	
-	if CAKE.FreeScroll then
+	if CAKE.FreeScroll then --Rotate around the player/objective
 		if ValidEntity( CAKE.ViewRagdoll ) then
 			newpos =  Angle( 0, CAKE.ViewRagdoll:GetAngles().y, 0 ):Forward()*100
 			newpos:Rotate(mouserotate)
@@ -49,7 +39,7 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 		end
 	end
 
-	if( CAKE.Thirdperson:GetBool() ) then
+	if( CAKE.Thirdperson:GetBool() ) then --All thirdperson code goes here.
 		if ValidEntity( CAKE.ViewRagdoll ) then
 			pos = CAKE.ViewRagdoll:GetPos()
 			ignoreent = CAKE.ViewRagdoll
@@ -61,7 +51,7 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 			pos = ply:GetBonePosition( ply:LookupBone( "ValveBiped.Bip01_Head1" ) ) or ply:EyePos()
 		end
 					
-		if( ply:GetNWBool( "aiming", false ) ) then
+		if( ply:GetNWBool( "aiming", false ) ) then--Over the shoulder view.
 			if !LocalPlayer():InVehicle() then
 	            tracedata.start = pos
 	            tracedata.endpos = pos - ( angles:Forward() * CAKE.ThirdpersonDistance:GetInt() ) + ( angles:Right()* 30 )
@@ -75,7 +65,7 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 			end
 
 			return GAMEMODE:CalcView(ply, newpos , angles ,fov)
-		else
+		else -- Regular view.
 			if !LocalPlayer():InVehicle() then
 	            tracedata.start = pos
 	            tracedata.endpos = pos - ( angles:Forward() * CAKE.ThirdpersonDistance:GetInt() * 2 ) + ( angles:Up()* 20 )

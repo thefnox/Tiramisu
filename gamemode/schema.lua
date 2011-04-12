@@ -57,31 +57,12 @@ function CAKE.LoadSchema( schema )
 	
 end
 
+--Makes schemas run their SetUp function
 function CAKE.InitSchemas( )
 
 	for _, SCHEMA in ipairs( CAKE.Schemas ) do
 
 		SCHEMA.SetUp( );
-		
-	end
-	
-end
-
-CAKE.ValidModels = {};
-
-function CAKE.AddModels(mdls)
-
-	if(type(mdls) == "table") then
-	
-		for k, v in pairs(mdls) do
-		
-			table.insert(CAKE.ValidModels, v)
-			
-		end
-		
-	else
-	
-		table.insert(CAKE.ValidModels, mdls)
 		
 	end
 	

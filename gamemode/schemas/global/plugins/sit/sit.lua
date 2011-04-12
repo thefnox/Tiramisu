@@ -24,7 +24,9 @@ CAKE.Chairs = {
 			{ ["pos"] = Vector(18.0000, 0.0000, 17.0000 ), ["angles"] = Angle( 0.000, 0.000, 0.000) }
 		}
 }
+--Add all chairs to this file.
 
+--Edits a chair's coordinates based on a table.
 function CAKE.EditChair( mdl, tbl )
 	if CAKE.Chairs then
 		for k, v in pairs( CAKE.Chairs ) do
@@ -35,11 +37,13 @@ function CAKE.EditChair( mdl, tbl )
 	end
 end
 
+--Saves all chairs to file
 function CAKE.SaveChairs()
 	local keys = glon.encode(CAKE.Chairs);
 	file.Write( CAKE.Name .. "/chairs.txt", keys )
 end
 
+--Fetches all chairs from file
 function CAKE.LoadChairs()
 	if file.Exists( CAKE.Name .. "/chairs.txt" ) then
 		CAKE.Chairs = glon.decode(file.Read( CAKE.Name .. "/chairs.txt" ))
@@ -51,11 +55,11 @@ local function LoadChairs()
 end
 hook.Add( "InitPostEntity", "TiramisuLoadChairs", LoadChairs )
 
+--Returns true if the entity in question is an available chair.
 function CAKE.IsChair( ent )
 	if ent:GetClass() == "prop_physics" or ent:GetClass() == "prop_static" then
 		for k, v in pairs( CAKE.Chairs ) do
 			if string.lower( ent:GetModel() ) == string.lower( k ) then
-				print( "yep, it's chair." )
 				return true
 			end
 		end
@@ -126,6 +130,7 @@ local function ccSitDown( ply, cmd, args )
 end
 concommand.Add( "rp_sit", ccSitDown )
 
+--Makes a player exit any sitting position
 function CAKE.StandUp( ply )
 	if ply:GetNWBool( "sittingchair", false ) or ply:GetNWBool( "sittingground", false ) then
 		ply:Freeze( false )

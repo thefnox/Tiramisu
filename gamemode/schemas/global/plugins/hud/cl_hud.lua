@@ -24,6 +24,7 @@ timer.Create( "TiramisuTitleMarkupRefresh", 1, 0, function()
 	markuplbl = markup.Parse( "<color=230,230,230,255><font=TiramisuTimeFont>" .. LocalPlayer():GetNWString( "title", "Connecting..." ) .. "</font></color>", 300 )
 end)
 
+--Draws the time and the player name/title
 local function DrawTime( )
 
 	if !CAKE.MinimalHUD:GetBool() or CAKE.MenuOpen then 

@@ -41,6 +41,7 @@ function CAKE.InitTime() -- Load the time from a text file or default value, thi
 	
 end
 
+--Saves time to a file
 function CAKE.SaveTime()
 
 	local clumpedtime = CAKE.ClockDay .. " " .. CAKE.ClockMonth .. " " .. CAKE.ClockYear .. " " .. CAKE.ClockMins
@@ -48,6 +49,7 @@ function CAKE.SaveTime()
 	
 end
 
+--Sends the time to all clients.
 function CAKE.SendTime()
 	
 	if CAKE.ClockYear then

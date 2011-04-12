@@ -4,7 +4,7 @@ PLUGIN.Description = "Configures the schema"; -- The description or purpose of t
 
 function PLUGIN.Init()
 	
-	
+	--Containers.
 	CAKE.AddCType("models/props_junk/wood_crate001a_damagedmax.mdl", 16)
 	CAKE.AddCType("models/props_junk/wood_crate001a_damaged.mdl", 16)
 	CAKE.AddCType("models/props_junk/wood_crate001a.mdl", 8)
@@ -27,19 +27,21 @@ function PLUGIN.Init()
 	CAKE.AddCType("models/items/ammocrate_grenade.mdl", 10)
 	CAKE.AddCType("models/weapons/w_suitcase_passenger.mdl", 5)
 
+	--Allowed default male clothing
 	CAKE.ConVars[ "Default_Clothing" ][ "Male" ] = {
 		"clothing_formal",
 		"clothing_formal2",
 		"clothing_labcoat",
 		"clothing_combat"
 	}
-
+	--Allowed default female clothing.
 	CAKE.ConVars[ "Default_Clothing" ][ "Female" ] = {
 		"clothing_formalf",
 		"clothing_labcoat",
 		"clothing_combatf"
 	}
 
+	--Currency data.
 	CURRENCY = {}
 	CURRENCY.Name        = "Dollars";
 	CURRENCY.Slang       = "dollar"

@@ -2,6 +2,7 @@ PLUGIN.Name = "Damage Systems"; -- What is the plugin name
 PLUGIN.Author = "Big Bang"; -- Author of the plugin
 PLUGIN.Description = "Calculates damage and damage effects"; -- The description or purpose of the plugin
 
+--Calculates the protection ratio of an item.
 function CAKE.CalculateShields( ply, item, helmet )
 	
 	if CAKE.ItemData[ item ] then
@@ -105,7 +106,7 @@ function GM:ScalePlayerDamage( ply, hitgroup, dmginfo )
 end
 
 function GM:GravGunPunt( ply, ent )
-    return false --Useless to RP
+    return false --Useless for RP, so we disable gravity gun punting.
 end
 
 hook.Add( "PlayerSetModel", "TiramisuShieldCalc", function( ply )

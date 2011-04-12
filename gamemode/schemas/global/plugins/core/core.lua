@@ -13,14 +13,14 @@ CAKE.AddDataField( 1, "adrank", "Player" )
 -- If there is a field in the data and it isn't added, it will automatically be removed.
 
 -- Character Fields
-CAKE.AddDataField( 2, "name", "Set Your Name" ); -- Let's hope this never gets used.
-CAKE.AddDataField( 2, "model", "models/humans/group01/male_07.mdl" );
+CAKE.AddDataField( 2, "name", "Set Your Name" ); 
+CAKE.AddDataField( 2, "model", "models/humans/group01/male_07.mdl" ); -- Your base model
 CAKE.AddDataField( 2, "title", CAKE.ConVars[ "Default_Title" ] ); -- What is their default title.
 CAKE.AddDataField( 2, "money", CAKE.ConVars[ "Default_Money" ] ); -- How much money do players start out with.
 CAKE.AddDataField( 2, "flags", CAKE.ConVars[ "Default_Flags" ] ); -- What flags do they start with.
 CAKE.AddDataField( 2, "inventory", CAKE.ConVars[ "Default_Inventory" ] ); -- What inventory do they start with
 CAKE.AddDataField( 2, "gender", "Male" ) -- MAN POWER
 CAKE.AddDataField( 2, "age", 30 ) --Can't think of any puns.
-CAKE.AddDataField( 2, "group", "None" )
-CAKE.AddDataField( 2, "grouprank", "None" )
+CAKE.AddDataField( 2, "group", "none" )
+CAKE.AddDataField( 2, "grouprank", "none" )
 CAKE.AddDataField( 2, "gear", {} )

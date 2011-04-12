@@ -1,6 +1,4 @@
-CLPLUGIN.Name = "Forums Menu Element"
-CLPLUGIN.Author = "F-Nox/Big Bang"
-
+--HTML Page tab.
 
 local function OpenForums()
 	PlayerMenu = vgui.Create( "DFrameTransparent" )
@@ -16,7 +14,7 @@ local function OpenForums()
 	local html = vgui.Create( "HTML" , PlayerMenu )
 	html:SetSize( 690, 487 )
 	html:SetPos( 5, 28 )
-	html:OpenURL( "http://www.facepunch.com/" )
+	html:OpenURL( CAKE.Webpage )
 
 end
 
@@ -27,7 +25,3 @@ local function CloseForums()
 	end
 end
 CAKE.RegisterMenuTab( "Forums", OpenForums, CloseForums )
-
-function CLPLUGIN.Init()
-	
-end

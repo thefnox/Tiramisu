@@ -85,6 +85,6 @@ hook.Add( "Initialize", "TiramisuInitSpawns", function()
 	CAKE.InitSpawns()
 end)
 
-hook.Add( "PlayerSpawn", "TiramisuSpawnPlayer", function( ply )
+hook.Add( "PlayerSpawn", "TiramisuSpawnHandle", function( ply )
 	CAKE.SpawnPointHandle(ply)
 end)

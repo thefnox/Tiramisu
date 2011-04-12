@@ -1,3 +1,4 @@
+--rp_admin globalsound soundpath
 function Admin_GlobalSound( ply, cmd, args )
 
 	if !args[1] or args[1] == "" then

@@ -15,7 +15,7 @@ timer.Create( "LocalTiramisuTitleTimer", 0.2, 0, function()
 
 end)
 
---3D Titles
+--3D Titles drawing.
 
 hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DTitles", function( )
 	

@@ -2,7 +2,7 @@ PLUGIN.Name = "Clothing"; -- What is the plugin name
 PLUGIN.Author = "Big Bang"; -- Author of the plugin
 PLUGIN.Description = "Enables you to wear fucking clothes :D"; -- The description or purpose of the plugin
 
-
+--Removes a player's clothing on death
 local function PlayerDeath( Victim, Inflictor, Attacker )
 
 		if( Victim.Clothing ) then
@@ -26,6 +26,7 @@ hook.Add( "PlayerDeath", "PlayerRemoveClothing", PlayerDeath )
 
 local meta = FindMetaTable( "Player" );
 	
+--Main function to set a player's clothing based on at least one item. Helmet and gloves are not necessary arguments.
 function CAKE.SetClothing( ply, body, helmet, glove )
 
 	if resourcex then
@@ -90,6 +91,7 @@ function CAKE.SetClothing( ply, body, helmet, glove )
 		
 end
 
+--Allows you to try a set of clothes without actually owning the item.
 function CAKE.TestClothing( ply, model, body, helmet, glove )
 
 	ply:RemoveClothing()
@@ -152,7 +154,8 @@ function CAKE.TestClothing( ply, model, body, helmet, glove )
 	CAKE.SendClothingToClient( ply )
 		
 end
-	
+
+--Removes all of a player's clothing.
 function meta:RemoveClothing()
 		if self.Clothing then
 		
@@ -168,7 +171,8 @@ function meta:RemoveClothing()
 		
 	self.Clothing = {}	
 end
-	
+
+--Removes only the helmet of a player, if wearing any.
 function meta:RemoveHelmet()
 	
 		local body = CAKE.GetCharField( self, "clothing" )
@@ -177,7 +181,8 @@ function meta:RemoveHelmet()
 		CAKE.SetClothing( self, body, face, gloves )
 		
 end
-	
+
+--Internal function to handle clothing creation.
 function CAKE.HandleClothing( ply, model, type )
 		
 		if !ply.Clothing then
@@ -204,6 +209,7 @@ function CAKE.HandleClothing( ply, model, type )
 		
 end
 
+--Restores a character's clothing based on it's clothing, helmet and gloves fields. Also handles if the player is using a special model.
 function CAKE.RestoreClothing( ply )
 		ply:RemoveClothing()
 		local clothes = CAKE.GetCharField( ply, "clothing" )
@@ -289,6 +295,7 @@ local function ccSetClothing( ply, cmd, args )
 end
 concommand.Add( "rp_setclothing", ccSetClothing );
 
+--Sends the clothing entity indexes, in order to use them clientside.
 function CAKE.SendClothingToClient( ply )
 	
 	if ply.Clothing then

@@ -22,7 +22,6 @@ function ENT:Draw()
 		self.Entity:SetFlexWeight( i, 1 )
 	end
 	
-	self.Entity:RemoveEffects(EF_ITEM_BLINK)
 	self.Entity:DrawShadow( true )
 	
 end

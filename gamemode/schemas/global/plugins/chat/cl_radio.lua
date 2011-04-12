@@ -1,4 +1,4 @@
---Keeping shit neat.
+--Creates an invisible panel to put radio messages on.
 function CAKE.CreateRadioMenu()
 	if !RadioPanel then
 		RadioPanel = vgui.Create( "DFrame" ) -- Creates the frame itself
@@ -22,6 +22,7 @@ function CAKE.CreateRadioMenu()
 	end
 end
 
+--Internal for adding new lines to the invisible panel.
 function CAKE.AddRadioLine( text )
 	if RadioList then
 		local label= vgui.Create("MarkupLabel" )
@@ -34,6 +35,7 @@ function CAKE.AddRadioLine( text )
 		end)
 	end
 end
+
 
 datastream.Hook( "TiramisuAddToRadio", function( handler, id, encoded, decoded )
 	CAKE.CreateRadioMenu()

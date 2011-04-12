@@ -18,6 +18,8 @@ local menuopened
 local trace
 local tracedata = {}
 
+
+--Handles the drawing of all the thirdperson 2D3D elements, 3D health and 3D ammo displays.
 hook.Add( "PostDrawOpaqueRenderables", "TiramisuHealthAmmoDisplay", function( )
 
 	if CAKE.MenuOpen then
@@ -112,6 +114,7 @@ hook.Add( "PostDrawOpaqueRenderables", "TiramisuHealthAmmoDisplay", function( )
 
 end)
 
+--Simple check to see if the player was damaged.
 hook.Add( "Think", "TiramisuDamageDetect",function() 
 
 	if !LocalPlayer().TiramisuHUDDamage then
@@ -128,6 +131,7 @@ hook.Add( "Think", "TiramisuDamageDetect",function()
 	
 end)
 
+--Handles drawing of firstperson ammo GUI.
 local pos
 local trace
 hook.Add( "HUDPaint", "TiramisuHUDDraw", function()

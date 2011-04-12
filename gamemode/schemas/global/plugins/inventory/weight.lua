@@ -4,6 +4,7 @@ PLUGIN.Description = "Handles the weighting of items"; -- The description or pur
 
 local meta = FindMetaTable( "Player" )
 
+--Fetches how many slots are available.
 function CAKE.CalculateAvailableSpace( ply )
 
 	local sum = 0
@@ -23,6 +24,7 @@ function CAKE.CalculateAvailableSpace( ply )
 
 end
 
+--If there are available inventory slots, returns true. Else, it returns false.
 function CAKE.CanPickupItem( ply, item )
 	
 	if CAKE.CalculateAvailableSpace( ply ) > 0 then
@@ -33,6 +35,7 @@ function CAKE.CanPickupItem( ply, item )
 
 end
 
+--Prevents a player from picking an item.
 function CAKE.CalculateEncumberment( ply )
 
 	if CAKE.CalculateAvailableSpace( ply ) < 0 then
@@ -49,6 +52,6 @@ end
 
 function PLUGIN.Init()
 	
-	CAKE.MaxItems = 40
+	CAKE.MaxItems = 40 --Please note that this does not change the amount of slots clientside. If you want to change the amount of slots, change this number clientside too.
 	
 end

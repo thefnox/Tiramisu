@@ -1,5 +1,4 @@
 --Override on GM:OnPlayerUse, in order to make it work wtih other kinds of doors
-
 hook.Add( "KeyPress", "TiramisuHandleDoors", function( ply, key )
 	if( key == IN_USE ) then
 		local entity = ply:GetEyeTrace( ).Entity
@@ -17,6 +16,8 @@ hook.Add( "KeyPress", "TiramisuHandleDoors", function( ply, key )
 	end
 end)
 
+--rp_admin adddoor doorgroup [title] [number of building it belongs to] [purchaseable 1/0]. All arguments in brackets are optional.
+--Setting two doors to have the same building number means that BOTH doors will be purchased when either of them is owned.
 function Admin_AddDoor(ply, cmd, args)
 	
 	local tr = ply:GetEyeTrace()

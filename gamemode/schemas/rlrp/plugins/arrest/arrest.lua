@@ -18,7 +18,7 @@ local function ccArrest( ply, cmd, args )
 end
 concommand.Add( "rp_arrest", ccArrest )
 
-
+--Arrests a player. First argument is the person detaining the player on the second argument.
 function CAKE.ArrestPlayer( ply, detainee )
 	
 	if ply:HasItem( "weapon_zipties" ) and !detainee:GetNWBool( "arrested", false ) then
@@ -51,6 +51,7 @@ function CAKE.ArrestPlayer( ply, detainee )
 
 end
 
+--Unties a player. The first argument is the player performing the untying.
 function CAKE.UnArrestPlayer( ply, detainee )
 	
 	if detainee:GetNWBool( "arrested", false ) then

@@ -52,7 +52,7 @@ function ccListVoice( ply, cmd, args ) -- LIST DA FUKKEN VOICES
 end
 concommand.Add( "rp_listvoices", ccListVoice );
 
-function CAKE.AddVoice( id, path, soundgroup, text, fa)
+function CAKE.AddVoice( id, path, soundgroup, text, fa) -- Registers a voice command. FA is the female alternative to the voice.
 
 	local voice = { };
 	voice.path = path;

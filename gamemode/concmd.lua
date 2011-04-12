@@ -21,6 +21,7 @@ function ccChangeName( ply, cmd, args )
 end
 concommand.Add( "rp_changename", ccChangeName );
 
+--Gives money to a target player.
 function ccGiveMoney( ply, cmd, args )
 	
 	if( player.GetByID( args[ 1 ] ) != nil ) then
@@ -57,6 +58,7 @@ function ccGiveMoney( ply, cmd, args )
 end
 concommand.Add( "rp_givemoney", ccGiveMoney );	
 
+--Makes you fall unconcious.
 local function ccKnockOut( ply, cmd, args )
 
 	CAKE.UnconciousMode( ply )
@@ -64,6 +66,7 @@ local function ccKnockOut( ply, cmd, args )
 end
 concommand.Add( "rp_passout", ccKnockOut )
 
+--Wakes you up from unconcious state.
 local function ccWakeUp( ply, cmd, args )
 
 	if ply:GetNWBool( "unconciousmode", false ) then

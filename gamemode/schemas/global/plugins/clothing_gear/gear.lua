@@ -29,10 +29,12 @@ local BoneList = {
 	["left toe"			] = "ValveBiped.Bip01_L_Toe0"		
 }
 
+--Converts a bone's name from it's shortened version to the full skeleton bone's name.
 function CAKE.BoneShorttoFull( bone )
 	return BoneList[ bone ]
 end
 
+--Does the opposite of the above.
 function CAKE.BoneFulltoShort( bone )
 	for k, v in pairs( BoneList ) do
 		if v == bone then
@@ -41,6 +43,7 @@ function CAKE.BoneFulltoShort( bone )
 	end
 end
 
+--Internal function used to create gear entities.
 function CAKE.HandleGear( ply, item, bone, offset, angle, scale, skin )
 	
 	if CAKE.ItemData[ item ] then
@@ -94,7 +97,7 @@ function CAKE.HandleGear( ply, item, bone, offset, angle, scale, skin )
 	
 end
 
-	
+--Removes one gear piece based on it's entity index.	
 function CAKE.RemoveGear( ply, id )
 
 	if ply.Gear[ id ] then
@@ -104,7 +107,8 @@ function CAKE.RemoveGear( ply, id )
 	end
 	
 end
-	
+
+--Removes all gear that player is wearing.
 function CAKE.RemoveAllGear( ply )
 	
 	if ply.Gear then
@@ -117,6 +121,7 @@ function CAKE.RemoveAllGear( ply )
 
 end
 
+--Removes one gear piece of the same item type.
 function CAKE.RemoveGearItem( ply, item )
 
 	if ply.Gear then
@@ -236,6 +241,7 @@ concommand.Add( "rp_editgear", ccEditGear )
 
 local meta = FindMetaTable( "Player" )
 
+--Internal used to hide weapons when unholstered.
 function meta:HideActiveWeapon()
 	
 	if ValidEntity( self ) then
@@ -257,6 +263,7 @@ function meta:HideActiveWeapon()
 	end
 end
 
+--Saves gear to the character's table.
 function CAKE.SaveGear( ply )
 
 	local savedgear = {}
@@ -281,6 +288,7 @@ function CAKE.SaveGear( ply )
 
 end
 
+--Restores all gear on spawn.
 function CAKE.RestoreGear( ply )
 	
 	if ply:IsCharLoaded() then
@@ -303,6 +311,7 @@ function CAKE.RestoreGear( ply )
 	
 end
 
+--Allows a player to wear a gear piece without having it's item.
 function CAKE.TestGear( ply, tbl )
 
 	CAKE.RemoveAllGear( ply )
@@ -321,6 +330,7 @@ function CAKE.TestGear( ply, tbl )
 	
 end
 
+--Sends all gear entities to the client.
 function CAKE.SendGearToClient( ply )
 	
 	local newtable = {}

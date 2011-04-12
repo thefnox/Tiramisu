@@ -13,6 +13,7 @@ function sanitizeGroupName( name )
 	return str
 end
 
+--Creates a new group. If the group already exists, then merge the new table with the old one.
 function CAKE.CreateGroup( name, tbl )
 	if !CAKE.Groups[name] then
 		CAKE.Groups[name] = tbl
@@ -31,9 +32,9 @@ function CAKE.CreateGroup( name, tbl )
 		table.Merge(CAKE.Groups[name], tbl)
 	end
 
-	print( name )
 end
 
+--Does the group exist in CAKE.Groups?
 function CAKE.GroupExists( name )
 
 	if CAKE.Groups[name] and name != "none" then
@@ -44,6 +45,7 @@ function CAKE.GroupExists( name )
 
 end
 
+--Fetches a groups data field
 function CAKE.GetGroupField( name, field )
 	if CAKE.Groups[name] and CAKE.Groups[name][field] then
 		return CAKE.Groups[name][field]
@@ -52,6 +54,7 @@ function CAKE.GetGroupField( name, field )
 	return false
 end
 
+--Destroys and deletes a group. Handles stored data removal too.
 function CAKE.RemoveGroup( name )
 	if CAKE.GroupExists( name ) and CAKE.GetGroupField( name, "Type" ) == "public" then
 		if CAKE.GetGroupField( name, "Members" ) and 	table.Count(CAKE.GetGroupField( name, "Members" )) == 0 then
@@ -61,6 +64,7 @@ function CAKE.RemoveGroup( name )
 	end
 end
 
+--Sets a group's data field. If the field does not exist, it is created.
 function CAKE.SetGroupField( name, field, data )
 	if CAKE.Groups[name] then
 		CAKE.Groups[name][field] = data
@@ -71,6 +75,7 @@ function CAKE.SetGroupField( name, field, data )
 	return false
 end
 
+--Fetches a groups flag. This flags cannot be changed.
 function CAKE.GetGroupFlag( name, flag )
 	if CAKE.Groups[name] then
 		return CAKE.Groups[name]["Flags"][flag] or false
@@ -79,6 +84,7 @@ function CAKE.GetGroupFlag( name, flag )
 	return false
 end
 
+--Fetches a rank's data field
 function CAKE.GetRankField( name, rank, field )
 	if CAKE.Groups[name] and CAKE.Groups[name]["Ranks"][rank] then
 		return CAKE.Groups[name]["Ranks"][rank][field] or false
@@ -87,12 +93,14 @@ function CAKE.GetRankField( name, rank, field )
 	return false
 end
 
+--Edits a rank's data.
 function CAKE.SetRankField(name, rank, field, value)
 	if CAKE.Groups[name] and CAKE.Groups[name]["Ranks"][rank] then
 		CAKE.Groups[name]["Ranks"][rank][field] = value
 	end
 end
 
+--Does the rank exists within the group's hirearchy.
 function CAKE.RankExists( group, rank )
 	if CAKE.GroupExists( group ) and CAKE.Groups[group]["Ranks"][rank] then
 		return true
@@ -100,12 +108,14 @@ function CAKE.RankExists( group, rank )
 	return false
 end
 
+--Creates a new rank based on the table provided. Rank cannot currently exist.
 function CAKE.CreateRank( group, rank, table )
 	if CAKE.GroupExists( group ) and !CAKE.RankExists( group, rank ) then
 		CAKE.Groups[group]["Ranks"][rank] = table
 	end
 end
 
+--Is this player a member of the group provided on the first argument? Also accepts player signatures, for offline players.
 function CAKE.GroupHasMember(name, ply)
 
 	if CAKE.Groups[name] then
@@ -128,6 +138,7 @@ function CAKE.GroupHasMember(name, ply)
 
 end
 
+--Saves all of the group's data to file
 function CAKE.SaveGroupData( name )
 	if CAKE.Groups[name] then
 		local keys = glon.encode(CAKE.Groups[name])
@@ -135,11 +146,13 @@ function CAKE.SaveGroupData( name )
 	end
 end
 
+--Loads the group's data table
 function CAKE.LoadGroupData( name )
 	local tbl = glon.decode(file.Read( CAKE.Name .. "/GroupData/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( name ) .. ".txt"))
 	CAKE.CreateGroup( tbl["name"], tbl )
 end
 
+--Loads ALL groups currently existing on the data folder.
 function CAKE.LoadAllGroups()
 
 	local groups = file.Find(CAKE.Name .. "/GroupData/" .. CAKE.ConVars[ "Schema" ] .. "/*.txt")
@@ -158,6 +171,7 @@ hook.Add( "InitPostEntity", "TiramisuLoadAllGroups", function()
 
 end)
 
+--Makes a player join a particular group. Makes it leave it's current group.
 function CAKE.JoinGroup( ply, name )
 	if CAKE.GroupExists( name ) then
 		if CAKE.GetCharField( ply, "group" ) != "none" then
@@ -176,7 +190,7 @@ function CAKE.JoinGroup( ply, name )
 	end
 end
 
-
+--Makes the player leave a particular group.
 function CAKE.LeaveGroup( ply, group )
 
 	if ValidEntity( ply ) then
@@ -205,6 +219,7 @@ function CAKE.LeaveGroup( ply, group )
 	end
 end
 
+--Sets a player's rank on a group to the rank provided on the third argument. Also accepts player signatures.
 function CAKE.SetCharRank( ply, name, rank )
 
 	if ValidEntity( ply ) then
@@ -388,6 +403,7 @@ concommand.Add( "rp_creategroup", function( ply, cmd, args)
 	local name = args[1]
 
 	if !CAKE.GroupExists( name ) and name != "none" then
+		--Mind this table, this should be the base of all groups you may want to make
 		local tbl = {}
 		tbl[ "Name" ]		= name
 		tbl[ "Type" ]		= "public"
@@ -552,7 +568,7 @@ hook.Add( "Initialize", "TiramisuGroupInit", function()
 	
 end)
 
-
+--rp_admin forcejoin playername groupname [rank]. Rank is optional, will default to the group's DefaultRank.
 function Admin_ForceJoin( ply, cmd, args )
 	
 	if #args < 1 then CAKE.SendError( ply, "Must specify a player!") return end 

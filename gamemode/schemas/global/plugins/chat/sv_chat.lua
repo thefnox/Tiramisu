@@ -48,13 +48,17 @@ hook.Add( "AcceptStream", "TiramisuAcceptChatStream", function( pl, handler, id 
 	end
 end)
 
+--NOTE: TIRAMISU NO LONGER USES THE NORMAL "SAY" COMMAND NOR THE REGULAR CHAT HOOKS.
+
+--This means everything that you MUST use through chat commands must be hooked to this stream otherwise it won't work, period. There's no other way nor workaround.
+
 datastream.Hook( "TiramisuChatHandling", function( ply, handler, id, encoded, decoded )
 
 	local text = decoded.text or ""
 
 	CAKE.DayLog("chat.txt", ply:SteamID() .. ": " .. text); -- we be spyins.
 	
-	if( string.sub( text, 1, 1 ) == "@" ) then -- All rp_ commands can be executed with /
+	if( string.sub( text, 1, 1 ) == "@" ) or ( string.sub( text, 1, 1 ) == "!" ) then -- All rp_ commands can be executed with /
 	
 		ply:ConCommand("rp_" .. string.sub( text, 2, string.len(text) ));
 		return
@@ -132,18 +136,23 @@ datastream.Hook( "TiramisuChatHandling", function( ply, handler, id, encoded, de
 	
 end)
 
+--Adds a regular radio chat line.
 function CAKE.AddRadioLine( ply, text )
 	datastream.StreamToClients( ply, "TiramisuAddToRadio", {
 		["text"] = text,
 	})
 end
 
+
+--Concommand to handle OOC color changes. Takes 4 arguments, red, green, blue and alpha.
 local function ccChangeOOCColor( ply, cmd, args )
 	
 	CAKE.SetPlayerField( ply, "ooccolor", Color( math.Clamp( tonumber( args[1] ), 0, 255 ), math.Clamp( tonumber( args[2] ), 0, 255 ), math.Clamp( tonumber( args[3] ), 0, 255 ), math.Clamp( tonumber( args[4] ), 0, 100 ) ) )
 
 end
 concommand.Add( "rp_ooccolor", ccChangeOOCColor )
+
+--Sends a regular blue IC message.
 
 function CAKE.ICAdd( ply, text )
 
@@ -160,6 +169,8 @@ function CAKE.ICAdd( ply, text )
 	end
 
 end
+
+--Handles OOC messaging.
 
 function CAKE.OOCAdd( ply, text )
 
@@ -193,6 +204,7 @@ function CAKE.OOCAdd( ply, text )
 	end
 end
 
+--Sends the user a random number between the two limits established in the two arguments( Defaults to 0 and 100 )
 local function ccRoll( ply, cmd, args )
 
 	local Min = args[1];
@@ -238,6 +250,7 @@ local function ccRoll( ply, cmd, args )
 end
 concommand.Add("rp_roll", ccRoll);
 
+--Makes a player display the "Typing" title
 function ccOpenChat( ply, cmd, args )
 
 	ply:SetNWBool( "chatopen", true )
@@ -245,6 +258,7 @@ function ccOpenChat( ply, cmd, args )
 end
 concommand.Add( "rp_openedchat", ccOpenChat );
 
+--Hides the "Typing" title
 function ccCloseChat( ply, cmd, args )
 
 	ply:SetNWBool( "chatopen", false )
@@ -252,6 +266,7 @@ function ccCloseChat( ply, cmd, args )
 end
 concommand.Add( "rp_closedchat", ccCloseChat );
 
+--Reports a message directly to all online admins in the channel "Reports"
 local function Report( ply, text )
 
 	for k, v in pairs(player.GetAll()) do
@@ -274,6 +289,7 @@ local function Report( ply, text )
 	
 end
 
+--Broadcasts a message across the server, if group permissions allow it.
 local function Broadcast( ply, text )
 
 	-- Check to see if the player's team allows broadcasting
@@ -293,6 +309,7 @@ local function Broadcast( ply, text )
 	
 end
 
+--Global message that only admins may send.
 local function Event( ply, text )
 
 	-- Check to see if the player's team allows broadcasting
@@ -310,6 +327,7 @@ local function Event( ply, text )
 	
 end
 
+--Sends a private message to anyone who is online. Opens on a separate channel.
 local function PersonalMessage( ply, text )
 
 	-- Check to see if the player's team allows broadcasting
@@ -327,6 +345,7 @@ local function PersonalMessage( ply, text )
 	
 end
 
+--Removes your currently wore helmet.
 local function RemoveHelmet( ply, text )
 	
 	local gender = CAKE.GetCharField( ply, "gender" )
@@ -356,6 +375,7 @@ local function RemoveHelmet( ply, text )
 
 end
 
+--Sends a global message if advertising is allowed. Costs money.
 local function Advertise( ply, text )
 
 	if(CAKE.ConVars[ "AdvertiseEnabled" ] == "1") then
@@ -386,6 +406,7 @@ local function Advertise( ply, text )
 	
 end
 
+--Sends a group only message.
 local function Radio( ply, text )
 
 	local players = player.GetAll();
@@ -434,16 +455,19 @@ local function Radio( ply, text )
 
 end
 
+--Sets your title.
 local function Title( ply, text )
 	ply:ConCommand( "rp_title " .. text )
 	return "";
 end
 
+--Sets the title of the door you're facing.
 local function DoorTitle( ply, text )
 	ply:ConCommand( "rp_doortitle " .. text)
 	return "";
 end
 
+--ICly yells a message.
 local function Yell( ply, text )
 	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "YellRange" ] )
 	for k, v in pairs( players ) do
@@ -454,6 +478,7 @@ local function Yell( ply, text )
 	return "";
 end
 
+--IC whispers a message.
 local function Whisper( ply, text )
 	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "WhisperRange" ] )
 	for k, v in pairs( players ) do
@@ -464,6 +489,7 @@ local function Whisper( ply, text )
 	return "";
 end
 
+--Allows you to perform an action.
 local function Emote( ply, text )
 	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "MeRange" ] )
 	for k, v in pairs( players ) do

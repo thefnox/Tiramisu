@@ -17,12 +17,13 @@ function meta:CanTraceTo( ent ) -- Can the player and the entity "see" eachother
 
 end
 
-function meta:Nick( )
+function meta:Nick( ) -- Hotfix. Allows you to fetch a character's name quickly.
 	
 	return self:GetNWString( "name", "Unnamed" );
 
 end
 
+--Calculates the position where an item should be created when dropped.
 function meta:CalcDrop( )
 
 	local pos = self:GetShootPos( );
@@ -37,6 +38,7 @@ function meta:CalcDrop( )
 	
 end
 
+--Returns a door's title
 function CAKE.GetDoorTitle( door )
 	return door:GetNWString( "doortitle", "" )
 end

@@ -4,6 +4,7 @@ end)
 
 CAKE.Doors = {}
 
+--Loads all door information
 function CAKE.LoadDoors()
 
 	if(file.Exists(CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt")) then
@@ -31,6 +32,7 @@ function CAKE.LoadDoors()
 
 end
 
+--Fetches a door's group affinity.
 function CAKE.GetDoorGroup( entity )
 
 	if ValidEntity( entity ) and entity.doorgroup then
@@ -51,6 +53,7 @@ function CAKE.GetDoorGroup( entity )
 
 end
 
+--Fetches on what group of doors does this entity belong to.
 function CAKE.GetDoorBuilding(entity)
 
 	if entity.building then
@@ -71,6 +74,7 @@ function CAKE.GetDoorBuilding(entity)
 
 end
 
+--Sets a door's title.
 function CAKE.SetDoorTitle( door, title )
 	door:SetNWString( "doortitle", string.sub( title, 1, 33) )
 end
