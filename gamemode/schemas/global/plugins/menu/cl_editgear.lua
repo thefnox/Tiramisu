@@ -506,6 +506,9 @@ CAKE.RegisterMenuTab( "Character Editor", EditGear, CloseGear )
 
 usermessage.Hook( "cleargear", function( um )
 	CAKE.Gear = {}
+	if RefreshGearTree then
+		RefreshGearTree()
+	end
 end)
 
 usermessage.Hook( "clearclothing", function( um )
@@ -528,6 +531,9 @@ usermessage.Hook( "addgear", function( um )
 	tbl.entity = entity
 
 	table.insert( CAKE.Gear[ bone ], tbl )
+	if RefreshGearTree then
+		RefreshGearTree()
+	end
 
 end)
 
@@ -544,7 +550,9 @@ usermessage.Hook( "editgear", function( um )
 	local ent = ents.GetByIndex( um:ReadShort() )
 
 	StartGearEditor( ent, um:ReadString(), um:ReadString(), ent:GetDTVector( 1 ), ent:GetDTAngle( 1 ), ent:GetDTVector( 2 ), ent:GetSkin() )
-	RefreshGearTree()
+	if RefreshGearTree then
+		RefreshGearTree()
+	end
 
 end)
 

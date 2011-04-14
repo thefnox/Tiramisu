@@ -7,7 +7,7 @@ function CAKE.DayLog( outputfile, text )
 
 	local curdate = month .. "-" .. day .. "-" .. year;
 
-	local filedir = "Tiramisu/logs/daylogs/" .. curdate .. "/" .. outputfile;
+	local filedir = CAKE.Name .. "/Logs/daylogs/" .. curdate .. "/" .. outputfile;
 
 	local old = CAKE.NilFix(file.Read( filedir ), "");
 	

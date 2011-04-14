@@ -1,4 +1,7 @@
 datastream.Hook( "TiramisuAddToChat", function( handler, id, encoded, decoded )
+    if !decoded.font then
+        decoded.font = CAKE.ChatFont
+    end
     if decoded.channel == "IC" then
         CAKE.Chatbox:AddLine(  "<color=135,209,255,255><font=" .. decoded.font .. ">" .. decoded.text .. "</font></color>", decoded.channel )
     else
@@ -17,7 +20,7 @@ datastream.Hook( "TiramisuAddToOOC", function( handler, id, encoded, decoded )
     local playername = decoded.name
     local text = decoded.text
 
-    CAKE.Chatbox:AddLine(  "<font=ChatFont><color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>:" .. text .. "</color></font>", "OOC" )
+    CAKE.Chatbox:AddLine(  "<font=" .. CAKE.ChatFont .. "><color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>:" .. text .. "</color></font>", "OOC" )
 
     text = "[OOC]" .. playername .. ": " .. text
 

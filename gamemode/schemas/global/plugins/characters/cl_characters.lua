@@ -1,13 +1,10 @@
-CLPLUGIN.Name = "Character Menu"
-CLPLUGIN.Author = "F-Nox/Big Bang"
-
 CAKE.SelectedChar = false
+ExistingChars = {  }
 
 local x,y 
 local charpanel
 
-
-function OpenCharacterMenu()
+function OpenCharacterMenu( hideclosebutton )
 
 	RunConsoleCommand( "rp_thirdperson", 1 )
 
@@ -16,11 +13,11 @@ function OpenCharacterMenu()
 		CharacterMenu:SetSize( ScrW(), ScrH() )
 		CharacterMenu:Center()
 		CharacterMenu:SetDraggable( false )
-		CharacterMenu:ShowCloseButton( true )
+		CharacterMenu:ShowCloseButton( !hideclosebutton )
 		CharacterMenu:SetTitle( "" )
 		CharacterMenu.Paint = function()
 
-		Derma_DrawBackgroundBlur( CharacterMenu, 0 )
+			Derma_DrawBackgroundBlur( CharacterMenu, 0 )
 
 		end
 		CharacterMenu:MakePopup()
@@ -35,6 +32,17 @@ function OpenCharacterMenu()
 			x,y = titlelabel:GetPos()
 			titlelabel:SetPos( x, Lerp( 0.15, y, 70 ))
 		end
+
+		local subtitlelabel = vgui.Create( "DLabel", CharacterMenu )
+		subtitlelabel:SetText( CAKE.IntroSubtitle )
+		subtitlelabel:SetFont( "TiramisuSubtitlesFont" )
+		subtitlelabel:SizeToContents()
+		subtitlelabel:SetPos( ScrW() / 2 - subtitlelabel:GetWide() / 2 + 46, 0 )
+		subtitlelabel.PaintOver = function()
+			x,y = subtitlelabel:GetPos()
+			subtitlelabel:SetPos( x, Lerp( 0.15, y, 103 ))
+		end
+
 
 		PlayerModel = vgui.Create( "PlayerPanel", CharacterMenu )
 		PlayerModel:SetSize( 500, 500 )
@@ -268,6 +276,37 @@ usermessage.Hook( "DisplayCharacterList", function( um )
 	CreateCharList( )
 end)
 
-function CLPLUGIN.Init()
+usermessage.Hook( "characterselection",  function( um )
+
+	local useintro = um:ReadBool()
+
+	if !useintro then
+		OpenCharacterMenu( true )
+	else
+		if CAKE.InitIntro then
+			CAKE.InitIntro()
+		else
+			OpenCharacterMenu( true )
+		end
+	end
+	InitHiddenButton()
+	
+end )
+
+usermessage.Hook( "charactercreation", function()
+	
+	CAKE.CharCreate()
+
+end)
+
+
+local function ReceiveChar( data )
+
+	local n = data:ReadLong( );
+	ExistingChars[ n ] = {  }
+	ExistingChars[ n ][ 'name' ] = data:ReadString( );
+	ExistingChars[ n ][ 'model' ] = data:ReadString( );
+	ExistingChars[ n ][ 'title' ] = data:ReadString( );
 	
 end
+usermessage.Hook( "ReceiveChar", ReceiveChar );

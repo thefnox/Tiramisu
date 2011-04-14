@@ -166,6 +166,9 @@ function CAKE.LoadPlayerDataFile( ply )
 			end
 			
 		end
+
+		-- In case someone wants to make a quiz later on.
+		ply.FirstTimeJoining = true
 		
 		-- We won't make a character, obviously. That is done later.
 		CAKE.SavePlayerData(ply);

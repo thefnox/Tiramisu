@@ -5,7 +5,7 @@ function CAKE.SendChat( ply, msg, font, channel )
 		--ply:PrintMessage( 3, msg );
 		datastream.StreamToClients( ply, "TiramisuAddToChat", {
 			["text"] = msg,
-			["font"] = font or "ChatFont",
+			["font"] = font or false,
 			["channel"] = channel or false 
 		})
 		/*

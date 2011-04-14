@@ -5,12 +5,6 @@ CLPLUGIN.Author = "F-Nox/Big Bang"
 CAKE.TitleDrawDistance = CreateClientConVar( "rp_titledrawdistance", 600, true, true )
 CAKE.MinimalHUD = CreateClientConVar( "rp_minimalhud", 0, true, true )
 
-surface.CreateFont(CAKE.MenuFont, 32, 500, true, false, "TiramisuTitlesFont", false, true)
-surface.CreateFont(CAKE.MenuFont, 18, 500, true, false, "TiramisuTimeFont", true, false )
-surface.CreateFont(CAKE.MenuFont, 12, 400, true, false, "TiramisuTabsFont", true )
-surface.CreateFont("DefaultSmallDropShadow", ScreenScale(5), 500, true, false, "TiramisuWhisperFont", true )
-surface.CreateFont("Trebuchet18", ScreenScale(10), 700, true, false, "TiramisuYellFont", true )
-
 --Draws HUD time text
 local struc = {}
 struc.pos = { ScrW() - 10, 10 } -- Pos x, y
