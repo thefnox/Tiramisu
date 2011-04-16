@@ -52,17 +52,29 @@ function CAKE.SetClothing( ply, body, helmet, glove )
 	if !ply:HasItem( helmet ) or helmet == "none" then
 		helmet = CAKE.GetCharField( ply, "model" )
 	else
-		helmet = CAKE.ItemData[ helmet ].Model
+		if CAKE.ItemData[ helmet ].FemaleModel and ply:GetGender() == "Female" then
+			helmet = CAKE.ItemData[ helmet ].FemaleModel
+		else
+			helmet = CAKE.ItemData[ helmet ].Model
+		end
 	end
 	if !ply:HasItem( glove ) or glove == "none" then
 		glove = CAKE.GetCharField( ply, "model" )
 	else
-		glove = CAKE.ItemData[ glove ].Model
+		if CAKE.ItemData[ glove ].FemaleModel and ply:GetGender() == "Female" then
+			glove = CAKE.ItemData[ glove ].FemaleModel
+		else
+			glove = CAKE.ItemData[ glove ].Model
+		end
 	end
 	if !ply:HasItem( body ) or body == "none" then
 		body = CAKE.GetCharField( ply, "model" )
 	else
-		body = CAKE.ItemData[ body ].Model
+		if CAKE.ItemData[ body ].FemaleModel and ply:GetGender() == "Female" then
+			body = CAKE.ItemData[ body ].FemaleModel
+		else
+			body = CAKE.ItemData[ body ].Model
+		end
 	end
 	
 	ply:SetNWString( "model", helmet )

@@ -20,7 +20,6 @@ end
 
 function ITEM:UseItem(ply)
 
-	ply:ConCommand("say /me opens up his rations");
 	CAKE.ChangeMoney(ply, CAKE.ConVars["RationMoney"]);
 	self:Remove();
 

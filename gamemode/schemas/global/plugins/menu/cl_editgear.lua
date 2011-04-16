@@ -199,7 +199,7 @@ function EditGear()
 	PropertySheet:AddSheet( "Gear/Accessories", GearList, "gui/silkicons/wrench", false, false, "Edit your gear" )
 
 	function RefreshGearTree()
-		if GearList then
+		if GearList and GearList:IsValid() then
 			if GearTree then
 				GearTree:Remove()
 				GearTree = nil

@@ -18,7 +18,6 @@ end
 
 function ITEM:UseItem(ply)
 
-	ply:ConCommand("say /me drinks a lot of soda");
 	self:Remove();
 
 end

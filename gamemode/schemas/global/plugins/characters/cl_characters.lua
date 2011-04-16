@@ -23,7 +23,7 @@ function OpenCharacterMenu( hideclosebutton )
 		CharacterMenu:MakePopup()
 
 		local titlelabel = vgui.Create( "DLabel", CharacterMenu )
-		titlelabel:SetText( "Welcome to Tiramisu" )
+		titlelabel:SetText( CAKE.IntroText )
 		titlelabel:SetFont( "TiramisuTitlesFont" )
 		titlelabel:SizeToContents()
 		titlelabel:SetPos( ScrW() / 2 - titlelabel:GetWide() / 2, 0 )

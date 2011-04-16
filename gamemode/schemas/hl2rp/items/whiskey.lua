@@ -19,7 +19,6 @@ end
 function ITEM:UseItem(ply)
 
 	CAKE.DrugPlayer(ply, 2);
-	ply:ConCommand("say /me drinks some whiskey");
 	self:Remove();
 
 end

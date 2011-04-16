@@ -22,7 +22,6 @@ end
 
 function ITEM:UseItem(ply)
 
-	ply:Give("weapon_mad_mp7");
 	self:Remove();
 
 end

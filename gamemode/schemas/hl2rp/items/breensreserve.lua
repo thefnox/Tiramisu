@@ -1,6 +1,6 @@
-ITEM.Name = "Breens Reserve";
+ITEM.Name = "Breen's Reserve";
 ITEM.Class = "breensreserve";
-ITEM.Description = "Breens 'special' water";
+ITEM.Description = "Breen's 'special' water";
 ITEM.Model = "models/props_junk/popcan01a.mdl";
 ITEM.Purchaseable = true;
 ITEM.Price = 4;
@@ -18,7 +18,6 @@ end
 
 function ITEM:UseItem(ply)
 
-	ply:ConCommand("say /me drinks some water");
 	self:Remove();
 
 end

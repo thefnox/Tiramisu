@@ -5,7 +5,7 @@ function CAKE.InitIntro()
 	CharacterMenu:SetSize( ScrW(), ScrH() )
 	CharacterMenu:SetPos( 0, 0 )
 	CharacterMenu:SetDraggable( false )
-	CharacterMenu:ShowCloseButton( true )
+	CharacterMenu:ShowCloseButton( false )
 	CharacterMenu:SetTitle( "" )
 	CharacterMenu.Paint = function()
 		Derma_DrawBackgroundBlur( CharacterMenu, 0 )
@@ -42,7 +42,7 @@ function CAKE.InitIntro()
 	CharacterMenu:MakePopup()
 
 	titlelabel = vgui.Create( "DLabel", CharacterMenu )
-	titlelabel:SetText( "Welcome to Tiramisu" )
+	titlelabel:SetText( CAKE.IntroText )
 	titlelabel:SetFont( "TiramisuTitlesFont" )
 	titlelabel:SizeToContents()
 	titlelabel:SetPos( ScrW() / 2 - titlelabel:GetWide() / 2, -100 )
@@ -61,7 +61,7 @@ function CAKE.InitIntro()
 			if titlelabel.FadeOut then
 				titlelabel:SetPos( x, Lerp( 0.03, y, 70 ))
 			else
-				titlelabel:SetPos( x, math.Clamp( y + 3, -100, ScrH() / 2 - 13 ))
+				titlelabel:SetPos( x, math.Clamp( y + 4, -100, ScrH() / 2 - 13 ))
 			end
 		end
 
@@ -71,7 +71,7 @@ function CAKE.InitIntro()
 				x,y = subtitlelabel:GetPos()
 				subtitlelabel:SetPos( x, Lerp( 0.03, y, 103 ))
 			else
-				subtitlelabel:SetPos( x, math.Clamp( y + 3, -100, ScrH() / 2 + 20 ))
+				subtitlelabel:SetPos( x, math.Clamp( y + 4, -100, ScrH() / 2 + 20 ))
 			end
 		end
 	end)

@@ -18,7 +18,6 @@ end
 
 function ITEM:UseItem(ply)
 
-	ply:ConCommand("/me eats a watermelon");
 	ply:SetHealth(math.Clamp(ply:Health() + 15, 0, ply:MaxHealth()));
 	self:Remove();
 

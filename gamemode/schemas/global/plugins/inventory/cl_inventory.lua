@@ -525,7 +525,7 @@ datastream.Hook("addinventory", function(handler, id, encoded, decoded )
 	InventoryTable = decoded
 
 	for k, v in pairs( decoded ) do
-		if CalculateItemPosition( v.Class ) then
+		if CalculateItemPosition( v.Class ) and CAKE.InventorySlot[ CalculateItemPosition( v.Class ) ] then
 			CAKE.InventorySlot[ CalculateItemPosition( v.Class ) ]:AddItem( v ) 
 		end
 	end

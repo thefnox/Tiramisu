@@ -173,7 +173,7 @@ end)
 
 --Makes a player join a particular group. Makes it leave it's current group.
 function CAKE.JoinGroup( ply, name )
-	if CAKE.GroupExists( name ) then
+	if CAKE.GroupExists( name ) and ValidEntity( ply ) then
 		if CAKE.GetCharField( ply, "group" ) != "none" then
 			CAKE.LeaveGroup( ply )
 		end
@@ -187,6 +187,7 @@ function CAKE.JoinGroup( ply, name )
 		tbl.Rank = CAKE.GetGroupField( name, "DefaultRank" )
 		CAKE.Groups[name]["Members"][CAKE.GetCharSignature(ply)] = tbl
 		CAKE.SaveGroupData( name )
+		CAKE.SendGroupToClient( ply )
 	end
 end
 
@@ -208,7 +209,7 @@ function CAKE.LeaveGroup( ply, group )
 		end
 	elseif type( ply ) == "string" then
 		local roster = CAKE.GetGroupField( group, "Members" )
-		if CAKE.Groups[group]["Members"][ply] then
+		if group and CAKE.Groups[group]["Members"][ply] then
 			if CAKE.FindPlayer( CAKE.Groups[group]["Members"][ply].Name ) then
 				local ent = CAKE.FindPlayer( CAKE.Groups[group]["Members"][ply].Name )
 				CAKE.SetCharField( ent, "group", "none" )
@@ -580,7 +581,6 @@ function Admin_ForceJoin( ply, cmd, args )
 	if args[ 3 ] and args[ 3 ] != "none" then CAKE.SetCharRank( target, CAKE.GetCharField( target, "group" ), args[ 3 ] ) end
 
 	CAKE.SendError( target, "You have been forced into group: " .. CAKE.GetCharField( target, "group" ) )
-	CAKE.SendGroupToClient( ply )
 
 end
 

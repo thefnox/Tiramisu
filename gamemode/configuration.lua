@@ -19,7 +19,7 @@ CAKE.ConVars[ "Default_Weapons" ] = {  }; -- What inventory do characters start 
 CAKE.ConVars[ "Default_Ammo" ] = {  }; --The default ammo table your character will have on spawn.
 CAKE.ConVars[ "Default_Clothing" ] = { };--Clothing you can choose on startup
 CAKE.ConVars[ "Respawn_Timer" ] = 5 --Time in seconds that it takes for people to be allowed to respawn.
-CAKE.ConVars[ "Schema" ] = "rlrp"; -- What folder is schema data being loaded from?
+CAKE.ConVars[ "Schema" ] = "hl2rp"; -- What folder is schema data being loaded from?
 
 CAKE.ConVars[ "ContentDownload" ] = true --Set this to true if you want new playermodels to download dynamically ( Like toybox ).
 CAKE.ConVars[ "LoseWeaponsOnDeath" ] = false --Set this to true if you want people to lose their guns once they die.

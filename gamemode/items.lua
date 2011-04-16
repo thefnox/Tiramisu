@@ -189,15 +189,30 @@ end
 function meta:RefreshInventory( )
 
 	local newtbl = {}
+	local inventory = CAKE.GetCharField( self, "inventory" )
 	
-	for k, v in pairs( CAKE.GetCharField( self, "inventory" ) ) do
-		newtbl[k] = {}
-		newtbl[k].Name = CAKE.ItemData[ v ].Name or "Error Item"
-		newtbl[k].Class = CAKE.ItemData[ v ].Class or "error"
-		newtbl[k].Description = CAKE.ItemData[ v ].Description or "Grab a programmer!"
-		newtbl[k].Model = CAKE.ItemData[ v ].Model or "models/error.mdl"
-		newtbl[k].Unusable = CAKE.ItemData[ v ].Unusable or false
+	for k, v in pairs( inventory ) do
+		if v then
+			if CAKE.ItemData[ v ] then
+				newtbl[k] = {}
+				newtbl[k].Name = CAKE.ItemData[ v ].Name or "Error Item"
+				newtbl[k].Class = CAKE.ItemData[ v ].Class or "error"
+				newtbl[k].Description = CAKE.ItemData[ v ].Description or "Grab a programmer!"
+				newtbl[k].Model = CAKE.ItemData[ v ].Model or "models/error.mdl"
+				newtbl[k].Unusable = CAKE.ItemData[ v ].Unusable or false
+			else
+				newtbl[k] = {}
+				newtbl[k].Name = "Error Item: " .. v 
+				newtbl[k].Class = v
+				newtbl[k].Description = "Grab a programmer!"
+				newtbl[k].Model = "models/error.mdl"
+				newtbl[k].Unusable = true
+				table.remove( inventory, k )
+			end
+		end
 	end
+
+	CAKE.SetCharField( self, "inventory", inventory)
 		
 	datastream.StreamToClients( self, "addinventory", newtbl )
 

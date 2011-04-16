@@ -6,7 +6,6 @@ ITEM.Purchaseable = true;
 ITEM.Price = 10;
 ITEM.ItemGroup = 1;
 ITEM.Flags = {
-	"extracargo;2"
 }
 
 function ITEM:Drop(ply)

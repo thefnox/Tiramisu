@@ -27,15 +27,15 @@ if SERVER then
 
 	--Weapons that are never aimed
 	NeverAimed = {
-                "hands"
+    "hands"
 	}
 
-        function meta:SetSpecialModel( model )
+    function meta:SetSpecialModel( model )
 
-                self:SetNWBool( "specialmodel", true )
-                self:SetModel( model )
+    self:SetNWBool( "specialmodel", true )
+    self:SetModel( model )
 
-        end
+    end
 
 	
 	function meta:SetAiming( bool )
@@ -67,8 +67,8 @@ if SERVER then
 	concommand.Add( "toggleholster", HolsterToggle );
 	
 	hook.Add( "PlayerSpawn", "TiramisuAnimSpawnHandle", function( ply )
-                ply:SetAiming( false )
-                ply:SetNWBool( "specialmodel", false )
+    ply:SetAiming( false )
+    ply:SetNWBool( "specialmodel", false )
 		timer.Create( ply:SteamID() .. "TiramisuAimTimer", 0.1, 0, function()
 			if ValidEntity( ply ) then
 				if ply.TiramisuLastWeapon and ValidEntity( ply:GetActiveWeapon() ) and ply:GetActiveWeapon():GetClass() != ply.TiramisuLastWeapon then
@@ -83,32 +83,32 @@ if SERVER then
 		end)
 	end)
 
-        hook.Add( "PlayerSetModel", "TiramisuSetAnimTrees", function( ply )
-                if !ply:GetNWBool( "specialmodel", false ) then
-                        if(ply:IsCharLoaded()) then
-                                        local m = ""
-                                        if( CAKE.GetCharField( ply, "gender" ) == "Female" ) then
-                                                m = "models/Tiramisu/AnimationTrees/femaleanimtree.mdl"
-                                                ply:SetNWString( "gender", "Female" )
-                                        else
-                                                m = "models/Tiramisu/AnimationTrees/maleanimtree.mdl"
-                                                ply:SetNWString( "gender", "Male" )
-                                        end
-                                        
-                                        ply:SetModel( m );
-                        else
-                                ply:SetModel("models/kleiner.mdl");
-                        end
-                end
-        end )
+    hook.Add( "PlayerSetModel", "TiramisuSetAnimTrees", function( ply )
+    if !ply:GetNWBool( "specialmodel", false ) then
+        if(ply:IsCharLoaded()) then
+            local m = ""
+            if( CAKE.GetCharField( ply, "gender" ) == "Female" ) then
+            m = "models/Tiramisu/AnimationTrees/femaleanimtree.mdl"
+            ply:SetNWString( "gender", "Female" )
+            else
+            m = "models/Tiramisu/AnimationTrees/maleanimtree.mdl"
+            ply:SetNWString( "gender", "Male" )
+            end
+            
+            ply:SetModel( m );
+        else
+        ply:SetModel("models/kleiner.mdl");
+        end
+    end
+    end )
 
-        hook.Add( "KeyPress", "TiramisuAimCheck", function(ply, key)
-                if ValidEntity( ply ) and ValidEntity( ply:GetActiveWeapon() ) then
-                        if key == IN_ATTACK or key == IN_ATTACK2 then
-                                ply:SetAiming( true )
-                        end
-                end
-        end )
+    hook.Add( "KeyPress", "TiramisuAimCheck", function(ply, key)
+    if ValidEntity( ply ) and ValidEntity( ply:GetActiveWeapon() ) then
+        if key == IN_ATTACK or key == IN_ATTACK2 then
+        ply:SetAiming( true )
+        end
+    end
+    end )
 	
 end
 
@@ -130,23 +130,23 @@ Anims.Male[ "models" ] = {
 	"models/Tiramisu/AnimationTrees/policeanimtree.mdl"
 }
 Anims.Male[ "default" ] = { 
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_IDLE",
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_IDLE",
 		--[ "idle" ] = "&sequence:LineIdle01;models/Tiramisu/AnimationTrees/maleanimtree.mdl",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RUN",
-        [ "jump" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_JUMP",
-        [ "land" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_LAND",
-        [ "fly" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_GLIDE",
-        [ "sit" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_BUSY_SIT_CHAIR",
-        [ "sitentry" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_BUSY_SIT_CHAIR_ENTRY",
-        [ "sitexit" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_BUSY_SIT_CHAIR_EXIT",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RUN",
+    [ "jump" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_JUMP",
+    [ "land" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_LAND",
+    [ "fly" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_GLIDE",
+    [ "sit" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_BUSY_SIT_CHAIR",
+    [ "sitentry" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_BUSY_SIT_CHAIR_ENTRY",
+    [ "sitexit" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_BUSY_SIT_CHAIR_EXIT",
 	[ "swim" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_GLIDE",
-        [ "sitground" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_BUSY_SIT_GROUND",
-        [ "sitgroundentry" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_BUSY_SIT_GROUND_ENTRY",
-        [ "sitgroundexit" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_BUSY_SIT_GROUND_EXIT",
-        [ "flinch" ] = {
-                ["explosion"] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_GESTURE_FLINCH_BLAST"
-                },
+    [ "sitground" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_BUSY_SIT_GROUND",
+    [ "sitgroundentry" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_BUSY_SIT_GROUND_ENTRY",
+    [ "sitgroundexit" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_BUSY_SIT_GROUND_EXIT",
+    [ "flinch" ] = {
+    ["explosion"] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_GESTURE_FLINCH_BLAST"
+    },
 		[ "crouch" ] = {
 				[ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_COVER_LOW",
 				[ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_CROUCH",
@@ -154,171 +154,171 @@ Anims.Male[ "default" ] = {
 				[ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
 		},
 		[ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
-        }
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
+    }
 }
 Anims.Male[ "pistol" ] = {
-        [ "idle" ] = "ACT_IDLE",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_PISTOL",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN_PISTOL",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_COVER_PISTOL_LOW",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_CROUCH",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_COVER_PISTOL_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_CROUCH"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_IDLE_ANGRY_PISTOL",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_AIM_PISTOL",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN_AIM_PISTOL"
-        },
+    [ "idle" ] = "ACT_IDLE",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_PISTOL",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN_PISTOL",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_COVER_PISTOL_LOW",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_CROUCH",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_COVER_PISTOL_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_CROUCH"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_IDLE_ANGRY_PISTOL",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_AIM_PISTOL",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN_AIM_PISTOL"
+    },
 		[ "fire" ] = "ACT_GESTURE_RANGE_ATTACK_PISTOL",
-        [ "reload" ] = "ACT_GESTURE_RELOAD_PISTOL"
+    [ "reload" ] = "ACT_GESTURE_RELOAD_PISTOL"
 }
 Anims.Male[ "ar2" ] = {
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_IDLE_SMG1_RELAXED",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_RIFLE_RELAXED",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RUN_RIFLE_RELAXED",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_COVER_LOW",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_CROUCH_RIFLE",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
-        },
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_IDLE_SMG1_RELAXED",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_RIFLE_RELAXED",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RUN_RIFLE_RELAXED",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_COVER_LOW",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_CROUCH_RIFLE",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
+    },
 		["fire"] = "ACT_GESTURE_RANGE_ATTACK_SMG1"
 }
 
 Anims.Male[ "smg" ] = {
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_IDLE_SMG1",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_RIFLE",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN_RIFLE",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_COVER_SMG1_LOW",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_CROUCH",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_COVER_SMG1_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_CROUCH"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_IDLE_ANGRY_SMG1",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_AIM_RIFLE",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN_AIM_RIFLE"
-        },
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_IDLE_SMG1",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_RIFLE",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN_RIFLE",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_COVER_SMG1_LOW",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_CROUCH",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_COVER_SMG1_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_CROUCH"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_IDLE_ANGRY_SMG1",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_AIM_RIFLE",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN_AIM_RIFLE"
+    },
 		[ "fire" ] = "ACT_GESTURE_RANGE_ATTACK_SMG1",
-        [ "reload" ] = "ACT_GESTURE_RELOAD_SMG1"
+    [ "reload" ] = "ACT_GESTURE_RELOAD_SMG1"
 }
 
 Anims.Male[ "shotgun" ] = {
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_IDLE",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_WALK_RIFLE",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_RUN_RIFLE",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_COVER_LOW",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_WALK_CROUCH_RIFLE",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_RANGE_AIM_AR2_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_WALK_CROUCH_RIFLE"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_IDLE_ANGRY_SHOTGUN",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_WALK_AIM_SHOTGUN",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_RUN_AIM_SHOTGUN"
-        },
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_IDLE",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_WALK_RIFLE",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_RUN_RIFLE",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_COVER_LOW",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_WALK_CROUCH_RIFLE",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_RANGE_AIM_AR2_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_WALK_CROUCH_RIFLE"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_IDLE_ANGRY_SHOTGUN",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_WALK_AIM_SHOTGUN",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_RUN_AIM_SHOTGUN"
+    },
 		["fire"] = "ACT_GESTURE_RANGE_ATTACK_SHOTGUN"
 }
 
 Anims.Male[ "crossbow" ] = {
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_IDLE",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_WALK_RIFLE",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_RUN_RIFLE",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_COVER_LOW",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_WALK_CROUCH_RIFLE",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_RANGE_AIM_AR2_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_WALK_CROUCH_RIFLE"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_IDLE_ANGRY",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_WALK_AIM_RIFLE",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_RUN_AIM_RIFLE"
-        },
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_IDLE",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_WALK_RIFLE",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_RUN_RIFLE",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_COVER_LOW",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_WALK_CROUCH_RIFLE",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_RANGE_AIM_AR2_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_WALK_CROUCH_RIFLE"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_IDLE_ANGRY",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_WALK_AIM_RIFLE",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/combineanimtree.mdl;ACT_RUN_AIM_RIFLE"
+    },
 		["fire"] = "ACT_GESTURE_RANGE_ATTACK_AR2"
 }
 
 Anims.Male[ "rpg" ] = {
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_IDLE_RPG",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_RPG_RELAXED",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RUN_RPG_RELAXED",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_COVER_LOW_RPG",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_CROUCH_RPG",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_IDLE_ANGRY_RPG",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
-        },
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_IDLE_RPG",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_RPG_RELAXED",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RUN_RPG_RELAXED",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_COVER_LOW_RPG",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_CROUCH_RPG",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_IDLE_ANGRY_RPG",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
+    },
 		["fire"] = "ACT_GESTURE_RANGE_ATTACK_SMG1"
 }
 
 Anims.Male[ "melee" ] = {
 		[ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_IDLE",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_COVER_PISTOL_LOW",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_CROUCH",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_COVER_PISTOL_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_CROUCH"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_IDLE_ANGRY_MELEE",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_ANGRY",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN"
-        },
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_COVER_PISTOL_LOW",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_CROUCH",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_COVER_PISTOL_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_CROUCH"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_IDLE_ANGRY_MELEE",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_ANGRY",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN"
+    },
 		["fire"] = "ACT_MELEE_ATTACK_SWING_GESTURE"
 }
 
 Anims.Male[ "grenade" ] = {
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_IDLE",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_COVER_PISTOL_LOW",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_CROUCH",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_COVER_PISTOL_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_CROUCH"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_IDLE_ANGRY_MELEE",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_ANGRY",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN"
-        },
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_IDLE",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_COVER_PISTOL_LOW",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_CROUCH",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_COVER_PISTOL_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_CROUCH"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_IDLE_ANGRY_MELEE",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_WALK_ANGRY",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_RUN"
+    },
 		["fire"] = "&switch:models/Tiramisu/AnimationTrees/policeanimtree.mdl;ACT_COMBINE_THROW_GRENADE"
 }
 
 Anims.Male[ "slam" ] = {
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_IDLE",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_SUITCASE",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RUN",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_COVER_LOW",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_CROUCH",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_CROUCH_RPG"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_IDLE_PACKAGE",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_PACKAGE",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RUN"
-        },
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_IDLE",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_SUITCASE",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RUN",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_COVER_LOW",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_CROUCH",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_CROUCH_RPG"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_IDLE_PACKAGE",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_WALK_PACKAGE",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_RUN"
+    },
 		["fire"] = "&switch:models/Tiramisu/AnimationTrees/maleanimtree.mdl;ACT_PICKUP_RACK"
 }
  
@@ -329,22 +329,22 @@ Anims.Female[ "models" ] = {
 	"models/Tiramisu/AnimationTrees/alyxanimtree.mdl"
 }
 Anims.Female[ "default" ] = { 
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN",
-        [ "jump" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_JUMP",
-        [ "land" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_LAND",
-        [ "fly" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_GLIDE",
-        [ "sit" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_BUSY_SIT_CHAIR",
-        [ "sitentry" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_BUSY_SIT_CHAIR_ENTRY",
-        [ "sitexit" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_BUSY_SIT_CHAIR_EXIT",
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN",
+    [ "jump" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_JUMP",
+    [ "land" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_LAND",
+    [ "fly" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_GLIDE",
+    [ "sit" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_BUSY_SIT_CHAIR",
+    [ "sitentry" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_BUSY_SIT_CHAIR_ENTRY",
+    [ "sitexit" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_BUSY_SIT_CHAIR_EXIT",
 	[ "swim" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_GLIDE",
-        [ "sitground" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_BUSY_SIT_GROUND",
-        [ "sitgroundentry" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_BUSY_SIT_GROUND_ENTRY",
-        [ "sitgroundexit" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_BUSY_SIT_GROUND_EXIT",
-        [ "flinch" ] = {
-                ["explosion"] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_GESTURE_FLINCH_BLAST"
-                },
+    [ "sitground" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_BUSY_SIT_GROUND",
+    [ "sitgroundentry" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_BUSY_SIT_GROUND_ENTRY",
+    [ "sitgroundexit" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_BUSY_SIT_GROUND_EXIT",
+    [ "flinch" ] = {
+    ["explosion"] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_GESTURE_FLINCH_BLAST"
+    },
 		[ "crouch" ] = {
 				[ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_COVER_LOW",
 				[ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH",
@@ -352,170 +352,170 @@ Anims.Female[ "default" ] = {
 				[ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
 		},
 		[ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
-        }
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
+    }
 }
 Anims.Female[ "pistol" ] = {
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE_PISTOL",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_COVER_LOW",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE_ANGRY_PISTOL",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_AIM_PISTOL",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN_AIM_PISTOL"
-        },
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE_PISTOL",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_COVER_LOW",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE_ANGRY_PISTOL",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_AIM_PISTOL",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN_AIM_PISTOL"
+    },
 		[ "fire" ] = "ACT_GESTURE_RANGE_ATTACK_PISTOL",
 }
 Anims.Female[ "ar2" ] = {
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE_SMG1_RELAXED",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_RIFLE_RELAXED",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN_RIFLE_RELAXED",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_COVER_LOW",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH_RIFLE",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
-        },
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE_SMG1_RELAXED",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_RIFLE_RELAXED",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN_RIFLE_RELAXED",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_COVER_LOW",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH_RIFLE",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
+    },
 		["fire"] = "ACT_GESTURE_RANGE_ATTACK_SMG1"
 }
 
 Anims.Female[ "smg" ] = {
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE_SMG1",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_RIFLE",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN_RIFLE",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_COVER_LOW",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH_RIFLE",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE_ANGRY_SMG1",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_AIM_RIFLE",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN_AIM_RIFLE"
-        },
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE_SMG1",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_RIFLE",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN_RIFLE",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_COVER_LOW",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH_RIFLE",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE_ANGRY_SMG1",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_AIM_RIFLE",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN_AIM_RIFLE"
+    },
 		[ "fire" ] = "ACT_GESTURE_RANGE_ATTACK_SMG1",
 }
 
 Anims.Female[ "shotgun" ] = {
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE_SHOTGUN_STIMULATED",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_RIFLE_RELAXED",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN_RIFLE_RELAXED",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_COVER_LOW",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH_RIFLE",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH_RIFLE"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE_ANGRY_RPG",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_AIM_RIFLE",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN_AIM_RIFLE"
-        },
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE_SHOTGUN_STIMULATED",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_RIFLE_RELAXED",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN_RIFLE_RELAXED",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_COVER_LOW",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH_RIFLE",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH_RIFLE"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE_ANGRY_RPG",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_AIM_RIFLE",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN_AIM_RIFLE"
+    },
 		["fire"] = "ACT_GESTURE_RANGE_ATTACK_SHOTGUN"
 }
 
 Anims.Female[ "crossbow" ] = {
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE_SMG1_RELAXED",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_RIFLE_RELAXED",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN_RIFLE_RELAXED",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_COVER_LOW",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH_RIFLE",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
-        },
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE_SMG1_RELAXED",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_RIFLE_RELAXED",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN_RIFLE_RELAXED",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_COVER_LOW",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH_RIFLE",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
+    },
 		["fire"] = "ACT_GESTURE_RANGE_ATTACK_SMG1"
 }
 
 Anims.Female[ "rpg" ] = {
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE_RPG",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_RPG_RELAXED",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN_RPG_RELAXED",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_COVER_LOW_RPG",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH_RPG",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE_ANGRY_RPG",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
-        },
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE_RPG",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_RPG_RELAXED",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN_RPG_RELAXED",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_COVER_LOW_RPG",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH_RPG",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE_ANGRY_RPG",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
+    },
 		["fire"] = "ACT_GESTURE_RANGE_ATTACK_SMG1"
 }
 
 Anims.Female[ "melee" ] = {
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_COVER_LOW",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_COVER_PISTOL_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE_MANNEDGUN",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_PACKAGE",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN"
-        },
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_COVER_LOW",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_COVER_PISTOL_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE_MANNEDGUN",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_PACKAGE",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN"
+    },
 		["fire"] = "ACT_MELEE_ATTACK_SWING"
 }
 
 Anims.Female[ "grenade" ] = {
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_COVER_LOW",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_COVER_PISTOL_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE_ANGRY_PISTOL",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_PACKAGE",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN"
-        },
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_COVER_LOW",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_COVER_PISTOL_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_CROUCH"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_IDLE_ANGRY_PISTOL",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_WALK_PACKAGE",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/alyxanimtree.mdl;ACT_RUN"
+    },
 		["fire"] = "ACT_MELEE_ATTACK_SWING"
 }
 
 
 Anims.Female[ "slam" ] = {
-        [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE",
-        [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_SUITCASE",
-        [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN",
-        [ "crouch" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_COVER_LOW",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH",
-                [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
-                [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH_RPG"
-                },
-        [ "aim" ] = {
-                [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE_PACKAGE",
-                [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_PACKAGE",
-                [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN"
-        },
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_SUITCASE",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN",
+    [ "crouch" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_COVER_LOW",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH",
+    [ "aimidle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RANGE_AIM_SMG1_LOW",
+    [ "aimwalk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_CROUCH_RPG"
+    },
+    [ "aim" ] = {
+    [ "idle" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_IDLE_PACKAGE",
+    [ "walk" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_WALK_PACKAGE",
+    [ "run" ] = "&switch:models/Tiramisu/AnimationTrees/femaleanimtree.mdl;ACT_RUN"
+    },
 		["fire"] = "ACT_PICKUP_RACK"
 }
 
@@ -585,17 +585,7 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 	
 	--if ply.Sequence != seq then
 		--print(ply.Sequence .. "GEGSJ")
-		if !string.match( seq, "&" ) then
-			/*
-			if !ply.SpecialModel and seq != "" then
-				timer.Simple( 0.2, function()
-					if string.lower( ply:GetModel() ) != "models/gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl" and !string.match( seq, "models" ) then
-						--print( "Changing model to " .. "models/Gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl LOL!" )
-						ply:SetModel( "models/Gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl" )
-					end
-				end)
-			end*/
-		else
+		if string.match( seq, "&" ) then
 			ply.Sequence = seq
 			if string.match( seq, "sequence" ) then
 				exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
@@ -657,9 +647,7 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 end
 
 local shotgunholdtypes = {
-	"shotgun",
-	"physgun"
-	
+	"shotgun"
 }
 
 local meleeholdtypes = {
@@ -751,52 +739,52 @@ end
 
 function GM:HandlePlayerJumping( ply ) --Handles jumping
 
-        local holdtype
-        --If we're not on the ground, then play the gliding animation.
-        if !ply.Jumping and !ply:OnGround() and !ply:GetNWBool( "sittingchair", false ) then
-                ply.Jumping = true
-                ply.FirstJumpFrame = false
-                ply.JumpStartTime = CurTime()
-        end
-        
-        if ply.Jumping then
-                if ply.FirstJumpFrame then
-                        ply.FirstJumpFrame = false
-                        ply:AnimRestartMainSequence()
-                end
-                
-                if ply:WaterLevel() >= 2 then
-                        ply.Jumping = false
-                        ply:AnimRestartMainSequence()
+    local holdtype
+    --If we're not on the ground, then play the gliding animation.
+    if !ply.Jumping and !ply:OnGround() and !ply:GetNWBool( "sittingchair", false ) then
+    ply.Jumping = true
+    ply.FirstJumpFrame = false
+    ply.JumpStartTime = CurTime()
+    end
+    
+    if ply.Jumping then
+    if ply.FirstJumpFrame then
+        ply.FirstJumpFrame = false
+        ply:AnimRestartMainSequence()
+    end
+    
+    if ply:WaterLevel() >= 2 then
+        ply.Jumping = false
+        ply:AnimRestartMainSequence()
 				end
 				
-                if (CurTime() - ply.JumpStartTime) > 0.4 then --If we have been on the air for more than 0.4 seconds, then we're meant to play the land animation.
-                    if ply:OnGround() and !ply.Landing and !ply:GetNWBool( "observe" ) then
+    if (CurTime() - ply.JumpStartTime) > 0.4 then --If we have been on the air for more than 0.4 seconds, then we're meant to play the land animation.
+        if ply:OnGround() and !ply.Landing and ply:GetMoveType() == MOVETYPE_WALK then
 							ply.Landing = true
 							timer.Simple( 0.3, function()
 									ply.Landing = false
 									ply.Jumping = false
 							end)
 						return true
-                    end
+        end
 				else
 					if ply:OnGround() and !ply.Landing then
 						ply.Jumping = false
-                        ply:AnimRestartMainSequence()
+        ply:AnimRestartMainSequence()
 					end
-                end
-                
-                if ply.Jumping then --If we're still on a part of the jumping sequence, that means we're either on the process of jumping or landing.
+    end
+    
+    if ply.Jumping then --If we're still on a part of the jumping sequence, that means we're either on the process of jumping or landing.
 		      if !ply.Landing then 
-                            ply.CalcIdeal = ACT_JUMP
+        ply.CalcIdeal = ACT_JUMP
 		      else
 						ply.CalcIdeal = ACT_LAND
 			end
-                    return true
-                end
-        end
-        
-        return false
+    return true
+    end
+    end
+    
+    return false
 end
  
 function GM:HandlePlayerDucking( ply, velocity ) --Handles crouching
@@ -805,37 +793,37 @@ function GM:HandlePlayerDucking( ply, velocity ) --Handles crouching
 		if( ValidEntity(  ply:GetActiveWeapon() ) ) then
 			holdtype = DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
 		end
-        if ply:Crouching() then
+    if ply:Crouching() then
 			if ply:GetNWBool( "aiming", false ) then
-                len2d = velocity:Length2D() -- the velocity on the x and y axis.
-                if len2d > 0.5 then
-                        ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "crouch" ][ "aimwalk" ] )
-                else
-                        ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype][ "crouch" ][ "aimidle" ] )
-                end
+    len2d = velocity:Length2D() -- the velocity on the x and y axis.
+    if len2d > 0.5 then
+    ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "crouch" ][ "aimwalk" ] )
+    else
+    ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype][ "crouch" ][ "aimidle" ] )
+    end
 			else
 				len2d = velocity:Length2D()
-                
-                if len2d > 0.5 then
+    
+    if len2d > 0.5 then
 						ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "crouch" ][ "walk" ] )
-                else
-                        ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "crouch" ][ "idle" ] )
-                end
+    else
+        ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "crouch" ][ "idle" ] )
+    end
 			end
 			return true
-        end
-        
-        return false
+    end
+    
+    return false
 end
  
 function GM:HandlePlayerSwimming( ply ) --Handles swimming.
 
-        if ply:WaterLevel() >= 2 then
+    if ply:WaterLevel() >= 2 then
 				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "swim" ] )
 				return true
 		end
-        
-        return false
+    
+    return false
 end
 
 function GM:HandlePlayerDriving( ply ) --Handles sequences while in vehicles.
@@ -843,16 +831,16 @@ function GM:HandlePlayerDriving( ply ) --Handles sequences while in vehicles.
 	local vehicle
 	local class
  
-        if ply:InVehicle() then
-                vehicle = ply:GetVehicle()
-                class = vehicle:GetClass()
+    if ply:InVehicle() then
+    vehicle = ply:GetVehicle()
+    class = vehicle:GetClass()
 	if ( class == "prop_vehicle_prisoner_pod" and vehicle:GetModel() == "models/vehicles/prisoner_pod_inner.mdl" ) then
 			ply.CalcIdeal = HandleSequence( ply, "ACT_IDLE" )
-            else
+    else
 			ply.CalcIdeal = HandleSequence( ply, "&switch:models/Tiramisu/AnimationTrees/playeranimtree.mdl;ACT_DRIVE_JEEP" )
-            end
+    end
 
-            return true
+    return true
 		end
 end
 
@@ -901,8 +889,8 @@ function GM:HandleExtraActivities( ply ) --Drop in here everything additional yo
 				return true
 			end
 		end
-        
-        return false
+    
+    return false
 
 end
 
@@ -913,17 +901,17 @@ function GM:CalcMainActivity( ply, velocity )
 		if( ValidEntity(  ply:GetActiveWeapon() ) ) then
 			holdtype = DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
 		end
-        ply.CalcIdeal = ACT_IDLE
-        ply.CalcSeqOverride = -1
-        
-        if self:HandleExtraActivities( ply ) or self:HandlePlayerDriving( ply ) or
-                self:HandlePlayerJumping( ply ) or
-                self:HandlePlayerDucking( ply, velocity ) or
-                self:HandlePlayerSwimming( ply ) 
+    ply.CalcIdeal = ACT_IDLE
+    ply.CalcSeqOverride = -1
+    
+    if self:HandleExtraActivities( ply ) or self:HandlePlayerDriving( ply ) or
+    self:HandlePlayerJumping( ply ) or
+    self:HandlePlayerDucking( ply, velocity ) or
+    self:HandlePlayerSwimming( ply ) 
 		then
 			--We do nothing, I guess, lol.
 		else
-            len2d = velocity:Length2D()
+    len2d = velocity:Length2D()
 				
 			if ply:GetNWBool( "aiming", false ) then
 				if len2d > 135 then
@@ -936,22 +924,22 @@ function GM:CalcMainActivity( ply, velocity )
 			else
 				if len2d > 135 then
 					ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
-                                        if SERVER then
-                                                ply:SetAiming( false )
-                                        end
+            if SERVER then
+            ply:SetAiming( false )
+            end
 				elseif len2d > 0.1 then
 					ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "walk" ] )
 				else
 					ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "idle" ] )
 				end
 			end
-        end
+    end
 		
 		--print( tostring( ply.CalcIdeal ) )
 		
-        return ply.CalcIdeal, ply.CalcSeqOverride
+    return ply.CalcIdeal, ply.CalcSeqOverride
 end		
-        
+    
 function GM:TranslateActivity( ply, act )
 		
 		--We're not translating through the weapon, thus, this hook isn't used.
@@ -966,7 +954,7 @@ function GM:DoAnimationEvent( ply, event, data ) -- This is for gestures.
 			holdtype = DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
 		end
 
-        if event == PLAYERANIMEVENT_ATTACK_PRIMARY then
+    if event == PLAYERANIMEVENT_ATTACK_PRIMARY then
 				if Anims[ ply:GetGender() ][ holdtype ][ "fire" ] then
 					if !string.match( Anims[ ply:GetGender() ][ holdtype ][ "fire" ], "&lua" ) then
 						if( string.match( Anims[ ply:GetGender() ][ holdtype ][ "fire" ], "GESTURE" ) ) then
@@ -986,9 +974,9 @@ function GM:DoAnimationEvent( ply, event, data ) -- This is for gestures.
 						ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_RANGE_ATTACK_SMG1 )
 				end
 
-                return ACT_VM_PRIMARYATTACK
-                
-        elseif event == PLAYERANIMEVENT_RELOAD then
+    return ACT_VM_PRIMARYATTACK
+    
+    elseif event == PLAYERANIMEVENT_RELOAD then
 				if Anims[ ply:GetGender() ][ holdtype ][ "reload" ] then
 						if( string.match( Anims[ ply:GetGender() ][ holdtype ][ "reload" ], "GESTURE" ) ) then
 								ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, FindEnumeration(  Anims[ ply:GetGender() ][ holdtype ][ "reload" ] ) )
@@ -996,28 +984,28 @@ function GM:DoAnimationEvent( ply, event, data ) -- This is for gestures.
 							--ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "reload" ] )
 						end	
 				else
-                        ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_RELOAD_SMG1 )
+        ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_RELOAD_SMG1 )
 				end
-                
-                return ACT_INVALID
+    
+    return ACT_INVALID
 		elseif event == PLAYERANIMEVENT_CANCEL_RELOAD then
-        
-                ply:AnimResetGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD )
-                
-                return ACT_INVALID
-        end
-                
-        if event == PLAYERANIMEVENT_JUMP then
-        
-                ply.Jumping = true
-                ply.FirstJumpFrame = true
-                ply.JumpStartTime = CurTime()
-                
-                ply:AnimRestartMainSequence()
-                
-                return ACT_INVALID
-                
+    
+    ply:AnimResetGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD )
+    
+    return ACT_INVALID
+    end
+    
+    if event == PLAYERANIMEVENT_JUMP then
+    
+    ply.Jumping = true
+    ply.FirstJumpFrame = true
+    ply.JumpStartTime = CurTime()
+    
+    ply:AnimRestartMainSequence()
+    
+    return ACT_INVALID
+    
 		end
  
-        return nil
+    return nil
 end

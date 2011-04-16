@@ -1,9 +1,7 @@
-PLUGIN.Name = "Core Schema Plugin"; -- What is the plugin name
-PLUGIN.Author = "F-Nox/Big Bang"; -- Author of the plugin
-PLUGIN.Description = "Configures the schema"; -- The description or purpose of the plugin
+CAKE.CityNumber = 17 --This provides a quick way of changing the name of the city employed on the whole script
+--Since HL2RP servers seem to think that setting on a city number is a fundamental part of the community.
 
-function PLUGIN.Init()
-	
+if SERVER then	
 	--Containers.
 	CAKE.AddCType("models/props_junk/wood_crate001a_damagedmax.mdl", 16)
 	CAKE.AddCType("models/props_junk/wood_crate001a_damaged.mdl", 16)
@@ -27,25 +25,20 @@ function PLUGIN.Init()
 	CAKE.AddCType("models/items/ammocrate_grenade.mdl", 10)
 	CAKE.AddCType("models/weapons/w_suitcase_passenger.mdl", 5)
 
-	--Allowed default male clothing
-	CAKE.ConVars[ "Default_Clothing" ][ "Male" ] = {
-		"clothing_formal",
-		"clothing_formal2",
-		"clothing_labcoat",
-		"clothing_combat"
-	}
-	--Allowed default female clothing.
-	CAKE.ConVars[ "Default_Clothing" ][ "Female" ] = {
-		"clothing_formalf",
-		"clothing_labcoat",
-		"clothing_combatf"
-	}
+	--With this we disable character creation clothing.
+	CAKE.ConVars[ "Default_Clothing" ][ "Male" ] = {}
+	CAKE.ConVars[ "Default_Clothing" ][ "Female" ] = {}
 
 	--Currency data.
 	CURRENCY = {}
-	CURRENCY.Name        = "Dollars";
-	CURRENCY.Slang       = "dollar"
-	CURRENCY.Abr         = "$"
+	CURRENCY.Name        = "Credits";
+	CURRENCY.Slang       = "credit"
+	CURRENCY.Abr         = "Credits"
 	CAKE.RegisterCurrency( CURRENCY )
-	
+
+	CAKE.AddDataField( 2, "cid", "000000" ); 
+
+else
+	CAKE.IntroText = "Welcome to City " .. CAKE.CityNumber -- Character menu and intro text
+	CAKE.IntroSubtitle = "IT'S SAFER HERE" -- Character menu and intro subtitle. If you want this gone just set it to ""
 end

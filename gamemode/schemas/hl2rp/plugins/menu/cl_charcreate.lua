@@ -1,4 +1,4 @@
---Handles character creation. The steps are actually entirely up to you, so is the design. The most important part is the ending, where the player's data is set.
+--Same as the RLRP schema's character creation screen, only that this one does not use startout clothing.
 
 local models = {}
 models[ "Male" ] = {
@@ -23,21 +23,6 @@ models[ "Female" ] = {
 	"models/Humans/Group01/Female_06.mdl",
 	"models/Humans/Group01/Female_07.mdl"
 
-}
-
-local clothing = {}
-clothing[ "Male" ] = {
-	"none",
-	"clothing_formal",
-	"clothing_formal2",
-	"clothing_labcoat",
-	"clothing_combat"
-}
-clothing[ "Female" ] = {
-	"none",
-	"clothing_formalf",
-	"clothing_labcoat",
-	"clothing_combatf"
 }
 
 local x, y
@@ -105,34 +90,19 @@ local function CharacterCreation()
 		end
 		modellist:ChooseOptionID( 1 )
 
-		local clothinglist = vgui.Create( "DMultiChoice" )
-		for k, v in pairs( clothing[ Gender ] ) do
-			clothinglist:AddChoice( v )
-		end
-		clothinglist.OnSelect = function( panel,index,value )
-			RunConsoleCommand( "rp_testclothing", "none", SelectedModel, value )
-			SelectedClothing = value
-		end
-		clothinglist:ChooseOption( "none", 1 )
-
 		local genderlist = vgui.Create( "DMultiChoice" )
 		genderlist:AddChoice( "Male" )
 		genderlist:AddChoice( "Female" )
 		genderlist.OnSelect = function( panel,index,value )
 			Gender = value
 			RunConsoleCommand( "rp_testclothing", value, models[ value ][1] )
-			clothinglist:Clear()
 			modellist:Clear()
-			for k, v in pairs( clothing[ Gender ] ) do
-				clothinglist:AddChoice( v )
-			end
 			for k, v in pairs( models[ Gender ] ) do
 				modellist:AddChoice( v )
 			end
 			SelectedClothing = "none"
 			SelectedModel = models[ value ][1]
 			modellist:ChooseOptionID( 1 )
-			clothinglist:ChooseOption( "none", 1 )
 		end
 		genderlist:ChooseOptionID( 1 )
 
@@ -145,11 +115,6 @@ local function CharacterCreation()
 		label:SetText( "Model:" )
 		panel:AddItem( label )
 		panel:AddItem( modellist )
-
-		label = vgui.Create( "DLabel" )
-		label:SetText( "Clothing:" )
-		panel:AddItem( label )
-		panel:AddItem( clothinglist )
 
 		label = vgui.Create( "DLabel" )
 		label:SetText( "Age:" )
@@ -215,11 +180,11 @@ local function CharacterCreation()
 
 			RunConsoleCommand("rp_startcreate")
 			RunConsoleCommand("rp_setmodel", SelectedModel );
-			RunConsoleCommand("rp_setstartclothing", SelectedClothing );
 			RunConsoleCommand("rp_changename", CharName );
 			RunConsoleCommand("rp_title", Title1 );
 			RunConsoleCommand("rp_setage", Age )
 			RunConsoleCommand("rp_setgender", Gender )
+			RunConsoleCommand("rp_setcid")
 			RunConsoleCommand( "rp_finishcreate" )
 			panel.SlideOut = true
 			createlabel.SlideOut = true

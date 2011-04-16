@@ -459,7 +459,7 @@ function Admin_SetModel( ply, cmd, args )
 		CAKE.SendChat(ply, "Target not found!")
 	elseif ValidEntity( target ) then
 		target:RemoveClothing()
-		CAKE.RemoveAllGear( ply )
+		CAKE.RemoveAllGear( target )
 		target:SetSpecialModel( args[2] or "models/kleiner.mdl" )
 		target:SetNWString( "model", args[2])
 	end
