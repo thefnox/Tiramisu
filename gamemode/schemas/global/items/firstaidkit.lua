@@ -36,7 +36,6 @@ function ITEM:UseItem(ply)
 			v.ply:SetPos(v:GetPos());
 			CAKE.SendChat(ply, "*beep* Anabolic Steroids Injected");
 			CAKE.SendChat(v.ply, "*beep* Anabolic Steroids Injected");
-			ply:ConCommand("/me revives " .. v.ply:Nick());
 			self:Remove();
 			v:Remove();
 			return;

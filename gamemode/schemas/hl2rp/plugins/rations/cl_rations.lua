@@ -1,4 +1,4 @@
-CLPLUGIN.Init = function()
+hook.Add( "ScoreboardShow", "HL2RPRationsDisplay", function()
 
 	if RationFrame then
 	    RationFrame:Remove()
@@ -12,9 +12,11 @@ CLPLUGIN.Init = function()
 
 	local label = Label( "Rations (" .. GetGlobalInt( "rations" ) .. " left)" , RationFrame)
 	label:SizeToContents()
-	label.Think = function()
-	    label:SetText( "Rations (" .. GetGlobalInt( "rations" ) .. " left)" )
-	end
+	timer.Create( "RefreshRationLabel", 2, 0, function()
+		if label and label:IsValid() then
+			label:SetText( "Rations (" .. GetGlobalInt( "rations" ) .. " left)" )
+		end
+	end)
 	label:SetPos( 3, 26 )
 
 	local amount = vgui.Create( "DNumberWang", RationFrame )
@@ -30,7 +32,7 @@ CLPLUGIN.Init = function()
 	spawn:SetText( "Create" )
 	spawn:SetPos( 44, 44 )
 	spawn.DoClick = function()
-		RunConsoleCommand( "rp_makeration", amount )
+		RunConsoleCommand( "rp_makeration", amount:GetValue() )
 	end
 
 	local x, y
@@ -38,10 +40,14 @@ CLPLUGIN.Init = function()
 		x, y = RationFrame:GetPos()
 		if CAKE.MenuOpen and CAKE.Group and ( CAKE.Group["Name"] == "CCA" or CAKE.Group["Name"] == "Overwatch" ) then
 			RationFrame:SetPos( Lerp( 0.2, x, 10), ScrH() / 2 - 52)
-		else
-			RationFrame:SetPos( Lerp( 0.2, x, -110 ), ScrH() / 2 - 52)
 		end
 	end   
 
 
-end
+end )
+
+hook.Add( "ScoreboardHide", "HL2RPDestroyRations", function()
+	if RationFrame then
+	    RationFrame:Remove()
+	end
+end)

@@ -17,8 +17,6 @@ function ITEM:Pickup(ply)
 end
 
 function ITEM:UseItem(ply)
-
-	ply:ConCommand("say /me eats some refried beans");
 	self:Remove();
 
 end

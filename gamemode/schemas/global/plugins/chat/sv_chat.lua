@@ -501,8 +501,11 @@ local function Emote( ply, text )
 end
 
 hook.Add( "PlayerSpawn", "TiramisuStartChat", function( ply )
-	umsg.Start( "TiramisuInitChat", ply )
-	umsg.End()
+	if !ply.ChatInitialized then
+		ply.ChatInitialized = true
+		umsg.Start( "TiramisuInitChat", ply )
+		umsg.End()
+	end
 end)
 
 function GM:PlayerChat( ply, text )

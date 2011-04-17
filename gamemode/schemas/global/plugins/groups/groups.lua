@@ -17,7 +17,7 @@ end
 function CAKE.CreateGroup( name, tbl )
 	if !CAKE.Groups[name] then
 		CAKE.Groups[name] = tbl
-		CAKE.Groups[name][ "name" ] = name --what
+		CAKE.Groups[name][ "Name" ] = name --what
 		CAKE.SaveGroupData(name)
 		timer.Create( name .. "GroupSaveTimer", 60, 0, function()
 			if CAKE.GroupExists( name ) then
@@ -149,7 +149,7 @@ end
 --Loads the group's data table
 function CAKE.LoadGroupData( name )
 	local tbl = glon.decode(file.Read( CAKE.Name .. "/GroupData/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( name ) .. ".txt"))
-	CAKE.CreateGroup( tbl["name"], tbl )
+	CAKE.CreateGroup( tbl["Name"], tbl )
 end
 
 --Loads ALL groups currently existing on the data folder.
@@ -174,7 +174,7 @@ end)
 --Makes a player join a particular group. Makes it leave it's current group.
 function CAKE.JoinGroup( ply, name )
 	if CAKE.GroupExists( name ) and ValidEntity( ply ) then
-		if CAKE.GetCharField( ply, "group" ) != "none" then
+		if CAKE.GetCharField( ply, "group" ) != "none" and CAKE.GetCharField( ply, "group" ) != name then
 			CAKE.LeaveGroup( ply )
 		end
 		CAKE.SetCharField( ply, "group", name )
@@ -581,6 +581,7 @@ function Admin_ForceJoin( ply, cmd, args )
 	if args[ 3 ] and args[ 3 ] != "none" then CAKE.SetCharRank( target, CAKE.GetCharField( target, "group" ), args[ 3 ] ) end
 
 	CAKE.SendError( target, "You have been forced into group: " .. CAKE.GetCharField( target, "group" ) )
+	CAKE.SendGroupToClient( ply )
 
 end
 

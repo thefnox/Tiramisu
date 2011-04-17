@@ -2,20 +2,23 @@ function CAKE.MakeCombine( ply, rank )
 
 	if ValidEntity( ply ) then
 		if CAKE.RankExists( "CCA", rank ) then
-			CAKE.JoinGroup( ply, "CCA" )
-			CAKE.SetCharRank( ply, "CCA", rank )
+			if CAKE.GetCharField( ply, "group" ) != "CCA" then
+				CAKE.JoinGroup( ply, "CCA" )
+			end
+			CAKE.SetCharRank( ply, CAKE.GetCharField( ply, "group" ), rank )
 			CAKE.SendError( ply, "Your flag has been set to " .. rank )
 			local name = "CCA.C" .. CAKE.CityNumber .. "." .. string.upper( rank ) .. "-" .. CAKE.GetCharField(ply, "cid" )
 			CAKE.SetCharField(ply, "name", name )
 			ply:SetNWString( "name", name )
 		elseif CAKE.RankExists( "Overwatch", rank ) then
 			CAKE.JoinGroup( ply, "Overwatch" )
-			CAKE.SetCharRank( ply, "Overwatch", rank )
+			CAKE.SetCharRank( ply, CAKE.GetCharField( ply, "group" ), rank )
 			CAKE.SendError( ply, "Your flag has been set to " .. rank )
 			local name = "COTA.C" .. CAKE.CityNumber .. "." .. string.upper( rank ) .. "-" .. CAKE.GetCharField(ply, "cid" )
 			CAKE.SetCharField(ply, "name", name )
 			ply:SetNWString( "name", name )
 		end
+		CAKE.SendGroupToClient( ply )
 	end
 
 end
@@ -42,12 +45,10 @@ local function Admin_SetFlag( ply, cmd, args )
 		if CAKE.RankExists( "CCA", rank ) or CAKE.RankExists( "Overwatch", rank ) then
 			CAKE.MakeCombine( target, rank )
 		elseif CAKE.RankExists( "Resistance", rank ) then
-			CAKE.JoinGroup( ply, "Resistance" )
-			CAKE.SetCharRank( ply, "Resistance", rank )
-			CAKE.SendError( ply, "Your flag has been set to " .. rank )
-		elseif !args[2] then
-			CAKE.SendError( ply, "Your flag has been set to none" )
-			CAKE.LeaveGroup( target )
+			CAKE.JoinGroup( target, "Resistance" )
+			CAKE.SetCharRank( target, CAKE.GetCharField( target, "group" ), rank )
+			CAKE.SendError( target, "Your flag has been set to " .. rank )
+			CAKE.SendGroupToClient( target )
 		end
 	else
 		CAKE.SendConsole( ply, "Player Not Found!" )

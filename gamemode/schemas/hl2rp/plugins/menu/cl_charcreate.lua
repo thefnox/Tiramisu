@@ -36,6 +36,8 @@ local SelectedModel = "models/humans/group01/male_01.mdl"
 
 local function CharacterCreation()
 
+	RunConsoleCommand( "rp_thirdperson", 1 )
+
 	if CharacterMenu then
 		local panel = vgui.Create( "DPanelList", CharacterMenu)
 		panel:SetSize( 230, 500 )

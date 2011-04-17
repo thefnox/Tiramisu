@@ -30,7 +30,7 @@ CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 0, true, true ) -- Set 
 CAKE.ThirdpersonDistance = CreateClientConVar( "rp_thirdpersondistance", 50, true, true ) --Maximum thirdperson distance
 CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true ) --Set this to 0 to have headbob disabled by default.
 CAKE.UseIntro = true --Set this to false if you want the player to go directly into the character menu when they join
-CAKE.IntroText = "Welcome to Tiramisu" -- Character menu and intro text
+CAKE.IntroText = "Welcome to Tiramisu" -- Character menu and intro text. NOTE, the HL2RP scheme changes this
 CAKE.IntroSubtitle = "A ROLEPLAY REVOLUTION" -- Character menu and intro subtitle. If you want this gone just set it to ""
 CAKE.ChatFont = "ChatFont" -- Main font used in chatting
 

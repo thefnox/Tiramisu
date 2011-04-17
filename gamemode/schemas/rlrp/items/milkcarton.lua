@@ -19,7 +19,6 @@ end
 function ITEM:UseItem(ply)
 
 	ply:SetHealth(math.Clamp(ply:Health() + 5, 0, ply:MaxHealth()));
-	ply:ConCommand("say /me drinks some milk");
 	self:Remove();
 
 end
