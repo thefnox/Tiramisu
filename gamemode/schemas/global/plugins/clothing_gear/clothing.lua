@@ -253,12 +253,17 @@ local function SpawnClothingHook( ply )
 		ply.BonemergeGearEntity = ents.Create( "prop_physics" )
 		ply.BonemergeGearEntity:SetPos( ply:GetPos() + Vector( 0, 0, 80 ) )
 		ply.BonemergeGearEntity:SetAngles( ply:GetAngles() )
-		ply.BonemergeGearEntity:SetModel("models/Tiramisu/gearhandler.mdl")
+		ply.BonemergeGearEntity:SetModel("models/tiramisu/gearhandler.mdl")
 		ply.BonemergeGearEntity:SetParent( ply )
 		ply.BonemergeGearEntity:SetNoDraw( true )
 		ply.BonemergeGearEntity:SetSolid( SOLID_NONE )
 		ply.BonemergeGearEntity:Spawn()
 		ply.BonemergeGearEntity:DrawShadow( false )
+		ply.BonemergeGearEntity.Think = function()
+			if ( ply.BonemergeGearEntity:IsOnFire() ) then
+				ply.BonemergeGearEntity:Extinguish()
+			end
+		end
 	end
 
 	if ply:IsCharLoaded() then

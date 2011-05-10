@@ -79,10 +79,22 @@ function PANEL:Init()
         end
         self.TextEntry.OnEnter = function()
             if self.TextEntry:GetValue() != "" then
-                if self.TextEntry:GetValue():len() > 600 then
-                    datastream.StreamToServer( "TiramisuChatHandling", { ["text"] = string.sub( string.Replace(self.TextEntry:GetValue(), "\"", "'"), 1, 600 ) } )
+                if ( string.sub(self.TextEntry:GetValue(), 1, 1 ) == "@" ) then
+                    local exp = string.Explode( " ", self.TextEntry:GetValue()) or {}
+                    local command = exp[1] or self.TextEntry:GetValue()
+                    table.remove( exp, 1 )
+                    RunConsoleCommand(string.sub( command, 2, string.len(command) ), unpack(exp) )
+                elseif ( string.sub( self.TextEntry:GetValue(), 1, 1 ) == "!" ) then
+                    local exp = string.Explode( " ", self.TextEntry:GetValue()) or {}
+                    local command = exp[1] or self.TextEntry:GetValue()
+                    table.remove( exp, 1 )
+                    RunConsoleCommand("rp_" .. string.sub( command, 2, string.len(command) ), unpack(exp) )
                 else
-                    datastream.StreamToServer( "TiramisuChatHandling", { ["text"] = string.Replace(self.TextEntry:GetValue(), "\"", "'") } )
+                    if self.TextEntry:GetValue():len() > 600 then
+                        datastream.StreamToServer( "TiramisuChatHandling", { ["text"] = string.sub( string.Replace(self.TextEntry:GetValue(), "\"", "'"), 1, 600 ) } )
+                    else
+                        datastream.StreamToServer( "TiramisuChatHandling", { ["text"] = string.Replace(self.TextEntry:GetValue(), "\"", "'") } )
+                    end
                 end
                 self.TextEntry:Clear()
                 self:Close()

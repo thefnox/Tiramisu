@@ -36,37 +36,41 @@ local function HandleGearEditing( entity, bone, item )
 	if entity and ValidEntity( entity ) then
 		StartGearEditor( entity, item, bone, entity:GetDTVector( 1 ), entity:GetDTAngle( 1 ), entity:GetDTVector( 2 ), entity:GetSkin() )
 	else
-		if frame then
-			frame:Remove()
-			frame = nil
-		end
-
-		local frame = vgui.Create( "DFrameTransparent", PlayerMenu )
-		frame:SetSize( 360, 423 )
-		frame:Center()
-		frame:SetTitle( "Choose the item you want to use for your gear" )
-
-		local panel = vgui.Create( "DPanelList", frame )
-		panel:SetSize( 350, 390 )
-		panel:SetPos( 5, 28 )
-		panel:SetSpacing( 5 )
-		panel:SetPadding( 5 )
-		panel:EnableHorizontal( true )
-
-		for k, v in pairs(InventoryTable) do
-			if !string.match( v.Class, "clothing" ) and !string.match( v.Class, "helmet" ) then
-			    local spawnicon = vgui.Create( "SpawnIcon");
-			    spawnicon:SetIconSize( 64 )
-			    spawnicon:SetModel(v.Model);
-			    spawnicon:SetToolTip(v.Description)
-			    spawnicon.DoClick = function()
-			        RunConsoleCommand( "rp_setgear", v.Class, bone )
-			        frame:Remove()
-			        frame = nil
-
-			    end
-			    panel:AddItem( spawnicon )
+		if InventoryTable and #InventoryTable > 0 then
+			if frame then
+				frame:Remove()
+				frame = nil
 			end
+
+			local frame = vgui.Create( "DFrameTransparent", PlayerMenu )
+			frame:SetSize( 360, 423 )
+			frame:Center()
+			frame:SetTitle( "Choose the item you want to use for your gear" )
+
+			local panel = vgui.Create( "DPanelList", frame )
+			panel:SetSize( 350, 390 )
+			panel:SetPos( 5, 28 )
+			panel:SetSpacing( 5 )
+			panel:SetPadding( 5 )
+			panel:EnableHorizontal( true )
+
+			for k, v in pairs(InventoryTable) do
+				if !string.match( v.Class, "clothing" ) and !string.match( v.Class, "helmet" ) then
+				    local spawnicon = vgui.Create( "SpawnIcon");
+				    spawnicon:SetIconSize( 64 )
+				    spawnicon:SetModel(v.Model);
+				    spawnicon:SetToolTip(v.Description)
+				    spawnicon.DoClick = function()
+				        RunConsoleCommand( "rp_setgear", v.Class, bone )
+				        frame:Remove()
+				        frame = nil
+
+				    end
+				    panel:AddItem( spawnicon )
+				end
+			end
+		else
+			CAKE.Message( "You don't have any items!", "Error!", "OK" )
 		end
 	end
 
@@ -136,19 +140,22 @@ function EditGear()
 	ClothesCategory:SetContents( clist )
 
 	local button
-	for k, v in pairs( InventoryTable ) do
-		if( string.match( v.Class, "clothing" ) ) then
-			button = vgui.Create( "SpawnIcon" )
-			button:SetIconSize( 64 )
-			button:SetModel( v.Model )
-			button:SetToolTip(v.Description)
-			button.DoClick = function()
-				CAKE.Clothing = v.Class
-				LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
+	if InventoryTable and #InventoryTable > 0 then
+		for k, v in pairs( InventoryTable ) do
+			if( string.match( v.Class, "clothing" ) ) then
+				button = vgui.Create( "SpawnIcon" )
+				button:SetIconSize( 64 )
+				button:SetModel( v.Model )
+				button:SetToolTip(v.Description)
+				button.DoClick = function()
+					CAKE.Clothing = v.Class
+					LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
+				end
+				clist:AddItem( button )
 			end
-			clist:AddItem( button )
 		end
 	end
+
 	button = vgui.Create( "SpawnIcon" )
 	button:SetIconSize( 64 )
 	button:SetModel( LocalPlayer():GetModel() )

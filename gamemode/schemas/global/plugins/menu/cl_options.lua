@@ -2,8 +2,8 @@ CLPLUGIN.Name = "Options Menu"
 CLPLUGIN.Author = "F-Nox/Big Bang"
 
 hook.Add( "InitPostEntity", "TiramisuLoadSchemeColor", function()
-	if file.Exists( CAKE.Name .. "/PersonalData/schemecolor.txt" ) then
-		local tbl = glon.decode( file.Read( CAKE.Name .. "/PersonalData/schemecolor.txt" ))
+	if file.Exists( CAKE.Name .. "/personaldata/schemecolor.txt" ) then
+		local tbl = glon.decode( file.Read( CAKE.Name .. "/personaldata/schemecolor.txt" ))
 		CAKE.BaseColor = tbl.color
 	end
 end)
@@ -88,7 +88,7 @@ local function OpenOptions()
 		local color = SchemeColor:GetColor()
 		CAKE.BaseColor = color
 		local tbl = { ["color"] = CAKE.BaseColor }
-		file.Write( CAKE.Name .. "/PersonalData/schemecolor.txt", glon.encode( tbl ) )
+		file.Write( CAKE.Name .. "/personaldata/schemecolor.txt", glon.encode( tbl ) )
 	end
 	Custom:AddItem( SchemeColor )
 	Custom:AddItem( schemecolormixer )

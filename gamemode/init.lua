@@ -27,18 +27,18 @@ include( "plugins.lua" ); -- Plugin system
 include( "client_resources.lua" ); -- Sends files to the client
 include( "animations.lua")
 
-resource.AddFile( "models/Tiramisu/AnimationTrees/alyxanimtree.mdl" )
-resource.AddFile( "models/Tiramisu/AnimationTrees/combineanimtree.mdl" )
-resource.AddFile( "models/Tiramisu/AnimationTrees/maleanimtree.mdl" )
-resource.AddFile( "models/Tiramisu/AnimationTrees/playeranimtree.mdl" )
-resource.AddFile( "models/Tiramisu/AnimationTrees/femaleanimtree.mdl" )
-resource.AddFile( "models/Tiramisu/AnimationTrees/policeanimtree.mdl" )
-resource.AddFile( "models/Tiramisu/AnimationTrees/barneyanimtree.mdl" )
-resource.AddFile( "models/Tiramisu/gearhandler.mdl")
+resource.AddFile( "models/tiramisu/animationtrees/alyxanimtree.mdl" )
+resource.AddFile( "models/tiramisu/animationtrees/combineanimtree.mdl" )
+resource.AddFile( "models/tiramisu/animationtrees/maleanimtree.mdl" )
+resource.AddFile( "models/tiramisu/animationtrees/playeranimtree.mdl" )
+resource.AddFile( "models/tiramisu/animationtrees/femaleanimtree.mdl" )
+resource.AddFile( "models/tiramisu/animationtrees/policeanimtree.mdl" )
+resource.AddFile( "models/tiramisu/animationtrees/barneyanimtree.mdl" )
+resource.AddFile( "models/tiramisu/gearhandler.mdl")
 resource.AddFile( "materials/tiramisu/gearhandler.vmt")
 resource.AddFile( "materials/tiramisu/gearhandler.vtf")
 resource.AddFile( "materials/tiramisu/tabbutton2.vmt" )
-resource.AddFile( "resource/fonts/Harabara.ttf")
+resource.AddFile( "resource/fonts/harabara.ttf")
 
 CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ); -- Load the schema and plugins, this is NOT initializing.
 

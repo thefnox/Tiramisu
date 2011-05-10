@@ -4,13 +4,18 @@ PLUGIN.Description = "Handles creation destruction and use of groups."; -- The d
 
 CAKE.Groups = {}
 
-function sanitizeGroupName( name )
-	local str = name
-	str = string.gsub( str,":","" );
-	str = string.gsub( str,"_","" );
-	str = string.gsub( str,".","" );
-	str = string.gsub( str," ","" );
-	return str
+function sanitizeGroupName( str )
+	return string.lower( string.gsub( str,"[%p%c%s]","" ) )
+end
+
+--Changes the name of a player within a group so that it's data is not lost. Used in rp_changename
+function CAKE.ChangeMemberName( group, oldname, newname )
+
+	if CAKE.GroupExists( group ) and CAKE.GroupHasMember(group, oldname) then
+		CAKE.Groups[group]["Members"][newname] = CAKE.Groups[group]["Members"][oldname]
+		CAKE.Groups[group]["Members"][oldname] = nil
+	end
+
 end
 
 --Creates a new group. If the group already exists, then merge the new table with the old one.
@@ -58,7 +63,7 @@ end
 function CAKE.RemoveGroup( name )
 	if CAKE.GroupExists( name ) and CAKE.GetGroupField( name, "Type" ) == "public" then
 		if CAKE.GetGroupField( name, "Members" ) and 	table.Count(CAKE.GetGroupField( name, "Members" )) == 0 then
-			file.Delete( CAKE.Name .. "/GroupData/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( name ) .. ".txt" )
+			file.Delete( CAKE.Name .. "/groupdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( name ) .. ".txt" )
 			CAKE.Groups[name] = nil
 		end
 	end
@@ -142,20 +147,24 @@ end
 function CAKE.SaveGroupData( name )
 	if CAKE.Groups[name] then
 		local keys = glon.encode(CAKE.Groups[name])
-		file.Write( CAKE.Name .. "/GroupData/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( name ) .. ".txt" , keys)
+		file.Write( CAKE.Name .. "/groupdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. sanitizeGroupName( name ) .. ".txt" , keys)
 	end
 end
 
 --Loads the group's data table
 function CAKE.LoadGroupData( name )
-	local tbl = glon.decode(file.Read( CAKE.Name .. "/GroupData/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( name ) .. ".txt"))
-	CAKE.CreateGroup( tbl["Name"], tbl )
+	local tbl = glon.decode(file.Read( CAKE.Name .. "/groupdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. sanitizeGroupName( name ) .. ".txt"))
+	if tbl then
+		CAKE.CreateGroup( tbl["Name"], tbl )
+	else
+		file.Delete( CAKE.Name .. "/groupdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. sanitizeGroupName( name ) .. ".txt" )
+	end
 end
 
 --Loads ALL groups currently existing on the data folder.
 function CAKE.LoadAllGroups()
 
-	local groups = file.Find(CAKE.Name .. "/GroupData/" .. CAKE.ConVars[ "Schema" ] .. "/*.txt")
+	local groups = file.Find(CAKE.Name .. "/groupdata/" .. CAKE.ConVars[ "Schema" ] .. "/*.txt")
 	local name = ""
 
 	for k, v in pairs( groups ) do
@@ -471,7 +480,7 @@ concommand.Add( "rp_rostersearch", function( ply, cmd, args )
 		local searchresults = {}
 		local tbl = {}
 		for k, v in pairs( roster ) do
-			if string.match( searchstring, v.Name ) or string.match( searchstring, v.SteamID ) or ((v.Rank != false) and(string.match( searchstring, v.Rank ))) or string.match( searchstring, CAKE.GetRankField( group, v.Rank, "formalname" ) or "None" ) then
+			if string.match( string.lower( searchstring ), string.lower( v.Name )) or string.match( searchstring, v.SteamID ) or ((v.Rank != false) and(string.match( searchstring, v.Rank ))) or string.match( searchstring, CAKE.GetRankField( group, v.Rank, "formalname" ) or "None" ) then
 				tbl = {}
 				tbl.Name = v.Name
 				tbl.SteamID = v.SteamID
@@ -535,16 +544,13 @@ local function GroupSpawnHook( ply )
 		timer.Simple( 1, function()
 			local group = CAKE.GetCharField( ply, "group" )
 			local rank = CAKE.GetCharField( ply, "grouprank" )
-			if CAKE.GroupExists( group ) and CAKE.Groups[group]["Members"][CAKE.GetCharSignature(ply)] then
+			if CAKE.GroupExists( group ) and CAKE.GroupHasMember(group, ply) then
 				if CAKE.Groups[group]["Members"] and CAKE.Groups[group]["Members"][CAKE.GetCharSignature(ply)][ "Rank" ] then
 					if rank != CAKE.Groups[group]["Members"][CAKE.GetCharSignature(ply)][ "Rank" ] then
 						CAKE.SetCharRank( ply, group, CAKE.Groups[group]["Members"][CAKE.GetCharSignature(ply)][ "Rank" ] )
 					end
 				else
 					CAKE.SetCharRank( ply, group, CAKE.GetGroupField( group, "DefaultRank" ))
-				end
-				if !CAKE.GroupHasMember(group, ply) then
-					CAKE.LeaveGroup( ply )
 				end
 				timer.Create( ply:SteamID() .. "groupsendtimer", 10, 0, function()
 					CAKE.SendGroupToClient( ply )
@@ -553,7 +559,10 @@ local function GroupSpawnHook( ply )
 					end
 				end)
 			else
-				CAKE.LeaveGroup( ply )
+				if CAKE.GetCharField( ply, "group" ) != "none" then
+					CAKE.SendError( ply, "You have been kicked from your group."  )
+					CAKE.LeaveGroup( ply )
+				end
 			end
 			CAKE.SendGroupToClient( ply )
 		end)

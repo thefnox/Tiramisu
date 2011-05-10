@@ -1,7 +1,7 @@
 --Sends a player a chat message using the enhanced message system.
 function CAKE.SendChat( ply, msg, font, channel )
 	
-	if ply:IsPlayer() then
+	if ValidEntity( ply ) and ply:IsPlayer() then
 		--ply:PrintMessage( 3, msg );
 		datastream.StreamToClients( ply, "TiramisuAddToChat", {
 			["text"] = msg,
@@ -93,7 +93,7 @@ function CAKE.DeathMode( ply )
 	rag.BonemergeGearEntity = ents.Create( "prop_physics" )
 	rag.BonemergeGearEntity:SetPos( rag:GetPos() + Vector( 0, 0, 80 ) )
 	rag.BonemergeGearEntity:SetAngles( rag:GetAngles() )
-	rag.BonemergeGearEntity:SetModel("models/Tiramisu/gearhandler.mdl")
+	rag.BonemergeGearEntity:SetModel("models/tiramisu/gearhandler.mdl")
 	rag.BonemergeGearEntity:SetParent( rag )
 	rag.BonemergeGearEntity:SetNoDraw( true )
 	rag.BonemergeGearEntity:SetSolid( SOLID_NONE )
@@ -201,7 +201,7 @@ function CAKE.UnconciousMode( ply )
 			rag.BonemergeGearEntity = ents.Create( "prop_physics" )
 			rag.BonemergeGearEntity:SetPos( rag:GetPos() + Vector( 0, 0, 80 ) )
 			rag.BonemergeGearEntity:SetAngles( rag:GetAngles() )
-			rag.BonemergeGearEntity:SetModel("models/Tiramisu/gearhandler.mdl")
+			rag.BonemergeGearEntity:SetModel("models/tiramisu/gearhandler.mdl")
 			rag.BonemergeGearEntity:SetParent( rag )
 			rag.BonemergeGearEntity:SetNoDraw( true )
 			rag.BonemergeGearEntity:SetSolid( SOLID_NONE )

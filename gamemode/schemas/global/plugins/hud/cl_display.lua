@@ -20,8 +20,8 @@ local tracedata = {}
 
 
 --Handles the drawing of all the thirdperson 2D3D elements, 3D health and 3D ammo displays.
-hook.Add( "PostDrawOpaqueRenderables", "TiramisuHealthAmmoDisplay", function( )
-
+hook.Add( "PostDrawTranslucentRenderables", "TiramisuHealthAmmoDisplay", function( )
+	cam.IgnoreZ(true)
 	if CAKE.MenuOpen then
 		LocalPlayer().IsDamaged = true
 		menuopened = true
@@ -111,7 +111,7 @@ hook.Add( "PostDrawOpaqueRenderables", "TiramisuHealthAmmoDisplay", function( )
 		    end
 		end
 	end
-
+	cam.IgnoreZ(false)
 end)
 
 --Simple check to see if the player was damaged.

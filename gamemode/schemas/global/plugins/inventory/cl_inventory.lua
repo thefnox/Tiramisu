@@ -14,13 +14,13 @@ local function SavePositions()
 			end 
 		end
 	end
-	file.Write( CAKE.Name .. "/PersonalData/inventory.txt", glon.encode( CAKE.SavedPositions ) )
+	file.Write( CAKE.Name .. "/personaldata/inventory.txt", glon.encode( CAKE.SavedPositions ) )
 end
 
 --Loads a player's icon positioning preferences.
 local function LoadPositions()
-	if file.Exists( CAKE.Name .. "/PersonalData/inventory.txt" ) then
-		CAKE.SavedPositions = glon.decode( file.Read( CAKE.Name .. "/PersonalData/inventory.txt"  ))
+	if file.Exists( CAKE.Name .. "/personaldata/inventory.txt" ) then
+		CAKE.SavedPositions = glon.decode( file.Read( CAKE.Name .. "/personaldata/inventory.txt"  ))
 	else
 		SavePositions()
 	end

@@ -15,6 +15,9 @@ concommand.Add( "rp_title", ccSetTitle );
 function ccChangeName( ply, cmd, args )
 
 	local name = table.concat( args, " " )
+	print( "OLD: " .. CAKE.GetCharSignature( ply ))
+	CAKE.ChangeMemberName( group, CAKE.GetCharSignature( ply ), name .. "@" .. ply:SteamID() )
+	print( "NEW: " .. CAKE.GetCharSignature( ply ))
 	CAKE.SetCharField(ply, "name", name );
 	ply:SetNWString("name", name);
 	

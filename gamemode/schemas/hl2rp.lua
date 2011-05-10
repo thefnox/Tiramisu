@@ -50,10 +50,10 @@ function SCHEMA.SetUp( )
 	end
 
 	function CAKE.AddOverwatchRank( name, formalname, loadout, level, canedit, cankick, canpromote )
-		if !CAKE.GroupExists( "Overwatch") then
+		if !CAKE.GroupExists( "Combine Overwatch") then
 			print( "Creating Overwatch" )
 			local tbl = {
-			[ "Name" ]		= "Overwatch",
+			[ "Name" ]		= "Combine Overwatch",
 			[ "Type" ]		= "faction",
 			[ "Founder" ]	= "Combine High Command",
 			[ "Members" ]	= {},
@@ -73,10 +73,10 @@ function SCHEMA.SetUp( )
 			[ "Description" ] = "The fearsome Overwatch, the Combine's trans-human military force"
 			}
 			
-			CAKE.CreateGroup( "Overwatch", tbl )
+			CAKE.CreateGroup( "Combine Overwatch", tbl )
 		end
 
-		CAKE.CreateRank( "Overwatch", name, {
+		CAKE.CreateRank( "Combine Overwatch", name, {
 			[ "formalname" ] = formalname or "none",
 			[ "loadout" ] = loadout or {},
 			[ "level" ] = level or 1,
