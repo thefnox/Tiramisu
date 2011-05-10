@@ -124,7 +124,6 @@ end)
 --3D Titles drawing.
 
 hook.Add( "PostDrawTranslucentRenderables", "Tiramisu3DPlayerTitles", function( )
-	cam.IgnoreZ(true)
 	if closeents then
 	    for k, v in pairs( closeents ) do
 	    	if ValidEntity( v ) then
@@ -177,5 +176,4 @@ hook.Add( "PostDrawTranslucentRenderables", "Tiramisu3DPlayerTitles", function( 
 		   end
 	    end
 	end
-	cam.IgnoreZ(false)
 end)
