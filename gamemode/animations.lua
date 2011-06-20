@@ -27,15 +27,13 @@ if SERVER then
 
 	--Weapons that are never aimed
 	NeverAimed = {
-    "hands"
+    		"hands"
 	}
 
-    function meta:SetSpecialModel( model )
-
-    self:SetNWBool( "specialmodel", true )
-    self:SetModel( model )
-
-    end
+	function meta:SetSpecialModel( model )
+		self:SetNWBool( "specialmodel", true )
+   		self:SetModel( model )
+	end
 
 	
 	function meta:SetAiming( bool )
@@ -43,12 +41,22 @@ if SERVER then
 		if self:GetNWBool( "arrested", false ) then
 			bool = false
 		end
-		if ValidEntity( wep ) then
+		if ValidEntity( wep ) and wep:GetClass() != nil and wep.SetNextPrimaryFire != nil then
 			if table.HasValue( AlwaysAimed, wep:GetClass() ) then
 				bool = true
 			end
 			if table.HasValue( NeverAimed, wep:GetClass() ) then
 				bool = false
+			end
+
+			if bool then
+				if not self.wasAiming then
+					wep:SetNextPrimaryFire( CurTime() + .5 ) -- Slight time to 'aim' weapon before fire.
+				end
+				self.wasAiming = bool
+			else
+				wep:SetNextPrimaryFire( CurTime() + 999999999 )
+				self.wasAiming = bool
 			end
 		end
 		self:DrawViewModel( bool )
@@ -62,8 +70,8 @@ if SERVER then
 	concommand.Add( "toggleholster", HolsterToggle );
 	
 	hook.Add( "PlayerSpawn", "TiramisuAnimSpawnHandle", function( ply )
-    ply:SetAiming( false )
-    ply:SetNWBool( "specialmodel", false )
+		ply:SetAiming( false )
+		ply:SetNWBool( "specialmodel", false )
 		timer.Create( ply:SteamID() .. "TiramisuAimTimer", 0.1, 0, function()
 			if ValidEntity( ply ) then
 				if ply.TiramisuLastWeapon and ValidEntity( ply:GetActiveWeapon() ) and ply:GetActiveWeapon():GetClass() != ply.TiramisuLastWeapon then
@@ -75,7 +83,7 @@ if SERVER then
 					end
 				end
 			end
-		end)
+	end)
 	end)
 
     hook.Add( "PlayerSetModel", "TiramisuSetAnimTrees", function( ply )
