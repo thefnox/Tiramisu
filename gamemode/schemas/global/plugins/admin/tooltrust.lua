@@ -42,6 +42,11 @@ function GM:PlayerSpawnProp(ply, mdl)
 	
 	if CAKE.PlayerRank(ply) <= 2 then
 		
+		if CAKE.GetPlayerField(ply, "tooltrust")  < 1 then -- require tt to spawn stuff.
+			CAKE.SendChat(ply, "You are not allowed to spawn anything!");
+			return false;
+		end
+
 		if(spawntable != nil) then
 		
 			local spawned = 0;
@@ -202,6 +207,16 @@ function GM:PlayerSpawnVehicle(ply)
 	end
 	
 end
+
+function GM:PlayerSpawnNPC( ply, class )
+
+	if CAKE.PlayerRank( ply ) > 0 then 
+		return true 
+	end
+	return false
+
+end
+
 
 function GM:PlayerSpawnEffect(ply, mdl)
 

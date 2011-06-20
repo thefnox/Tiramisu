@@ -50,11 +50,6 @@ if SERVER then
 			if table.HasValue( NeverAimed, wep:GetClass() ) then
 				bool = false
 			end
-			if bool then
-				wep:SetNextPrimaryFire( CurTime() )
-			else
-				wep:SetNextPrimaryFire( CurTime() + 999999 )
-			end
 		end
 		self:DrawViewModel( bool )
 		self:SetNWBool( "aiming", bool )
