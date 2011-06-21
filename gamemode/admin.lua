@@ -47,6 +47,40 @@ function CAKE.PlayerRank(ply)
 	end
 end
 
+function parseAdminArgs(words)
+	curstring = ""
+	instring = false
+	out = {}
+	for k,v in pairs(words) do
+		first, second = string.find(v, "'", 1, true)
+		if first then
+
+			fsplit = string.sub(v, 1, first-1)
+			lsplit = string.sub(v, first+1)
+
+			if fsplit == "\"" or fsplit == "" then fsplit = nil end
+			if lsplit == "\"" or lsplit == "" then lsplit = nil end
+
+			if instring then
+				if fsplit then table.insert(out, curstring .. " " .. fsplit) end
+				if lsplit then table.insert(out, lsplit) end
+				curstring = ""
+				instring = false
+			else
+				if fsplit then table.insert(out, fsplit) end
+				curstring = lsplit or ""
+				instring = true
+			end
+
+		elseif instring then
+			curstring = curstring .. " " .. v
+		else
+			table.insert(out, v)
+		end
+	end
+
+	return out
+end
 -- Syntax is rp_admin command args
 function ccAdmin( ply, cmd, args )
 
@@ -66,6 +100,7 @@ function ccAdmin( ply, cmd, args )
 	local CMDName = args[1]
 	
 	table.remove( args, 1 ); -- Remove the admin command from the arguments
+	args = parseAdminArgs(args)
 	if( ply:EntIndex( ) == 0 ) then -- We're dealing with a console
 		
 		if( CanRunFromConsole ) then
