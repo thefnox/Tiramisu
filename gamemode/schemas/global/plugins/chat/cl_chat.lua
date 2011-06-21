@@ -173,6 +173,15 @@ function PANEL:AddLine( text, channel )
             self.Channels[ "All" ].VBar:SetScroll( 999999 )
         end
     end)
+
+    --Purge previous lines that nobody is going to read.
+    if table.Count( self.Lines ) > 500 then
+        local lastkey = table.GetFirstKey( self.Lines )
+        self.Lines[ lastkey ]["panel"]:Remove()
+        self.Lines[ lastkey ]["panel"] = nil
+        self.Lines[ lastkey ]["timestamp"] = nil
+        self.Lines[ lastkey ] = nil
+    end
 end
 
  
