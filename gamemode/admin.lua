@@ -131,9 +131,6 @@ function ccAdmin( ply, cmd, args )
 	table.remove( args, 1 ); -- Remove the admin command from the arguments
 	args = parseAdminArgs(args)
 	if args == 4 then CAKE.SendChat(ply, "Three quotes in one word? What are you doing.") return end
-	for k,v in pairs(args) do
-		print(v)
-	end
 	if( ply:EntIndex( ) == 0 ) then -- We're dealing with a console
 		
 		if( CanRunFromConsole ) then
