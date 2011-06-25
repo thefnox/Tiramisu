@@ -104,15 +104,6 @@ function GM:PlayerInitialSpawn( ply )
 end
 
 function GM:PlayerLoadout(ply)
-
-	if(ply:GetNWInt("charactercreate") != 1) then
-
-		ply:Give("hands");
-		
-		ply:SelectWeapon("hands");
-		
-	end
-	
 end
 
 function GM:PlayerSpawn( ply )
@@ -149,6 +140,9 @@ function GM:PlayerSpawn( ply )
 	timer.Simple( 1, function()
 		ply:RefreshInventory( )
 	end)
+
+	ply:Give("hands");
+	ply:SelectWeapon("hands");
 	
 	self.BaseClass:PlayerSpawn( ply )
 	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] );

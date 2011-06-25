@@ -92,8 +92,9 @@ function meta:RestoreAmmo()
 
 end
 
-local function WeaponsLoadout( ply ) 
-	
+
+hook.Add( "PlayerLoadout", "TiramisuWeaponsLoadout", function( ply )
+
 	if ply:IsCharLoaded() then
 		if(ply:GetNWInt("charactercreate", 0 ) != 1) then
 			for k, v in pairs( CAKE.GetCharField( ply, "weapons" ) ) do
@@ -107,36 +108,20 @@ local function WeaponsLoadout( ply )
 			ply:RemoveAllAmmo( )
 			ply:RestoreAmmo()
 		end
- 
-		local group = CAKE.GetCharField( ply, "group" )
-		local rank = CAKE.GetCharField( ply, "grouprank" )
-		
-		timer.Simple( 1, function()
-			if CAKE.GetGroupFlag( group, "loadouts" ) then
-				for k, v in pairs( CAKE.GetRankField( group, rank, "loadout" ) or {} ) do
-					if !ply:HasItem( v ) then
-						ply:GiveItem( v )
-						if string.match( v, "weapon" ) then
-							ply:Give( v )
-						end
-					end
-				end
-			end
-		end)
 	end
 
-end
-hook.Add( "PlayerLoadout", "CakeWeaponsLoadout", WeaponsLoadout )
+end )
 
 --AUtomatically saves a player's ammo.
-local function StartTimer( ply )
+hook.Add( "PlayerSpawn", "TiramisuAmmoSaveTimer", function( ply )
+
 	if ply:IsCharLoaded() then
 		timer.Create( "ammosavetimer" .. ply:Nick(), 15, 0, function()
 			ply:SaveAmmo()
 		end)
 	end
-end
-hook.Add( "PlayerSpawn", "CakeAmmoSaveTimer", StartTimer )
+
+end )
 
 function ccDropWeapon( ply, cmd, args )
 	

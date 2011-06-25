@@ -117,13 +117,13 @@ Schemas = {}
 
 usermessage.Hook("addschema", function(data)
 	local schema = data:ReadString()
-	AddRclicks(schema)
-	AddPlugins(schema)
+	CAKE.AddRightClicks(schema)
+	CAKE.AddClientsidePlugins(schema)
 end )
 
 RclickTable = {}
 
-function AddRclicks(schema)
+function CAKE.AddRightClicks(schema)
 	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua" )	
 	for k,v in pairs( list ) do
 		local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/" .. v
@@ -135,28 +135,33 @@ end
 
 CAKE.CLPlugin = {}
 
-function AddPlugins( schema, filename )
+function CAKE.AddClientsidePlugins( schema, filename )
 
-	local tbl = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/*" ) 
-	local list = {}
+	local filename = filename or ""
+	local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/" .. filename
+	local list = file.FindInLua( path .. "*" ) or {}
 
-	for _, folder in pairs( tbl ) do
-	    if folder != "." and folder != ".." then
-	        for k, v in pairs( file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/" .. folder .. "/*.lua" )) do
-                if v:sub( 1, 3 ) == "cl_" or v:sub( 1, 3 ) == "sh_" then
-                   PLUGIN = {} -- Support for shared plugins. 
-                   CLPLUGIN = { }
-                   include( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/" .. folder .. "/" .. v )
-                   CLPLUGIN.Name = CLPLUGIN.Name or CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/" .. folder .. "/" .. v 
-                   CAKE.CLPlugin[CLPLUGIN.Name] = {}
-                   if CLPLUGIN and CLPLUGIN.Init then
-                       	CAKE.CLPlugin[CLPLUGIN.Name].Init = CLPLUGIN.Init or function() end
-                      	CAKE.CLPlugin[CLPLUGIN.Name].Init()
-                   end
-               end
-	        end
-	    end    
+
+	for k, v in pairs( list ) do
+		if v != "." and v != ".." and v != filename then
+			if string.GetExtensionFromFilename( v ) and string.GetExtensionFromFilename( v ) == "lua" then
+				if v:sub( 1, 3 ) == "cl_" or v:sub( 1,3 ) == "sh_" then --Filters out serverside files that may have got sent
+					PLUGIN = {} -- Support for shared plugins. 
+					CLPLUGIN = {}
+					include( path .. v )
+					CLPLUGIN.Name = CLPLUGIN.Name or schema .. "/plugins/" .. filename .. v 
+					CAKE.CLPlugin[CLPLUGIN.Name] = {}
+					if CLPLUGIN and CLPLUGIN.Init then
+						CAKE.CLPlugin[CLPLUGIN.Name].Init = CLPLUGIN.Init or function() end
+					   	CAKE.CLPlugin[CLPLUGIN.Name].Init()
+					end
+				end
+			else --It's a folder
+				 CAKE.AddClientsidePlugins( schema, filename .. v .. "/" )
+			end
+		end
 	end
+
 end
 
 function CAKE.RegisterCharCreate( passedfunc )

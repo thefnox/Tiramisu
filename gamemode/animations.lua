@@ -50,11 +50,6 @@ if SERVER then
 			if table.HasValue( NeverAimed, wep:GetClass() ) then
 				bool = false
 			end
-			if bool then
-				wep:SetNextPrimaryFire( CurTime() )
-			else
-				wep:SetNextPrimaryFire( CurTime() + 999999 )
-			end
 		end
 		self:DrawViewModel( bool )
 		self:SetNWBool( "aiming", bool )
@@ -67,8 +62,8 @@ if SERVER then
 	concommand.Add( "toggleholster", HolsterToggle );
 	
 	hook.Add( "PlayerSpawn", "TiramisuAnimSpawnHandle", function( ply )
-    ply:SetAiming( false )
-    ply:SetNWBool( "specialmodel", false )
+        ply:SetAiming( false )
+        ply:SetNWBool( "specialmodel", false )
 		timer.Create( ply:SteamID() .. "TiramisuAimTimer", 0.1, 0, function()
 			if ValidEntity( ply ) then
 				if ply.TiramisuLastWeapon and ValidEntity( ply:GetActiveWeapon() ) and ply:GetActiveWeapon():GetClass() != ply.TiramisuLastWeapon then
@@ -84,32 +79,32 @@ if SERVER then
 	end)
 
     hook.Add( "PlayerSetModel", "TiramisuSetAnimTrees", function( ply )
-    if !ply:GetNWBool( "specialmodel", false ) then
-        if(ply:IsCharLoaded()) then
-            local m = ""
-            if( CAKE.GetCharField( ply, "gender" ) == "Female" ) then
-            m = "models/tiramisu/animationtrees/alyxanimtree.mdl"
-            ply:SetNWString( "gender", "Female" )
+        if !ply:GetNWBool( "specialmodel", false ) then
+            if(ply:IsCharLoaded()) then
+                local m = ""
+                if( CAKE.GetCharField( ply, "gender" ) == "Female" ) then
+                m = "models/tiramisu/animationtrees/alyxanimtree.mdl"
+                ply:SetNWString( "gender", "Female" )
+                else
+                m = "models/tiramisu/animationtrees/maleanimtree.mdl"
+                ply:SetNWString( "gender", "Male" )
+                end
+                
+                ply:SetModel( m );
             else
-            m = "models/tiramisu/animationtrees/maleanimtree.mdl"
-            ply:SetNWString( "gender", "Male" )
+            ply:SetModel("models/kleiner.mdl");
             end
-            
-            ply:SetModel( m );
-        else
-        ply:SetModel("models/kleiner.mdl");
         end
-    end
     end )
 
     hook.Add( "KeyPress", "TiramisuAimCheck", function(ply, key)
-    if ValidEntity( ply ) and ValidEntity( ply:GetActiveWeapon() ) then
-        if key == IN_ATTACK or key == IN_ATTACK2 then
-        ply:SetAiming( true )
+        if ValidEntity( ply ) and ValidEntity( ply:GetActiveWeapon() ) then
+            if key == IN_ATTACK or key == IN_ATTACK2 then
+                ply:SetAiming( true )
+            end
         end
-    end
     end )
-	
+
 end
 
 function meta:GetAiming()

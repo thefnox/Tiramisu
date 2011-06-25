@@ -20,23 +20,27 @@ function CAKE.LoadPlugin( schema, filename )
 
 	local filename = filename or ""
 	local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/" .. filename
-	local list = file.FindInLua( path .. "/*.lua" ) or {}
+	local list = file.FindInLua( path .. "*" ) or {}
 
 	for k, v in pairs( list ) do
-		--It's a lua file! So it's time to include it according to what it actually is.
 		PLUGIN = {}
-		if v:sub( 1, 3 ) == "cl_" then --It's a clientside file
-			AddResource("lua", "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v )
-			CAKE.DayLog( "script.txt", "Loading clientside plugin " .. filename .. "/" .. v );
-		elseif v:sub( 1,3 ) == "sh_" then --It's a shared file
-			AddResource("lua", "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v )
-			CAKE.DayLog( "script.txt", "Loading shared plugin " .. filename .. "/" .. v );
-			include( "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v  )
-		else --It doesn't have a prefix so we default it to be serverside only
-			CAKE.DayLog( "script.txt", "Loading serverside plugin " .. filename .. "/" .. v );
-			include( "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v  )
-			table.insert( CAKE.Plugins, PLUGIN );
+		if v != "." and v != ".." and v != filename then
+			if string.GetExtensionFromFilename( v ) and string.GetExtensionFromFilename( v ) == "lua" then
+				if v:sub( 1, 3 ) == "cl_" then --It's a clientside file, send it to the client
+					AddResource("lua", "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v )
+				elseif v:sub( 1,3 ) == "sh_" then --It's a shared file, so we add it and include it serverside.
+					AddResource("lua", "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v )
+					CAKE.DayLog( "script.txt", "Loading Shared File: " .. schema .. "/plugins/" .. filename .. v )
+					include( "schemas/" .. schema .. "/plugins/" .. filename .. v )
+				else --It doesn't have a prefix so we default it to be serverside only
+					CAKE.DayLog( "script.txt", "Loading Serverside File: " .. schema .. "/plugins/" .. filename .. v )
+					include( "schemas/" .. schema .. "/plugins/" .. filename .. v )
+				end
+			else --It's a folder
+				CAKE.LoadPlugin( schema, filename .. v .. "/" )
+			end
 		end
+		table.insert( CAKE.Plugins, PLUGIN )
 	end
 	
 end
@@ -46,12 +50,14 @@ function CAKE.InitPlugins( )
 
 	for _, PLUGIN in pairs( CAKE.Plugins ) do
 		
-		PLUGIN.Name = PLUGIN.Name or ""
+		PLUGIN.Name = PLUGIN.Name or "Unnamed Plugin-" .. SysTime()
 
 		CAKE.DayLog("script.txt", "Initializing " .. PLUGIN.Name );
 		
-		if(PLUGIN.Init) then
-			PLUGIN.Init( );
+		if PLUGIN.Init then
+			PLUGIN.Init()
+		elseif PLUGIN.Initialize then
+			PLUGIN.Initialize()
 		end
 		
 	end
