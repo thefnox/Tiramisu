@@ -47,6 +47,69 @@ function CAKE.PlayerRank(ply)
 	end
 end
 
+function parseAdminArgs(words)
+	curstring = ""
+	instring = false
+	out = {}
+	for k,v in pairs(words) do
+		first, a = string.find(v, "'", 1, true)
+		if first then second, a = string.find(v, "'", first+1, true) end
+		if second and string.find(v, "'", second + 1, true) then return 4 end
+		if first and second then
+			if !instring then
+				fsplit = string.sub(v, 1, first-1)
+				lsplit = string.sub(v, first+1, second-1)
+				bsplit = string.sub(v, second+1)
+				
+				if fsplit == "'" or fsplit == " " or fsplit == "" then fsplit = nil end
+				if lsplit == "'" or lsplit == " " or lsplit == "" then lsplit = nil end
+				if bsplit == "'" or bsplit == " " or bsplit == "" then bsplit = nil end
+
+				if fsplit then table.insert(out, fsplit) end
+				if lsplit then table.insert(out, lsplit) end
+				if bsplit then table.insert(out, bsplit) end
+				print(bsplit)
+			else
+				fsplit = string.sub(v, 1, first-1)
+				lsplit = string.sub(v, first+1, second -1)
+				bsplit = string.sub(v, second+1)
+				
+				if fsplit == "'" or fsplit == " " or fsplit == "" then fsplit = nil end
+				if lsplit == "'" or lsplit == " " or lsplit == "" then lsplit = nil end
+				if bsplit == "'" or bsplit == " " or bsplit == "" then bsplit = nil end
+
+				if fsplit then table.insert(out, curstring .. " " .. fsplit) end
+				if lsplit then table.insert(out, lsplit) end
+				curstring = bsplit or ""
+			end
+		elseif first then
+
+			fsplit = string.sub(v, 1, first-1)
+			lsplit = string.sub(v, first+1)
+
+			if fsplit == "'" or fsplit == " " or fsplit == "" then fsplit = nil end
+			if lsplit == "'" or lsplit == " " or lsplit == "" then lsplit = nil end
+
+			if instring then
+				if fsplit then table.insert(out, curstring .. " " .. fsplit) end
+				if lsplit then table.insert(out, lsplit) end
+				curstring = ""
+				instring = false
+			else
+				if fsplit then table.insert(out, fsplit) end
+				curstring = lsplit or ""
+				instring = true
+			end
+
+		elseif instring then
+			curstring = curstring .. " " .. v
+		else
+			table.insert(out, v)
+		end
+	end
+	return out
+end
+
 -- Syntax is rp_admin command args
 function ccAdmin( ply, cmd, args )
 
@@ -66,6 +129,8 @@ function ccAdmin( ply, cmd, args )
 	local CMDName = args[1]
 	
 	table.remove( args, 1 ); -- Remove the admin command from the arguments
+	args = parseAdminArgs(args)
+	if args == 4 then CAKE.SendChat(ply, "Three quotes in one word? What are you doing.") return end
 	if( ply:EntIndex( ) == 0 ) then -- We're dealing with a console
 		
 		if( CanRunFromConsole ) then
