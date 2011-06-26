@@ -143,7 +143,7 @@ function CAKE.AddClientsidePlugins( schema, filename )
 
 
 	for k, v in pairs( list ) do
-		if v != "." and v != ".." and v != filename then
+		if v != "." and v != ".." then
 			if string.GetExtensionFromFilename( v ) and string.GetExtensionFromFilename( v ) == "lua" then
 				if v:sub( 1, 3 ) == "cl_" or v:sub( 1,3 ) == "sh_" then --Filters out serverside files that may have got sent
 					PLUGIN = {} -- Support for shared plugins. 
@@ -157,7 +157,7 @@ function CAKE.AddClientsidePlugins( schema, filename )
 					end
 				end
 			else --It's a folder
-				 CAKE.AddClientsidePlugins( schema, filename .. v .. "/" )
+				CAKE.AddClientsidePlugins( schema, filename .. v .. "/" )
 			end
 		end
 	end

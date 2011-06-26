@@ -14,7 +14,7 @@ function CAKE.LoadItem( schema, filename )
 end
 
 function CAKE.SaveUData( id )
-	savetable = glon.encode(CAKE.UData[id])
+	local savetable = glon.encode(CAKE.UData[id])
 	file.Write( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. id .. ".txt" , savetable);
 end
 
@@ -40,8 +40,8 @@ function CAKE.GetUData(id, key)
 end
 
 function CAKE.CreateItemID()
-	repnum = 0
-	uidfile = file.Read( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" );
+	local repnum = 0
+	local uidfile = file.Read( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" );
 	while(uidfile) do
 		uidfile = file.Read( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" );
 	end

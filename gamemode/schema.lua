@@ -22,15 +22,9 @@ function CAKE.LoadSchema( schema )
 	CAKE.DayLog( "script.txt", "Loading schema " .. SCHEMA.Name .. " by " .. SCHEMA.Author .. " ( " .. SCHEMA.Description .. " )" );
 
 
-	local list = file.FindDir( GM.Folder .. "/gamemode/schemas/" .. schema .. "/plugins/*", true  )
+	-- Use the new plugin system
 
-	for k, v in pairs( list ) do
-
-		if v != "." and v != ".." then
-			CAKE.LoadPlugin( schema, v )
-		end
-		
-	end
+	CAKE.LoadPlugin( schema )
 
 	-- Load the items
 	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/items/*.lua" );

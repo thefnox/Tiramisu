@@ -27,9 +27,9 @@ function CAKE.LoadPlugin( schema, filename )
 		if v != "." and v != ".." and v != filename then
 			if string.GetExtensionFromFilename( v ) and string.GetExtensionFromFilename( v ) == "lua" then
 				if v:sub( 1, 3 ) == "cl_" then --It's a clientside file, send it to the client
-					AddResource("lua", "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v )
+					AddResource("lua", "schemas/" .. schema .. "/plugins/" .. filename .. v )
 				elseif v:sub( 1,3 ) == "sh_" then --It's a shared file, so we add it and include it serverside.
-					AddResource("lua", "schemas/" .. schema .. "/plugins/" .. filename .. "/" .. v )
+					AddResource("lua", "schemas/" .. schema .. "/plugins/" .. filename .. v )
 					CAKE.DayLog( "script.txt", "Loading Shared File: " .. schema .. "/plugins/" .. filename .. v )
 					include( "schemas/" .. schema .. "/plugins/" .. filename .. v )
 				else --It doesn't have a prefix so we default it to be serverside only
