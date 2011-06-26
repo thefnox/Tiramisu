@@ -50,18 +50,20 @@ function noteRead( handler, id, encoded, decoded )
 	LineList:SetAutoSize(false)
 	
 	linetable = string.Explode( "\n", decoded["text"] )
-	align = TEXT_ALIGN_LEFT
 	
 	for k,v in pairs(linetable) do
+		align = TEXT_ALIGN_LEFT
 		print(v)
-		alingstr = v:sub(1, 3)
+		alignstr = v:sub(1, 3)
+		print(alignstr)
 
 		if alignstr == "<r>" then align = TEXT_ALIGN_RIGHT 
 		elseif alignstr == "<c>" then align = TEXT_ALIGN_CENTER end
 
 		if align != TEXT_ALIGN_LEFT then v = v:sub(4) end
 
-		NoteLabel = MarkupLabel( decoded["text"], 630 )
+		NoteLabel = MarkupLabelBook( v, 590, 590 )
+		print(NoteLabel.Str:GetWidth())
 		NoteLabel:SetAlign(align)
 		LineList:AddItem(NoteLabel)
 	end

@@ -36,6 +36,7 @@ function CAKE.GetUData(id, key)
 		CAKE.LoadUData( id )
 	end
 	
+	if !CAKE.UData[id] or !CAKE.UData[id][key] then return nil end
 	return CAKE.UData[id][key]
 end
 

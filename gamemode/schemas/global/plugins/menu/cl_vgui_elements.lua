@@ -483,7 +483,12 @@ end
 function PANEL:Paint( )
 
     if self.Str then
-        self.Str:Draw(2, 0, self.Align, self.VerticalAlign, self.Alpha)
+	if self.BWidth and self.Align == TEXT_ALIGN_CENTER then
+		print(self.BWidth/2)
+		self.Str:Draw((self.BWidth/2)-(self.Str:GetWidth()/2), 0, TEXT_ALIGN_LEFT, self.VerticalAlign, self.Alpha)
+	else
+     		self.Str:Draw(2, 0, self.Align, self.VerticalAlign, self.Alpha)
+	end
     end
 
 end
@@ -553,6 +558,17 @@ function MarkupLabel( strText, width, parent )
         local lbl = vgui.Create( "MarkupLabel", parent )
         lbl:SetWidth( width )
         lbl:SetText( strText )
+        
+        return lbl
+ 
+end
+
+function MarkupLabelBook(strText, width, containerwidth)
+	    
+        local lbl = vgui.Create( "MarkupLabel", parent )
+        lbl:SetWidth( width )
+        lbl:SetText( strText )
+	lbl.BWidth = containerwidth
         
         return lbl
  
