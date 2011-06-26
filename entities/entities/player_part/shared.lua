@@ -14,12 +14,10 @@ function ENT:SetupDataTables()
 	self:DTVar("Int", 3, "headratio" );
 end
 
+function ENT:PhysicsCollide()
+
+end
+
 function ENT:Think()
-	
-	if ValidEntity( self:GetParent() ) and self:GetParent():IsPlayer() then
-		if self:GetParent().CalcIdeal then
-			self:SetSequence( self:GetParent().CalcIdeal )
-		end
-	end
 
 end

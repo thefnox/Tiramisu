@@ -578,6 +578,97 @@ hook.Add( "Initialize", "TiramisuGroupInit", function()
 	
 end)
 
+hook.Add( "PlayerLoadout", "TiramisuGroupWeaponsLoadout", function( ply )
+
+	if ply:IsCharLoaded() then
+		timer.Simple( 1, function()
+			local group = CAKE.GetCharField( ply, "group" )
+			local rank = CAKE.GetCharField( ply, "grouprank" )
+			if CAKE.GetGroupFlag( group, "loadouts" ) then
+				for k, v in pairs( CAKE.GetRankField( group, rank, "loadout" ) or {} ) do
+					if !ply:HasItem( v ) then
+						ply:GiveItem( v )
+						if string.match( v, "weapon" ) then
+							ply:Give( v )
+						end
+					end
+				end
+			end
+		end)
+	end
+
+end)
+
+--Broadcasts a message across the server, if group permissions allow it.
+local function Broadcast( ply, text )
+
+	-- Check to see if the player's team allows broadcasting
+	local group = CAKE.GetCharField( ply, "group" )
+	
+	if( CAKE.GetGroupFlag( group, "canbroadcast" ) ) then
+		
+		for k, v in pairs( player.GetAll( ) ) do
+		
+			CAKE.SendChat( v, "[BROADCAST]: " .. text, "BudgetLabel", "IC" );
+			
+		end
+	
+	end
+	
+	return "";
+	
+end
+
+
+--Sends a group only message.
+local function Radio( ply, text )
+
+	local players = player.GetAll();
+	local heardit = {};
+	local group = CAKE.GetCharField( ply, "group" )
+	local color = CAKE.GetGroupField( group, "radiocolor" ) or Color( 255, 255, 255 )
+
+	if !ply:IsCharLoaded() then return ""; end
+	if !CAKE.GroupExists( group ) then return ""; end
+
+	for _, target in pairs(player.GetAll()) do
+		if target:IsCharLoaded() then
+			if( CAKE.GetCharField( target, "group" ) == group ) then
+				/*
+				if v2 != ply then
+					CAKE.AddRadioLine( v2, "[RADIO] " .. ply:Nick() .. ": " .. text, CAKE.GetGroupFlag( group, "radiocolor" ) or Color( 255, 255, 255 ) );
+					else
+					CAKE.AddRadioLine( v2, "[RADIO] " .. ply:Nick() .. ": " .. text, Color( 255, 0, 0 ) );
+						
+					end*/
+				datastream.StreamToClients( target, "TiramisuAddToRadio", {
+					["text"] = "<color=white>[RADIO]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.b ) .. "," .. tostring( color.g ) .. ">" .. ply:Nick() .. "</color><color=white>: " .. text .. "</color>" 
+				})
+				table.insert(heardit, target);
+			end
+		end
+	end
+
+	for k, v in pairs(players) do
+		
+		if(!table.HasValue(heardit, v)) then
+		
+			local range = CAKE.ConVars[ "TalkRange" ]
+			
+			if( v:EyePos( ):Distance( ply:EyePos( ) ) <= range ) then
+			
+				CAKE.SendChat( v, ply:Nick() .. ": " .. text, "ChatFont", "IC" );
+				
+			end
+			
+		end
+		
+	end
+	
+	return "";
+
+end
+
 --rp_admin forcejoin playername groupname [rank]. Rank is optional, will default to the group's DefaultRank.
 function Admin_ForceJoin( ply, cmd, args )
 	
@@ -613,4 +704,7 @@ function PLUGIN.Init( )
 
 	CAKE.AdminCommand( "forcejoin", Admin_ForceJoin, "Force a player into a group at a set rank.", true, true, 3 );
 	CAKE.AdminCommand( "giverankbis", Admin_GiveRankBusiness, "Gives a player created group's rank business.", true, true, 4 );
+	CAKE.ChatCommand( "/bc", Broadcast ); -- Broadcast
+	CAKE.ChatCommand( "/r", Radio ); -- Radio
+	CAKE.ChatCommand( "/radio", Radio );
 end
