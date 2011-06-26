@@ -332,7 +332,7 @@ Anims.Female[ "models" ] = {
 	"models/Tiramisu/AnimationTrees/alyxanimtree.mdl"
 }
 Anims.Female[ "default" ] = { 
-    [ "idle" ] = "&switch:models/tiramisu/animationtrees/alyxanimtree.mdl;ACT_IDLE",
+    [ "idle" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_IDLE",
     [ "walk" ] = "&switch:models/tiramisu/animationtrees/alyxanimtree.mdl;ACT_WALK",
     [ "run" ] = "&switch:models/tiramisu/animationtrees/alyxanimtree.mdl;ACT_RUN",
     [ "jump" ] = "&switch:models/tiramisu/animationtrees/alyxanimtree.mdl;ACT_JUMP",
