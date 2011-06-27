@@ -250,8 +250,8 @@ local function SpawnClothingHook( ply )
 
 	--This is a kinda ridiculous override I use for gear that uses bonemerge. It's the only way to allow gear with bones to be rendered manually.
 	if !ply.BonemergeGearEntity or ply.BonemergeGearEntity:GetParent() != ply then
-		ply.BonemergeGearEntity = ents.Create( "prop_physics" )
-		ply.BonemergeGearEntity:SetPos( ply:GetPos() + Vector( 0, 0, 80 ) )
+		ply.BonemergeGearEntity = ents.Create( "player_gearhandler" )
+		ply.BonemergeGearEntity:SetPos( ply:GetPos() + ply:GetUp() * 80 )
 		ply.BonemergeGearEntity:SetAngles( ply:GetAngles() )
 		ply.BonemergeGearEntity:SetModel("models/tiramisu/gearhandler.mdl")
 		ply.BonemergeGearEntity:SetParent( ply )
