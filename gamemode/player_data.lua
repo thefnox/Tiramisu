@@ -119,6 +119,12 @@ function CAKE.LoadPlayerDataFile( ply )
 		
 			for k, v in pairs( char ) do
 			
+				if k == "inventory" and #v > 0 and type(v[#v]) == "string" then
+					for i, item in pairs(v) do
+						v[i] = {item, CAKE.CreateItemID()}
+					end
+				end
+
 				if( CAKE.CharacterDataFields[ k ] == nil ) then
 				
 					CAKE.DayLog( "script.txt", "Invalid character data field '" .. tostring( _ ) .. "' in character " .. ply:SteamID( ) .. "-" .. _ .. ", removing." );

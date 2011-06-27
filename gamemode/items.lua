@@ -87,6 +87,55 @@ function ccDropItem( ply, cmd, args )
 	
 		local inv = CAKE.GetCharField( ply, "inventory" );
 		for k, v in pairs( inv ) do
+			print(v[2] .. args[1])
+			if v[2] == args[1] then
+				if( string.match( v[1], "weapon" ) )then
+					CAKE.DropWeapon( ply, args[ 1 ] )
+					CAKE.RemoveGearItem( ply, args[ 1 ] )
+					ply:RefreshInventory( )
+					CAKE.CalculateEncumberment( ply )
+					return
+				end
+				CAKE.RestoreClothing( ply )
+				CAKE.RestoreGear( ply )
+				CAKE.CreateItem( v[1], ply:CalcDrop( ), Angle( 0,0,0 ), v[2] );
+				ply:TakeItemID( args[ 1 ] );
+				CAKE.CalculateEncumberment( ply )	
+				ply:RefreshInventory( )
+				return
+			end
+		end
+end
+concommand.Add( "rp_dropitem", ccDropItem );
+
+function ccDropItemUnspecific( ply, cmd, args )
+	
+		local inv = CAKE.GetCharField( ply, "inventory" );
+		for k, v in pairs( inv ) do
+			if v[1] == args[1] then
+				if( string.match( v[1], "weapon" ) )then
+					CAKE.DropWeapon( ply, args[ 1 ] )
+					CAKE.RemoveGearItem( ply, args[ 1 ] )
+					ply:RefreshInventory( )
+					CAKE.CalculateEncumberment( ply )
+					return
+				end
+				CAKE.RestoreClothing( ply )
+				CAKE.RestoreGear( ply )
+				CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ), v[2] );
+				ply:TakeItem( args[ 1 ] );
+				CAKE.CalculateEncumberment( ply )	
+				ply:RefreshInventory( )
+				return
+			end
+		end
+end
+concommand.Add( "rp_dropitemunspecific", ccDropItemUnspecific );
+
+function ccDropAllItem( ply, cmd, args )
+	
+		local inv = CAKE.GetCharField( ply, "inventory" );
+		for k, v in pairs( inv ) do
 			if( v[1] == args[ 1 ] ) then
 				if( string.match( v[1], "weapon" ) )then
 					CAKE.DropWeapon( ply, args[ 1 ] )
@@ -107,7 +156,7 @@ function ccDropItem( ply, cmd, args )
 	ply:RefreshInventory( )
 	
 end
-concommand.Add( "rp_dropitem", ccDropItem );
+concommand.Add( "rp_dropallitem", ccDropAllItem );
 
 function ccPickupItem( ply, cmd, args )
 
@@ -232,6 +281,22 @@ function meta:TakeItem( class )
 	
 end
 
+
+function meta:TakeItemID( id )
+	local inv = CAKE.GetCharField(self, "inventory" );
+	
+	for k, v in pairs( inv ) do
+		if( v[2] == id ) then
+			inv[ k ] = nil;
+			CAKE.SetCharField( self, "inventory", inv);
+			CAKE.DayLog( "economy.txt", "Removing item '" .. v[1] .. "' from " .. CAKE.FormatCharString( self ) .. " inventory" );
+			return v[1];
+		end
+	end
+	CAKE.CalculateEncumberment( self )
+	
+end
+
 function meta:RefreshInventory( )
 
 	local newtbl = {}
@@ -246,13 +311,18 @@ function meta:RefreshInventory( )
 				newtbl[k].Description = CAKE.ItemData[ v[1] ].Description or "Grab a programmer!"
 				newtbl[k].Model = CAKE.ItemData[ v[1] ].Model or "models/error.mdl"
 				newtbl[k].Unusable = CAKE.ItemData[ v[1] ].Unusable or false
+				if CAKE.ItemData[ v[1] ].Stack == nil then newtbl[k].Stack = true
+				else newtbl[k].Stack = CAKE.ItemData[ v[1] ].Stack end
+				newtbl[k].ID = v[2]
 			else
 				newtbl[k] = {}
-				newtbl[k].Name = "Error Item: " .. v 
+				newtbl[k].Name = "Error Item: " .. v[1]
 				newtbl[k].Class = v[1]
 				newtbl[k].Description = "Grab a programmer!"
 				newtbl[k].Model = "models/error.mdl"
 				newtbl[k].Unusable = true
+				newtbl[k].Stack = true
+				newtbl[k].ID = v[2]
 				table.remove( inventory, k )
 			end
 		end

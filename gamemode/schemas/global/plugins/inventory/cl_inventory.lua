@@ -281,7 +281,8 @@ function PANEL:SetItem( item, amount )
 		self.Icon = vgui.Create( "InventorySlot_Icon", self )
 		self:SetIconSize( self.IconSize )
 	end
-	self:SetToolTip( item.Name .. ":\n" .. item.Description )
+	if item.Description != "" then self:SetToolTip( item.Name .. "\n" .. item.Description )
+	else self:SetToolTip( item.Name ) end
 	self.Icon:SetModel( item.Model )
 	self:SetAmount( amount or 1 )
 	self:OnUseItem( item, amount )
@@ -345,8 +346,18 @@ end
 --Utility to handle item dropping.
 function PANEL:DropItem()
 	if self.Item then
-		LocalPlayer():ConCommand("rp_dropitem " .. self:GetItem().Class )
+		if !self:GetItem().Stack then
+			LocalPlayer():ConCommand("rp_dropitem " .. self:GetItem().ID )
+		else
+			LocalPlayer():ConCommand("rp_dropitemunspecific " .. self:GetItem().Class )
+		end
 		self:RemoveItem()
+	end
+end
+
+function PANEL:DropAllItem()
+	if self.Item then
+		LocalPlayer():ConCommand("rp_dropallitem " .. self:GetItem().Class )
 	end
 end
 
@@ -435,6 +446,7 @@ end
 function PANEL:OpenMenu()
 	local ContextMenu = DermaMenu()
 		ContextMenu:AddOption("Drop", function() self:DropItem() end)
+		if self.Amount > 1 then ContextMenu:AddOption("Drop All", function() self:DropAllItem() end) end
 		if !self:GetItem().Unusable then
 			ContextMenu:AddOption("Use", function() self:UseItem() end)
 		end
@@ -525,7 +537,10 @@ datastream.Hook("addinventory", function(handler, id, encoded, decoded )
 	InventoryTable = decoded
 
 	for k, v in pairs( decoded ) do
-		if CalculateItemPosition( v.Class ) and CAKE.InventorySlot[ CalculateItemPosition( v.Class ) ] then
+		if !v.Stack then
+			print "BIGSEXY"
+			CAKE.InventorySlot[ AvailableSlot( ) ]:AddItem( v )
+		elseif CalculateItemPosition( v.Class ) and CAKE.InventorySlot[ CalculateItemPosition( v.Class ) ] then
 			CAKE.InventorySlot[ CalculateItemPosition( v.Class ) ]:AddItem( v ) 
 		end
 	end
