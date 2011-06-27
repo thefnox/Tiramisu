@@ -362,8 +362,11 @@ function PANEL:DropAllItem()
 end
 
 --Utility to handle item using.
-function PANEL:UseItem()
-	if self.Item and !self:GetItem().Unusable then
+function PANEL:UseItem(dofunc)
+	if self.Item and dofunc then
+		LocalPlayer():ConCommand("rp_useinventory " .. self:GetItem().Class .. " " .. dofunc )
+		self:RemoveItem()
+	elseif self.Item and !self:GetItem().Unusable then
 		LocalPlayer():ConCommand("rp_useinventory " .. self:GetItem().Class )
 		self:RemoveItem()
 	end
@@ -445,11 +448,14 @@ end
 ---------------------------------------------------------*/
 function PANEL:OpenMenu()
 	local ContextMenu = DermaMenu()
-		ContextMenu:AddOption("Drop", function() self:DropItem() end)
-		if self.Amount > 1 then ContextMenu:AddOption("Drop All", function() self:DropAllItem() end) end
 		if !self:GetItem().Unusable then
 			ContextMenu:AddOption("Use", function() self:UseItem() end)
 		end
+		for k,v in pairs(self:GetItem().RightClick) do
+			ContextMenu:AddOption( k, function() self:UseItem(v) end)
+		end
+		ContextMenu:AddOption("Drop", function() self:DropItem() end)
+		if self.Amount > 1 then ContextMenu:AddOption("Drop All", function() self:DropAllItem() end) end
 	ContextMenu:Open()
 end
 

@@ -218,6 +218,8 @@ concommand.Add( "rp_useitem", ccUseItem );
 
 function ccUseOnInventory( ply, cmd, args )
 	id = ply:HasItem( args [ 1 ] )
+	print( args [ 2 ] )
+	if args [ 2 ] then funcrun = args [ 2 ] end
 	
 	if id then
 		local item = CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ), id )
@@ -233,7 +235,12 @@ function ccUseOnInventory( ply, cmd, args )
 			else
 				
 				ply:TakeItem( item.Class )
-				item:UseItem( ply );
+				if funcrun then
+					funcrun = CAKE.ItemData[ args [ 1 ] ][funcrun]
+					funcrun(item, ply );
+				else
+					item:UseItem( ply );
+				end
 			end
 			
 		end
@@ -310,7 +317,8 @@ function meta:RefreshInventory( )
 				newtbl[k].Class = CAKE.ItemData[ v[1] ].Class or "error"
 				newtbl[k].Description = CAKE.ItemData[ v[1] ].Description or "Grab a programmer!"
 				newtbl[k].Model = CAKE.ItemData[ v[1] ].Model or "models/error.mdl"
-				newtbl[k].Unusable = CAKE.ItemData[ v[1] ].Unusable or false
+				newtbl[k].Unusable = CAKE.ItemData[ v[1] ].Unuseable or false
+				newtbl[k].RightClick = CAKE.ItemData[ v[1] ].RightClick or {}
 				if CAKE.ItemData[ v[1] ].Stack == nil then newtbl[k].Stack = true
 				else newtbl[k].Stack = CAKE.ItemData[ v[1] ].Stack end
 				newtbl[k].ID = v[2]
@@ -320,7 +328,8 @@ function meta:RefreshInventory( )
 				newtbl[k].Class = v[1]
 				newtbl[k].Description = "Grab a programmer!"
 				newtbl[k].Model = "models/error.mdl"
-				newtbl[k].Unusable = true
+				newtbl[k].Unuseable = true
+				newtbl[k].RightClick = CAKE.ItemData[ v[1] ].RightClick or {}
 				newtbl[k].Stack = true
 				newtbl[k].ID = v[2]
 				table.remove( inventory, k )
