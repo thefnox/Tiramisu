@@ -448,6 +448,7 @@ end
 ---------------------------------------------------------*/
 function PANEL:OpenMenu()
 	local ContextMenu = DermaMenu()
+		print(self:GetItem().Unusable)
 		if !self:GetItem().Unusable then
 			ContextMenu:AddOption("Use", function() self:UseItem() end)
 		end
@@ -544,7 +545,6 @@ datastream.Hook("addinventory", function(handler, id, encoded, decoded )
 
 	for k, v in pairs( decoded ) do
 		if !v.Stack then
-			print "BIGSEXY"
 			CAKE.InventorySlot[ AvailableSlot( ) ]:AddItem( v )
 		elseif CalculateItemPosition( v.Class ) and CAKE.InventorySlot[ CalculateItemPosition( v.Class ) ] then
 			CAKE.InventorySlot[ CalculateItemPosition( v.Class ) ]:AddItem( v ) 

@@ -6,7 +6,7 @@ ITEM.Purchaseable = true;
 ITEM.Price = 50;
 ITEM.ItemGroup = 1;
 ITEM.Stack = false
-ITEM.Unuseable = true
+ITEM.Unusable = true
 ITEM.RightClick = {
 	["Write"] = "Write"
 }

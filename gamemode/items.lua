@@ -317,7 +317,7 @@ function meta:RefreshInventory( )
 				newtbl[k].Class = CAKE.ItemData[ v[1] ].Class or "error"
 				newtbl[k].Description = CAKE.ItemData[ v[1] ].Description or "Grab a programmer!"
 				newtbl[k].Model = CAKE.ItemData[ v[1] ].Model or "models/error.mdl"
-				newtbl[k].Unusable = CAKE.ItemData[ v[1] ].Unuseable or false
+				newtbl[k].Unusable = CAKE.ItemData[ v[1] ].Unusable or false
 				newtbl[k].RightClick = CAKE.ItemData[ v[1] ].RightClick or {}
 				if CAKE.ItemData[ v[1] ].Stack == nil then newtbl[k].Stack = true
 				else newtbl[k].Stack = CAKE.ItemData[ v[1] ].Stack end
@@ -328,7 +328,7 @@ function meta:RefreshInventory( )
 				newtbl[k].Class = v[1]
 				newtbl[k].Description = "Grab a programmer!"
 				newtbl[k].Model = "models/error.mdl"
-				newtbl[k].Unuseable = true
+				newtbl[k].Unusable = true
 				newtbl[k].RightClick = CAKE.ItemData[ v[1] ].RightClick or {}
 				newtbl[k].Stack = true
 				newtbl[k].ID = v[2]
