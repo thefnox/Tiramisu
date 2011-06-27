@@ -58,7 +58,7 @@ end
 
 function CAKE.HasSavedData( ply )
 
-	if( file.Exists( CAKE.Name .. "/playersaves/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" ) ) then
+	if( file.Exists( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" ) ) then
 		return true
 	end
 		
@@ -78,7 +78,7 @@ function CAKE.LoadPlayerDataFile( ply )
 		CAKE.DayLog( "script.txt", "Loading player data file for " .. ply:SteamID( ) );
 		
 		-- Read the data from their data file
-		local Data_Raw = file.Read( CAKE.Name .. "/playersaves/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" );
+		local Data_Raw = file.Read( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" );
 		
 		-- Convert the data into a table
 		local Data_Table = CAKE.NilFix(glon.decode( Data_Raw ), { });
@@ -293,7 +293,7 @@ end
 function CAKE.SavePlayerData( ply )
 	if ValidEntity( ply ) then
 		local keys = glon.encode(CAKE.PlayerData[CAKE.FormatText( ply:SteamID() )]);
-		file.Write( CAKE.Name .. "/playersaves/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" , keys);
+		file.Write( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" , keys);
 	end
 end
 
