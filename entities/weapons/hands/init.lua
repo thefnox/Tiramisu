@@ -7,6 +7,10 @@ SWEP.AutoSwitchFrom		= false
 function SWEP:Reload()
 end
 
+function SWEP:CanPrimaryAttack()
+	return false
+end
+
 function SWEP:PrimaryAttack()
 end
 
