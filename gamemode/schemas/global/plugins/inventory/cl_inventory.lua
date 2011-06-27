@@ -448,7 +448,6 @@ end
 ---------------------------------------------------------*/
 function PANEL:OpenMenu()
 	local ContextMenu = DermaMenu()
-		print(self:GetItem().Unusable)
 		if !self:GetItem().Unusable then
 			ContextMenu:AddOption("Use", function() self:UseItem() end)
 		end

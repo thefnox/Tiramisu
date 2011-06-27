@@ -87,7 +87,6 @@ function ccDropItem( ply, cmd, args )
 	
 		local inv = CAKE.GetCharField( ply, "inventory" );
 		for k, v in pairs( inv ) do
-			print(v[2] .. args[1])
 			if v[2] == args[1] then
 				if( string.match( v[1], "weapon" ) )then
 					CAKE.DropWeapon( ply, args[ 1 ] )
@@ -218,7 +217,6 @@ concommand.Add( "rp_useitem", ccUseItem );
 
 function ccUseOnInventory( ply, cmd, args )
 	id = ply:HasItem( args [ 1 ] )
-	print( args [ 2 ] )
 	if args [ 2 ] then funcrun = args [ 2 ] end
 	
 	if id then

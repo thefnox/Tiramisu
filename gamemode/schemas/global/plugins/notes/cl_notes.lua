@@ -53,9 +53,7 @@ function noteRead( handler, id, encoded, decoded )
 	
 	for k,v in pairs(linetable) do
 		align = TEXT_ALIGN_LEFT
-		print(v)
 		alignstr = v:sub(1, 3)
-		print(alignstr)
 
 		if alignstr == "<r>" then align = TEXT_ALIGN_RIGHT 
 		elseif alignstr == "<c>" then align = TEXT_ALIGN_CENTER end
@@ -63,7 +61,6 @@ function noteRead( handler, id, encoded, decoded )
 		if align != TEXT_ALIGN_LEFT then v = v:sub(4) end
 
 		NoteLabel = MarkupLabelBook( v, 590, 590 )
-		print(NoteLabel.Str:GetWidth())
 		NoteLabel:SetAlign(align)
 		LineList:AddItem(NoteLabel)
 	end
