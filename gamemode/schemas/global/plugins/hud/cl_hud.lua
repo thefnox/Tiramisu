@@ -45,11 +45,16 @@ end
 
 function DrawTargetInfo( )
 	
-	local tr = LocalPlayer( ):GetEyeTrace( )
+	local ang = gui.ScreenToVector(gui.MouseX(), gui.MouseY());
+	local tracedata = {}
+	tracedata.start = campos
+	tracedata.endpos = campos+(ang*300)
+	tracedata.filter = LocalPlayer()
+	local tr = util.TraceLine(tracedata)
 	
 	if( !tr.HitNonWorld ) then return; end
 	
-	if( tr.Entity:GetClass( ) == "item_prop" and tr.Entity:GetPos( ):Distance( LocalPlayer( ):GetPos( ) ) < 100 ) then
+	if( tr.Entity:GetClass( ) == "item_prop" and tr.Entity:GetPos( ):Distance( campos ) < 200 ) then
 	
 		local screenpos = tr.Entity:GetPos( ):ToScreen( )
 		draw.DrawText( tr.Entity:GetNWString( "Name" ), "ChatFont", screenpos.x + 2, screenpos.y + 2, Color( 0, 0, 0, 255 ), 1 );	
@@ -81,6 +86,13 @@ end)
 
 --Context Button Initialization
 
+CAKE.ItemData = {}
+
+function NItemData( handler, id, encoded, decoded )
+	CAKE.ItemData[decoded.Class] = decoded 
+end
+datastream.Hook( "NetworkItemData", NItemData )
+
 function InitHiddenButton()
 	HiddenButton = vgui.Create("DButton") -- HOLY SHIT WHAT A HACKY METHOD FO SHO
 	HiddenButton:SetSize(ScrW(), ScrH());
@@ -88,13 +100,24 @@ function InitHiddenButton()
 	HiddenButton:SetDrawBackground(false);
 	HiddenButton:SetDrawBorder(false);
 	HiddenButton.DoRightClick = function()
-		local Vect = gui.ScreenToVector(gui.MouseX(), gui.MouseY());
-		local trace = LocalPlayer():GetEyeTrace( )
+		local ang = gui.ScreenToVector(gui.MouseX(), gui.MouseY());
+		local tracedata = {}
+		tracedata.start = campos
+		tracedata.endpos = campos+(ang*1000)
+		tracedata.filter = LocalPlayer()
+		local trace = util.TraceLine(tracedata)
 		
-		if(trace.HitNonWorld) and trace.StartPos:Distance( trace.HitPos ) <= 400 then
+		if(trace.HitNonWorld) and trace.StartPos:Distance( trace.HitPos ) <= 200 then
 			local target = trace.Entity;
 			local ContextMenu = DermaMenu()
 			
+				--if target:GetClass() == "item_prop" then
+				--	item = CAKE.ItemData[target:GetNWString("Class")]
+				--	for k,v in pairs(item.RightClick) do
+				--		ContextMenu:AddOption(k, function() LocalPlayer():ConCommand("rp_useitem " ..target:EntIndex().. " " .. v) end)
+				--	end
+				--end
+
 				for k,v in pairs (RclickTable) do
 					if v.Condition(target) then ContextMenu:AddOption(v.Name, function() v.Click(target, LocalPlayer()) end) end
 				end
