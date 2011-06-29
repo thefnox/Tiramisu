@@ -1,4 +1,5 @@
 function ccWrite(ply, cmd, args)
+	
 	WriteMenu = vgui.Create( "DFrameTransparent" )
 	WriteMenu:SetSize( 640, 480 )
 	WriteMenu:SetTitle( "Write" )
@@ -27,10 +28,12 @@ function ccWrite(ply, cmd, args)
 	end
 
 	WriteMenu:MakePopup()
+
 end
 concommand.Add( "rp_write", ccWrite )
 
 function noteRead( handler, id, encoded, decoded )
+
 	ReadMenu = vgui.Create( "DFrameTransparent" )
 	ReadMenu:SetSize( 640, 480 )
 	ReadMenu:SetTitle( decoded["title"] )
@@ -49,11 +52,11 @@ function noteRead( handler, id, encoded, decoded )
 	LineList:EnableVerticalScrollbar(true);
 	LineList:SetAutoSize(false)
 	
-	linetable = string.Explode( "\n", decoded["text"] )
+	local linetable = string.Explode( "\n", decoded["text"] )
 	
 	for k,v in pairs(linetable) do
-		align = TEXT_ALIGN_LEFT
-		alignstr = v:sub(1, 3)
+		local align = TEXT_ALIGN_LEFT
+		local alignstr = v:sub(1, 3)
 
 		if alignstr == "<r>" then align = TEXT_ALIGN_RIGHT 
 		elseif alignstr == "<c>" then align = TEXT_ALIGN_CENTER end
