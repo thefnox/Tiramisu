@@ -117,8 +117,15 @@ function CAKE.LoadPlayerDataFile( ply )
 		-- If any values were loaded and they aren't in the DataFields table, delete them from the character.
 		for _, char in pairs( CharTable ) do
 		
-			for k, v in pairs( char ) do
+			for k, v in pairs( char["inventory"] ) do
+				if type(v) == "string" then
+					char["inventory"][k] = {v, CAKE.CreateItemID()}
+				else
+					return
+				end
+			end
 
+			for k, v in pairs( char ) do
 
 				if( CAKE.CharacterDataFields[ k ] == nil ) then
 				

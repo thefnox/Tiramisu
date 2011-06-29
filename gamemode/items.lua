@@ -147,11 +147,12 @@ function ccDropAllItem( ply, cmd, args )
 					ply:RefreshInventory( )
 					CAKE.CalculateEncumberment( ply )
 					return
+				else
+					CAKE.RestoreClothing( ply )
+					CAKE.RestoreGear( ply )
+					CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ), v[2] );
+					ply:TakeItem( args[ 1 ] );
 				end
-				CAKE.RestoreClothing( ply )
-				CAKE.RestoreGear( ply )
-				CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ), v[2] );
-				ply:TakeItem( args[ 1 ] );
 			end
 		end
 	
@@ -230,7 +231,7 @@ function ccUseOnInventory( ply, cmd, args )
 				end
 
 				if( string.match( item.Class, "weapon" ) ) then
-					--ply:Give( item.Class )
+					ply:Give( item.Class )
 				end
 				item:Pickup( ply );
 
