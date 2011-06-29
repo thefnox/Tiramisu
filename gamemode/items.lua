@@ -4,6 +4,7 @@ CAKE.UData = {  };
 function CAKE.LoadItem( schema, filename )
 
 	local path = "schemas/" .. schema .. "/items/" .. filename;
+	AddResource("lua", path)
 	
 	ITEM = {  };
 	
@@ -49,8 +50,8 @@ function CAKE.CreateItemID()
 	return os.time() .. repnum
 end
 
-function CAKE.SendItemData( ply, class )
-	datastream.StreamToClients( ply, "NetworkItemData", CAKE.ItemData[class] );
+function CAKE.SendItemData( ply )
+	datastream.StreamToClients( ply, "NetworkItemData", CAKE.ItemData );
 end
 
 function CAKE.CreateItem( class, pos, ang, id )
@@ -69,21 +70,18 @@ function CAKE.CreateItem( class, pos, ang, id )
 	else
 		item:SetModel( itemtable.Model );
 	end
+
+	for k, v in pairs( itemtable ) do
+		item[ k ] = v;
+	end
+
 	item:SetAngles( ang );
 	item:SetPos( pos );
 	
-	for k, v in pairs( itemtable ) do
-		item[ k ] = v;
-		if( type( v ) == "string" ) then
-			item:SetNWString( k, v );
-		end
-	end
-	
-	if !itemtable.Usable then item:SetNWBool("usable", false) else
-	item:SetNWBool("usable", true) end
+	item:SetNWString("Name", CAKE.GetUData(id, "name") or itemtable.Name)
+	item:SetNWString("Class", itemtable.Class)
 	item:SetNWString("id", id)
 	
-	CAKE.SendItemData( player.GetAll(), class )
 	item:Spawn( );
 	item:Activate( );
 	return item
@@ -173,14 +171,6 @@ function ccPickupItem( ply, cmd, args )
 			if ply:ItemHasFlag( item.Class , "extracargo" ) then
 				CAKE.SetCharField( ply, "extracargo", tonumber( ply:GetFlagValue( item.Class, "extracargo" ) ) )
 			end
-			if( string.match( item.Class, "weapon" ) ) then
-				if !table.HasValue( CAKE.GetCharField( ply, "weapons" ), item.Class) then
-					local weapons = CAKE.GetCharField( ply, "weapons" )
-					table.insert( weapons, item.Class )
-					CAKE.SetCharField( ply, "weapons", weapons )
-				end
-				ply:Give( item.Class )
-			end
 			if string.match( item.Class, "zipties" ) then
 				ply:Give( item.Class )
 			end
@@ -229,13 +219,25 @@ function ccUseOnInventory( ply, cmd, args )
 	if id then
 		local item = CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ), id )
 		
+		if item.Unusable == true then item:Remove() end
+
 		if( item != nil and item:IsValid( ) and item:GetClass( ) == "item_prop" ) then
 			
 			if( string.match( item.Class, "clothing" ) or string.match( item.Class, "helmet" ) or string.match( item.Class, "weapon" ) ) then
+				print("FIRST")
+				for k,v in pairs(CAKE.GetCharField(ply, "inventory")) do
+					PrintTable(v)
+				end
+
 				if( string.match( item.Class, "weapon" ) ) then
-					ply:Give( item.Class )
+					--ply:Give( item.Class )
 				end
 				item:Pickup( ply );
+
+				print("THEN")
+				for k,v in pairs(CAKE.GetCharField(ply, "inventory")) do
+					PrintTable(v)
+				end
 				CAKE.SavePlayerData( ply )
 			else
 				
@@ -318,25 +320,10 @@ function meta:RefreshInventory( )
 		if v then
 			if CAKE.ItemData[ v[1] ] then
 				newtbl[k] = {}
-				newtbl[k].Name = CAKE.GetUData( v[2], "name" ) or CAKE.ItemData[ v[1] ].Name or "Error Item"
+				newtbl[k].Name = CAKE.GetUData( v[2], "name" )
 				newtbl[k].Class = CAKE.ItemData[ v[1] ].Class or "error"
-				newtbl[k].Description = CAKE.ItemData[ v[1] ].Description or "Grab a programmer!"
-				newtbl[k].Model = CAKE.ItemData[ v[1] ].Model or "models/error.mdl"
-				newtbl[k].Unusable = CAKE.ItemData[ v[1] ].Unusable or false
-				newtbl[k].RightClick = CAKE.ItemData[ v[1] ].RightClick or {}
-				if CAKE.ItemData[ v[1] ].Stack == nil then newtbl[k].Stack = true
-				else newtbl[k].Stack = CAKE.ItemData[ v[1] ].Stack end
 				newtbl[k].ID = v[2]
 			else
-				newtbl[k] = {}
-				newtbl[k].Name = "Error Item: " .. v[1]
-				newtbl[k].Class = v[1]
-				newtbl[k].Description = "Grab a programmer!"
-				newtbl[k].Model = "models/error.mdl"
-				newtbl[k].Unusable = true
-				newtbl[k].RightClick = {}
-				newtbl[k].Stack = true
-				newtbl[k].ID = v[2]
 				table.remove( inventory, k )
 			end
 		end

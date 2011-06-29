@@ -90,7 +90,6 @@ function GM:PlayerInitialSpawn( ply )
 		umsg.End()
 	end
 
-	
 	-- Set some default variables
 	ply.Ready = false;
 	ply:SetNWBool( "chatopen", false );
@@ -137,7 +136,7 @@ function GM:PlayerSpawn( ply )
 		end
 	end)
 
-	timer.Simple( 1, function()
+	timer.Simple( .5, function()
 		ply:RefreshInventory( )
 	end)
 

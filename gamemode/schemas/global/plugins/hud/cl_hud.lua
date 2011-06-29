@@ -86,13 +86,6 @@ end)
 
 --Context Button Initialization
 
-CAKE.ItemData = {}
-
-function NItemData( handler, id, encoded, decoded )
-	CAKE.ItemData[decoded.Class] = decoded 
-end
-datastream.Hook( "NetworkItemData", NItemData )
-
 function InitHiddenButton()
 	HiddenButton = vgui.Create("DButton") -- HOLY SHIT WHAT A HACKY METHOD FO SHO
 	HiddenButton:SetSize(ScrW(), ScrH());
@@ -111,12 +104,12 @@ function InitHiddenButton()
 			local target = trace.Entity;
 			local ContextMenu = DermaMenu()
 			
-				--if target:GetClass() == "item_prop" then
-				--	item = CAKE.ItemData[target:GetNWString("Class")]
-				--	for k,v in pairs(item.RightClick) do
-				--		ContextMenu:AddOption(k, function() LocalPlayer():ConCommand("rp_useitem " ..target:EntIndex().. " " .. v) end)
-				--	end
-				--end
+				if target:GetClass() == "item_prop" then
+					item = CAKE.ItemData[target:GetNWString("Class")]
+					for k,v in pairs(item.RightClick or {}) do
+						ContextMenu:AddOption(k, function() LocalPlayer():ConCommand("rp_useitem " ..target:EntIndex().. " " .. v) end)
+					end
+				end
 
 				for k,v in pairs (RclickTable) do
 					if v.Condition(target) then ContextMenu:AddOption(v.Name, function() v.Click(target, LocalPlayer()) end) end

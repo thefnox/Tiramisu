@@ -64,7 +64,7 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 				tracedata.filter = ignoreent
 				trace = util.TraceLine(tracedata)  
 	          		pos = newpos
-				newpos = LerpVector( 0.3, pos, trace.HitPos )
+				newpos = LerpVector( 0.3, pos, trace.HitPos + trace.HitNormal*2 )
 			else
 				newpos = LocalPlayer():EyePos()
 			end

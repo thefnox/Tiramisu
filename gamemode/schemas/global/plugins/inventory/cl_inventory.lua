@@ -451,7 +451,7 @@ function PANEL:OpenMenu()
 		if !self:GetItem().Unusable then
 			ContextMenu:AddOption("Use", function() self:UseItem() end)
 		end
-		for k,v in pairs(self:GetItem().RightClick) do
+		for k,v in pairs(self:GetItem().RightClick or {}) do
 			ContextMenu:AddOption( k, function() self:UseItem(v) end)
 		end
 		ContextMenu:AddOption("Drop", function() self:DropItem() end)
@@ -543,6 +543,15 @@ datastream.Hook("addinventory", function(handler, id, encoded, decoded )
 	InventoryTable = decoded
 
 	for k, v in pairs( decoded ) do
+		possiblename = v.Name
+		
+		for key, val in pairs(CAKE.ItemData[v.Class]) do
+			v[key] = val
+		end
+
+		if v.Stack == nil then v.Stack = true end
+		v.Name = possiblename or v.Name
+
 		if !v.Stack then
 			CAKE.InventorySlot[ AvailableSlot( ) ]:AddItem( v )
 		elseif CalculateItemPosition( v.Class ) and CAKE.InventorySlot[ CalculateItemPosition( v.Class ) ] then

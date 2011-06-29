@@ -118,12 +118,7 @@ function CAKE.LoadPlayerDataFile( ply )
 		for _, char in pairs( CharTable ) do
 		
 			for k, v in pairs( char ) do
-			
-				if k == "inventory" and #v > 0 and type(v[#v]) == "string" then
-					for i, item in pairs(v) do
-						v[i] = {item, CAKE.CreateItemID()}
-					end
-				end
+
 
 				if( CAKE.CharacterDataFields[ k ] == nil ) then
 				

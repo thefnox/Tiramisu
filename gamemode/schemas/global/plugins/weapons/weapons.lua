@@ -21,7 +21,7 @@ local function WeaponEquipItem( wep )
 				table.insert( weapons, wep:GetClass() )
 				CAKE.SetCharField( ply, "weapons", weapons )
 			end
-			ply:GiveItem( wep:GetClass( ) )
+			--ply:GiveItem( wep:GetClass( ) )
 		end 
  
 	end)

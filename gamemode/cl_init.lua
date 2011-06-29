@@ -3,6 +3,7 @@ DeriveGamemode( "sandbox" );
 
 --Initializing global variables. Don't touch this
 CAKE = {  };
+CAKE.ItemData = {}
 CAKE.Running = false;
 CAKE.Loaded = false;
 CAKE.Skin = "default"
@@ -119,6 +120,7 @@ usermessage.Hook("addschema", function(data)
 	local schema = data:ReadString()
 	CAKE.AddRightClicks(schema)
 	CAKE.AddClientsidePlugins(schema)
+	CAKE.AddItems(schema)
 end )
 
 RclickTable = {}
@@ -163,6 +165,31 @@ function CAKE.AddClientsidePlugins( schema, filename )
 	end
 
 end
+
+function CAKE.AddItems( schema )
+
+	local filename = filename or ""
+	local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/items/"
+	local list = file.FindInLua( path .. "*" ) or {}
+
+
+	for k, v in pairs( list ) do
+		if v != "." and v != ".." then
+			if string.GetExtensionFromFilename( v ) and string.GetExtensionFromFilename( v ) == "lua" then
+				ITEM = {  };
+				include( path .. v );
+				for k,v in pairs(ITEM) do
+					if type(v) == "function" then
+						ITEM[k] = nil
+					end
+				end
+				CAKE.ItemData[ ITEM.Class ] = ITEM;
+			end
+		end
+	end
+
+end
+
 
 function CAKE.RegisterCharCreate( passedfunc )
 
