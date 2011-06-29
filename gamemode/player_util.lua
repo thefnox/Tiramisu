@@ -80,6 +80,38 @@ function CAKE.DeathMode( ply )
 	rag.ply = ply;
 	rag:Spawn( )
 	
+	if( ply.Clothing ) then
+		for k, v in pairs( ply.Clothing ) do
+			if( ValidEntity( v ) ) then
+				v:SetParent( rag )
+				v:Initialize()
+			end
+		end
+	end
+	
+	rag.BonemergeGearEntity = ents.Create( "player_gearhandler" )
+	rag.BonemergeGearEntity:SetPos( rag:GetPos() + Vector( 0, 0, 80 ) )
+	rag.BonemergeGearEntity:SetAngles( rag:GetAngles() )
+	rag.BonemergeGearEntity:SetModel("models/tiramisu/gearhandler.mdl")
+	rag.BonemergeGearEntity:SetParent( rag )
+	rag.BonemergeGearEntity:SetNoDraw( true )
+	rag.BonemergeGearEntity:SetSolid( SOLID_NONE )
+	rag.BonemergeGearEntity:Spawn()
+			
+	if( ply.Gear ) then
+		for k, v in pairs( ply.Gear ) do
+			if( ValidEntity( v ) ) then
+				v:SetParent( rag.BonemergeGearEntity )
+				v:SetDTEntity( 1, rag )
+				v:Initialize()
+			end
+		end
+	end
+	
+	rag.clothing = ply.Clothing
+	ply.Clothing = nil
+	ply.Gear = nil
+	
 	--ply:SetViewEntity( rag );
 
 	rag:GetPhysicsObject():ApplyForceCenter( ply:GetVelocity() )
@@ -154,9 +186,42 @@ function CAKE.UnconciousMode( ply )
 			rag:SetAngles( ply:GetAngles( ) )
 			rag.ply = ply;
 			rag:Spawn( )
+
+			if( ply.Clothing ) then
+				for k, v in pairs( ply.Clothing ) do
+					if( ValidEntity( v ) ) then
+						v:SetParent( rag )
+						v:Initialize()
+					end
+				end
+			end
+
+			rag.BonemergeGearEntity = ents.Create( "player_gearhandler" )
+			rag.BonemergeGearEntity:SetPos( rag:GetPos() + Vector( 0, 0, 80 ) )
+			rag.BonemergeGearEntity:SetAngles( rag:GetAngles() )
+			rag.BonemergeGearEntity:SetModel("models/tiramisu/gearhandler.mdl")
+			rag.BonemergeGearEntity:SetParent( rag )
+			rag.BonemergeGearEntity:SetNoDraw( true )
+			rag.BonemergeGearEntity:SetSolid( SOLID_NONE )
+			rag.BonemergeGearEntity:Spawn()
+			
+			if( ply.Gear ) then
+				for k, v in pairs( ply.Gear ) do
+					if( ValidEntity( v ) ) then
+						v:SetParent( rag.BonemergeGearEntity )
+						v:SetDTEntity( 1, rag )
+						v:Initialize()
+					end
+				end
+			end
 			
 			
 			rag:GetPhysicsObject():ApplyForceCenter( ply:GetVelocity() )
+
+			rag.clothing = ply.Clothing
+			rag.gear = ply.Gear
+			ply.Clothing = nil
+			ply.Gear = nil
 			
 
 			ply:SetNWBool( "unconciousmode", true ) 
@@ -180,8 +245,10 @@ function CAKE.UnconciousMode( ply )
 		else
 			ply:SetNWBool( "unconciousmode", false )
 			ply:SetViewEntity( ply )
+			CAKE.RestoreGear( ply )
 			ply:SetPos( ply.unconciousrag:GetPos() + Vector( 0, 0, 10 ))
 			ply:UnLock()
+			CAKE.RestoreClothing( ply )
 			ply:GodDisable()
 			if ply:GetActiveWeapon():IsValid() then
 				ply:GetActiveWeapon():SetNoDraw( false )
