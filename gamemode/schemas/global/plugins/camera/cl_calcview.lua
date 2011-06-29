@@ -74,13 +74,12 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 			return GAMEMODE:CalcView(ply, newpos , angles ,fov)
 		else -- Regular view.
 			if !LocalPlayer():InVehicle() then
-	            tracedata.start = pos
-	            tracedata.endpos = pos - ( angles:Forward() * CAKE.ThirdpersonDistance:GetInt() * 2 ) + ( angles:Up()* 20 )
-	            tracedata.filter = ignoreent
-	            trace = util.TraceLine(tracedata)
-	            
-	            pos = newpos
-				newpos = LerpVector( 0.3, pos, trace.HitPos )
+				tracedata.start = pos
+				tracedata.endpos = pos - ( angles:Forward() * CAKE.ThirdpersonDistance:GetInt() * 2 ) + ( angles:Up()* 20 )
+				tracedata.filter = ignoreent
+	    			trace = util.TraceLine(tracedata)
+	          		pos = newpos
+				newpos = LerpVector( 0.3, pos, trace.HitPos + trace.HitNormal*2 )
 			else
 				newpos = LocalPlayer():EyePos()
 			end
