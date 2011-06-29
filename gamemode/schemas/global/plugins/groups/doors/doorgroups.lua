@@ -7,7 +7,7 @@ hook.Add( "KeyPress", "TiramisuHandleDoors", function( ply, key )
 			local groupdoor = CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or 0
 			if type( groupdoor ) == "table" then groupdoor = groupdoor[1] end
 			if doorgroup == groupdoor then --lol
-				entity:Fire( "open", "", 0 );
+				entity:Fire( "IN_USE", "", 0 );
 			end
 		end
 		if( entity:GetClass() == "item_prop" ) then

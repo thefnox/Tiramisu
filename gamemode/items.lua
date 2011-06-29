@@ -49,6 +49,10 @@ function CAKE.CreateItemID()
 	return os.time() .. repnum
 end
 
+function CAKE.SendItemData( ply, class )
+	datastream.StreamToClients( ply, "NetworkItemData", CAKE.ItemData[class] );
+end
+
 function CAKE.CreateItem( class, pos, ang, id )
 
 	if !id then id = CAKE.CreateItemID() end
@@ -75,8 +79,11 @@ function CAKE.CreateItem( class, pos, ang, id )
 		end
 	end
 	
+	if !itemtable.Usable then item:SetNWBool("usable", false) else
+	item:SetNWBool("usable", true) end
 	item:SetNWString("id", id)
 	
+	CAKE.SendItemData( player.GetAll(), class )
 	item:Spawn( );
 	item:Activate( );
 	return item
@@ -161,7 +168,7 @@ function ccPickupItem( ply, cmd, args )
 
 	local item = ents.GetByIndex( tonumber( args[ 1 ] ) );
 	
-	if( item != nil and item:IsValid( ) and item:GetClass( ) == "item_prop" and item:GetPos( ):Distance( ply:GetShootPos( ) ) < 100 ) then
+	if( item != nil and item:IsValid( ) and item:GetClass( ) == "item_prop" and item:GetPos( ):Distance( ply:GetShootPos( ) ) < 200 ) then
 		if CAKE.CanPickupItem( ply, item.Class ) then
 			if ply:ItemHasFlag( item.Class , "extracargo" ) then
 				CAKE.SetCharField( ply, "extracargo", tonumber( ply:GetFlagValue( item.Class, "extracargo" ) ) )
@@ -327,7 +334,7 @@ function meta:RefreshInventory( )
 				newtbl[k].Description = "Grab a programmer!"
 				newtbl[k].Model = "models/error.mdl"
 				newtbl[k].Unusable = true
-				newtbl[k].RightClick = CAKE.ItemData[ v[1] ].RightClick or {}
+				newtbl[k].RightClick = {}
 				newtbl[k].Stack = true
 				newtbl[k].ID = v[2]
 				table.remove( inventory, k )
