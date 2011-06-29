@@ -82,7 +82,7 @@ local function ccSitDown( ply, cmd, args )
 	local newposition, newangles
 	local tbl
 	
-	if ValidEntity( ent ) and CAKE.IsChair( ent ) and !ply:GetNWBool( "sittingchair", false ) and !ply:GetNWBool( "sittingground", false ) and distance < 180 then		
+	if ValidEntity( ent ) and CAKE.IsChair( ent ) and !ply:GetNWBool( "sittingchair", false ) and !ply:GetNWBool( "sittingground", false ) and !ply.SitTimer and distance < 180 then		
 		if !ent.PeopleSitting then
 			ent.PeopleSitting = {}
 		end
@@ -115,7 +115,7 @@ local function ccSitDown( ply, cmd, args )
 		else
 			CAKE.SendChat( ply, "No room to sit here." )
 		end
-	else
+	elseif !ply.SitTimer then
 		if ply:OnGround() then
 			umsg.Start( "ToggleFreescroll", ply )
 				umsg.Bool( true )
@@ -125,6 +125,8 @@ local function ccSitDown( ply, cmd, args )
 			--ply.Clothing[1]:SetParent( ply )
 			CAKE.SendChat( ply, "Use !stand to get back on your feet." )
 		end
+	else
+		CAKE.SendChat( ply, "Wait at least 2 seconds between sitting!")
 	end
 	
 end
@@ -133,7 +135,8 @@ concommand.Add( "rp_sit", ccSitDown )
 --Makes a player exit any sitting position
 function CAKE.StandUp( ply )
 	if ply:GetNWBool( "sittingchair", false ) or ply:GetNWBool( "sittingground", false ) then
-		ply:Freeze( false )
+		ply.SitTimer = true
+		timer.Simple(1.3, function() ply:Freeze( false ) ply.SitTimer = false end)
 		if ply:GetNWBool( "sittingchair", false ) then
 			if ply:GetParent() and ply:GetParent().PeopleSitting then
 				ply:GetParent().PeopleSitting[ ply.SitSpot ] = nil

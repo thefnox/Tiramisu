@@ -121,7 +121,7 @@ function CAKE.LoadPlayerDataFile( ply )
 				if type(v) == "string" then
 					char["inventory"][k] = {v, CAKE.CreateItemID()}
 				else
-					return
+					break
 				end
 			end
 
