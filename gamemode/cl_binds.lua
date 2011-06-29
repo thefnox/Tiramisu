@@ -90,7 +90,9 @@ function GM:ScoreboardHide( )
 
 	CAKE.MenuOpen = false
 	CAKE.ContextEnabled = false;
-	gui.EnableScreenClicker( false );
+	if !CAKE.FreeScroll or !CAKE.ForceFreeScroll then
+		gui.EnableScreenClicker( false )
+	end
 	if HiddenButton then
 		HiddenButton:SetVisible( false );
 	end

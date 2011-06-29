@@ -194,7 +194,9 @@ function PANEL:Close()
     self.Open = false
     self:SetKeyboardInputEnabled(false)
     self:SetMouseInputEnabled(false)
-    gui.EnableScreenClicker( false )
+    if !CAKE.FreeScroll or !CAKE.ForceFreeScroll then
+        gui.EnableScreenClicker( false )
+    end
     LocalPlayer( ):ConCommand( "rp_closedchat" )
 
 end

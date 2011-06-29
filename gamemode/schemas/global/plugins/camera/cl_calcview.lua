@@ -4,8 +4,8 @@ local newpos
 local headpos, headang
 local tracedata = {}
 local ignoreent
-campos = Vector(0, 0, 0)
-camang = Angle(0, 0, 0)
+CAKE.CameraPos = Vector(0, 0, 0)
+CAKE.CameraAngle = Angle(0, 0, 0)
 
 usermessage.Hook( "recieveragdoll", function( um )
 	
@@ -29,19 +29,37 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 	
 	if CAKE.FreeScroll then --Rotate around the player/objective
 		if ValidEntity( CAKE.ViewRagdoll ) then
-			newpos =  Angle( 0, CAKE.ViewRagdoll:GetAngles().y, 0 ):Forward()*100
+
+			newpos =  CAKE.ViewRagdoll:GetAngles():Forward()*100
 			newpos:Rotate(mouserotate)
-			pos = CAKE.ViewRagdoll:GetPos()+Vector(0,0,10) + newpos
-			campos = pos
-			camang = angles
-			return GAMEMODE:CalcView(ply, pos , (CAKE.ViewRagdoll:GetPos()+Vector(0,0,60)-pos):Angle(),fov)
+			pos = CAKE.ViewRagdoll:LocalToWorld(CAKE.ViewRagdoll:OBBCenter()) + Vector(0,0,10) + newpos
+
+			tracedata.start = CAKE.ViewRagdoll:LocalToWorld(CAKE.ViewRagdoll:OBBCenter()) + Vector(0,0,10)
+			tracedata.endpos = CAKE.ViewRagdoll:LocalToWorld(CAKE.ViewRagdoll:OBBCenter()) + Vector(0,0,10) + newpos
+			tracedata.filter = CAKE.ViewRagdoll
+			trace = util.TraceLine(tracedata)
+
+			pos = trace.HitPos + trace.HitNormal * 4
+			CAKE.CameraPos = pos
+			CAKE.CameraAngle = angles
+			return GAMEMODE:CalcView(ply, pos, (CAKE.ViewRagdoll:LocalToWorld(CAKE.ViewRagdoll:OBBCenter())+Vector(0,0,10)-pos):Angle(), fov)
+
 		else
-			newpos = Angle( 0, ply:GetAngles().y, 0 ):Forward()*100
+
+			newpos = ply:GetAngles():Forward()*100
 			newpos:Rotate(mouserotate)
-			pos = ply:GetPos()+Vector(0,0,60) + newpos
-			campos = pos
-			camang = angles
-			return GAMEMODE:CalcView(ply, pos , (ply:GetPos()+Vector(0,0,60)-pos):Angle(),fov)
+			pos = ply:EyePos() + newpos
+
+			tracedata.start = ply:EyePos()
+			tracedata.endpos = ply:EyePos() + newpos
+			tracedata.filter = ply
+			trace = util.TraceLine(tracedata)
+
+			pos = trace.HitPos + trace.HitNormal * 4
+			CAKE.CameraPos = pos
+			CAKE.CameraAngle = angles
+			return GAMEMODE:CalcView(ply, pos, ( ply:EyePos() - pos ):Angle(), fov)
+
 		end
 	end
 
@@ -69,9 +87,9 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 				newpos = LocalPlayer():EyePos()
 			end
 
-			campos = pos
-			camang = angles
-			return GAMEMODE:CalcView(ply, newpos , angles ,fov)
+			CAKE.CameraPos = pos
+			CAKE.CameraAngle = angles
+			return GAMEMODE:CalcView(ply, newpos, angles, fov)
 		else -- Regular view.
 			if !LocalPlayer():InVehicle() then
 				tracedata.start = pos
@@ -83,8 +101,8 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 			else
 				newpos = LocalPlayer():EyePos()
 			end
-			campos = pos
-			camang = angles
+			CAKE.CameraPos = pos
+			CAKE.CameraAngle = angles
 			return GAMEMODE:CalcView(ply, newpos , angles ,fov)
 
 		end
@@ -93,23 +111,23 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 		if ValidEntity( CAKE.ViewRagdoll ) then
 			headpos, headang = CAKE.ViewRagdoll:GetBonePosition( CAKE.ViewRagdoll:LookupBone( "ValveBiped.Bip01_Head1" ) )
 			newpos = headpos
-			campos = pos
-			camang = angles
+			CAKE.CameraPos = pos
+			CAKE.CameraAngle = angles
 			return GAMEMODE:CalcView(ply, headpos, angles ,fov)
 		end
 
 		if CAKE.Headbob:GetBool() then
 			headpos, headang = LocalPlayer():GetBonePosition( LocalPlayer():LookupBone( "ValveBiped.Bip01_Head1" ) )
 			newpos = headpos
-			campos = pos
-			camang = angles
+			CAKE.CameraPos = pos
+			CAKE.CameraAngle = angles
 			return GAMEMODE:CalcView(ply, headpos, angles ,fov)
 		end
 
 	end
 
-	campos = pos
-	camang = angles
+	CAKE.CameraPos = pos
+	CAKE.CameraAngle = angles
 	return GAMEMODE:CalcView(ply, pos , angles ,fov)
 
 
@@ -132,6 +150,7 @@ timer.Create( "LocalMouseControlCam", 0.01, 0, function()
 			gui.EnableScreenClicker( false )
 		end
 		mouserotate.y = math.NormalizeAngle(( gui.MouseX() - ScrW()/2 ) / 2)
+		mouserotate.p = math.NormalizeAngle(( gui.MouseY() - ScrH()/2 ) / -1.7)
 	end
 
 end)
