@@ -217,7 +217,7 @@ datastream.Hook( "DisplayRoster", function( handler, id, encoded, decoded )
     if #decoded > 0 then
 
         local dlist = vgui.Create( "DListView" )
-        panel:AddItem( dlist )
+
         dlist:AddColumn("Name")
         dlist:AddColumn("SteamID")
         dlist:AddColumn("Rank")
@@ -235,7 +235,8 @@ datastream.Hook( "DisplayRoster", function( handler, id, encoded, decoded )
             end
             dlist:AddLine( v.Name, v.SteamID, v.Rank ,online )
         end
-        dlist:SizeToContents( )
+        dlist:SetSize( 440, 295 )
+        panel:AddItem( dlist )
 
     else
         

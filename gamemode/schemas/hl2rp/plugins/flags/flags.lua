@@ -2,17 +2,17 @@ function CAKE.MakeCombine( ply, rank )
 
 	if ValidEntity( ply ) then
 		if CAKE.RankExists( "CCA", rank ) then
-			CAKE.JoinGroup( ply, "CCA" )
-			CAKE.SetCharRank( ply, CAKE.GetCharField( ply, "group" ), rank )
 			local name = "CCA.C" .. CAKE.CityNumber .. "." .. string.upper( rank ) .. "-" .. CAKE.GetCharField(ply, "cid" )
 			CAKE.SetCharField(ply, "name", name )
 			ply:SetNWString( "name", name )
-		elseif CAKE.RankExists( "Combine Overwatch", rank ) then
-			CAKE.JoinGroup( ply, "Combine Overwatch" )
+			CAKE.JoinGroup( ply, "CCA" )
 			CAKE.SetCharRank( ply, CAKE.GetCharField( ply, "group" ), rank )
+		elseif CAKE.RankExists( "Combine Overwatch", rank ) then
 			local name = "COTA.C" .. CAKE.CityNumber .. "." .. string.upper( rank ) .. "-" .. CAKE.GetCharField(ply, "cid" )
 			CAKE.SetCharField(ply, "name", name )
 			ply:SetNWString( "name", name )
+			CAKE.JoinGroup( ply, "Combine Overwatch" )
+			CAKE.SetCharRank( ply, CAKE.GetCharField( ply, "group" ), rank )
 		end
 		CAKE.SendError( ply, "Your flag has been set to " .. rank )
 		CAKE.SendGroupToClient( ply )
