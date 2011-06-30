@@ -14,7 +14,6 @@ function SCHEMA.SetUp( )
 	--Here's an example on how to set up ranks in a more flag linke fashion, while still using the Groups system.
 	function CAKE.AddMetroPoliceRank( name, formalname, loadout, level, canedit, cankick, canpromote )
 		if !CAKE.GroupExists( "CCA") then
-			print( "CCA" )
 			local tbl = {
 			[ "Name" ]		= "CCA",
 			[ "Type" ]		= "faction",
@@ -39,19 +38,27 @@ function SCHEMA.SetUp( )
 			CAKE.CreateGroup( "CCA", tbl )
 		end
 
-		CAKE.CreateRank( "CCA", name, {
-			[ "formalname" ] = formalname or "none",
-			[ "loadout" ] = loadout or {},
-			[ "level" ] = level or 1,
-			[ "canedit" ] = canedit,
-			[ "cankick" ] = cankick,
-			[ "canpromote" ] = canpromote
-		})
+		if CAKE.RankExists( "CCA", name ) then
+			CAKE.SetRankField( "CCA", name, "formalname", formalname or "none")
+			CAKE.SetRankField( "CCA", name, "loadout", loadout or {})
+			CAKE.SetRankField( "CCA", name, "level", level or 1)
+			CAKE.SetRankField( "CCA", name, "canedit", canedit )
+			CAKE.SetRankField( "CCA", name, "cankick", cankick )
+			CAKE.SetRankField( "CCA", name, "cankick", canpromote )
+		else
+			CAKE.CreateRank( "CCA", name, {
+				[ "formalname" ] = formalname or "none",
+				[ "loadout" ] = loadout or {},
+				[ "level" ] = level or 1,
+				[ "canedit" ] = canedit,
+				[ "cankick" ] = cankick,
+				[ "canpromote" ] = canpromote
+			})
+		end
 	end
 
 	function CAKE.AddOverwatchRank( name, formalname, loadout, level, canedit, cankick, canpromote )
 		if !CAKE.GroupExists( "Combine Overwatch") then
-			print( "Creating Overwatch" )
 			local tbl = {
 			[ "Name" ]		= "Combine Overwatch",
 			[ "Type" ]		= "faction",
@@ -76,19 +83,27 @@ function SCHEMA.SetUp( )
 			CAKE.CreateGroup( "Combine Overwatch", tbl )
 		end
 
-		CAKE.CreateRank( "Combine Overwatch", name, {
-			[ "formalname" ] = formalname or "none",
-			[ "loadout" ] = loadout or {},
-			[ "level" ] = level or 1,
-			[ "canedit" ] = canedit,
-			[ "cankick" ] = cankick,
-			[ "canpromote" ] = canpromote
-		})
+		if CAKE.RankExists( "Combine Overwatch", name ) then
+			CAKE.SetRankField( "Combine Overwatch", name, "formalname", formalname or "none")
+			CAKE.SetRankField( "Combine Overwatch", name, "loadout", loadout or {})
+			CAKE.SetRankField( "Combine Overwatch", name, "level", level or 1)
+			CAKE.SetRankField( "Combine Overwatch", name, "canedit", canedit )
+			CAKE.SetRankField( "Combine Overwatch", name, "cankick", cankick )
+			CAKE.SetRankField( "Combine Overwatch", name, "cankick", canpromote )
+		else
+			CAKE.CreateRank( "Combine Overwatch", name, {
+				[ "formalname" ] = formalname or "none",
+				[ "loadout" ] = loadout or {},
+				[ "level" ] = level or 1,
+				[ "canedit" ] = canedit,
+				[ "cankick" ] = cankick,
+				[ "canpromote" ] = canpromote
+			})
+		end
 	end
 
 	function CAKE.AddResistanceRank( name, formalname, loadout, level, canedit, cankick, canpromote, buygroup )
 		if !CAKE.GroupExists( "Resistance") then
-			print( "Creating Resistance" )
 			local tbl = {
 			[ "Name" ]		= "Resistance",
 			[ "Type" ]		= "faction",
@@ -112,15 +127,24 @@ function SCHEMA.SetUp( )
 			CAKE.CreateGroup( "Resistance", tbl )
 		end
 
-		CAKE.CreateRank( "Resistance", name, {
-			[ "formalname" ] = formalname or "none",
-			[ "loadout" ] = loadout or {},
-			[ "level" ] = level or 1,
-			[ "canedit" ] = canedit,
-			[ "cankick" ] = cankick,
-			[ "canpromote" ] = canpromote,
-			[ "buygroups" ] = buygroups or {}
-		})
+		if CAKE.RankExists( "Resistance", name ) then
+			CAKE.SetRankField( "Resistance", name, "formalname", formalname or "none")
+			CAKE.SetRankField( "Resistance", name, "loadout", loadout or {})
+			CAKE.SetRankField( "Resistance", name, "level", level or 1)
+			CAKE.SetRankField( "Resistance", name, "canedit", canedit )
+			CAKE.SetRankField( "Resistance", name, "cankick", cankick )
+			CAKE.SetRankField( "Resistance", name, "cankick", canpromote )
+		else
+			CAKE.CreateRank( "Resistance", name, {
+				[ "formalname" ] = formalname or "none",
+				[ "loadout" ] = loadout or {},
+				[ "level" ] = level or 1,
+				[ "canedit" ] = canedit,
+				[ "cankick" ] = cankick,
+				[ "canpromote" ] = canpromote,
+				[ "buygroups" ] = buygroups or {}
+			})
+		end
 	end
 
 	--Civil Protection

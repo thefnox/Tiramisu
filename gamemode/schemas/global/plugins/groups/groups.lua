@@ -174,7 +174,7 @@ function CAKE.LoadAllGroups()
 
 end
 
-hook.Add( "InitPostEntity", "TiramisuLoadAllGroups", function()
+hook.Add( "Initialize", "TiramisuLoadAllGroups", function()
 
 	CAKE.LoadAllGroups()
 
