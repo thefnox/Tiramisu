@@ -467,7 +467,7 @@ function Admin_SetModel( ply, cmd, args )
 end
 
 function Admin_CreatePropItem( ply, cmd, args )
-	if !(args[1] and args[2]) then CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin createpropitem \"name\" \"model\" )") end
+	if !(args[1] and args[2]) then CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin createpropitem \"name\" \"model\" )") return end
 	id = CAKE.CreateItemID()
 	CAKE.SetUData(id, "name", args[1])
 	CAKE.SetUData(id, "model", args[2])

@@ -59,9 +59,9 @@ local function HandleGearEditing( entity, bone, item )
 				    local spawnicon = vgui.Create( "SpawnIcon");
 				    spawnicon:SetIconSize( 64 )
 				    spawnicon:SetModel(v.Model);
-				    spawnicon:SetToolTip(v.Description)
+				    spawnicon:SetToolTip(v.Name)
 				    spawnicon.DoClick = function()
-				        RunConsoleCommand( "rp_setgear", v.Class, bone )
+				        RunConsoleCommand( "rp_setgear", v.Class, bone, v.ID )
 				        frame:Remove()
 				        frame = nil
 
@@ -224,7 +224,7 @@ function EditGear()
 				node = bones:AddNode( bone )
 				if CAKE.Gear and CAKE.Gear[ string.lower( bone ) ] then
 					for __, tbl in pairs( CAKE.Gear[ string.lower( bone ) ] ) do
-						node2 = node:AddNode( tbl.item )
+						node2 = node:AddNode( tbl.name or tbl.item )
 						node2.DoClick = function()
 							HandleGearEditing( tbl.entity, tbl.item, string.lower( bone ) )
 						end
@@ -318,10 +318,10 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin )
 		local xslider = vgui.Create( "DNumSlider" )
 		xslider:SetText( "X Position" )
 		xslider:SetValue( offset.x )
-		xslider:SetMinMax( -40, 40 )
+		xslider:SetMinMax( -80, 80 )
 		xslider.ValueChanged = function(self, value)
-			if  ValidEntity( entity ) then
-				RunConsoleCommand( "rp_editgear", entity:EntIndex(), tostring( value ) .. "," .. tostring( entity:GetDTVector( 1 ).y ) .. "," .. tostring( entity:GetDTVector( 1 ).z ) )
+			if ValidEntity( entity ) then
+				entity:SetDTVector( 1, Vector( value, entity:GetDTVector( 1 ).y, entity:GetDTVector( 1 ).z ))
 			end
 		end
 		PosList:AddItem( xslider )
@@ -329,34 +329,34 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin )
 		local yslider = vgui.Create( "DNumSlider" )
 		yslider:SetText( "Y Position" )
 		yslider:SetValue( offset.y )
-		yslider:SetMinMax( -40, 40 )
+		yslider:SetMinMax( -80, 80 )
 		yslider.ValueChanged = function(self, value)
-			if  ValidEntity( entity ) then
-				RunConsoleCommand( "rp_editgear", entity:EntIndex(), tostring( entity:GetDTVector( 1 ).x ) .. "," .. tostring( value ) .. "," .. tostring( entity:GetDTVector( 1 ).z ) )
+			if ValidEntity( entity ) then
+				entity:SetDTVector( 1, Vector( entity:GetDTVector( 1 ).x, value, entity:GetDTVector( 1 ).z ))
 			end
 		end
 		PosList:AddItem( yslider )
 
 		local zslider = vgui.Create( "DNumSlider" )
 		zslider:SetText( "Z Position" )
-		zslider:SetMinMax( -40, 40 )
+		zslider:SetMinMax( -80, 80 )
 		zslider:SetValue( offset.z )
 		zslider.ValueChanged = function(self, value)
-			if  ValidEntity( entity ) then
-				RunConsoleCommand( "rp_editgear", entity:EntIndex(), tostring( entity:GetDTVector( 1 ).x ) .. "," .. tostring( entity:GetDTVector( 1 ).z ) .. "," .. tostring( value ) )
+			if ValidEntity( entity ) then
+				entity:SetDTVector( 1, Vector( entity:GetDTVector( 1 ).x, entity:GetDTVector( 1 ).y, value ))
 			end
 		end
 		PosList:AddItem( zslider )
 
 		local setbutton = vgui.Create( "DButton" )
-		setbutton:SetText( "Set Coordinates" )
+		setbutton:SetText( "Save Offset Coordinates" )
 		setbutton.DoClick = function( button )
 			RunConsoleCommand( "rp_editgear", entity:EntIndex(), tostring( xslider:GetValue() ) .. "," .. tostring( yslider:GetValue() ) .. "," .. tostring( zslider:GetValue() ) )
 		end
 		PosList:AddItem( setbutton )
 		
 		local resetbutton = vgui.Create( "DButton" )
-		resetbutton:SetText( "Reset Coordinates" )
+		resetbutton:SetText( "Reset Offset Coordinates" )
 		resetbutton.DoClick = function( button )
 			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "0,0,0" )
 		end
@@ -377,7 +377,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin )
 		pslider:SetMinMax( -180, 180 ) 
 		pslider.ValueChanged = function(self, value)
 			if ValidEntity( entity ) then
-				RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none" ,tostring( value ).. "," ..tostring( entity:GetDTAngle( 1 ).y ) .. "," .. tostring( entity:GetDTAngle( 1 ).r ) )
+				entity:SetDTAngle( 1, Angle( value, entity:GetDTAngle( 1 ).y, entity:GetDTAngle( 1 ).r ))
 			end
 		end
 		AngList:AddItem( pslider )
@@ -388,7 +388,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin )
 		yslider:SetMinMax( -180, 180 )
 		yslider.ValueChanged = function(self, value)
 			if ValidEntity( entity ) then
-				RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none" , tostring( entity:GetDTAngle( 1 ).p ).. "," .. tostring( value ) .. "," .. tostring( entity:GetDTAngle( 1 ).r ) )
+				entity:SetDTAngle( 1, Angle( entity:GetDTAngle( 1 ).p, value, entity:GetDTAngle( 1 ).r ))
 			end
 		end
 		AngList:AddItem( yslider )
@@ -399,13 +399,13 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin )
 		rslider:SetMinMax( -180, 180 )
 		rslider.ValueChanged = function(self, value)
 			if ValidEntity( entity ) then
-				RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none" , tostring( entity:GetDTAngle( 1 ).p ).. "," .. tostring( entity:GetDTAngle( 1 ).y ) .. "," .. tostring( value ) )
+				entity:SetDTAngle( 1, Angle( entity:GetDTAngle( 1 ).p, entity:GetDTAngle( 1 ).y, value ))
 			end
 		end
 		AngList:AddItem( rslider )
 
 		local setbutton = vgui.Create( "DButton" )
-		setbutton:SetText( "Set Angles" )
+		setbutton:SetText( "Save Angles" )
 		setbutton.DoClick = function( button )
 			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", tostring( pslider:GetValue() ) .. "," .. tostring( yslider:GetValue() ) .. "," .. tostring( rslider:GetValue() ) )
 		end
@@ -433,7 +433,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin )
 		xslider:SetMinMax( 0, 10 ) 
 		xslider.ValueChanged = function(self, value)
 			if ValidEntity( entity ) then
-				RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", tostring( value ) .. "," .. tostring( entity:GetDTVector( 2 ).y ) .. "," .. tostring( entity:GetDTVector( 2 ).z ) )
+				entity:SetDTVector( 2, Vector( value, entity:GetDTVector(2).y, entity:GetDTVector(2).z ))
 			end
 		end
 		ScaleList:AddItem( xslider )
@@ -444,7 +444,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin )
 		yslider:SetMinMax( 0, 10 )
 		yslider.ValueChanged = function(self, value)
 			if ValidEntity( entity ) then
-				RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", tostring( entity:GetDTVector( 2 ).x ) .. "," .. tostring( value ) .. "," .. tostring( entity:GetDTVector( 2 ).z ) )
+				entity:SetDTVector( 2, Vector( entity:GetDTVector(2).x, value, entity:GetDTVector(2).z ))
 			end
 		end
 		ScaleList:AddItem( yslider )
@@ -455,13 +455,13 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin )
 		zslider:SetMinMax( 0, 10 )
 		zslider.ValueChanged = function(self, value)
 			if ValidEntity( entity ) then
-				RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", tostring( entity:GetDTVector( 2 ).x ) .. "," .. tostring( entity:GetDTVector( 2 ).y ) .. "," .. tostring( value) )
+				entity:SetDTVector( 2, Vector( entity:GetDTVector(2).x, entity:GetDTVector(2).y, value ))
 			end
 		end
 		ScaleList:AddItem( zslider )
 
 		local setbutton = vgui.Create( "DButton" )
-		setbutton:SetText( "Set Angles" )
+		setbutton:SetText( "Save Scale" )
 		setbutton.DoClick = function( button )
 			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", tostring( xslider:GetValue() ) .. "," .. tostring( yslider:GetValue() ) .. "," .. tostring( zslider:GetValue() ) )
 		end
@@ -528,6 +528,7 @@ usermessage.Hook( "addgear", function( um )
 	local entity = ents.GetByIndex( um:ReadShort() )
 	local item = um:ReadString()
 	local bone = um:ReadString()
+	local name = um:ReadString()
 
 	if CAKE.Gear and !CAKE.Gear[ bone ] then
 		CAKE.Gear[ bone ] = {}
@@ -536,6 +537,7 @@ usermessage.Hook( "addgear", function( um )
 	local tbl = {}
 	tbl.item = item
 	tbl.entity = entity
+	tbl.name = name
 
 	table.insert( CAKE.Gear[ bone ], tbl )
 	if RefreshGearTree then

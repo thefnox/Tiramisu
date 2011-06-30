@@ -1,7 +1,7 @@
 "Gamemode"
 {
 	"name"		"Tiramisu"
-	"version"	"1.0"
+	"version"	"1.2"
 
 	"author_name"	"FNox and Ryaga"
 	"author_email"	""

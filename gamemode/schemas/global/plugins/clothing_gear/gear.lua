@@ -44,7 +44,7 @@ function CAKE.BoneFulltoShort( bone )
 end
 
 --Internal function used to create gear entities.
-function CAKE.HandleGear( ply, item, bone, offset, angle, scale, skin )
+function CAKE.HandleGear( ply, item, bone, itemid, offset, angle, scale, skin )
 	
 	if CAKE.ItemData[ item ] then
 		local bone = bone or CAKE.ItemData[ item ].Bone or "pelvis"
@@ -54,7 +54,7 @@ function CAKE.HandleGear( ply, item, bone, offset, angle, scale, skin )
 		end
 		
 		local id =  #ply.Gear + 1 
-		local model = CAKE.ItemData[ item ].Model
+		local model = CAKE.GetUData(itemid, "model") or CAKE.ItemData[ item ].Model
 		local offset = offset or CAKE.ItemData[ item ].Offset or Vector( 0, 0, 0 )
 		local angle = angle or CAKE.ItemData[ item ].OffsetAngle or Angle( 0, 0, 0 )
 		local scale = scale or CAKE.ItemData[ item ].Scale or Vector( 1, 1, 1 )
@@ -90,6 +90,8 @@ function CAKE.HandleGear( ply, item, bone, offset, angle, scale, skin )
 		ply.Gear[ id ]:Spawn()
 		ply.Gear[ id ]:SetSkin( skin )
 		ply.Gear[ id ].item = item
+		ply.Gear[ id ].itemid = itemid
+		ply.Gear[ id ].name = CAKE.GetUData(itemid, "name") or CAKE.ItemData[ item ].Name or CAKE.ItemData[ item ].Class
 
 		return ply.Gear[ id ]
 
@@ -140,7 +142,8 @@ local function ccSetGear( ply, cmd, args )
 	
 	local item = args[1]
 	local bone = string.lower( args[2] ) or CAKE.ItemData[ item ].Bone or "pelvis"
-	local entity = CAKE.HandleGear( ply, item, bone )
+	local itemid = args[3]
+	local entity = CAKE.HandleGear( ply, item, bone, itemid )
 	local tbl = {}
 	timer.Simple( 1, function()
 		umsg.Start( "editgear", ply )
@@ -230,7 +233,6 @@ local function ccEditGear( ply, cmd, args )
 		ent:SetDTBool( 1, visible )
 		ent:SetSkin( skin )
 		ent.item = item
-		ent:SetModel( CAKE.ItemData[ item ].Model )
 		
 		CAKE.SaveGear( ply )
 		CAKE.SendGearToClient( ply )
@@ -275,6 +277,8 @@ function CAKE.SaveGear( ply )
 				tbl = {}
 				tbl["offset"] = v:GetDTVector(1)
 				tbl["item"] = v.item
+				tbl["name"] = v.name
+				tbl["itemid"] = v.itemid
 				tbl["bone"] = v.bone
 				tbl["scale"] = v:GetDTVector(2)
 				tbl["skin"] = v:GetSkin()
@@ -296,7 +300,7 @@ function CAKE.RestoreGear( ply )
 		CAKE.RemoveAllGear( ply )
 		for k, v in pairs( tbl ) do
 			if ply:HasItem( v["item"] ) then
-				CAKE.HandleGear( ply, v[ "item" ], v[ "bone" ], v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )
+				CAKE.HandleGear( ply, v[ "item" ], v[ "bone" ], v[ "itemid" ], v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )
 				timer.Simple( 1, function()
 					if resourcex and CAKE.ItemData[ v["item"] ].Content then
 						for k, v in ipairs( CAKE.ItemData[ v["item"] ].Content ) do
@@ -316,7 +320,7 @@ function CAKE.TestGear( ply, tbl )
 
 	CAKE.RemoveAllGear( ply )
 	for k, v in pairs( tbl ) do
-		CAKE.HandleGear( ply, v[ "item" ], v[ "bone" ], v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )
+		CAKE.HandleGear( ply, v[ "item" ], v[ "bone" ], v[ "itemid" ], v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )
 		timer.Simple( 1, function()
 			if resourcex and CAKE.ItemData[ v["item"] ].Content then
 				for k, v in ipairs( CAKE.ItemData[ v["item"] ].Content ) do
@@ -346,6 +350,7 @@ function CAKE.SendGearToClient( ply )
 							umsg.Short( v:EntIndex() )
 							umsg.String( v.item )
 							umsg.String( v.bone )
+							umsg.String( v.name or v.item )
 						umsg.End( )
 					end
 				end
