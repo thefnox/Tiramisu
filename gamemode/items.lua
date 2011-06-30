@@ -68,7 +68,7 @@ function CAKE.CreateItem( class, pos, ang, id )
 	if string.match( class, "clothing" ) or string.match( class, "helmet" ) then
 		item:SetModel( "models/props/de_tides/Vending_tshirt.mdl" )
 	else
-		item:SetModel( itemtable.Model );
+		item:SetModel( CAKE.GetUData(id, "model") or itemtable.Model );
 	end
 
 	for k, v in pairs( itemtable ) do
@@ -323,6 +323,7 @@ function meta:RefreshInventory( )
 				newtbl[k] = {}
 				newtbl[k].Name = CAKE.GetUData( v[2], "name" )
 				newtbl[k].Class = CAKE.ItemData[ v[1] ].Class or "error"
+				newtbl[k].Model = CAKE.GetUData( v[2], "model" )
 				newtbl[k].ID = v[2]
 			else
 				table.remove( inventory, k )

@@ -544,13 +544,15 @@ datastream.Hook("addinventory", function(handler, id, encoded, decoded )
 
 	for k, v in pairs( decoded ) do
 		possiblename = v.Name
-		
+		possiblemodel = v.Model
+
 		for key, val in pairs(CAKE.ItemData[v.Class]) do
 			v[key] = val
 		end
 
 		if v.Stack == nil then v.Stack = true end
 		v.Name = possiblename or v.Name
+		v.Model = possiblemodel or v.Model
 
 		if !v.Stack then
 			CAKE.InventorySlot[ AvailableSlot( ) ]:AddItem( v )
