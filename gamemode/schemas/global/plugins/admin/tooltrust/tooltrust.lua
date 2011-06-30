@@ -368,6 +368,10 @@ function Admin_Tooltrust(ply, cmd, args)
 	
 end
 
+function GM:PlayerSpray(ply)
+	return true
+end
+
 function PLUGIN.Init()
 
 	CAKE.ConVars[ "PropLimit" ] = 20;

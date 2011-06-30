@@ -363,11 +363,18 @@ end
 
 --Utility to handle item using.
 function PANEL:UseItem(dofunc)
+	if self.Stack then 
+		command = "rp_useinventory "
+		argone = self:GetItem().Class 
+	else
+		command = "rp_useinventoryid "
+		argone = self:GetItem().ID
+	end
 	if self.Item and dofunc then
-		LocalPlayer():ConCommand("rp_useinventory " .. self:GetItem().Class .. " " .. dofunc )
+		LocalPlayer():ConCommand(command .. argone .. " " .. dofunc )
 		self:RemoveItem()
 	elseif self.Item and !self:GetItem().Unusable then
-		LocalPlayer():ConCommand("rp_useinventory " .. self:GetItem().Class )
+		LocalPlayer():ConCommand(command .. argone )
 		self:RemoveItem()
 	end
 end

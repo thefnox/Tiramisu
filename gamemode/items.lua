@@ -225,17 +225,11 @@ function ccUseOnInventory( ply, cmd, args )
 		if( item != nil and item:IsValid( ) and item:GetClass( ) == "item_prop" ) then
 			
 			if( string.match( item.Class, "clothing" ) or string.match( item.Class, "helmet" ) or string.match( item.Class, "weapon" ) ) then
-				print("FIRST")
-				for k,v in pairs(CAKE.GetCharField(ply, "inventory")) do
-					PrintTable(v)
-				end
-
 				if( string.match( item.Class, "weapon" ) ) then
 					ply:Give( item.Class )
 				end
 				item:Pickup( ply );
 
-				print("THEN")
 				for k,v in pairs(CAKE.GetCharField(ply, "inventory")) do
 					PrintTable(v)
 				end
@@ -257,6 +251,42 @@ function ccUseOnInventory( ply, cmd, args )
 
 end
 concommand.Add( "rp_useinventory", ccUseOnInventory)	
+
+function ccUseOnInventoryID( ply, cmd, args )
+	id = args [ 1 ]
+	class = ply:HasItemID(id)
+	if args [ 2 ] then funcrun = args [ 2 ] end
+	
+	if class then
+		local item = CAKE.CreateItem( class, ply:CalcDrop( ), Angle( 0,0,0 ), id )
+		
+		if item.Unusable == true then item:Remove() end
+
+		if( item != nil and item:IsValid( ) and item:GetClass( ) == "item_prop" ) then
+			
+			if( string.match( class, "clothing" ) or string.match( class, "helmet" ) or string.match( class, "weapon" ) ) then
+				if( string.match( class, "weapon" ) ) then
+					ply:Give( class )
+				end
+				item:Pickup( ply );
+				CAKE.SavePlayerData( ply )
+			else
+				
+				ply:TakeItemID( id )
+				if funcrun then
+					funcrun = CAKE.ItemData[ class ][funcrun]
+					funcrun(item, ply );
+				else
+					item:UseItem( ply );
+				end
+			end
+			
+		end
+	end
+	ply:RefreshInventory( )
+
+end
+concommand.Add( "rp_useinventoryid", ccUseOnInventoryID)
 
 local meta = FindMetaTable( "Player" );
 
@@ -396,6 +426,16 @@ function meta:HasItem( class )
 	for k, v in pairs( inv ) do
 		if( v[1] == class ) then
 			return v[2];
+		end
+	end
+	return false
+end
+
+function meta:HasItemID( ID )
+	local inv = CAKE.GetCharField(self, "inventory" );
+	for k, v in pairs( inv ) do
+		if( v[2] == ID ) then
+			return v[1];
 		end
 	end
 	return false

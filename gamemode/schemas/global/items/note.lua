@@ -54,5 +54,7 @@ function ITEM:Copy(ply)
 			ply:GiveItem("note", myid)
 			self:Remove()
 		end
+	else
+		ply:GiveItem("note", self:GetNWString("id"))
 	end
 end
