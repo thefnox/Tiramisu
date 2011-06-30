@@ -8,7 +8,7 @@ function CAKE.MakeCombine( ply, rank )
 			CAKE.SetCharField(ply, "name", name )
 			ply:SetNWString( "name", name )
 		elseif CAKE.RankExists( "Combine Overwatch", rank ) then
-			CAKE.JoinGroup( ply, "Overwatch" )
+			CAKE.JoinGroup( ply, "Combine Overwatch" )
 			CAKE.SetCharRank( ply, CAKE.GetCharField( ply, "group" ), rank )
 			local name = "COTA.C" .. CAKE.CityNumber .. "." .. string.upper( rank ) .. "-" .. CAKE.GetCharField(ply, "cid" )
 			CAKE.SetCharField(ply, "name", name )
@@ -47,6 +47,7 @@ local function Admin_SetFlag( ply, cmd, args )
 			CAKE.SendError( target, "Your flag has been set to " .. rank )
 			CAKE.SendGroupToClient( target )
 		end
+		target:Spawn()
 	else
 		CAKE.SendConsole( ply, "Player Not Found!" )
 	end
