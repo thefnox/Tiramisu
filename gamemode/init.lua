@@ -122,13 +122,13 @@ function GM:PlayerSpawn( ply )
 	
 	if( ply:GetNWInt( "deathmode" ) == 1 ) then
 	
-		ply:SetNWInt( "deathmode", 0 );
-		ply:SetViewEntity( ply );
+		ply:SetNWInt( "deathmode", 0 )
+		ply:SetViewEntity( ply )
 		
 	end
 	if( ply:GetNWBool( "ragdollmode", false ) ) then 
-		ply:SetNWBool( "ragdollmode", false );
-		ply:SetViewEntity( ply );
+		ply:SetNWBool( "ragdollmode", false )
+		ply:SetViewEntity( ply )
 	end
 	
 	timer.Create( ply:SteamID() .. "savetimer", 10, 0, function()
@@ -141,11 +141,12 @@ function GM:PlayerSpawn( ply )
 		ply:RefreshInventory( )
 	end)
 
-	ply:Give("hands");
-	ply:SelectWeapon("hands");
+	ply:SetNWInt( "TiramisuAdminLevel", CAKE.PlayerRank(ply) )
+	ply:Give("hands")
+	ply:SelectWeapon("hands")
 	
 	self.BaseClass:PlayerSpawn( ply )
-	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] );
+	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] )
 	
 end
 

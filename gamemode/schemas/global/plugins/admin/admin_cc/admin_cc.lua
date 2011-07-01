@@ -473,6 +473,17 @@ function Admin_CreatePropItem( ply, cmd, args )
 	CAKE.SetUData(id, "model", args[2])
 	CAKE.CreateItem( "propitem", ply:CalcDrop( ), Angle( 0,0,0 ), id );
 end
+
+function Admin_TurnIntoItem( ply, cmd, args )
+	if !(args[1] and args[2]) then CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin createpropitem \"name\" \"model\" )") return end
+	local entity = ents.GetByIndex( tonumber( args[ 1 ] ))
+	local name = args[2]
+	id = CAKE.CreateItemID()
+	CAKE.SetUData(id, "name", name)
+	CAKE.SetUData(id, "model", entity:GetModel())
+	CAKE.CreateItem( "propitem", entity:GetPos(), entity:GetAngles(), id );
+	entity:Remove()
+end
 	
 -- Let's make some ADMIN COMMANDS!
 function PLUGIN.Init( )
@@ -503,6 +514,7 @@ function PLUGIN.Init( )
 	CAKE.AdminCommand( "slay", Admin_Slay, "Kills a player", true, true, 3 );
 	CAKE.AdminCommand( "setrank", Admin_SetRank, "Set the rank of another player", true, true, 4 )
 	CAKE.AdminCommand( "createpropitem", Admin_CreatePropItem, "Create an item from a prop.", true, true, 1 )
+	CAKE.AdminCommand( "converttoitem", Admin_TurnIntoItem, "Turns a prop into an item (Right click on prop)", true, true, 1 )
 	
 end
 
