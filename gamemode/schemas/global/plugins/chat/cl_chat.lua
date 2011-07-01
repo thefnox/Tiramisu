@@ -331,9 +331,7 @@ function chat.AddText(...) --Overriding default chat text entry
 end
 
 hook.Add( "ChatText", "WhatDontGoOnTheChatboxGetsDisabled", function(  playerindex, playername, text, messagetype  )
-    
     return true
-    
 end)
 
 

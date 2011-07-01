@@ -2,7 +2,7 @@ RCLICK.Name = "Unlock"
 
 function RCLICK.Condition(target)
 
-if CAKE.IsDoor(target) then return true end
+if ValidEntity( target) and CAKE.IsDoor(target) then return true end
 
 end
 

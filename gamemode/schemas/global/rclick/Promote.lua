@@ -2,7 +2,7 @@ RCLICK.Name = "Promote"
 
 function RCLICK.Condition(target)
 
-if target:IsPlayer() and CAKE.GetRankPermission( "canpromote" ) then return true end
+if ValidEntity( target) and target:IsPlayer() and CAKE.GetRankPermission( "canpromote" ) then return true end
 
 end
 

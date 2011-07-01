@@ -2,7 +2,7 @@ RCLICK.Name = "Use"
 
 function RCLICK.Condition(target)
 
-if target:GetClass() == "item_prop" and !CAKE.ItemData[target:GetNWString("Class")].Unusable then return true end
+if ValidEntity( target) and target:GetClass() == "item_prop" and !CAKE.ItemData[target:GetNWString("Class")].Unusable then return true end
 
 end
 
