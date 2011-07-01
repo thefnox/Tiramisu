@@ -229,8 +229,6 @@ concommand.Add( "rp_rostersearch", function( ply, cmd, args )
         local searchresults = {}
         local tbl = {}
         for k, v in pairs( roster ) do
-            print( string.lower( v.Name ) )
-            print( string.lower( searchstring ) )
             if ( string.match( string.lower( v.Name ), string.lower( searchstring )) or string.lower( v.Name ) == string.lower( searchstring ) ) or
             string.match( searchstring, v.SteamID ) or
             ((v.Rank != false) and(string.match( searchstring, v.Rank ))) or

@@ -20,12 +20,13 @@ include( "player_data.lua" ); -- Player data functions
 include( "player_util.lua" ); -- Player functions
 include( "admin.lua" ); -- Admin functions
 include( "concmd.lua" ); -- Concommands
-include( "items.lua" )
+include( "items.lua" ) --Items
 include( "util.lua" ); -- Functions
 include( "schema.lua" ); -- Schema system
 include( "plugins.lua" ); -- Plugin system
 include( "client_resources.lua" ); -- Sends files to the client
-include( "animations.lua")
+include( "sh_animations.lua" ) --Animaaaaations.
+include( "sh_anim_tables.lua" ) --Animation tables
 
 resource.AddFile( "models/tiramisu/animationtrees/alyxanimtree.mdl" )
 resource.AddFile( "models/tiramisu/animationtrees/combineanimtree.mdl" )

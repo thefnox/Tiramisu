@@ -45,7 +45,8 @@ surface.CreateFont("Trebuchet18", ScreenScale(10), 700, true, false, "TiramisuYe
 
 require( "datastream" )
 -- Client Includes
-include( "animations.lua" )
+include( "sh_animations.lua" )
+include( "sh_anim_tables.lua" )
 include( "shared.lua" )
 include( "cl_binds.lua" );
 

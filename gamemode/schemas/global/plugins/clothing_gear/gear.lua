@@ -150,6 +150,7 @@ local function ccSetGear( ply, cmd, args )
 			umsg.Short( entity:EntIndex() )
 			umsg.String( item )
 			umsg.String( bone )
+			umsg.String( entity.name or item )
 		umsg.End( )
 	end)
 
@@ -187,24 +188,25 @@ local function ccEditGear( ply, cmd, args )
 		local visible
 		local skin
 		local item
+		local name
 		
 		if args[2] and args[2] != "none" then
 			local exp = string.Explode( ",", args[2] )
-			offset = Vector( exp[1], exp[2], exp[3] )
+			offset = Vector( tonumber( exp[1] ), tonumber( exp[2] ), tonumber( exp[3] ) )
 		else
 			offset = ent:GetDTVector( 1 )
 		end
 		
 		if args[3] and args[3] != "none" then
 			local exp = string.Explode( ",", args[3] )
-			angle = Angle( exp[1], exp[2], exp[3] )
+			angle = Angle( tonumber( exp[1] ), tonumber( exp[2] ), tonumber( exp[3] ))
 		else
 			angle = ent:GetDTAngle( 1 )
 		end
 		
 		if args[4] and args[4] != "none" then
 			local exp = string.Explode( ",", args[4] )
-			scale = Vector( exp[1], exp[2], exp[3] )
+			scale = Vector( tonumber( exp[1] ), tonumber( exp[2] ), tonumber( exp[3] ) )
 		else
 			scale = ent:GetDTVector( 2 )
 		end
@@ -226,6 +228,11 @@ local function ccEditGear( ply, cmd, args )
 		else
 			item = ent.item
 		end
+
+		print( "server" )
+		print( offset )
+		print( angle )
+		print( scale )
 		
 		ent:SetDTVector( 1, offset )
 		ent:SetDTVector( 2, scale )

@@ -353,6 +353,16 @@ function PANEL:StartDraw()
         
 end
 
+function PANEL:SetTarget( entity )
+    if ValidEntity( entity ) then
+        self.CamTarget = entity
+        self:SetCamPos( self.CamTarget:GetForward() * 80 )
+        local angle = self.CamTarget:GetAngles()
+        angle:RotateAroundAxis(angle:Up(), 180) 
+        self:SetCamAngle( angle )
+    end
+end 
+
 function PANEL:EndDraw()
         
         // Note: Not in menu dll
@@ -448,9 +458,11 @@ end
 --The mouse angle calculations are all here.
 local angle
 local distance = -80
+local target
 function PANEL:OnCursorMoved(x, y)
+    target = self.CamTarget or LocalPlayer()
     if input.IsMouseDown( MOUSE_LEFT ) then
-        angle = Angle(0, LocalPlayer():GetAngles().y, 0 )
+        angle = Angle(0, target:GetAngles().y, 0 )
         angle:RotateAroundAxis(angle:Up(), math.NormalizeAngle( 180 - ( x - self:GetWide()/ 2 ) / 2 ) )
         angle:RotateAroundAxis(angle:Right(), math.NormalizeAngle( 0 - ( y - self:GetTall()/ 2 ) / 2 ) )
         self:SetCamPos( angle:Forward() * distance + Vector( 0, 0, 40))
