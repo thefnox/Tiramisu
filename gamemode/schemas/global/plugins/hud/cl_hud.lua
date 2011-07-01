@@ -112,6 +112,7 @@ function InitHiddenButton()
 		
 		if(trace.HitNonWorld) and trace.StartPos:Distance( trace.HitPos ) <= 200 then
 			local target = trace.Entity;
+			local submenus = {}
 			local ContextMenu = DermaMenu()
 			
 				if target:GetClass() == "item_prop" then
@@ -122,7 +123,16 @@ function InitHiddenButton()
 				end
 
 				for k,v in pairs (RclickTable) do
-					if v.Condition(target) then ContextMenu:AddOption(v.Name, function() v.Click(target, LocalPlayer()) end) end
+					if v.Condition(target) then 
+						if v.SubMenu then
+							if !submenus[ v.SubMenu ] then
+								submenus[ v.SubMenu ] = ContextMenu:AddSubMenu( v.SubMenu )
+							end
+							submenus[ v.SubMenu ]:AddOption(v.Name, function() v.Click(target, LocalPlayer()) end)
+						else
+							ContextMenu:AddOption(v.Name, function() v.Click(target, LocalPlayer()) end)
+						end
+					end
 				end
 				
 			ContextMenu:Open();

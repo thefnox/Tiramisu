@@ -1,4 +1,5 @@
 RCLICK.Name = "Make an item"
+RCLICK.SubMenu = "Admin"
 
 function RCLICK.Condition(target)
 
