@@ -115,12 +115,17 @@ function InitHiddenButton()
 		tracedata.endpos = CAKE.CameraPos+(ang*1000)
 		tracedata.filter = LocalPlayer()
 		local trace = util.TraceLine(tracedata)
+		local distance = 200
+		if LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 0 then
+			distance = 5000
+		end
 		
-		if(trace.HitNonWorld) and trace.StartPos:Distance( trace.HitPos ) <= 200 then
+		if trace.StartPos:Distance( trace.HitPos ) <= distance then
 			local target = trace.Entity;
+			local submenus = {}
 			local ContextMenu = DermaMenu()
 			
-				if target:GetClass() == "item_prop" then
+				if ValidEntity( target ) and target:GetClass() == "item_prop" then
 					item = CAKE.ItemData[target:GetNWString("Class")]
 					for k,v in pairs(item.RightClick or {}) do
 						ContextMenu:AddOption(k, function() LocalPlayer():ConCommand("rp_useitem " ..target:EntIndex().. " " .. v) end)
@@ -128,7 +133,16 @@ function InitHiddenButton()
 				end
 
 				for k,v in pairs (RclickTable) do
-					if v.Condition(target) then ContextMenu:AddOption(v.Name, function() v.Click(target, LocalPlayer()) end) end
+					if v.Condition(target) then 
+						if v.SubMenu then
+							if !submenus[ v.SubMenu ] then
+								submenus[ v.SubMenu ] = ContextMenu:AddSubMenu( v.SubMenu )
+							end
+							submenus[ v.SubMenu ]:AddOption(v.Name, function() v.Click(target, LocalPlayer()) end)
+						else
+							ContextMenu:AddOption(v.Name, function() v.Click(target, LocalPlayer()) end)
+						end
+					end
 				end
 				
 			ContextMenu:Open();

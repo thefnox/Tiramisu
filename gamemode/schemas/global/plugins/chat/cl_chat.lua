@@ -330,6 +330,10 @@ vgui.Register( "TiramisuChatBox", PANEL, "DFrame")
 function chat.AddText(...) --Overriding default chat text entry
 end
 
+hook.Add( "ChatText", "WhatDontGoOnTheChatboxGetsDisabled", function(  playerindex, playername, text, messagetype  )
+    return true
+end)
+
 
 hook.Add("PlayerBindPress", "TiramisuChatOverride", function(ply, bind, pressed)
     if string.find( bind, "messagemode" ) or string.find( bind, "messagemode2" ) then

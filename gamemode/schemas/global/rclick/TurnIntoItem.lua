@@ -1,8 +1,9 @@
 RCLICK.Name = "Make an item"
+RCLICK.SubMenu = "Admin"
 
 function RCLICK.Condition(target)
 
-	if target:GetClass() == "prop_physics" and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 0 then return true end
+	if ValidEntity( target) and target:GetClass() == "prop_physics" and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 0 then return true end
 
 end
 

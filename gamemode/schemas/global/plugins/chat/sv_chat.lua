@@ -1,5 +1,14 @@
 --Everything chat related
 
+local meta = FindMetaTable( "Player" )
+
+--Used instead of RunConsoleCOmmand
+function meta:Say( text )
+
+	gamemode.Call("PlayerSay", self, text )
+
+end
+
 CAKE.ChatCommands = {  };
 
 function CAKE.SimpleChatCommand( prefix, range, form, channel )
@@ -48,19 +57,15 @@ hook.Add( "AcceptStream", "TiramisuAcceptChatStream", function( pl, handler, id 
 	end
 end)
 
---NOTE: TIRAMISU NO LONGER USES THE NORMAL "SAY" COMMAND NOR THE REGULAR CHAT HOOKS.
+--NOTE: TIRAMISU IS NOW COMPATIBLE WITH REGULAR CHAT :D
 
---This means everything that you MUST use through chat commands must be hooked to this stream otherwise it won't work, period. There's no other way nor workaround.
-
-datastream.Hook( "TiramisuChatHandling", function( ply, handler, id, encoded, decoded )
-
-	local text = decoded.text or ""
+function GM:PlayerSay( ply, text, team )
 
 	CAKE.DayLog("chat.txt", ply:SteamID() .. ": " .. text); -- we be spyins.
 	
 	if( string.sub( text, 1, 2) == "//" or string.sub( text, 1, 4) == "/ooc" ) then --OOC override, to add colors.
 		CAKE.OOCAdd( ply, text )
-		return
+		return ""
 	end
 	
 	for prefix, cc in pairs( CAKE.ChatCommands ) do
@@ -106,7 +111,7 @@ datastream.Hook( "TiramisuChatHandling", function( ply, handler, id, encoded, de
 			
 			end
 			
-			return
+			return ""
 			
 		end
 		
@@ -115,7 +120,7 @@ datastream.Hook( "TiramisuChatHandling", function( ply, handler, id, encoded, de
 	if( string.sub( text, 1, 1 ) == "/" ) then
 	
 		CAKE.SendChat( ply, "That is not a valid command" );
-		return
+		return ""
 	
 	else
 	
@@ -123,9 +128,16 @@ datastream.Hook( "TiramisuChatHandling", function( ply, handler, id, encoded, de
 
 		CAKE.ICAdd( ply, ply:Nick() .. ": " .. text )
 		
-		return
+		return ""
 		
 	end
+
+end
+
+datastream.Hook( "TiramisuChatHandling", function( ply, handler, id, encoded, decoded )
+
+	local text = decoded.text or ""
+	gamemode.Call("PlayerSay", ply, text )
 	
 end)
 

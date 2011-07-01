@@ -158,7 +158,7 @@ usermessage.Hook("EndPopulate", MakeContainerUp);
 
 function RCLICK.Condition(target)
 
-if ( target:GetClass() == "prop_physics" or  target:GetClass() == "item_prop" ) and target:GetNWInt( "iscont" ) == 1 then return true end
+if ValidEntity( target ) and ( target:GetClass() == "prop_physics" or  target:GetClass() == "item_prop" ) and target:GetNWInt( "iscont" ) == 1 then return true end
 
 end
 
