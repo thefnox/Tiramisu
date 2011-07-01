@@ -12,12 +12,6 @@ local function GroupSpawnHook( ply )
                 else
                     CAKE.SetCharRank( ply, group, CAKE.GetGroupField( group, "DefaultRank" ))
                 end
-                timer.Create( ply:SteamID() .. "groupsendtimer", 10, 0, function()
-                    CAKE.SendGroupToClient( ply )
-                    if !CAKE.GroupExists( CAKE.GetCharField( ply, "group" ) ) then
-                        timer.Destroy( ply:SteamID() .. "groupsendtimer" )
-                    end
-                end)
             else
                 if CAKE.GetCharField( ply, "group" ) != "none" then
                     CAKE.SendError( ply, "You have been kicked from your group."  )
@@ -41,7 +35,7 @@ end)
 hook.Add( "PlayerLoadout", "TiramisuGroupWeaponsLoadout", function( ply )
 
     if ply:IsCharLoaded() then
-        timer.Simple( 1, function()
+        timer.Simple( 0, function()
             local group = CAKE.GetCharField( ply, "group" )
             local rank = CAKE.GetCharField( ply, "grouprank" )
             if CAKE.GetGroupFlag( group, "loadouts" ) then
