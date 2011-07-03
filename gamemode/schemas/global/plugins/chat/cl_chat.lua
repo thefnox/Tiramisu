@@ -1,5 +1,5 @@
 datastream.Hook( "TiramisuAddToChat", function( handler, id, encoded, decoded )
-    decoded.text = decoded.text:gsub("<font=%w*>", "")
+    decoded.text = decoded.text:gsub("<%s*%w*%s*=%s*%w*%s*>", "")
     decoded.text = decoded.text:gsub("</font>", "")
     if !decoded.font then
         decoded.font = CAKE.ChatFont
@@ -22,7 +22,7 @@ datastream.Hook( "TiramisuAddToOOC", function( handler, id, encoded, decoded )
     local playername = decoded.name
     local text = decoded.text
 
-    text = text:gsub("<font=%w*>", "")
+    text = text:gsub("<%s*%w*%s*=%s*%w*%s*>", "")
     text = text:gsub("</font>", "")
     CAKE.Chatbox:AddLine(  "<font=" .. CAKE.ChatFont .. "><color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>:" .. text .. "</color></font>", "OOC" )
 

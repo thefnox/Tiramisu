@@ -372,6 +372,20 @@ function GM:PlayerSpray(ply)
 	return true
 end
 
+function physgunPickup( ply, ent )
+	if !(ent:GetClass() != "func_door" and ent:GetClass() != "prop_door_rotating" and ent:GetClass() != "func_door_rotating") then
+		return false
+	end
+
+	if (ent:GetClass() != "prop_physics" and ent:GetClass() != "item_prop") and !(CAKE.PlayerRank(ply) > 0) then
+		return false // Don't allow them to pick up players!!
+	else
+		return true // If not a player, allow them to pick up the item.
+	end
+end
+ 
+hook.Add( "PhysgunPickup", "physgunPickup", physgunPickup );
+
 function PLUGIN.Init()
 
 	CAKE.ConVars[ "PropLimit" ] = 20;

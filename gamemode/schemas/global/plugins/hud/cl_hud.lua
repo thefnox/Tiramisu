@@ -130,6 +130,12 @@ end)
 
 --Context Button Initialization
 
+function CAKE.EntityIsItem(targ)
+	if target and target:GetClass() == "item_prop" then
+		return CAKE.ItemData[target:GetNWString("Class")]
+	end
+end
+
 function InitHiddenButton()
 	HiddenButton = vgui.Create("DButton") -- HOLY SHIT WHAT A HACKY METHOD FO SHO
 	HiddenButton:SetSize(ScrW(), ScrH());
