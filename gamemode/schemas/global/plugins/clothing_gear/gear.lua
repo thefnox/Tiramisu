@@ -55,11 +55,16 @@ function CAKE.HandleGear( ply, item, bone, itemid, offset, angle, scale, skin )
 		
 		local id =  #ply.Gear + 1 
 		local model = CAKE.GetUData(itemid, "model") or CAKE.ItemData[ item ].Model
-		local offset = offset or CAKE.ItemData[ item ].Offset or Vector( 0, 0, 0 )
-		local angle = angle or CAKE.ItemData[ item ].OffsetAngle or Angle( 0, 0, 0 )
-		local scale = scale or CAKE.ItemData[ item ].Scale or Vector( 1, 1, 1 )
-		local skin = skin or CAKE.ItemData[ item ].Skin or 0
+		local offset = offset or CAKE.GetUData(itemid, "offset") or CAKE.ItemData[ item ].Offset or Vector( 0, 0, 0 )
+		local angle = angle or CAKE.GetUData(itemid, "angle") or CAKE.ItemData[ item ].OffsetAngle or Angle( 0, 0, 0 )
+		local scale = scale or CAKE.GetUData(itemid, "scale") or CAKE.ItemData[ item ].Scale or Vector( 1, 1, 1 )
+		local skin = skin or CAKE.GetUData(itemid, "skin") or CAKE.ItemData[ item ].Skin or 0
 		local bonemerge = true
+
+		if itemid then
+			CAKE.SetUData( itemid, "bone", bone )
+		end
+
 		if CAKE.ItemData[ item ].WeaponType then
 			bonemerge = false
 		end
@@ -229,11 +234,14 @@ local function ccEditGear( ply, cmd, args )
 			item = ent.item
 		end
 
-		print( "server" )
-		print( offset )
-		print( angle )
-		print( scale )
-		
+		if ent.itemid then
+			CAKE.SetUData(ent.itemid, "offset", offset)
+			CAKE.SetUData(ent.itemid, "scale", scale)
+			CAKE.SetUData(ent.itemid, "angle", angle)
+			CAKE.SetUData(ent.itemid, "visible", visible)
+			CAKE.SetUData(ent.itemid, "skin", skin)
+		end
+
 		ent:SetDTVector( 1, offset )
 		ent:SetDTVector( 2, scale )
 		ent:SetDTAngle( 1, angle )

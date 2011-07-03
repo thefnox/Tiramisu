@@ -196,6 +196,9 @@ function PANEL:Paint()
 	    
 	    render.SuppressEngineLighting( true )
 	    render.SetLightingOrigin( self.Entity:GetPos() )
+        render.ResetModelLighting( 1,1,1 )
+        render.SetColorModulation( 1,1,1 )
+        render.SetBlend( 1 )
 
 	    self.Entity:DrawModel()
 	    

@@ -2,7 +2,7 @@ RCLICK.Name = "Give Credits"
 
 function RCLICK.Condition(target)
 
-if target:IsPlayer() then return true end
+if target:IsPlayer() and target != LocalPlayer() then return true end
 
 end
 

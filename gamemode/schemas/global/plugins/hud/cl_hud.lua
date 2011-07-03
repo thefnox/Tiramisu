@@ -5,6 +5,8 @@ CLPLUGIN.Author = "F-Nox/Big Bang"
 CAKE.TitleDrawDistance = CreateClientConVar( "rp_titledrawdistance", 600, true, true )
 CAKE.MinimalHUD = CreateClientConVar( "rp_minimalhud", 0, true, true )
 
+CAKE.SelectedEnt = false
+
 --Draws HUD time text
 local struc = {}
 struc.pos = { ScrW() - 10, 10 } -- Pos x, y
@@ -94,6 +96,38 @@ hook.Add( "HUDPaint", "TiramisuDeathMessages", function()
 	end
 end)
 
+--Right Click shader drawing
+
+local mat = Material("models/debug/debugwhite")
+hook.Add( "PostDrawOpaqueRenderables", "TiramisuRightClickSelectShader", function( )
+	
+	if ValidEntity( CAKE.SelectedEnt ) and HiddenButton:IsVisible() then
+		cam.IgnoreZ( true )
+		CAKE.SelectedEnt:SetNoDraw( true )
+
+		render.SuppressEngineLighting( true )
+		render.ResetModelLighting( 1,1,1 )
+		render.SetColorModulation( CAKE.BaseColor.r / 255, CAKE.BaseColor.g / 255 , CAKE.BaseColor.b / 255 )
+		render.SetBlend( 0.8 )
+		render.SetLightingOrigin( CAKE.SelectedEnt:GetPos() )
+		SetMaterialOverride( mat )
+
+		CAKE.SelectedEnt:SetModelScale( Vector( 1.03, 1.03, 1.03 ) )
+		CAKE.SelectedEnt:DrawModel()
+
+		render.SuppressEngineLighting( false )
+		cam.IgnoreZ( false )
+		render.SetBlend( 1 )
+		render.SetColorModulation( 1,1,1 )
+		SetMaterialOverride( nil )
+		CAKE.SelectedEnt:SetModelScale( Vector( 1, 1, 1 ) )
+		CAKE.SelectedEnt:SetNoDraw( false )
+		CAKE.SelectedEnt:DrawModel()
+
+	end
+
+end)
+
 --Context Button Initialization
 
 function InitHiddenButton()
@@ -102,27 +136,32 @@ function InitHiddenButton()
 	HiddenButton:SetText("");
 	HiddenButton:SetDrawBackground(false);
 	HiddenButton:SetDrawBorder(false);
+	HiddenButton.DoClick = function()
+		CAKE.SelectedEnt = false
+	end
 	HiddenButton.DoRightClick = function()
-		local ang = gui.ScreenToVector(gui.MouseX(), gui.MouseY());
-		local tracedata = {}
-		tracedata.start = CAKE.CameraPos
-		tracedata.endpos = CAKE.CameraPos+(ang*1000)
-		tracedata.filter = LocalPlayer()
-		local trace = util.TraceLine(tracedata)
 		local distance = 200
 		if LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 0 then
 			distance = 5000
 		end
+		local ang = gui.ScreenToVector(gui.MouseX(), gui.MouseY());
+		local tracedata = {}
+		tracedata.start = CAKE.CameraPos
+		tracedata.endpos = CAKE.CameraPos+(ang*2000)
+		if !CAKE.Thirdperson:GetBool() then
+			tracedata.filter = LocalPlayer()
+		end
+		local trace = util.TraceLine(tracedata)
 		
 		if trace.StartPos:Distance( trace.HitPos ) <= distance then
 			local target = trace.Entity;
 			local submenus = {}
 			local ContextMenu = DermaMenu()
-			
+			if ValidEntity( target ) or target:IsWorld() then
 				if ValidEntity( target ) and target:GetClass() == "item_prop" then
 					item = CAKE.ItemData[target:GetNWString("Class")]
 					for k,v in pairs(item.RightClick or {}) do
-						ContextMenu:AddOption(k, function() LocalPlayer():ConCommand("rp_useitem " ..target:EntIndex().. " " .. v) end)
+						ContextMenu:AddOption(k, function() CAKE.SelectedEnt = false LocalPlayer():ConCommand("rp_useitem " ..target:EntIndex().. " " .. v) end)
 					end
 				end
 
@@ -132,14 +171,17 @@ function InitHiddenButton()
 							if !submenus[ v.SubMenu ] then
 								submenus[ v.SubMenu ] = ContextMenu:AddSubMenu( v.SubMenu )
 							end
-							submenus[ v.SubMenu ]:AddOption(v.Name, function() v.Click(target, LocalPlayer()) end)
+							submenus[ v.SubMenu ]:AddOption(v.Name, function() CAKE.SelectedEnt = false v.Click(target, LocalPlayer()) end)
 						else
-							ContextMenu:AddOption(v.Name, function() v.Click(target, LocalPlayer()) end)
+							ContextMenu:AddOption(v.Name, function() CAKE.SelectedEnt = false v.Click(target, LocalPlayer()) end)
 						end
 					end
 				end
-				
-			ContextMenu:Open();
+				if !CAKE.SelectedEnt and ValidEntity( target ) then
+					CAKE.SelectedEnt = target
+				end
+				ContextMenu:Open();
+			end
 		end
 	end
 end

@@ -250,7 +250,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name )
 	if PlayerMenu then
 		EditorFrame = vgui.Create( "DFrameTransparent", PlayerMenu ) -- Creates the frame itself
 		EditorFrame:Center() -- Position on the players screen
-		EditorFrame:SetSize( 300, 300 ) -- Size of the frame
+		EditorFrame:SetSize( 280, 260 ) -- Size of the frame
 		EditorFrame:SetDeleteOnClose( true )
 		EditorFrame:SetTitle( "Editing gear in bone " .. bone ) -- Title of the frame
 		EditorFrame:SetVisible( true )
@@ -260,7 +260,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name )
 		local PropertySheet = vgui.Create( "DPropertySheet" )
 		PropertySheet:SetParent( EditorFrame )
 		PropertySheet:SetPos( 5, 28 )
-		PropertySheet:SetSize( 290, 267 )
+		PropertySheet:SetSize( EditorFrame:GetWide() - 10, EditorFrame:GetTall() - 33 )
 
 		local EditList = vgui.Create( "DPanelList" )
 		EditList:SetPos( 25,25 )
@@ -489,10 +489,6 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name )
 						local offstr = "\"" .. tostring( xslider:GetValue() ) .. "," .. tostring( yslider:GetValue() ) .. "," .. tostring( zslider:GetValue()) .. "\""
 						local angstr = "\"" .. tostring( pitchslider:GetValue() ) .. "," .. tostring( yawslider:GetValue() ) .. "," .. tostring( rollslider:GetValue() ) .. "\""
 						local scalestr =  "\"" .. tostring( xscale:GetValue() ) .. "," .. tostring( yscale:GetValue() ) .. "," .. tostring( zscale:GetValue()) .. "\""
-						print( "client" )
-						print( offstr )
-						print( angstr )
-						print( scalestr )
 						RunConsoleCommand( "rp_editgear", entity:EntIndex(), offsetstr, angstr, scalestr, "\"none\"", "\"" .. tostring( skinnumber:GetValue()) .. "\"" )
 						EditorFrame:SetVisible( false )
 						EditorFrame:Remove()

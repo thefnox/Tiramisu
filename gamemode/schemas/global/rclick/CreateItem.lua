@@ -11,14 +11,13 @@ function RCLICK.Click(target,ply)
  	
  	local tbl = {}
 
-	for k, v in pairs( CAKE.ItemData ) do
-		table.insert( tbl, v.Class )
+	for k, v in ipairs( CAKE.ItemData ) do
+		table.insert( tbl, k )
 	end
 
 	CAKE.ChoiceRequest( "Create an item", "Choose what item to create", tbl,
-	function( value )
-		print( "rp_admin createitem  \"" .. value .. "\"" )
-		ply:ConCommand("rp_admin createitem  \"" .. value .. "\"" )
+	function( text )
+		RunConsoleCommand("rp_admin", "createitem", text )
 	end,
 	function() end, "Accept", "Cancel")
 
