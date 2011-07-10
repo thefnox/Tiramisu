@@ -354,7 +354,7 @@ local function RemoveHelmet( ply, text )
 			
 	end
 	
-	ply:RemoveHelmet()
+	CAKE.RemoveHelmet( ply )
 	
 	return "";
 

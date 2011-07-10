@@ -172,8 +172,15 @@ function ccSelectChar( ply, cmd, args )
 	
 		CAKE.TestClothing( ply, CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "model" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "clothing" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "helmet" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "gloves" ] )
 
-		--CAKE.TestGear( ply, CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "gear" ] )
+		local tbl = CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "gear" ]
+		CAKE.RemoveAllGear( ply )
+
+		for k, v in pairs( tbl ) do
+			CAKE.HandleGear( ply, v[ "item" ], v[ "bone" ], v[ "itemid" ], v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )
+		end
 		
+		CAKE.SendGearToClient( ply )
+
 	else
 		
 		return;

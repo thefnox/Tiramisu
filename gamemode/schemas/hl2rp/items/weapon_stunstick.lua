@@ -9,6 +9,8 @@ ITEM.Offset = Vector( 1,-5,3 )
 ITEM.OffsetAngle = Angle( 0,0,0 )
 ITEM.Bone = "left thigh"
 ITEM.WeaponType = "small3"
+ITEM.Wearable = true
+
 
 function ITEM:Drop(ply)
 

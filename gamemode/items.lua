@@ -355,6 +355,7 @@ function meta:RefreshInventory( )
 				newtbl[k].Class = CAKE.ItemData[ v[1] ].Class or "error"
 				newtbl[k].Model = CAKE.GetUData( v[2], "model" )
 				newtbl[k].ID = v[2]
+				newtbl[k].Wearable = CAKE.ItemData[ v[1] ].Wearable or CAKE.GetUData( v[2], "wearable" )
 			else
 				table.remove( inventory, k )
 			end

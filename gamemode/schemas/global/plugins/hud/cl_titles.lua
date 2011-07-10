@@ -105,7 +105,6 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DDoorTitles", function()
 				if !doordata.HitWorld then
 					viewpos = LocalPlayer():GetShootPos()
 					alpha = math.Clamp( viewpos:Distance( door:GetPos() ) * - 1 + 300, 0, 255 )
-					cam.IgnoreZ(true)
 					cam.Start3D2D(doordata.position, doordata.angles, 0.12 );
 						draw.SimpleTextOutlined( CAKE.GetDoorTitle( door ), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
 					cam.End3D2D()
@@ -113,7 +112,6 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DDoorTitles", function()
 					cam.Start3D2D(doordata.positionBack, doordata.anglesBack, 0.12);
 						draw.SimpleTextOutlined( CAKE.GetDoorTitle( door ), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
 					cam.End3D2D()
-					cam.IgnoreZ(false)		
 				end
 			end
 		end

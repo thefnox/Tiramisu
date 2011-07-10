@@ -36,6 +36,46 @@ local function BoneScale( self, realboneid, scale )
 
 end
 
+function SolveIKForArm( self, laterality )
+
+	local shoulderid = self:LookupBone( "ValveBiped.Bip01_" .. laterality .. "_UpperArm" ) 
+	local shoulderpos, shoulderang = self:GetBonePosition( shoulderid )
+	local elbowid = self:LookupBone( "ValveBiped.Bip01_" .. laterality .. "_Forearm" )
+	local elbowpos, elbowang = self:GetBonePosition( elbowid )
+	local uparmlength = 11.5
+	local armlength = uparmlength * 2
+
+	local wristnormal = self.Entity:GetParent():GetAimVector():Normalize()
+	local wristdest = wristnormal * armlength
+	local targetang = self.Entity:GetParent():GetAimVector():Angle()
+
+	self:SetBonePosition( shoulderid, shoulderpos, targetang )
+	self:SetBonePosition( elbowid, elbowpos, targetang )
+	/*
+	if shoulderpos:Distance(wristdest) >= armlength then -- We don't even need to bend the arm!
+		-- just return some simple values :)
+		local wristnormal = wristdest:Normalize()
+		local wristdest = wristnormal * armlength
+		local shoulderang = wristdest:Normalize():Angle()
+		local elbowpos = wristnormal * uparmlength
+		return shoulderang, shoulderang
+	end
+
+
+
+	if shoulderpos:Distance(wristdest) >= uparmlength then
+		--What we're doing here is assuming that the length of the arm and the forearm are the same. The end result will be off by a couple of inches but it makes the entire equation so easy to solve.
+		local height = Vector(0, 0, 0):Distance(wristdest) - armlength
+		--The end result 
+		local destinationangle = math.asin( height / uparmlength ) * -1
+		shoulderang:RotateAroundAxis( shoulderang:Up(), destinationangle )
+		elbowang:RotateAroundAxis( elbowang:Up(), destinationangle * -1 )
+
+	end
+	*/
+
+end
+
 local body = {
 	"ValveBiped.Bip01_Head1",
 	"ValveBiped.Bip01_L_Hand",
@@ -288,6 +328,8 @@ function ENT:BuildBonePositions( NumBones, NumPhysBones )
 			end
 		end
 	end
+
+	--SolveIKForArm( self, "R" )
 
 end
 

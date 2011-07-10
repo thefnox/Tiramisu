@@ -11,6 +11,8 @@ ITEM.Scale = Vector( 0, 0, 0 )
 ITEM.Bone = "left thigh"
 ITEM.WeaponType = "small3"
 ITEM.Weight = 0
+ITEM.Wearable = true
+
 
 function ITEM:Drop(ply)
 

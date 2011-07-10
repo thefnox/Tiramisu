@@ -135,11 +135,30 @@ function CAKE.RemoveGearItem( ply, item )
 		for k, v in pairs( ply.Gear ) do
 			if ValidEntity( v ) and v.item == item then
 				CAKE.RemoveGear( ply, k )
+				CAKE.SaveGear( ply )
+				return true
 			end
-			break
 		end
 	end
-	CAKE.SaveGear( ply )
+		
+	return false
+
+end
+
+--Removes one gear piece based on it's item ID.
+function CAKE.RemoveGearItemID( ply, itemid )
+
+	if ply.Gear then
+		for k, v in pairs( ply.Gear ) do
+			if ValidEntity( v ) and v.itemid == itemid then
+				CAKE.RemoveGear( ply, k )
+				CAKE.SaveGear( ply )
+				return true
+			end
+		end
+	end
+		
+	return false
 	
 end
 
@@ -316,13 +335,6 @@ function CAKE.RestoreGear( ply )
 		for k, v in pairs( tbl ) do
 			if ply:HasItem( v["item"] ) then
 				CAKE.HandleGear( ply, v[ "item" ], v[ "bone" ], v[ "itemid" ], v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )
-				timer.Simple( 1, function()
-					if resourcex and CAKE.ItemData[ v["item"] ].Content then
-						for k, v in ipairs( CAKE.ItemData[ v["item"] ].Content ) do
-							resourcex.AddFile( v, true )
-						end
-					end
-				end)
 			end
 		end
 		CAKE.SendGearToClient( ply )

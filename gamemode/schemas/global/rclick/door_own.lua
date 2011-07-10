@@ -8,6 +8,6 @@ end
 
 function RCLICK.Click(target,ply)
 
-ply:ConCommand("rp_purchasedoor " .. target:EntIndex())
+	RunConsoleCommand("rp_purchasedoor", target:EntIndex())
 
 end

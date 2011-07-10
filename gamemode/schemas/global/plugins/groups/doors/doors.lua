@@ -32,21 +32,30 @@ function CAKE.LoadDoors()
 
 end
 
+function CAKE.SaveDoors()
+
+	local keys = glon.encode(CAKE.Doors);
+	file.Write(CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt", keys);
+
+end
+
 --Fetches a door's group affinity.
 function CAKE.GetDoorGroup( entity )
 
-	if ValidEntity( entity ) and entity.doorgroup then
-		return entity.doorgroup
-	end
+	if ValidEntity( entity ) then
+		if entity.doorgroup then
+			return entity.doorgroup
+		end
 
-	for k, v in pairs(CAKE.Doors) do
-		
-		if(v["class"] == entity:GetClass() and v["pos"] == entity:GetPos() and v["doorgroup"] != 0 ) then
+		for k, v in pairs(CAKE.Doors) do
 			
-			return v["doorgroup"]
+			if(v["class"] == entity:GetClass() and v["pos"] == entity:GetPos() and v["doorgroup"] != 0 ) then
+				
+				return v["doorgroup"]
+					
+			end
 				
 		end
-			
 	end
 
 	return false
@@ -115,7 +124,7 @@ function ccPurchaseDoor( ply, cmd, args )
 	local pos = door:GetPos( );
 	
 		
-	if( CAKE.GetDoorGroup( entity ) and !door.purchaseable ) then
+	if( CAKE.GetDoorGroup( door ) and !door.purchaseable ) then
 		
 		CAKE.SendChat( ply, "This is not a purchaseable door!" );
 		return;
@@ -129,13 +138,19 @@ function ccPurchaseDoor( ply, cmd, args )
 
 			if CAKE.GetDoorBuilding(door) then
 				local building = CAKE.GetDoorBuilding(door)
-				for k, v in pairs( CAKE.Doors ) do
-					if CAKE.GetDoorBuilding(v["entity"]) == building then
-						CAKE.ChangeMoney( ply, -50 );
-						v["entity"].owner = ply;
+				local doors
+				for _, targetdoor in pairs( CAKE.Doors ) do
+					if targetdoor["building"] == building then
+						doors = ents.FindByClass( targetdoor["class"] )
+						for k, v in pairs( doors ) do
+							if v:GetPos() == targetdoor["pos"] then
+								CAKE.ChangeMoney( ply, -50 )
+								v.owner = ply
+							end
+						end
 					end
 				end
-				CAKE.SendChat( ply, "Door Owned" );
+				CAKE.SendChat( ply, "Building Owned" );
 			else
 				if( tonumber( CAKE.GetCharField( ply, "money" ) ) >= 50 ) then
 					

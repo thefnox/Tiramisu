@@ -457,6 +457,7 @@ end
    Name: OpenMenu
 ---------------------------------------------------------*/
 function PANEL:OpenMenu()
+
 	local ContextMenu = DermaMenu()
 		if !self:GetItem().Unusable then
 			ContextMenu:AddOption("Use", function() self:UseItem() end)
@@ -464,9 +465,13 @@ function PANEL:OpenMenu()
 		for k,v in pairs(self:GetItem().RightClick or {}) do
 			ContextMenu:AddOption( k, function() self:UseItem(v) end)
 		end
+		if (self:GetItem().Wearable or string.match( self:GetItem().Class, "clothing_" ) or string.match( self:GetItem().Class, "helmet_" )) then
+			ContextMenu:AddOption("Wear", function() RunConsoleCommand( "rp_wearitem", self:GetItem().Class, self:GetItem().ID ) end)
+		end
 		ContextMenu:AddOption("Drop", function() self:DropItem() end)
 		if self.Amount > 1 then ContextMenu:AddOption("Drop All", function() self:DropAllItem() end) end
 	ContextMenu:Open()
+	
 end
 
 /*---------------------------------------------------------

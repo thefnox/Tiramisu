@@ -183,9 +183,11 @@ function InitHiddenButton()
 						end
 					end
 				end
+
 				if !CAKE.SelectedEnt and ValidEntity( target ) then
 					CAKE.SelectedEnt = target
 				end
+				
 				ContextMenu:Open();
 			end
 		end

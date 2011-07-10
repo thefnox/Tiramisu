@@ -8,6 +8,6 @@ end
 
 function RCLICK.Click(target,ply)
 
-ply:ConCommand("rp_pickup " .. target:EntIndex())
+	ply:ConCommand("rp_pickup " .. target:EntIndex())
 
 end

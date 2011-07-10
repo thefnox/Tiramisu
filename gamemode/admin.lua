@@ -7,12 +7,23 @@ CAKE.AdminRanks = {  }
 --Sends an admin message to all players.
 function CAKE.AnnounceAction( ply, action )
 
-	local s = "[ ADMIN ] " .. ply:Name( ) .. " " .. action;
+	local s
+	if ply:IsPlayer() then
+		s = "[ ADMIN ] " .. ply:Name( ) .. " " .. action;
 
-	for k, v in pairs( player.GetAll( ) ) do
+		for k, v in pairs( player.GetAll( ) ) do
 
-		CAKE.SendChat( v, s )
-		
+			CAKE.SendChat( v, s )
+			
+		end
+	else
+		s = "[ ADMIN ] Console " .. action;
+
+		for k, v in pairs( player.GetAll( ) ) do
+
+			CAKE.SendChat( v, s )
+			
+		end
 	end
 
 end

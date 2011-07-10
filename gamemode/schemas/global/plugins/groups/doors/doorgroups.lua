@@ -37,7 +37,7 @@ function Admin_AddDoor(ply, cmd, args)
 	Door["purchaseable"] = util.tobool( args[4] )
 
 	
-	table.insert(CAKE.Doors, Door);
+	table.insert(CAKE.Doors, Door)
 	
 	CAKE.SendChat(ply, "Door added");
 
@@ -47,13 +47,145 @@ function Admin_AddDoor(ply, cmd, args)
 	trent.title = Door["title"]
 	CAKE.SetDoorTitle( trent, Door["title"] )
 	
-	local keys = glon.encode(CAKE.Doors);
-	file.Write(CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt", keys);
+	CAKE.SaveDoors()
+	
+end
+
+function Admin_SetDoorGroup(ply, cmd, args)
+	
+	local ent = ents.GetByIndex( args[1] )
+
+	if(table.getn(args) < 2) then ply:PrintMessage(3, "Specify a doorgroup!"); return; end
+
+	ent.doorgroup = tonumber(args[2])
+
+	for _, Door in pairs( CAKE.Doors ) do
+		if Door[ "pos" ] == ent:GetPos() then
+			Door["doorgroup"] = tonumber(args[2])
+			CAKE.SendChat(ply, "Door group set to " .. args[2])
+			CAKE.SaveDoors()
+			return --The whole function ends here.
+		end
+	end
+
+	local Door = {}
+	Door["pos"] = ent:GetPos()
+	Door["class"] = ent:GetClass()
+	Door["title"] = ""
+	Door["doorgroup"] = tonumber(args[2])
+	Door["building"] = 0
+	Door["purchaseable"] = false
+
+	table.insert(CAKE.Doors, Door)
+	
+	CAKE.SendChat(ply, "Door group set to " .. args[2])
+	CAKE.SaveDoors()
+	
+end
+
+function Admin_SetDoorBuilding(ply, cmd, args)
+	
+	local ent = ents.GetByIndex( args[1] )
+
+	if(table.getn(args) < 2) then ply:PrintMessage(3, "Specify a building!"); return; end
+
+	ent.building = tonumber(args[2])
+
+	for _, Door in pairs( CAKE.Doors ) do
+		if Door[ "pos" ] == ent:GetPos() then
+			Door["building"] = tonumber(args[2])
+			CAKE.SendChat(ply, "Door building set to " .. args[2])
+			CAKE.SaveDoors()
+			return --The whole function ends here.
+		end
+	end
+
+	local Door = {}
+	Door["pos"] = ent:GetPos()
+	Door["class"] = ent:GetClass()
+	Door["title"] = ""
+	Door["doorgroup"] = 0
+	Door["building"] = tonumber(args[2])
+	Door["purchaseable"] = false
+
+	table.insert(CAKE.Doors, Door)
+	
+	CAKE.SendChat(ply, "Door building set to " .. args[2])
+	CAKE.SaveDoors()
+	
+end
+
+function Admin_SetDoorTitle(ply, cmd, args)
+	
+	local ent = ents.GetByIndex( args[1] )
+
+	if(table.getn(args) < 2) then ply:PrintMessage(3, "Specify a title!"); return; end
+
+	ent.title = args[2]
+	CAKE.SetDoorTitle( ent, args[2] )
+
+	for _, Door in pairs( CAKE.Doors ) do
+		if Door[ "pos" ] == ent:GetPos() then
+			Door["title"] = args[2]
+			CAKE.SendChat(ply, "Door title set to " .. args[2])
+			CAKE.SaveDoors()
+			return --The whole function ends here.
+		end
+	end
+
+	local Door = {}
+	Door["pos"] = ent:GetPos()
+	Door["class"] = ent:GetClass()
+	Door["title"] = args[2]
+	Door["doorgroup"] = 0
+	Door["building"] = 0
+	Door["purchaseable"] = false
+
+	table.insert(CAKE.Doors, Door)
+	
+	CAKE.SendChat(ply, "Door title set to " .. args[2])
+	CAKE.SaveDoors()
+	
+end
+
+function Admin_SetDoorPurchaseable(ply, cmd, args)
+	
+	local ent = ents.GetByIndex( args[1] )
+
+	if(table.getn(args) < 2) then ply:PrintMessage(3, "Specify if purchaseable!"); return; end
+
+	ent.purchaseable = tonumber(args[2])
+
+	for _, Door in pairs( CAKE.Doors ) do
+		if Door[ "pos" ] == ent:GetPos() and Door[ "class" ] then
+			Door["purchaseable"] = util.tobool( args[2] )
+			CAKE.SendChat(ply, "Door purchaseable status set to " .. args[2] )
+			CAKE.SaveDoors()
+			return --The whole function ends here.
+		end
+	end
+
+	local Door = {}
+	Door["pos"] = ent:GetPos()
+	Door["class"] = ent:GetClass()
+	Door["title"] = ""
+	Door["doorgroup"] = 0
+	Door["building"] = 0
+	Door["purchaseable"] = util.tobool( args[2] )
+
+	table.insert(CAKE.Doors, Door)
+	
+	CAKE.SendChat(ply, "Door purchaseable status set to " .. args[2] )
+	CAKE.SaveDoors()
 	
 end
 
 function PLUGIN.Init()
 
-	CAKE.AdminCommand( "adddoor", Admin_AddDoor, "Add group permissions to a door", true, true, 4 );
+	CAKE.AdminCommand( "adddoor", Admin_AddDoor, "Add group permissions to a door", true, true, 4 )
+	CAKE.AdminCommand( "setdoorgroup", Admin_SetDoorGroup, "Set door group access", true, true, 4 )
+	CAKE.AdminCommand( "setdoorbuilding", Admin_SetDoorBuilding, "Assign a door to a building", true, true, 4 )
+	CAKE.AdminCommand( "setdoortitle", Admin_SetDoorTitle, "Set a door's default title", true, true, 4 );
+	CAKE.AdminCommand( "setdoorpurchaseable", Admin_SetDoorPurchaseable, "Set a door's purchaseable status", true, true, 4 );
 	
 end

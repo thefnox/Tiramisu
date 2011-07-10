@@ -458,7 +458,7 @@ function Admin_SetModel( ply, cmd, args )
 	if !target then
 		CAKE.SendChat(ply, "Target not found!")
 	elseif ValidEntity( target ) then
-		target:RemoveClothing()
+		CAKE.RemoveClothing( target )
 		CAKE.RemoveAllGear( target )
 		target:SetSpecialModel( args[2] or "models/kleiner.mdl" )
 		target:SetNWString( "model", args[2])
@@ -478,11 +478,22 @@ function Admin_TurnIntoItem( ply, cmd, args )
 	if !(args[1] and args[2]) then CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin createpropitem \"name\" \"model\" )") return end
 	local entity = ents.GetByIndex( tonumber( args[ 1 ] ))
 	local name = args[2]
-	id = CAKE.CreateItemID()
-	CAKE.SetUData(id, "name", name)
-	CAKE.SetUData(id, "model", entity:GetModel())
-	CAKE.CreateItem( "propitem", entity:GetPos(), entity:GetAngles(), id );
-	entity:Remove()
+	local pickable = util.tobool( args[3] )
+	local wearable = util.tobool( args[4] )
+	local bone = args[5] or "pelvis"
+	if pickable then
+		id = CAKE.CreateItemID()
+		CAKE.SetUData(id, "name", name)
+		CAKE.SetUData(id, "model", entity:GetModel())
+		if wearable then
+			CAKE.SetUData(id, "wearable", true )
+			CAKE.SetUData(id, "bone", bone)
+		end
+		CAKE.CreateItem( "propitem", entity:GetPos(), entity:GetAngles(), id );
+		entity:Remove()
+	else
+		entity:SetNWString( "propdescription", name )
+	end
 end
 	
 -- Let's make some ADMIN COMMANDS!

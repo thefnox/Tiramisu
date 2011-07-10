@@ -223,18 +223,16 @@ function EditGear()
 			local amount
 			for _, bone in pairs( BoneList ) do
 				amount = table.Count( CAKE.Gear[ string.lower( bone ) ] or {} )
-				node = bones:AddNode( bone .. " (" .. amount .. " items)"  )
-				if CAKE.Gear and CAKE.Gear[ string.lower( bone ) ] then
-					for __, tbl in pairs( CAKE.Gear[ string.lower( bone ) ] ) do
-						node2 = node:AddNode( tbl.name or tbl.item )
-						node2.DoClick = function()
-							HandleGearEditing( tbl.entity, tbl.item, string.lower( bone ), tbl.name )
+				if amount > 0 then
+					node = bones:AddNode( bone .. " (" .. amount .. " items)"  )
+					if CAKE.Gear and CAKE.Gear[ string.lower( bone ) ] then
+						for __, tbl in pairs( CAKE.Gear[ string.lower( bone ) ] ) do
+							node2 = node:AddNode( tbl.name or tbl.item )
+							node2.DoClick = function()
+								HandleGearEditing( tbl.entity, tbl.item, string.lower( bone ), tbl.name )
+							end
 						end
 					end
-				end
-				node2 = node:AddNode( "Create New Gear..." )
-				node2.DoClick = function()
-					HandleGearEditing( false, string.lower( bone ) )
 				end
 			end
 			GearList:AddItem( GearTree )
@@ -579,6 +577,9 @@ end)
 usermessage.Hook( "addclothing", function( um )
 
 	local entity = ents.GetByIndex( um:ReadShort() )
+	local item = um:ReadString()
+
+	entity.item = item 
 
 	table.insert( CAKE.ClothingTbl, entity )
 
