@@ -53,7 +53,7 @@ function meta:RefreshBusiness()
 
 	local group = CAKE.GetCharField(self, "group")
 	local rank = CAKE.GetCharField(self, "grouprank")
-	if CAKE.GetRankField(group, rank, "buygroups") then
+	if type( CAKE.GetRankField(group, rank, "buygroups") ) == "table" and #CAKE.GetRankField(group, rank, "buygroups") > 0 then
 		local tbl = {}
 		for k,v in pairs(CAKE.GetRankField(group, rank, "buygroups") or {}) do
 			if CAKE.Business[v] then
@@ -68,11 +68,13 @@ function meta:RefreshBusiness()
 end
 
 hook.Add( "PlayerSpawn", "TiramisuRefreshBusiness", function( ply )
-	if ply:IsCharLoaded() then
-		ply:RefreshBusiness( )
-	end
+	timer.Simple( 2, function()
+		if ply:IsCharLoaded() then
+			ply:RefreshBusiness( )
+		end
+	end)
 end)
 
-function PLUGIN.Init()
+hook.Add( "InitPostEntity", "TiramisuBuildItemGroups", function() 
 	CAKE.BuildItemGroups()
-end
+end)

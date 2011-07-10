@@ -4,7 +4,7 @@ ITEM.Description = "Combine-Issue Citizen Ration";
 ITEM.Model = "models/weapons/w_package.mdl";
 ITEM.Purchaseable = false;
 ITEM.Price = 0;
-ITEM.ItemGroup = 0;
+ITEM.ItemGroup = 1;
 
 function ITEM:Drop(ply)
 

@@ -134,6 +134,8 @@ function SCHEMA.SetUp( )
 			CAKE.SetRankField( "Resistance", name, "canedit", canedit )
 			CAKE.SetRankField( "Resistance", name, "cankick", cankick )
 			CAKE.SetRankField( "Resistance", name, "cankick", canpromote )
+			CAKE.SetRankField( "Resistance", name, "buygroups", buygroup )
+			print( CAKE.GetRankField( "Resistance", name, "buygroups" ) )
 		else
 			CAKE.CreateRank( "Resistance", name, {
 				[ "formalname" ] = formalname or "none",
@@ -142,7 +144,7 @@ function SCHEMA.SetUp( )
 				[ "canedit" ] = canedit,
 				[ "cankick" ] = cankick,
 				[ "canpromote" ] = canpromote,
-				[ "buygroups" ] = buygroups or {}
+				[ "buygroups" ] = buygroups
 			})
 		end
 	end
@@ -182,7 +184,9 @@ function SCHEMA.SetUp( )
 	CAKE.AddResistanceRank( "member", "Resistance Member", { "clothing_combat", "helmet_balaclava", "weapon_smg1" }, 2 )
 	--Medics
 	CAKE.AddResistanceRank( "medic", "Resistance Medic", { "clothing_combat", "clothing_medic", "helmet_balaclava", "weapon_smg1" }, 2 )
+	--Dealer
+	CAKE.AddResistanceRank( "dealer", "Resistance Supplier", { "clothing_combat", "helmet_balaclava", "weapon_smg1" }, 2, false, false, false, {1,2,3} )
 	--Leader
-	CAKE.AddResistanceRank( "leader", "Resistance Leader", { "clothing_combat", "helmet_balaclava", "weapon_smg1"," weapon_357"}, 3, true, true, true, {1,2,3} )
+	CAKE.AddResistanceRank( "leader", "Resistance Leader", { "clothing_combat", "helmet_balaclava", "weapon_smg1","weapon_357"}, 3, true, true, true, {1,2,3} )
 
 end

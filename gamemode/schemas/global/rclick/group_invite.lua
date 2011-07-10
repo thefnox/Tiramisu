@@ -2,7 +2,7 @@ RCLICK.Name = "Invite"
 
 function RCLICK.Condition(target)
 
-if target:IsPlayer() and CAKE.GetRankPermission( "canpromote" ) then return true end
+if target:IsPlayer() and CAKE.GetRankPermission( "canpromote" ) and target != LocalPlayer() then return true end
 
 end
 

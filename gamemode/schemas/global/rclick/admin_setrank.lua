@@ -9,7 +9,7 @@ end
 
 function RCLICK.Click(target,ply)
 
-	CAKE.ChoiceRequest( "Change a player's rank", "Choose which admin rank should " .. target:Nick() " have", {
+	CAKE.ChoiceRequest( "Change a player's rank", "Choose which admin rank should " .. target:Nick() .. " have", {
 		"Event Coordinator",
 		"Moderator",
 		"Administrator",

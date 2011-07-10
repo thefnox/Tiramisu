@@ -103,6 +103,7 @@ concommand.Add( "rp_escapecreate", ccEscapeCreate );
 local function ccTestClothing( ply, cmd, args )
 
 	if ply:GetNWInt( "charactercreate", 0 )> 0 then
+		CAKE.RemoveAllGear( ply )
 		if args[ 1 ] and args[ 1 ] != "none" then
 			if( args[1] == "Female" ) then
 				ply:SetModel( "models/Tiramisu/AnimationTrees/femaleanimtree.mdl" )

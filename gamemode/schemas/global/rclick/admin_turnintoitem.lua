@@ -56,7 +56,7 @@ function RCLICK.Click(target,ply)
 
 	local TextEntry = vgui.Create( "DTextEntry" )
 	TextEntry:SetText( "Name" )
-	TextEntry.OnEnter = function() Window:Close() ply:ConCommand("rp_admin converttoitem " .. target:EntIndex() .. " \"" .. TextEntry:GetValue() .. "\" " .. tostring( CheckBox:GetChecked() ) .. " " .. tostring( CheckBox2:GetChecked() ) .. " \"" .. bone .. "\"" ) print( bone )) end
+	TextEntry.OnEnter = function() Window:Close() ply:ConCommand("rp_admin converttoitem " .. target:EntIndex() .. " \"" .. TextEntry:GetValue() .. "\" " .. tostring( CheckBox:GetChecked() ) .. " " .. tostring( CheckBox2:GetChecked() ) .. " \"" .. bone .. "\"" ) end
 	InnerPanel:AddItem( TextEntry )
 
 	local CheckBox = vgui.Create( "DCheckBoxLabel" )
@@ -99,7 +99,7 @@ function RCLICK.Click(target,ply)
 	Button:SetTall( 20 )
 	Button:SetWide( Button:GetWide() + 20 )
 	Button:SetPos( 5, 5 )
-	Button.DoClick = function() Window:Close() ply:ConCommand("rp_admin converttoitem " .. target:EntIndex() .. " \"" .. TextEntry:GetValue() .. "\" " .. tostring( CheckBox:GetChecked() ) .. " " .. tostring( CheckBox2:GetChecked() ) .. " \"" .. bone .. "\"" ) print( bone )) end
+	Button.DoClick = function() Window:Close() ply:ConCommand("rp_admin converttoitem " .. target:EntIndex() .. " \"" .. TextEntry:GetValue() .. "\" " .. tostring( CheckBox:GetChecked() ) .. " " .. tostring( CheckBox2:GetChecked() ) .. " \"" .. bone .. "\"" ) end
 
 	local ButtonCancel = vgui.Create( "DButton", ButtonPanel )
 	ButtonCancel:SetText( "Cancel" )
