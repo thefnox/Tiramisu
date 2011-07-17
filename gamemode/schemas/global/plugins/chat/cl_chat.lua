@@ -73,6 +73,7 @@ function PANEL:Init()
         self.TextEntry = vgui.Create( "DTextEntry", self )
         self.TextEntry:SetSize( self.Width - 13, 25 )
         self.TextEntry:SetPos( 5, self.Height - 30 )
+        self.TextEntry:SetAllowNonAsciiCharacters(true)
         self.TextEntry.Paint = function()
             
             if self.Open then
