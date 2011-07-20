@@ -38,19 +38,19 @@ function CAKE.FindPlayer(name)
 	
 	for k, v in pairs(player.GetAll()) do
 	
-		if(string.find(v:Nick(), name) != nil) then
+		if(string.find(string.lower(v:Nick()), string.lower(name)) != nil) then
 			
 			ply = v;
 				
 		end
 			
-		if(string.find(v:Name(), name) != nil) then
+		if(string.find(string.lower(v:Name()), string.lower(name)) != nil) then
 			
 			ply = v;
 				
 		end
 
-		if( string.find(v:SteamID(), name) != nil ) then
+		if(string.find(string.lower(v:SteamID()), string.lower(name)) != nil ) then
 		
 			ply = v;
 			
