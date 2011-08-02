@@ -1,4 +1,3 @@
---Override on GM:OnPlayerUse, in order to make it work wtih other kinds of doors
 hook.Add( "KeyPress", "TiramisuHandleDoors", function( ply, key )
 	if( key == IN_USE ) then
 		local entity = ply:GetEyeTrace( ).Entity
