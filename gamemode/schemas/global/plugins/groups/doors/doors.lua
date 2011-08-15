@@ -90,13 +90,22 @@ end
 
 function ccLockDoor( ply, cmd, args )
 	
+	local entity = ents.GetByIndex( tonumber( args[ 1 ] ) );
 	local door = ents.GetByIndex( tonumber( args[ 1 ] ) );
-	
+	local doorgroup = CAKE.GetDoorGroup(entity) or 0
+	local groupdoor = CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or 0
 	if( CAKE.IsDoor( door ) ) then
-		if( door.owner != nil ) and door.owner == ply then
+		if( ( door.owner != nil ) and door.owner == ply ) or ply:IsSuperAdmin() or ply:IsAdmin() then
 			door:Fire( "lock", "", 0 );
+			CAKE.SendChat( ply, "Door locked!" );
 		else
-			CAKE.SendChat( ply, "This is not your door!" );
+			if type( groupdoor ) == "table" then groupdoor = groupdoor[1] end
+			if doorgroup == groupdoor then --lol
+				door:Fire( "lock", "", 0 );
+				CAKE.SendChat( ply, "Door locked!" );
+			else
+				CAKE.SendChat( ply, "This is not your door!" );
+			end
 		end
 	end
 
@@ -105,15 +114,25 @@ concommand.Add( "rp_lockdoor", ccLockDoor );
 
 function ccUnLockDoor( ply, cmd, args )
 	
+	local entity = ents.GetByIndex( tonumber( args[ 1 ] ) );
 	local door = ents.GetByIndex( tonumber( args[ 1 ] ) );
-	
+	local doorgroup = CAKE.GetDoorGroup(entity) or 0
+	local groupdoor = CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or 0
 	if( CAKE.IsDoor( door ) ) then
-		if( door.owner != nil ) and door.owner == ply then
+		if( ( door.owner != nil ) and door.owner == ply ) or ply:IsSuperAdmin() or ply:IsAdmin() then
 			door:Fire( "unlock", "", 0 );
+			CAKE.SendChat( ply, "Door unlocked!" );
 		else
-			CAKE.SendChat( ply, "This is not your door!" );
+			if type( groupdoor ) == "table" then groupdoor = groupdoor[1] end
+			if doorgroup == groupdoor then --lol
+				door:Fire( "unlock", "", 0 );
+				CAKE.SendChat( ply, "Door unlocked!" );
+			else
+				CAKE.SendChat( ply, "This is not your door!" );
+			end
 		end
 	end
+
 
 end
 concommand.Add( "rp_unlockdoor", ccUnLockDoor );
