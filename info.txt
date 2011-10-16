@@ -1,0 +1,12 @@
+"Gamemode"
+{
+	"name"		"Tiramisu"
+	"version"	"1.2"
+
+	"author_name"	"FNox and Ryaga"
+	"author_email"	""
+	"author_url"	""
+	
+	"info"		"The free and better alternative."
+	"hide"		"0"
+}
