@@ -1,8 +1,10 @@
 -- Set up the gamemode
 DeriveGamemode( "sandbox" );
 
---Initializing global variables. Don't touch this
 CAKE = {  };
+include( "sh_configuration.lua" )
+
+--Initializing global variables. Don't touch this
 CAKE.ItemData = {}
 CAKE.Running = false;
 CAKE.Loaded = false;
@@ -13,7 +15,6 @@ CAKE.Helmet = "none"
 CAKE.Gear = {}
 CAKE.ClothingTbl = {}
 CAKE.MyGroup = {}
-readysent = false;
 CAKE.MenuTabs = {}
 CAKE.ActiveTab = nil
 CAKE.MenuOpen = false
@@ -21,19 +22,9 @@ CAKE.DisplayMenu = false
 CAKE.ViewRagdoll = false
 CAKE.FreeScroll = false
 CAKE.ForceFreeScroll = false
-
---Schema configuration options
-
-CAKE.MenuFont = "Harabara" -- The default font for the whole schema
-CAKE.BaseColor = Color( 100, 100, 115, 150 ) --The schema's default color. Can be set in game
-CAKE.Webpage = "http://www.facepunch.com/" --Set this to whatever you want to, it'll be accessible on the "Forums" tab
-CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 0, true, true ) -- Set this to 1 to have thirdperson enabled by default.
-CAKE.ThirdpersonDistance = CreateClientConVar( "rp_thirdpersondistance", 50, true, true ) --Maximum thirdperson distance
-CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true ) --Set this to 0 to have headbob disabled by default.
-CAKE.UseIntro = true --Set this to false if you want the player to go directly into the character menu when they join
-CAKE.IntroText = "Welcome to Tiramisu" -- Character menu and intro text. NOTE, the HL2RP scheme changes this
-CAKE.IntroSubtitle = "A ROLEPLAY REVOLUTION" -- Character menu and intro subtitle. If you want this gone just set it to ""
-CAKE.ChatFont = "ChatFont" -- Main font used in chatting
+CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", tostring(tonumber(!CAKE.FirstpersonDefault)) , true, true ) 
+CAKE.ThirdpersonDistance = CreateClientConVar( "rp_thirdpersondistance", tostring(CAKE.MaxThirdpersonDistance), true, true )
+CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true )
 
 surface.CreateFont(CAKE.MenuFont, 32, 500, true, false, "TiramisuTitlesFont", false, true) -- Biggest font used. Used in 3D titles and main character title.
 surface.CreateFont(CAKE.MenuFont, 18, 500, true, false, "TiramisuTimeFont", true, false ) -- Second biggest used. 
@@ -42,15 +33,14 @@ surface.CreateFont(CAKE.MenuFont, 12, 400, true, false, "TiramisuTabsFont", true
 surface.CreateFont("DefaultSmallDropShadow", ScreenScale(5), 500, true, false, "TiramisuWhisperFont", true ) -- Used only for whispering
 surface.CreateFont("Trebuchet18", ScreenScale(10), 700, true, false, "TiramisuYellFont", true ) -- Used only for yelling
 
+CAKE.Loaded = true;
 
 require( "datastream" )
 -- Client Includes
 include( "sh_animations.lua" )
 include( "sh_anim_tables.lua" )
 include( "shared.lua" )
-include( "cl_binds.lua" );
-
-CAKE.Loaded = true;
+include( "cl_binds.lua" )
 
 -- Initialize the gamemode
 function GM:Initialize( )
@@ -61,9 +51,10 @@ function GM:Initialize( )
 
 end
 
+
 function GM:Think( )
 
-	if( vgui and readysent == false ) then -- VGUI is initalized, tell the server we're ready for character creation.
+	if( vgui and !readysent ) then -- VGUI is initalized, tell the server we're ready for character creation.
 	
 		LocalPlayer( ):ConCommand( "rp_ready\n" );
 		readysent = true;

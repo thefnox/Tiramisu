@@ -15,7 +15,7 @@ end
 
 include( "shared.lua" ); -- Shared Functions
 include( "log.lua" ); -- Logging functions
-include( "configuration.lua" ); -- Configuration data
+include( "sh_configuration.lua" ); -- Configuration data
 include( "player_data.lua" ); -- Player data functions
 include( "player_util.lua" ); -- Player functions
 include( "admin.lua" ); -- Admin functions

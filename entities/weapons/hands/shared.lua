@@ -23,8 +23,8 @@ SWEP.ViewModel      = ""
 SWEP.WorldModel   = ""
 SWEP.HoldType = "normal"
  
-SWEP.Primary.ClipSize      = -1
-SWEP.Primary.DefaultClip    = 1
+SWEP.Primary.ClipSize      = 0
+SWEP.Primary.DefaultClip    = 0
 SWEP.Primary.Automatic    = false
 
 SWEP.Secondary.ClipSize      = 0

@@ -42,5 +42,6 @@ end)
 AddResource( "lua", "shared.lua" ); -- Shared Functions
 AddResource( "lua", "cl_binds.lua" ); -- Binds
 AddResource( "lua", "cl_init.lua"); -- The initialization of clientside gamemode
+AddResource( "lua", "sh_configuration.lua");
 AddResource( "lua", "sh_animations.lua"); -- Animations
 AddResource( "lua", "sh_anim_tables.lua"); -- Animations
