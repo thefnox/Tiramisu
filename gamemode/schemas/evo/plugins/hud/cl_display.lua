@@ -84,7 +84,7 @@ hook.Add( "PostDrawTranslucentRenderables", "TiramisuHealthAmmoDisplay", functio
 		    ang:RotateAroundAxis( ang:Forward() ,-90 )
 		    ang:RotateAroundAxis( ang:Right() ,0 )
 
-		    if ent:Clip1() >= 0 and ent:GetClass() != "weapon_physcannon" then
+		    if ent:Clip1() >= 0 and ent:GetClass() != "weapon_physcannon" and ent:GetClass() != "hands" then
 		        cam.Start3D2D( pos - (ang:Right() * 10) + (ang:Forward() * 5), ang , 0.2 )
 		        	if ent.Primary and ent.Primary.ClipSize then
 		        		perc = ent:Clip1() / ent.Primary.ClipSize
@@ -157,7 +157,7 @@ hook.Add( "HUDPaint", "TiramisuHUDDraw", function()
 	    
 		    if ( ValidEntity( ent ) and LocalPlayer():GetAiming() ) or ( CAKE.MenuOpen and ValidEntity( ent ) ) then
 		        ammotext = tostring( ent:Clip1() ) .. "/" .. tostring( LocalPlayer():GetAmmoCount(ent:GetPrimaryAmmoType()) )
-		        if ent:Clip1() >= 0 and ent:GetClass() != "weapon_physcannon" then
+		        if ent:Clip1() >= 0 and ent:GetClass() != "weapon_physcannon" and ent:GetClass() != "hands" then
 		            if ent.Primary and ent.Primary.ClipSize then
 		                perc = ent:Clip1() / ent.Primary.ClipSize
 		            else
