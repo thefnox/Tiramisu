@@ -77,13 +77,15 @@ end
 --Main function to set a player's clothing based on at least one item. Helmet is not a necessary argument.
 function CAKE.SetClothing( ply, clothing, helmet )
 
+	print("YES WE ARE HERE")
 	CAKE.RemoveClothing( ply )
 
 	if ( clothing and ply:HasItem( clothing )) or helmet then
-
+		print(clothing, helmet)
 		local item
 		if helmet and helmet != clothing then
-			if ply:ItemHasFlag( body, "nogloves" ) then --Head, body and hands are 
+			if ply:ItemHasFlag( clothing, "nogloves" ) then --Head, body and hands are 
+				print("HMM?")
 				CAKE.HandleClothing( ply, clothing, 1 )
 				CAKE.HandleClothing( ply, helmet, 2 )
 				CAKE.HandleClothing( ply, "none", 3 )
@@ -93,10 +95,15 @@ function CAKE.SetClothing( ply, clothing, helmet )
 			end
 			item = helmet
 		else
-			if ply:ItemHasFlag( body, "nogloves" ) then --If the head is the same as the body, you only have to make the hands.
+			if not helmet then
+				CAKE.HandleClothing( ply, clothing, 1 )
+				CAKE.HandleClothing( ply, "none", 2 )
+				CAKE.HandleClothing( ply, "none", 3 )
+			elseif ply:ItemHasFlag( clothing, "nogloves" ) then --If the head is the same as the body, you only have to make the hands.
 				CAKE.HandleClothing( ply, clothing , 4 )
 				CAKE.HandleClothing( ply, "none", 3 )
 			else --If body, head and hands are all the same, make a single clothing entity.
+				
 				CAKE.HandleClothing( ply, clothing , 0 )
 			end
 			item = clothing
@@ -132,7 +139,7 @@ function CAKE.TestClothing( ply, model, clothing, helmet)
 	if ( clothing and clothing != "none" ) or helmet then
 		local item
 		if helmet and helmet != clothing then
-			if ply:ItemHasFlag( body, "nogloves" ) then --Head, body and hands are 
+			if ply:ItemHasFlag( clothing, "nogloves" ) then --Head, body and hands are 
 				CAKE.HandleClothing( ply, clothing, 1, model )
 				CAKE.HandleClothing( ply, helmet, 2, model )
 				CAKE.HandleClothing( ply, "none", 3, model )
@@ -142,7 +149,11 @@ function CAKE.TestClothing( ply, model, clothing, helmet)
 			end
 			item = helmet
 		else
-			if ply:ItemHasFlag( body, "nogloves" ) then --If the head is the same as the body, you only have to make the hands.
+			if not helmet then
+				CAKE.HandleClothing( ply, clothing, 1 )
+				CAKE.HandleClothing( ply, "none", 2 )
+				CAKE.HandleClothing( ply, "none", 3 )
+			elseif ply:ItemHasFlag( clothing, "nogloves" ) then --If the head is the same as the body, you only have to make the hands.
 				CAKE.HandleClothing( ply, clothing , 4, model )
 				CAKE.HandleClothing( ply, "none", 3 , model )
 			else --If body, head and hands are all the same, make a single clothing entity.
@@ -174,7 +185,7 @@ function CAKE.TestClothing( ply, model, clothing, helmet)
 end
 
 --Internal function to handle clothing creation.
-function CAKE.HandleClothing( ply, item, type, modeloverride )
+function CAKE.HandleClothing( ply, item, ctype, modeloverride )
 	
 	local model
 
@@ -192,23 +203,23 @@ function CAKE.HandleClothing( ply, item, type, modeloverride )
 		ply.Clothing = {}
 	end
 		
-	if ValidEntity( ply.Clothing[ type ] ) and ply.Clothing[ type ]:GetParent() == ply then
-		ply.Clothing[ type ]:Remove()
+	if ValidEntity( ply.Clothing[ ctype ] ) and ply.Clothing[ tcype ]:GetParent() == ply then
+		ply.Clothing[ ctype ]:Remove()
 	end
 	
-	ply.Clothing[ type ] = ents.Create( "player_part" )
-	ply.Clothing[ type ]:SetDTInt( 1, type )
-	ply.Clothing[ type ]:SetDTInt( 2, ply:EntIndex() )
-	ply.Clothing[ type ]:SetDTInt( 3, 1 )
-	ply.Clothing[ type ]:SetModel( model )
-	ply.Clothing[ type ]:SetParent( ply )
-	ply.Clothing[ type ]:SetPos( ply:GetPos() )
-	ply.Clothing[ type ]:SetAngles( ply:GetAngles() )
-	if ValidEntity( ply.Clothing[ type ]:GetPhysicsObject( ) ) then
-		ply.Clothing[ type ]:GetPhysicsObject( ):EnableCollisions( false )
+	ply.Clothing[ ctype ] = ents.Create( "player_part" )
+	ply.Clothing[ ctype ]:SetDTInt( 1, ctype )
+	ply.Clothing[ ctype ]:SetDTInt( 2, ply:EntIndex() )
+	ply.Clothing[ ctype ]:SetDTInt( 3, 1 )
+	ply.Clothing[ ctype ]:SetModel( model )
+	ply.Clothing[ ctype ]:SetParent( ply )
+	ply.Clothing[ ctype ]:SetPos( ply:GetPos() )
+	ply.Clothing[ ctype ]:SetAngles( ply:GetAngles() )
+	if ValidEntity( ply.Clothing[ ctype ]:GetPhysicsObject( ) ) then
+		ply.Clothing[ ctype ]:GetPhysicsObject( ):EnableCollisions( false )
 	end
-	ply.Clothing[ type ]:Spawn()
-	ply.Clothing[ type ].item = item
+	ply.Clothing[ ctype ]:Spawn()
+	ply.Clothing[ ctype ].item = item
 	
 		
 end
