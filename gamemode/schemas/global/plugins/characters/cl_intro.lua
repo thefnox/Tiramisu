@@ -7,8 +7,8 @@ function CAKE.InitIntro()
 	CharacterMenu:SetDraggable( false )
 	CharacterMenu:ShowCloseButton( false )
 	CharacterMenu:SetTitle( "" )
-	CharacterMenu.Paint = function()
-		Derma_DrawBackgroundBlur( CharacterMenu, 0 )
+	CharacterMenu.PaintOver = function()
+		--Derma_DrawBackgroundBlur( CharacterMenu, 0 )
 		if !CharacterMenu.Alpha then
 			CharacterMenu.Alpha = 255
 		end

@@ -66,7 +66,7 @@ function CAKE.CreateItem( class, pos, ang, id )
 	item.uiid = id
 	
 	if string.match( class, "clothing" ) or string.match( class, "helmet" ) then
-		item:SetModel( "models/props/de_tides/Vending_tshirt.mdl" )
+		item:SetModel( "models/props_c17/suitcase_passenger_physics.mdl" )
 	else
 		item:SetModel( CAKE.GetUData(id, "model") or itemtable.Model );
 	end
@@ -97,14 +97,14 @@ function ccDropItem( ply, cmd, args )
 					CAKE.DropWeapon( ply, args[ 1 ] )
 					CAKE.RemoveGearItem( ply, args[ 1 ] )
 					ply:RefreshInventory( )
-					CAKE.CalculateEncumberment( ply )
+					
 					return
 				end
 				CAKE.RestoreClothing( ply )
 				CAKE.RestoreGear( ply )
 				CAKE.CreateItem( v[1], ply:CalcDrop( ), Angle( 0,0,0 ), v[2] );
 				ply:TakeItemID( args[ 1 ] );
-				CAKE.CalculateEncumberment( ply )	
+					
 				ply:RefreshInventory( )
 				return
 			end
@@ -121,14 +121,14 @@ function ccDropItemUnspecific( ply, cmd, args )
 					CAKE.DropWeapon( ply, args[ 1 ] )
 					CAKE.RemoveGearItem( ply, args[ 1 ] )
 					ply:RefreshInventory( )
-					CAKE.CalculateEncumberment( ply )
+					
 					return
 				end
 				CAKE.RestoreClothing( ply )
 				CAKE.RestoreGear( ply )
 				CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ), v[2] );
 				ply:TakeItem( args[ 1 ] );
-				CAKE.CalculateEncumberment( ply )	
+					
 				ply:RefreshInventory( )
 				return
 			end
@@ -145,7 +145,7 @@ function ccDropAllItem( ply, cmd, args )
 					CAKE.DropWeapon( ply, args[ 1 ] )
 					CAKE.RemoveGearItem( ply, args[ 1 ] )
 					ply:RefreshInventory( )
-					CAKE.CalculateEncumberment( ply )
+					
 					return
 				else
 					CAKE.RestoreClothing( ply )
@@ -156,7 +156,7 @@ function ccDropAllItem( ply, cmd, args )
 			end
 		end
 	
-	CAKE.CalculateEncumberment( ply )
+	
 	
 	ply:RefreshInventory( )
 	
@@ -325,7 +325,6 @@ function meta:TakeItem( class )
 	CAKE.CalculateEncumberment( self )
 	
 end
-
 
 function meta:TakeItemID( id )
 	local inv = CAKE.GetCharField(self, "inventory" );

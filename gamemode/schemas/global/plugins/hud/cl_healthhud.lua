@@ -32,6 +32,10 @@ local function CreateCharPortrait()
 		fov = 85
 	else
 	--Taken from the spawnicon code
+	CAKE.CharacterPortrait:SetPoseParameter("aim_yaw", 0 )
+	CAKE.CharacterPortrait:SetPoseParameter("head_yaw", 0 )
+	CAKE.CharacterPortrait:SetPoseParameter("body_yaw", 0 )
+	CAKE.CharacterPortrait:SetPoseParameter("spine_yaw", 0 )
 	CAKE.CharacterPortrait:SetAngles( Angle( 0, 180, 0 ) )
 	local mn, mx = CAKE.CharacterPortrait:GetRenderBounds()
 	local size = 0
@@ -127,7 +131,7 @@ hook.Add("HUDPaint","TiramisuCircleHealthDisplay", function()
 			surface.DrawTexturedRectRotated( portraitpos.x + cos( rad( a * 7.2 ) ) * scale, portraitpos.y - sin( rad( a * 7.2 ) ) * scale, 8, 12, a * 7.2  )
 		end
 		--Money bar.
-		draw.WordBox( 4, portraitpos.x+scale + 4    ,portraitpos.y - 8 , CurrencyTable.abr .. ": " .. LocalPlayer():GetNWString("money", "0" ), "TiramisuTimeFont" , Color( 20, 20, 20, 155 ), Color( 220, 220, 220, 200 ))
+		-- draw.WordBox( 4, portraitpos.x+scale + 4    ,portraitpos.y - 8 , CurrencyTable.abr .. ": " .. LocalPlayer():GetNWString("money", "0" ), "TiramisuTimeFont" , Color( 20, 20, 20, 155 ), Color( 220, 220, 220, 200 ))
 
 		--Armor circle.
 		if LocalPlayer():Armor() > 0 then

@@ -26,7 +26,7 @@ CAKE.ForceFreeScroll = false
 
 CAKE.MenuFont = "Harabara" -- The default font for the whole schema
 CAKE.BaseColor = Color( 100, 100, 115, 150 ) --The schema's default color. Can be set in game
-CAKE.Webpage = "http://www.facepunch.com/" --Set this to whatever you want to, it'll be accessible on the "Forums" tab
+CAKE.Webpage = "http://deadzonerebirth.wikia.com/" --Set this to whatever you want to, it'll be accessible on the "Forums" tab
 CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 0, true, true ) -- Set this to 1 to have thirdperson enabled by default.
 CAKE.ThirdpersonDistance = CreateClientConVar( "rp_thirdpersondistance", 50, true, true ) --Maximum thirdperson distance
 CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true ) --Set this to 0 to have headbob disabled by default.
@@ -47,6 +47,7 @@ require( "datastream" )
 -- Client Includes
 include( "sh_animations.lua" )
 include( "sh_anim_tables.lua" )
+include( "sh_stats.lua" )
 include( "shared.lua" )
 include( "cl_binds.lua" );
 

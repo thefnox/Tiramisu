@@ -101,9 +101,13 @@ function GM:PlayerSay( ply, text, team )
 			local s = string.gsub( s, "$2", ply:Name( ) ); -- OOC Name
 			local s = string.gsub( s, "$3", args ); -- Text
 			
-			for _, pl in pairs( player.GetAll( ) ) do
-			
-				if( pl:EyePos( ):Distance( ply:EyePos( ) ) <= range ) then
+			for _, pl in pairs( ents.FindInSphere( ply:GetPos(), range * 2 ) ) do
+				local tracedata = {}
+				tracedata.start = pl:EyePos()
+				tracedata.endpos = ply:EyePos()
+				tracedata.filter = pl
+				tracedata.mask = CONTENTS_SOLID + CONTENTS_MOVEABLE + CONTENTS_OPAQUE + CONTENTS_DEBRIS + CONTENTS_HITBOX + CONTENTS_MONSTER
+				if( pl:IsPlayer() and (pl:EyePos( ):Distance( ply:EyePos( ) ) <= range or util.TraceLine(tracedata).Entity == ply )) then
 				
 					CAKE.SendChat( pl, s, "ChatFont", cc.channel or "IC" );
 				

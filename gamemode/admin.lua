@@ -1,6 +1,3 @@
-SuperAdmins = { };
-Admins = { };
-
 CAKE.AdminCommands = {  }
 CAKE.AdminRanks = {  } 
 

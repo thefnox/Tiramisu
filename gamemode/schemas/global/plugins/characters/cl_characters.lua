@@ -15,10 +15,23 @@ function OpenCharacterMenu( hideclosebutton )
 		CharacterMenu:SetDraggable( false )
 		CharacterMenu:ShowCloseButton( !hideclosebutton )
 		CharacterMenu:SetTitle( "" )
+		CharacterMenu.BlurAmount = 4
+		local max = math.ceil( ScrH() / 30 )
+		local size = 0
+		CharacterMenu.Think = function()
+			size = Lerp( 0.05, size, 30 + max )
+		end
 		CharacterMenu.Paint = function()
-
-			Derma_DrawBackgroundBlur( CharacterMenu, 0 )
-
+			CharacterMenu.BlurAmount = Lerp( 0.3, CharacterMenu.BlurAmount, 0 )
+			Derma_DrawBackgroundBlur( CharacterMenu, CharacterMenu.BlurAmount )
+			if hideclosebutton then
+				surface.SetDrawColor( color_black )
+				surface.DrawRect( 0, 0, ScrW(), ScrH() )
+			end
+			for y = 0, max do
+				surface.SetDrawColor( Color( 80 - y * 1.5 , 80 - y * 1.5 , 80 - y * 1.5 , 255 ) )
+				surface.DrawRect( 0, y * 30 - 2, ScrW(), math.Clamp( size - y , 0, 30 ) )
+			end
 		end
 		CharacterMenu:MakePopup()
 

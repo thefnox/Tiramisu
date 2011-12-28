@@ -16,12 +16,7 @@ function ENT:Draw()
 		end
 	end
 
-	local FlexNum = self.Entity:GetFlexNum() - 1
- 
-	for i=0, FlexNum do
-		self.Entity:SetFlexWeight( i, 1 )
-	end
-	
+
 	self.Entity:DrawShadow( true )
 	
 end
@@ -304,7 +299,7 @@ function ENT:BuildBonePositions( NumBones, NumPhysBones )
 	for i=0, NumBones do
 		if inverse then
 			if ( table.HasValue( tbl, i ) ) then
-				BoneScale( self, i, 0 )
+				BoneScale( self, i, 0.01 )
 			end
 			if ( table.HasValue( bodyinflate, i ) ) then
 				for k, v in pairs( bodyinflate ) do
@@ -316,7 +311,7 @@ function ENT:BuildBonePositions( NumBones, NumPhysBones )
 			end
 		else
 			if ( !table.HasValue( tbl, i, 0 ) ) then
-				BoneScale( self, i, 0 )
+				BoneScale( self, i, 0.01 )
 			end
 			if ( table.HasValue( headinflate, i ) ) then
 				for k, v in pairs( headinflate ) do
