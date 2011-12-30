@@ -1,4 +1,9 @@
 --NPC Animations V4
+Anims = {}
+Anims.PersonalityTypes = {
+	"default",
+	"relaxed"
+}
 
 local meta = FindMetaTable( "Player" )
 local model
@@ -25,6 +30,83 @@ function meta:StopGesture()
 
 	self.DoGesture = false
 
+end
+
+function meta:GetPersonality()
+
+	self.Personality = self.Personality or "default"
+
+	if table.HasValue( Anims.PersonalityTypes, self.Personality ) then
+		return self.Personality
+	end
+
+	return "default"
+
+end
+
+function meta:SetPersonality( i )
+
+	i = tostring(i)
+
+	if table.HasValue( Anims.PersonalityTypes, i:lower() ) then
+		self.Personality = i
+	else
+		self.Personality = "default"
+	end
+	if SERVER then
+		umsg.Start( "Tiramisu.SendPersonality" )
+			umsg.Entity( self )
+			umsg.String( self.Personality )
+		umsg.End()
+	end
+
+end
+
+
+local shotgunholdtypes = {
+	"shotgun"
+}
+
+local meleeholdtypes = {
+	"passive",
+	"knife",
+	"melee2",
+	"melee" 
+}
+		
+function Anims.DetectHoldType( act ) --This is just a function used to group up similar holdtype for them to use the same sequences, since NPC animations are kinda limited.
+	--You can add or remove to this list as you see fit, if you feel like creating a different holdtype.
+	
+	if string.match(  act, "pistol" ) then
+		return "pistol"
+	end
+	for k, v in pairs( shotgunholdtypes ) do
+		if string.match( act, v ) then
+			return "shotgun"
+		end
+	end
+	for k, v in pairs( meleeholdtypes ) do
+		if string.match( act, v ) then
+			return "melee"
+		end
+	end
+	if string.match(  act, "ar2" ) then
+		return "ar2"
+	end
+	if string.match(  act, "smg" ) then
+		return "smg"
+	end
+	if string.match(  act, "rpg" ) then
+		return "rpg"
+	end
+	if string.match(  act, "grenade" ) then
+		return "grenade"
+	end
+	if string.match(  act, "slam" ) then
+		return "slam"
+	end
+	return "default"
+	
 end
 
 if SERVER then
@@ -104,16 +186,16 @@ if SERVER then
 			if(ply:IsCharLoaded()) then
 				local m = ""
 				if( CAKE.GetCharField( ply, "gender" ) == "Female" ) then
-				m = "models/tiramisu/animationtrees/alyxanimtree.mdl"
-				ply:SetNWString( "gender", "Female" )
+					m = "models/tiramisu/animationtrees/alyxanimtree.mdl"
+					ply:SetNWString( "gender", "Female" )
 				else
-				m = "models/tiramisu/animationtrees/maleanimtree.mdl"
-				ply:SetNWString( "gender", "Male" )
+					m = "models/tiramisu/animationtrees/maleanimtree.mdl"
+					ply:SetNWString( "gender", "Male" )
 				end
-				
-				ply:SetModel( m );
+				ply:SetModel( m )
+				ply:SetPersonality( CAKE.GetCharField( ply, "personality" ))
 			else
-			ply:SetModel("models/kleiner.mdl");
+				ply:SetModel("models/kleiner.mdl");
 			end
 		end
 	end )
@@ -124,8 +206,60 @@ if SERVER then
 			ply:SetAiming( true )
 			end
 		end
-	end )
-	
+	end)
+
+	--This is the look at for thirdperson command. Don't touch this.
+	concommand.Add( "t_sla", function( ply, cmd, args )
+		ply:SetNWAngle( "tiramisulookat", Angle( tonumber(args[1] or 0), tonumber(args[2] or 0), 0))
+	end)
+
+	function GM:SetupMove( ply, mv ) --Sets up accelerated running
+		if ply:KeyDown(IN_SPEED) and ply:KeyDown(IN_FORWARD) then
+			if( ValidEntity(ply:GetActiveWeapon()) and Anims.DetectHoldType(ply:GetActiveWeapon():GetHoldType()) == "default") then
+				if !ply:KeyDown( IN_MOVELEFT ) and !ply:KeyDown( IN_MOVERIGHT ) then
+					ply.IsRunning = true
+					ply:SetRunSpeed( Lerp( 0.01, ply:GetRunSpeed(), CAKE.ConVars[ "RunSpeed" ] ))
+				else
+					ply.IsRunning = true
+					ply:SetRunSpeed( Lerp( 0.01, ply:GetRunSpeed(), CAKE.ConVars[ "RunSpeed" ] * 0.75 ))				
+				end
+			else
+				ply.IsRunning = true
+				ply:SetRunSpeed( Lerp( 0.01, ply:GetRunSpeed(), CAKE.ConVars[ "RunSpeed" ] * 0.66 ))
+			end
+		else
+			if ply.IsRunning and ply:KeyDown(IN_FORWARD) then
+				ply:SetRunSpeed( Lerp( 0.1, ply:GetRunSpeed(), CAKE.ConVars[ "WalkSpeed" ] ))
+				ply:SetWalkSpeed( ply:GetRunSpeed() )
+				if ply:GetWalkSpeed() < 160 then
+					ply.IsRunning = false
+				end
+			elseif ply.IsRunning and !ply:KeyDown(IN_FORWARD) then
+				ply:SetRunSpeed( Lerp( 0.1, ply:GetRunSpeed(), 0 ))
+				ply:SetVelocity( ply:GetForward() * ply:GetRunSpeed() / 10 )
+				if ply:GetRunSpeed() < CAKE.ConVars[ "WalkSpeed" ] then
+					ply.IsRunning = false
+				end
+			else
+				ply:SetRunSpeed( CAKE.ConVars[ "WalkSpeed" ] )
+				ply:SetWalkSpeed( CAKE.ConVars[ "WalkSpeed" ] )
+			end
+		end
+	end
+
+	concommand.Add( "t_setpersonality", function( ply, cmd, args )
+		ply:SetPersonality( args[1] )
+	end)
+
+else
+
+	usermessage.Hook( "Tiramisu.SendPersonality", function(um)
+		local ply = um:ReadEntity()
+		if ValidEntity( ply ) then
+			ply:SetPersonality( um:ReadString() )
+		end
+	end)	
+
 end
 
 function meta:GetAiming()
@@ -288,90 +422,6 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 	
 end
 
-local shotgunholdtypes = {
-	"shotgun"
-}
-
-local meleeholdtypes = {
-	"passive",
-	"knife",
-	"melee2",
-	"melee" 
-}
-		
-local function DetectHoldType( act ) --This is just a function used to group up similar holdtype for them to use the same sequences, since NPC animations are kinda limited.
-	--You can add or remove to this list as you see fit, if you feel like creating a different holdtype.
-	
-	if string.match(  act, "pistol" ) then
-		return "pistol"
-	end
-	for k, v in pairs( shotgunholdtypes ) do
-		if string.match( act, v ) then
-			return "shotgun"
-		end
-	end
-	for k, v in pairs( meleeholdtypes ) do
-		if string.match( act, v ) then
-			return "melee"
-		end
-	end
-	if string.match(  act, "ar2" ) then
-		return "ar2"
-	end
-	if string.match(  act, "smg" ) then
-		return "smg"
-	end
-	if string.match(  act, "rpg" ) then
-		return "rpg"
-	end
-	if string.match(  act, "grenade" ) then
-		return "grenade"
-	end
-	if string.match(  act, "slam" ) then
-		return "slam"
-	end
-	return "default"
-	
-end
-
-if SERVER then
-	concommand.Add( "t_sla", function( ply, cmd, args )
-		ply:SetNWAngle( "tiramisulookat", Angle( tonumber(args[1] or 0), tonumber(args[2] or 0), 0))
-	end)
-
-	function GM:SetupMove( ply, mv ) --Sets up accelerated running
-		if ply:KeyDown(IN_SPEED) and ply:KeyDown(IN_FORWARD) then
-			if !ply:KeyDown( IN_MOVELEFT ) and !ply:KeyDown( IN_MOVERIGHT ) then
-				ply.IsRunning = true
-				ply:SetRunSpeed( Lerp( 0.01, ply:GetRunSpeed(), CAKE.ConVars[ "RunSpeed" ] ))
-			else
-				ply.IsRunning = true
-				ply:SetRunSpeed( Lerp( 0.01, ply:GetRunSpeed(), CAKE.ConVars[ "RunSpeed" ] * 0.75 ))				
-			end
-		else
-			if ply.IsRunning and ply:KeyDown(IN_FORWARD) then
-				ply:SetRunSpeed( Lerp( 0.1, ply:GetRunSpeed(), CAKE.ConVars[ "WalkSpeed" ] ))
-				ply:SetWalkSpeed( ply:GetRunSpeed() )
-				if ply:GetWalkSpeed() < 160 then
-					ply.IsRunning = false
-				end
-			elseif ply.IsRunning and !ply:KeyDown(IN_FORWARD) then
-				ply:SetRunSpeed( Lerp( 0.1, ply:GetRunSpeed(), 0 ))
-				ply:SetVelocity( ply:GetForward() * ply:GetRunSpeed() / 10 )
-				if ply:GetRunSpeed() < CAKE.ConVars[ "WalkSpeed" ] then
-					ply.IsRunning = false
-				end
-			else
-				ply:SetRunSpeed( CAKE.ConVars[ "WalkSpeed" ] )
-				ply:SetWalkSpeed( CAKE.ConVars[ "WalkSpeed" ] )
-			end
-		end
-	end
-
-end
-
-
-
 function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles everything about how sequences run, the framerate, boneparameters, everything.
 	
 	local eye, estyaw, myaw, len2d, rate, ang
@@ -400,7 +450,7 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 		ply:SetPoseParameter("move_yaw", 0 )
 	end
 
-	if ply:GetNWAngle( "tiramisulookat", Angle( 0, 0, 0 )) != Angle( 0, 0, 0 ) then
+	if ply:GetNWAngle( "tiramisulookat", Angle( 0, 0, 0 )) != Angle( 0, 0, 0 ) and ( SERVER or ply != LocalPlayer()) then
 		if !ply.CurrentLookAt then
 			ply.CurrentLookAt = ply:GetNWAngle( "tiramisulookat")
 		end
@@ -437,7 +487,7 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 			end
 		end
 		--print("HEAD YAW:", ply:GetPoseParameter("head_yaw"))
-	else
+	elseif SERVER or ply != LocalPlayer() then
 		--This set of boneparameters are all set to 0 to avoid having the engine setting them to something else, thus resulting in  awkwardly twisted models
 		ply:SetPoseParameter("aim_yaw", 0 )
 		ply:SetPoseParameter("head_yaw", 0 )
@@ -512,7 +562,7 @@ function GM:HandlePlayerDucking( ply, velocity ) --Handles crouching
 
 	local holdtype = "default"
 	if( ValidEntity(  ply:GetActiveWeapon() ) ) then
-		holdtype = DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
+		holdtype = Anims.DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
 	end
 
 	if ply:Crouching() then
@@ -619,9 +669,15 @@ function GM:CalcMainActivity( ply, velocity )
 	--This is the hook used to handle sequences, if you need to add additional activities you should check the hook above.
 	--By a general rule you don't have to touch this hook at all.
 	local holdtype = "default"
+	local personality = ply:GetPersonality()
 	if( ValidEntity(ply:GetActiveWeapon()) ) then
-		holdtype = DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
+		holdtype = Anims.DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
 	end
+
+	if holdtype == "default" and personality != "default" then
+		holdtype = personality --We use the personality custom animation table, rather than the default.
+	end
+
 	ply.CalcIdeal = ACT_IDLE
 	ply.CalcSeqOverride = -1
 	
@@ -634,7 +690,7 @@ function GM:CalcMainActivity( ply, velocity )
 			
 		if ply:GetNWBool( "aiming", false ) then
 			if len2d > 320 then
-				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "sprint" ] )
+				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ personality ][ "sprint" ] )
 				if SERVER then
 					if ply:GetAiming() and !ply.WasAimingBeforeRunning then
 						ply.WasAimingBeforeRunning = true
@@ -664,7 +720,7 @@ function GM:CalcMainActivity( ply, velocity )
 			end
 		else
 			if len2d > 320 then
-				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "sprint" ] )
+				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ personality ][ "sprint" ] )
 			elseif len2d > 135 and len2d <= 320 then
 				ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
 			elseif len2d > 0.1 and len2d <= 135 then
@@ -698,7 +754,7 @@ function GM:DoAnimationEvent( ply, event, data ) -- This is for gestures.
 
 	holdtype = "default"
 	if( ValidEntity(  ply:GetActiveWeapon() ) ) then
-		holdtype = DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
+		holdtype = Anims.DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
 	end
 
 	if event == "CUSTOMGESTUREPARTY"  then

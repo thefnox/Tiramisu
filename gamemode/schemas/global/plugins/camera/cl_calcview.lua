@@ -1,5 +1,5 @@
 local mouserotate = Angle( 0, 0, 0 )
-local mousex, newpos, headpos, headang, ignoreent, targetent
+local mousex, newpos, headpos, headang, ignoreent, targetent, hypotenuse, lookattarget, ang, length
 local tracedata = {}
 CAKE.CameraSmoothFactor = 0.9
 CAKE.CameraPos = Vector(0, 0, 0)
@@ -10,6 +10,8 @@ CAKE.DiffReal = Angle(0, 0, 0)
 CAKE.OldAngles = Angle(0, 0, 0)
 CAKE.LastAng = Angle(0, 0, 0)
 CAKE.CurAng = Angle(0, 0, 0)
+CAKE.CorrectionAngle = 0
+CAKE.CorrectionData = {}
 
 usermessage.Hook( "recieveragdoll", function( um )
 	
@@ -18,7 +20,7 @@ usermessage.Hook( "recieveragdoll", function( um )
 end)
 
 local stillcamera = false
-timer.Create( "TiramisuLookAtTimer", 0.5, 0, function()
+timer.Create( "TiramisuLookAtTimer", 0.2, 0, function()
 	if stillcamera then
 		local angle = CAKE.CurAng - CAKE.LastViewAng
 		RunConsoleCommand("t_sla", angle.p, math.NormalizeAngle( angle.y ))
@@ -51,12 +53,11 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( UCMD )
 			UCMD:SetViewAngles(CAKE.LastViewAng)
 		end
 	elseif CAKE.Thirdperson:GetBool() and LocalPlayer():GetNWBool( "aiming", false ) then
-		CAKE.RealAng = UCMD:GetViewAngles()
-		CAKE.LastViewAng = CAKE.CurAng
-		CAKE.DiffReal = CAKE.CurAng - CAKE.RealAng
-		UCMD:SetViewAngles(CAKE.CurAng)
-		CAKE.RealAng = CAKE.CurAng
 		stillcamera = false
+		firstpersonswitch = true
+		CAKE.DiffReal = Angle( 0, 0, 0 )
+		--UCMD:SetViewAngles( UCMD:GetViewAngles() + Angle(0,CAKE.CorrectionAngle,0))
+		CAKE.LastViewAng = UCMD:GetViewAngles()
 	else
 		stillcamera = false
 		firstpersonswitch = true
@@ -125,43 +126,95 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 		CAKE.DiffAng = CAKE.RealAng - angles
 		CAKE.CurAng = CAKE.LastAng + CAKE.DiffAng - CAKE.DiffReal
 		CAKE.CurAng = Angle( math.Clamp(CAKE.CurAng.p or 0, -90, 90 ), CAKE.CurAng.y, CAKE.CurAng.r )
-		angles = CAKE.CurAng
+		--angles = CAKE.CurAng
 		CAKE.LastAng = CAKE.CurAng 
 
 		if( ply:GetNWBool( "aiming", false ) ) then--Over the shoulder view.
 			if !ply:InVehicle() then
+				--Setting the camera to the over the shoulder position.
 				tracedata.start = pos
 				tracedata.endpos = pos - ( angles:Forward() * CAKE.ThirdpersonDistance:GetInt() ) + ( angles:Right()* 30 )
 				tracedata.filter = ply
 				trace = util.TraceLine(tracedata)
 				pos = LerpVector( CAKE.CameraSmoothFactor, pos, trace.HitPos + trace.HitNormal*2 )
 			else
-				pos = ply:EyePos()
+				pos = ply:EyePos() -- Override it
 			end
-			angles = LerpAngle( CAKE.CameraSmoothFactor, CAKE.OldAngles, Angle( angles.p, angles.y, 0 ) )
+			angles = LerpAngle( CAKE.CameraSmoothFactor, CAKE.OldAngles, Angle( angles.p, angles.y , 0 ) )
 			CAKE.OldAngles = angles
+			CAKE.CameraPos = pos
 			return GAMEMODE:CalcView(ply, pos, Angle( angles.p, angles.y, 0), fov)
 	
 		else -- Regular view.
 	
 			if !ply:InVehicle() then
 				tracedata.start = pos
-				tracedata.endpos = pos - ( angles:Forward() * CAKE.ThirdpersonDistance:GetInt() * 2 ) --+ ( angles:Up()* 20 )
+				tracedata.endpos = pos - ( CAKE.CurAng:Forward() * CAKE.ThirdpersonDistance:GetInt() * 2 ) --+ ( angles:Up()* 20 )
 				tracedata.filter = ply
 				trace = util.TraceLine(tracedata)
 				pos = LerpVector( CAKE.CameraSmoothFactor, pos, trace.HitPos + trace.HitNormal*2 )
 			else
 				pos = ply:EyePos()
 			end
-			angles = LerpAngle( CAKE.CameraSmoothFactor, CAKE.OldAngles, Angle( angles.p, angles.y, 0 ) )
-			CAKE.OldAngles = angles
-			return GAMEMODE:CalcView(ply, pos , Angle( angles.p, angles.y, 0) ,fov)
+			CAKE.CurAng = LerpAngle( CAKE.CameraSmoothFactor, CAKE.OldAngles, Angle( CAKE.CurAng.p, CAKE.CurAng.y, 0 ) )
+			CAKE.OldAngles = CAKE.CurAng
+			CAKE.CameraPos = pos
+			return GAMEMODE:CalcView(ply, pos , Angle( CAKE.CurAng.p, CAKE.CurAng.y, 0) ,fov)
 	
 		end
 
 	end
 
+	CAKE.CameraPos = pos
 	return GAMEMODE:CalcView(ply, pos , angles ,fov)
+end)
+
+hook.Add( "UpdateAnimation", "TiramisuAnimateRotate", function( ply, velocity, maxseqgroundspeed )
+	if ply == LocalPlayer() then
+		ply:SetPoseParameter("aim_yaw", 0 )
+		ply:SetPoseParameter("head_yaw", 0 )
+		ply:SetPoseParameter("body_yaw", 0 )
+		ply:SetPoseParameter("spine_yaw", 0 )
+		if stillcamera then
+			lookattarget = CAKE.CurAng - CAKE.LastViewAng
+			lookattarget = Angle( lookattarget.p, math.NormalizeAngle( lookattarget.y ), 0 )
+			if !ply.CurrentLookAt then
+				ply.CurrentLookAt = lookattarget
+			end
+			ang = LerpAngle( 0.1, ply.CurrentLookAt, lookattarget)
+			ply.CurrentLookAt = ang
+			ply:SetPoseParameter("head_pitch", ang.p + 20)
+			if ang.y > 0 then
+				if ang.y < 60 then
+					ply:SetPoseParameter("head_yaw", ang.y)
+					ply:SetPoseParameter("body_yaw", 0)
+					ply:SetPoseParameter("spine_yaw", 0)
+				elseif ang.y >= 60 and ang.y <= 90 then
+					ply:SetPoseParameter("head_yaw", ang.y)
+					ply:SetPoseParameter("body_yaw", (ang.y - 60))
+					ply:SetPoseParameter("spine_yaw", 0)
+				elseif ang.y > 90 then
+					ply:SetPoseParameter("head_yaw", ang.y)
+					ply:SetPoseParameter("body_yaw", (ang.y - 60))
+					ply:SetPoseParameter("spine_yaw", (ang.y - 90))
+				end
+			else
+				if ang.y > -60 then
+					ply:SetPoseParameter("head_yaw", ang.y)
+					ply:SetPoseParameter("body_yaw", 0)
+					ply:SetPoseParameter("spine_yaw", 0)
+				elseif ang.y <= -60 and ang.y >= -90 then
+					ply:SetPoseParameter("head_yaw", ang.y)
+					ply:SetPoseParameter("body_yaw", (ang.y + 60))
+					ply:SetPoseParameter("spine_yaw", 0)
+				elseif ang.y < -90 then
+					ply:SetPoseParameter("head_yaw", ang.y)
+					ply:SetPoseParameter("body_yaw", (ang.y + 60))
+					ply:SetPoseParameter("spine_yaw", (ang.y + 90))
+				end
+			end
+		end
+	end
 end)
 
 local keydown = false
@@ -182,6 +235,30 @@ timer.Create( "LocalMouseControlCam", 0.01, 0, function()
 		end
 		mouserotate.y = math.NormalizeAngle(( gui.MouseX() - ScrW()/2 ) / 2)
 		mouserotate.p = math.NormalizeAngle(( gui.MouseY() - ScrH()/2 ) / -1.7)
+	end
+
+	if CAKE.Thirdperson:GetBool() and LocalPlayer():GetNWBool( "aiming", false ) then
+		--Calculating the hypotenuse
+		CAKE.CorrectionData["origin"] = LocalPlayer():GetShootPos()
+		CAKE.CorrectionData["ideal"] = gui.ScreenToVector( ScrW()/2, ScrH()/2 )
+		CAKE.CorrectionData["endpos"] = CAKE.CameraPos + CAKE.CorrectionData["ideal"] * 10000
+		tracedata.start = CAKE.CameraPos
+		tracedata.endpos = CAKE.CorrectionData["endpos"]
+		tracedata.filter = LocalPlayer()
+		trace = util.TraceLine(tracedata)
+		CAKE.CorrectionData["hitpos"] = trace.HitPos
+		CAKE.CorrectionData["hypotenuse"] = CAKE.CorrectionData["origin"]:Distance(CAKE.CorrectionData["hitpos"])
+
+		--Calculating adyacent leg.
+		CAKE.CorrectionData["leg"] = CAKE.CorrectionData["origin"]:Distance(LocalPlayer():GetEyeTrace().HitPos)
+
+		if (CAKE.CorrectionData["hypotenuse"] != 0 ) then
+			CAKE.CorrectionAngle =  math.Rad2Deg(math.acos(math.Clamp( CAKE.CorrectionData["leg"]/CAKE.CorrectionData["hypotenuse"], -1, 1)))
+		else
+			CAKE.CorrectionAngle = 0
+		end
+	else
+		CAKE.CorrectionAngle = 0
 	end
 
 end)

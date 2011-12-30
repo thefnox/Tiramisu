@@ -1,4 +1,3 @@
-Anims = {}
 Anims.Male = {}
 Anims.Male[ "models" ] = {
 	"models/tiramisu/animationtrees/maleanimtree.mdl",
@@ -35,6 +34,38 @@ Anims.Male[ "default" ] = {
 	[ "walk" ] = "&switch:models/tiramisu/animationtrees/maleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
 	[ "run" ] = "&switch:models/tiramisu/animationtrees/maleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
 	}
+}
+Anims.Male[ "relaxed" ] = { 
+	[ "idle" ] = "&sequence:models/tiramisu/animationtrees/maleanimtree.mdl;LineIdle01",
+	--[ "walk" ] = "&gesture:models/tiramisu/animationtrees/maleanimtree.mdl;ACT_WALK;G_what;1",
+	[ "walk" ] = "&sequence:models/tiramisu/animationtrees/maleanimtree.mdl;walk_all_Moderate",
+	[ "run" ] = "&switch:models/tiramisu/animationtrees/maleanimtree.mdl;ACT_RUN",
+	[ "jump" ] = "&switch:models/tiramisu/animationtrees/maleanimtree.mdl;ACT_JUMP",
+	[ "land" ] = "&switch:models/tiramisu/animationtrees/maleanimtree.mdl;ACT_LAND",
+	[ "fly" ] = "&switch:models/tiramisu/animationtrees/maleanimtree.mdl;ACT_GLIDE",
+	[ "sit" ] = "&sequence:models/tiramisu/animationtrees/maleanimtree.mdl;sitccouchtv1",
+	[ "sitentry" ] = "&switch:models/tiramisu/animationtrees/maleanimtree.mdl;ACT_BUSY_SIT_CHAIR_ENTRY",
+	[ "sitexit" ] = "&switch:models/tiramisu/animationtrees/maleanimtree.mdl;ACT_BUSY_SIT_CHAIR_EXIT",
+	[ "swim" ] = "&switch:models/tiramisu/animationtrees/maleanimtree.mdl;ACT_GLIDE",
+	[ "sitground" ] = "&sequence:models/tiramisu/animationtrees/maleanimtree.mdl;plazaidle4",
+	[ "sitgroundentry" ] = "&switch:models/tiramisu/animationtrees/maleanimtree.mdl;ACT_BUSY_SIT_GROUND_ENTRY",
+	[ "sitgroundexit" ] = "&switch:models/tiramisu/animationtrees/maleanimtree.mdl;ACT_BUSY_SIT_GROUND_EXIT",
+	[ "sprint" ] = "&sequence:models/tiramisu/animationtrees/maleanimtree.mdl;run_all_panicked",
+	[ "flinch" ] = {
+	["explosion"] = "&switch:models/tiramisu/animationtrees/maleanimtree.mdl;ACT_GESTURE_FLINCH_BLAST"
+	},
+		[ "crouch" ] = {
+				[ "idle" ] = "&sequence:models/tiramisu/animationtrees/maleanimtree.mdl;roofidle2",
+				[ "walk" ] = "&sequence:models/tiramisu/animationtrees/maleanimtree.mdl;walk_panicked_all",
+				[ "aimidle" ] = "&sequence:models/tiramisu/animationtrees/maleanimtree.mdl;cower_Idle",
+				[ "aimwalk" ] = "&sequence:models/tiramisu/animationtrees/maleanimtree.mdl;Crouch_walk_all"
+		},
+		[ "aim" ] = {
+			[ "idle" ] = "&sequence:models/tiramisu/animationtrees/maleanimtree.mdl;Man_Gun",
+			[ "walk" ] = "&switch:models/tiramisu/animationtrees/maleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+			[ "run" ] = "&switch:models/tiramisu/animationtrees/maleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
+	},
+	[ "fire" ] = "&sequence:models/tiramisu/animationtrees/maleanimtree.mdl;swing"
 }
 Anims.Male[ "pistol" ] = {
 	[ "idle" ] = "ACT_IDLE",
@@ -198,6 +229,10 @@ Anims.Male[ "slam" ] = {
 	},
 		["fire"] = "&switch:models/tiramisu/animationtrees/maleanimtree.mdl;ACT_PICKUP_RACK"
 }
+
+
+--FEMALE ANIMATIONS
+
  
 Anims.Female = {}
 Anims.Female[ "models" ] = {
@@ -218,9 +253,9 @@ Anims.Female[ "default" ] = {
 	[ "sitground" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_BUSY_SIT_GROUND",
 	[ "sitgroundentry" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_BUSY_SIT_GROUND_ENTRY",
 	[ "sitgroundexit" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_BUSY_SIT_GROUND_EXIT",
-	[ "sprint" ] = "&sequence:models/tiramisu/animationtrees/femaleanimtree.mdl;sprint_all",
+	[ "sprint" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_RUN",
 	[ "flinch" ] = {
-	["explosion"] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_GESTURE_FLINCH_BLAST"
+		["explosion"] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_GESTURE_FLINCH_BLAST"
 	},
 	[ "crouch" ] = {
 	[ "idle" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_COVER_LOW",
@@ -232,7 +267,40 @@ Anims.Female[ "default" ] = {
 		[ "idle" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
 		[ "walk" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
 		[ "run" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
-	}
+	},
+	[ "fire" ] = "&sequence:models/tiramisu/animationtrees/femaleanimtree.mdl;MeleeAttack01"
+}
+Anims.Female[ "relaxed" ] = { 
+	[ "idle" ] = "&sequence:models/tiramisu/animationtrees/femaleanimtree.mdl;LineIdle02",
+	--[ "walk" ] = "&gesture:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_WALK;G_what;1",
+	[ "walk" ] = "&sequence:models/tiramisu/animationtrees/femaleanimtree.mdl;walk_all_Moderate",
+	[ "run" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_RUN",
+	[ "jump" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_JUMP",
+	[ "land" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_LAND",
+	[ "fly" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_GLIDE",
+	[ "sit" ] = "&sequence:models/tiramisu/animationtrees/femaleanimtree.mdl;silosit",
+	[ "sitentry" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_BUSY_SIT_CHAIR_ENTRY",
+	[ "sitexit" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_BUSY_SIT_CHAIR_EXIT",
+	[ "swim" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_GLIDE",
+	[ "sitground" ] = "&sequence:models/tiramisu/animationtrees/femaleanimtree.mdl;plazaidle4",
+	[ "sitgroundentry" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_BUSY_SIT_GROUND_ENTRY",
+	[ "sitgroundexit" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_BUSY_SIT_GROUND_EXIT",
+	[ "sprint" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_RUN",
+	[ "flinch" ] = {
+		["explosion"] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_GESTURE_FLINCH_BLAST"
+	},
+		[ "crouch" ] = {
+				[ "idle" ] = "&sequence:models/tiramisu/animationtrees/femaleanimtree.mdl;roofidle2",
+				[ "walk" ] = "&sequence:models/tiramisu/animationtrees/femaleanimtree.mdl;Crouch_walk_all",
+				[ "aimidle" ] = "&sequence:models/tiramisu/animationtrees/femaleanimtree.mdl;cower_Idle",
+				[ "aimwalk" ] = "&sequence:models/tiramisu/animationtrees/femaleanimtree.mdl;Crouch_walk_all"
+		},
+		[ "aim" ] = {
+			[ "idle" ] = "&sequence:models/tiramisu/animationtrees/femaleanimtree.mdl;Man_Gun",
+			[ "walk" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+			[ "run" ] = "&switch:models/tiramisu/animationtrees/femaleanimtree.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
+	},
+	[ "fire" ] = "&sequence:models/tiramisu/animationtrees/femaleanimtree.mdl;MeleeAttack01"
 }
 Anims.Female[ "pistol" ] = {
 	[ "idle" ] = "&switch:models/tiramisu/animationtrees/alyxanimtree.mdl;ACT_IDLE_PISTOL",
