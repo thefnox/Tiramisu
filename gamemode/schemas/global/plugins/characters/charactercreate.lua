@@ -171,7 +171,7 @@ function ccSelectChar( ply, cmd, args )
 			ply:SetNWString( "gender", "Male" )
 		end
 	
-		CAKE.TestClothing( ply, CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "model" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "clothing" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "helmet" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "gloves" ] )
+		CAKE.TestClothing( ply, CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "model" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "clothing" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "helmet" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "headratio" ],CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "bodyratio" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "handratio" ])
 
 		local tbl = CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "gear" ]
 		CAKE.RemoveAllGear( ply )

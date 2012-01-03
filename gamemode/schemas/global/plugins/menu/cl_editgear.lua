@@ -93,21 +93,6 @@ function EditGear()
 	end
 	PlayerMenu:MakePopup()
 
-	local x, y 
-	local closelabel = vgui.Create( "DButton", PlayerMenu )
-	closelabel:SetSize( 80, 26 )
-	closelabel:SetText( "" )
-	closelabel:SetPos( (ScrW() / 2 )- 60, ScrH() + 500  )
-	closelabel.Paint = function() end
-	closelabel.PaintOver = function()
-		draw.SimpleText( "Close Menu", "TiramisuTimeFont", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
-		x,y = closelabel:GetPos()
-		closelabel:SetPos( (ScrW() / 2 )- 40, Lerp( 0.1, y, ScrH() / 2 + 230 ))
-	end
-	closelabel.DoClick = function()
-		CloseGear()
-	end
-
 	PlayerModel = vgui.Create( "PlayerPanel", PlayerMenu )
 	PlayerModel:SetSize( 500, 500 )
 	PlayerModel:SetPos( ScrW() / 2 - 150, ScrH() / 2 - 300 )
@@ -201,6 +186,84 @@ function EditGear()
 	end
 	hlist:AddItem( button )
 
+	local entity = CAKE.ClothingTbl
+
+	local headslider = vgui.Create( "DNumSlider" )
+	headslider:SetText( "Head Scale" )
+	if CAKE.ClothingTbl then
+		for _,entity in pairs( CAKE.ClothingTbl ) do
+			if ValidEntity( entity ) then
+				headslider:SetValue( entity:GetDTFloat( 1 ))
+				break
+			end
+		end
+	else
+		headslider:SetValue( 1 )
+	end
+	headslider:SetMinMax( 0.5, 1.2 )
+	headslider:SetDecimals( 2 )
+	headslider.ValueChanged = function(self, value)
+		if CAKE.ClothingTbl then
+			for _,entity in pairs( CAKE.ClothingTbl ) do
+				if ValidEntity( entity ) then
+					entity:SetDTFloat( 1, value )
+				end
+			end
+		end
+	end
+	ClothingList:AddItem( headslider )
+
+	local bodyslider = vgui.Create( "DNumSlider" )
+	bodyslider:SetText( "Body Scale" )
+	if CAKE.ClothingTbl then
+		for _,entity in pairs( CAKE.ClothingTbl ) do
+			if ValidEntity( entity ) then
+				bodyslider:SetValue( entity:GetDTFloat( 2 ))
+				break
+			end
+		end
+	else
+		bodyslider:SetValue( 1 )
+	end
+	bodyslider:SetMinMax( 0.5, 1.2 )
+	bodyslider:SetDecimals( 2 )
+	bodyslider.ValueChanged = function(self, value)
+		if CAKE.ClothingTbl then
+			for _,entity in pairs( CAKE.ClothingTbl ) do
+				if ValidEntity( entity ) then
+					entity:SetDTFloat( 2, value )
+				end
+			end
+		end
+	end
+	ClothingList:AddItem( bodyslider )
+
+	local handslider = vgui.Create( "DNumSlider" )
+	handslider:SetText( "Hands Scale" )
+	if CAKE.ClothingTbl then
+		for _,entity in pairs( CAKE.ClothingTbl ) do
+			if ValidEntity( entity ) then
+				handslider:SetValue( entity:GetDTFloat( 3 ))
+				break
+			end
+		end
+	else
+		handslider:SetValue( 1 )
+	end
+	handslider:SetMinMax( 0.5, 1.2 )
+	handslider:SetDecimals( 2 )
+	handslider.ValueChanged = function(self, value)
+		if CAKE.ClothingTbl then
+			for _,entity in pairs( CAKE.ClothingTbl ) do
+				if ValidEntity( entity ) then
+					entity:SetDTFloat( 3, value )
+				end
+			end
+		end
+	end
+	ClothingList:AddItem( handslider )
+
+
 	GearList = vgui.Create( "DPanelList" )
 	GearList:SetSize( 300, 432 )
 	PropertySheet:AddSheet( "Gear/Accessories", GearList, "gui/silkicons/wrench", false, false, "Edit your gear" )
@@ -240,6 +303,23 @@ function EditGear()
 	end
 
 	RefreshGearTree()
+
+	local x, y 
+	local closelabel = vgui.Create( "DButton", PlayerMenu )
+	closelabel:SetSize( 80, 26 )
+	closelabel:SetText( "" )
+	closelabel:SetPos( (ScrW() / 2 )- 60, ScrH() + 500  )
+	closelabel.Paint = function() end
+	closelabel.PaintOver = function()
+		draw.SimpleText( "Close Menu", "TiramisuTimeFont", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
+		x,y = closelabel:GetPos()
+		closelabel:SetPos( (ScrW() / 2 )- 40, Lerp( 0.1, y, ScrH() / 2 + 230 ))
+	end
+	closelabel.DoClick = function()
+		RunConsoleCommand( "rp_scaleclothing", tostring(headslider:GetValue()), tostring(bodyslider:GetValue()), tostring(handslider:GetValue()))
+		PlayerModel:Close()
+		CloseGear()
+	end
 
 end
 

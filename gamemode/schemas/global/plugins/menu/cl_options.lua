@@ -63,6 +63,14 @@ local function OpenOptions()
 	TitleDrawDistance:SetMax( 2000 )
 	TitleDrawDistance:SetConVar( "rp_titledrawdistance")
 	Options:AddItem( TitleDrawDistance )
+
+	local CameraSmoothFactor = vgui.Create( "DNumSlider" )
+	CameraSmoothFactor:SetText( "Camera Smooth Factor ( Camera Speed )" )
+	CameraSmoothFactor:SetDecimals( 1 )
+	CameraSmoothFactor:SetMin( 1 )
+	CameraSmoothFactor:SetMax( 20 )
+	CameraSmoothFactor:SetConVar( "rp_camerasmooth")
+	Options:AddItem( CameraSmoothFactor )
 	
 	local Custom = vgui.Create( "DPanelList", PlayerMenu )
 	Custom:SetPadding(20);
@@ -109,7 +117,6 @@ local function OpenOptions()
 	SetOOCColor:SetText( "Set your OOC Color" )
 	SetOOCColor.DoClick = function()
 		local color = OOCColor:GetColor()
-		CAKE.BaseColor = color
 		RunConsoleCommand( "rp_ooccolor", tostring( color.r ), tostring( color.g ), tostring( color.b ), tostring( color.a ) )
 	end
 	Custom:AddItem( OOCColor )

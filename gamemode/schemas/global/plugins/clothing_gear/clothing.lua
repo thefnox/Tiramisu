@@ -2,12 +2,13 @@ PLUGIN.Name = "Clothing"; -- What is the plugin name
 PLUGIN.Author = "Big Bang"; -- Author of the plugin
 PLUGIN.Description = "Enables you to wear fucking clothes :D"; -- The description or purpose of the plugin
 
---0: No bone resizing
---1: Body only, no head nor hands
---2: Head only
---3: Hands only
+--0: No bone resizing.
+--1: Body only, no head nor hands.
+--2: Head only.
+--3: Hands only.
 --4: Head and body.
 --5: Hands and body.
+--6: Head and hands.
 
 
 CLOTHING_FULL = 0
@@ -16,6 +17,16 @@ CLOTHING_HEAD = 2
 CLOTHING_HANDS = 3
 CLOTHING_HEADANDBODY = 4
 CLOTHING_BODYANDHANDS = 5
+CLOTHING_HEADANDHANDS = 6
+
+
+--Enums for the DTVars, they are the same than the DTVar unique ID
+CLOTHING_TYPE = 1
+CLOTHING_PARENTINDEX = 2 --The entity index of the parent.
+CLOTHING_HEADRATIO = 1
+CLOTHING_BODYRATIO = 2
+CLOTHING_HANDRATIO = 3
+
 
 --Removes a player's clothing on death
 hook.Add( "PlayerDeath", "TiramisuRemoveClothingOnDeath", function( Victim, Inflictor, Attacker )
@@ -95,10 +106,9 @@ function CAKE.SetClothing( ply, clothing, helmet )
 	CAKE.RemoveClothing( ply )
 
 	if ( clothing and ply:HasItem( clothing )) or helmet then
-		print(clothing, helmet)
 		local item
 		if helmet and helmet != clothing then
-			if ply:ItemHasFlag( clothing, "nogloves" ) then --Head, body and hands are 
+			if ply:ItemHasFlag( clothing, "nogloves" ) then --Head, body and hands are different
 				CAKE.HandleClothing( ply, clothing, CLOTHING_BODY )
 				CAKE.HandleClothing( ply, helmet, CLOTHING_HEAD )
 				CAKE.HandleClothing( ply, "none", CLOTHING_HANDS )
@@ -110,8 +120,7 @@ function CAKE.SetClothing( ply, clothing, helmet )
 		else
 			if !helmet then
 				CAKE.HandleClothing( ply, clothing, CLOTHING_BODY )
-				CAKE.HandleClothing( ply, "none", CLOTHING_HEAD )
-				CAKE.HandleClothing( ply, "none", CLOTHING_HANDS )
+				CAKE.HandleClothing( ply, "none", CLOTHING_HEADANDHANDS )
 			elseif ply:ItemHasFlag( clothing, "nogloves" ) then --If the head is the same as the body, you only have to make the hands.
 				CAKE.HandleClothing( ply, clothing , CLOTHING_HEADANDBODY )
 				CAKE.HandleClothing( ply, "none", CLOTHING_HANDS )
@@ -143,8 +152,23 @@ function CAKE.SetClothing( ply, clothing, helmet )
 		
 end
 
+--Scales individual body parts.
+function CAKE.ScaleClothing( ply, headratio, bodyratio, handratio )
+	headratio, bodyratio, handratio = headratio or CAKE.GetCharField( ply, "headratio" ), bodyratio or CAKE.GetCharField( ply, "bodyratio" ), handratio or CAKE.GetCharField( ply, "handratio" )
+	for _, ent in pairs( ply.Clothing ) do
+		if ValidEntity( ent ) then
+			ent:SetDTFloat( CLOTHING_HEADRATIO, headratio )
+			ent:SetDTFloat( CLOTHING_BODYRATIO, bodyratio )
+			ent:SetDTFloat( CLOTHING_HANDRATIO, handratio )
+		end
+	end
+	CAKE.SetCharField( ply, "headratio", headratio )
+	CAKE.SetCharField( ply, "bodyratio", bodyratio )
+	CAKE.SetCharField( ply, "handratio", handratio )
+end
+
 --Allows you to try a set of clothes without actually owning the item.
-function CAKE.TestClothing( ply, model, clothing, helmet)
+function CAKE.TestClothing( ply, model, clothing, helmet, headratio, bodyratio, handratio )
 
 	CAKE.RemoveClothing( ply )
 
@@ -191,6 +215,14 @@ function CAKE.TestClothing( ply, model, clothing, helmet)
 
 	end
 
+	headratio, bodyratio, handratio = headratio or 1, bodyratio or 1, handratio or 1
+	for _, ent in pairs( ply.Clothing ) do
+		if ValidEntity( ent ) then
+			ent:SetDTFloat( CLOTHING_HEADRATIO, headratio )
+			ent:SetDTFloat( CLOTHING_BODYRATIO, bodyratio )
+			ent:SetDTFloat( CLOTHING_HANDRATIO, handratio )
+		end
+	end
 
 	CAKE.SendClothingToClient( ply )
 		
@@ -220,9 +252,11 @@ function CAKE.HandleClothing( ply, item, ctype, modeloverride )
 	end
 	
 	ply.Clothing[ ctype ] = ents.Create( "player_part" )
-	ply.Clothing[ ctype ]:SetDTInt( 1, ctype )
-	ply.Clothing[ ctype ]:SetDTInt( 2, ply:EntIndex() )
-	ply.Clothing[ ctype ]:SetDTInt( 3, 1 )
+	ply.Clothing[ ctype ]:SetDTInt( CLOTHING_TYPE, ctype )
+	ply.Clothing[ ctype ]:SetDTInt( CLOTHING_PARENTINDEX, ply:EntIndex() )
+	ply.Clothing[ ctype ]:SetDTFloat( CLOTHING_HEADRATIO, CAKE.GetCharField( ply, "headratio" ) )
+	ply.Clothing[ ctype ]:SetDTFloat( CLOTHING_BODYRATIO, CAKE.GetCharField( ply, "bodyratio" ) )
+	ply.Clothing[ ctype ]:SetDTFloat( CLOTHING_HANDRATIO, CAKE.GetCharField( ply, "handratio" ) )
 	ply.Clothing[ ctype ]:SetModel( model )
 	ply.Clothing[ ctype ]:SetParent( ply )
 	ply.Clothing[ ctype ]:SetPos( ply:GetPos() )
@@ -267,8 +301,7 @@ function CAKE.RestoreClothing( ply )
 
 end
 
-local function ccSetClothing( ply, cmd, args )
-	
+concommand.Add( "rp_setclothing", function( ply, cmd, args )
 	local body = ""
 	local helmet = ""
 	local gloves = ""
@@ -298,9 +331,14 @@ local function ccSetClothing( ply, cmd, args )
 	CAKE.SetClothing( ply, body, helmet )
 	CAKE.SetCharField( ply, "clothing", body )
 	CAKE.SetCharField( ply, "helmet", helmet )
+	CAKE.ScaleClothing( ply, 1, 1, 1 )
 
-end
-concommand.Add( "rp_setclothing", ccSetClothing );
+end)
+
+concommand.Add( "rp_scaleclothing", function( ply, cmd, args )
+	local headratio, bodyratio, handratio = math.Clamp(tonumber(args[1] or 1),0.5,1.2), math.Clamp(tonumber(args[2] or 1),0.5,1.2), math.Clamp(tonumber(args[3] or 1),0.5,1.2)
+	CAKE.ScaleClothing( ply, headratio, bodyratio, handratio )
+end)
 
 --Sends the clothing entity indexes, in order to use them clientside.
 function CAKE.SendClothingToClient( ply )
@@ -328,6 +366,8 @@ function PLUGIN.Init()
 	CAKE.AddDataField( 2, "clothing", "none" ); --What you're wearing on your body
 	CAKE.AddDataField( 2, "helmet", "none" ); --What you're wearing on your head
 	CAKE.AddDataField( 2, "headratio", 1 ); --for those bighead guys.
+	CAKE.AddDataField( 2, "bodyratio", 1 ); --Thick bones, or maybe you're just fat.
+	CAKE.AddDataField( 2, "handratio", 1 ); --You know what they say about big hands.
 	CAKE.AddDataField( 2, "specialmodel", "none" );
 	
 end

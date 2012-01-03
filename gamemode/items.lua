@@ -168,20 +168,11 @@ function ccPickupItem( ply, cmd, args )
 	local item = ents.GetByIndex( tonumber( args[ 1 ] ) );
 	
 	if( item != nil and item:IsValid( ) and item:GetClass( ) == "item_prop" and item:GetPos( ):Distance( ply:GetShootPos( ) ) < 200 ) then
-		if CAKE.CanPickupItem( ply, item.Class ) then
-			if ply:ItemHasFlag( item.Class , "extracargo" ) then
-				CAKE.SetCharField( ply, "extracargo", tonumber( ply:GetFlagValue( item.Class, "extracargo" ) ) )
-			end
-			if string.match( item.Class, "zipties" ) then
-				ply:Give( item.Class )
-			end
-			item:Pickup( ply );
-			ply:GiveItem( item.Class, item:GetNWString("id") );
-		else
-			CAKE.SendChat( ply, "Clean up some space in your inventory before picking up this item!" )
-			CAKE.SendConsole( ply, "Clean up some space in your inventory before picking up this item!" )
+		if string.match( item.Class, "zipties" ) then
+			ply:Give( item.Class )
 		end
-		
+		item:Pickup( ply );
+		ply:GiveItem( item.Class, item:GetNWString("id") );
 	end
 
 	ply:RefreshInventory( )
@@ -297,7 +288,7 @@ function meta:GiveItem( class, id )
 	local inv = CAKE.GetCharField( self, "inventory" );
 	table.insert( inv, {class, id} );
 	CAKE.SetCharField( self, "inventory", inv);
-	CAKE.CalculateEncumberment( self )
+	
 	if string.match( class, "weapon" ) then
 		if !table.HasValue( CAKE.GetCharField( self, "inventory" ), class ) then
 			if !table.HasValue( CAKE.GetCharField( self, "weapons" ), class) then
@@ -322,7 +313,6 @@ function meta:TakeItem( class )
 			return v[2];
 		end
 	end
-	CAKE.CalculateEncumberment( self )
 	
 end
 
@@ -337,7 +327,7 @@ function meta:TakeItemID( id )
 			return v[1];
 		end
 	end
-	CAKE.CalculateEncumberment( self )
+	
 	
 end
 

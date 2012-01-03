@@ -209,7 +209,7 @@ function CAKE.ResendCharData( ply ) -- Network all of the player's character dat
 
 		ply:SetNWString( "name", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "name" ] or "" )
 		ply:SetNWString( "title", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "title" ] or "" )
-		ply:SetNWInt( "money", tonumber( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "money" ] ) or 0 )
+		-- ply:SetNWInt( "money", tonumber( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "money" ] ) or 0 )
 
 		for k, v in pairs( CAKE.PlayerData[ SteamID ][ "characters" ] ) do -- Send them all their characters for selection
 			if v then
@@ -278,18 +278,24 @@ function CAKE.SetCharField( ply, fieldname, data )
 end
 	
 function CAKE.GetCharField( ply, fieldname )
-	
 		-- Check to see if this is a valid field
 		if( CAKE.CharacterDataFields[ fieldname ] ) then
-	
-			return CAKE.NilFix(CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ], CAKE.CharacterDataFields[ fieldname ]);
-		 
+			if CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ] and CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ] and CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ] then
+				if CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ] then
+					return CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ]
+				else
+					--Field is not yet set.
+					CAKE.SetCharField( ply, fieldname, CAKE.CharacterDataFields[ fieldname ])
+					return CAKE.CharacterDataFields[ fieldname ]
+				end
+				--return CAKE.NilFix(CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ], CAKE.CharacterDataFields[ fieldname ]);
+			else
+				--Character not loaded, return default
+				return CAKE.CharacterDataFields[ fieldname ]
+			end
 		else
-	
-			return "";
-		
+			return false
 		end
-
 end
 
 function CAKE.SavePlayerData( ply )

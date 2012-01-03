@@ -15,23 +15,10 @@ function OpenCharacterMenu( hideclosebutton )
 		CharacterMenu:SetDraggable( false )
 		CharacterMenu:ShowCloseButton( !hideclosebutton )
 		CharacterMenu:SetTitle( "" )
-		CharacterMenu.BlurAmount = 4
-		local max = math.ceil( ScrH() / 30 )
-		local size = 0
-		CharacterMenu.Think = function()
-			size = Lerp( 0.05, size, 30 + max )
-		end
 		CharacterMenu.Paint = function()
-			CharacterMenu.BlurAmount = Lerp( 0.3, CharacterMenu.BlurAmount, 0 )
-			Derma_DrawBackgroundBlur( CharacterMenu, CharacterMenu.BlurAmount )
-			if hideclosebutton then
-				surface.SetDrawColor( color_black )
-				surface.DrawRect( 0, 0, ScrW(), ScrH() )
-			end
-			for y = 0, max do
-				surface.SetDrawColor( Color( 80 - y * 1.5 , 80 - y * 1.5 , 80 - y * 1.5 , 255 ) )
-				surface.DrawRect( 0, y * 30 - 2, ScrW(), math.Clamp( size - y , 0, 30 ) )
-			end
+
+			Derma_DrawBackgroundBlur( CharacterMenu, 0 )
+
 		end
 		CharacterMenu:MakePopup()
 
@@ -202,10 +189,7 @@ function CreateMenuButtons()
 	spawnlabel.DoClick = function()
 		if CAKE.SelectedChar then
 			RunConsoleCommand( "rp_spawnchar", tostring( CAKE.SelectedChar ))
-			if CharacterMenu then
-				CharacterMenu:Remove()
-				CharacterMenu = nil
-			end
+			CloseCharacterMenu()
 		else
 			CAKE.Message( "You need to select a character first!", "Warning", "OK", Color( 140, 100, 100) )
 		end
@@ -265,6 +249,7 @@ end
 
 function CloseCharacterMenu()
 	if CharacterMenu then
+		PlayerModel:Close()
 		CharacterMenu:Remove()
 		CharacterMenu = nil
 	end

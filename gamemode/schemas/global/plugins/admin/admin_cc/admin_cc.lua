@@ -1,5 +1,5 @@
 -- rp_admin kick "name" "reason"
-function Admin_Kick( ply, cmd, args )
+local function Admin_Kick( ply, cmd, args )
 
 	if( #args != 2 ) then
 	
@@ -30,7 +30,7 @@ function Admin_Kick( ply, cmd, args )
 end
 
 -- rp_admin ban "name" "reason" minutes
-function Admin_Ban( ply, cmd, args )
+local function Admin_Ban( ply, cmd, args )
 
 	if( #args != 3 ) then
 	
@@ -72,7 +72,7 @@ function Admin_Ban( ply, cmd, args )
 end
 
 --rp_admin observe. No arguments.
-function Admin_Observe( ply, cmd, args )
+local function Admin_Observe( ply, cmd, args )
 
 	   if( !ply:GetNWBool( "observe" ) and ply:GetMoveType() != MOVETYPE_NOCLIP ) then
 
@@ -136,30 +136,28 @@ function Admin_Observe( ply, cmd, args )
 end
 
 --rp admin noclip. No arguments.
-function Admin_Noclip( ply, cmd, args )
+local function Admin_Noclip( ply, cmd, args )
 		
-		ply.Noclip = !ply.Noclip
+	ply.Noclip = !ply.Noclip
 
-	  	if !ply.Noclip then
+	if !ply.Noclip then
 
+		ply:GodEnable();
+		ply:SetNotSolid( true );
+		ply:SetMoveType( 8 );
 
+	else
 
-		   	ply:GodEnable();
-		   	ply:SetNotSolid( true );
-		   	ply:SetMoveType( 8 );
-		   
-	   	else
+		ply:GodDisable();
 
-		   	ply:GodDisable();
-		   
-		   	ply:SetNotSolid( false );
-		   	ply:SetMoveType( 2 );
-		   
-	   	end
+		ply:SetNotSolid( false );
+		ply:SetMoveType( 2 );
+
+	end
 end
 
 -- rp_admin superban "name" "reason" minutes
-function Admin_SuperBan( ply, cmd, args )
+local function Admin_SuperBan( ply, cmd, args )
 
 	if( #args != 3 ) then
 	
@@ -204,7 +202,7 @@ function Admin_SuperBan( ply, cmd, args )
 end
 
 --rp_admin setconvar var value
-function Admin_SetConVar( ply, cmd, args )
+local function Admin_SetConVar( ply, cmd, args )
 
 	if( #args != 2 ) then
 	
@@ -243,7 +241,7 @@ function Admin_SetConVar( ply, cmd, args )
 end
 
 --rp_admin oocdelay number
-function Admin_SetOOCDelay( ply, cmd, args )
+local function Admin_SetOOCDelay( ply, cmd, args )
 
 	CAKE.ConVars[ args[ 1 ] ] = tostring(args[ 1 ]);
 	CAKE.SendChat( ply, "OOC Delay set to " .. tostring(args[ 1 ]) );
@@ -251,7 +249,7 @@ function Admin_SetOOCDelay( ply, cmd, args )
 end
 
 --rp_admin listvars, no argument.
-function Admin_ListVars( ply, cmd, args )
+local function Admin_ListVars( ply, cmd, args )
 
 	CAKE.SendChat( ply, "---List of Tiramisu ConVars---" );
 	
@@ -264,7 +262,7 @@ function Admin_ListVars( ply, cmd, args )
 end
 
 --rp_admin help, no arguments.
-function Admin_Help( ply, cmd, args )
+local function Admin_Help( ply, cmd, args )
 
 	CAKE.SendChat( ply, "---List of Tiramisu Admin Commands---" );
 	
@@ -303,7 +301,7 @@ function Admin_Help( ply, cmd, args )
 end
 
 --rp_admin addspawn, while standing on the point you want the player to spawn on.
-function Admin_AddSpawn( ply, cmd, args)
+local function Admin_AddSpawn( ply, cmd, args)
 	
 	if #args == 1 then
 		local pos = ply:GetPos()
@@ -319,98 +317,109 @@ function Admin_AddSpawn( ply, cmd, args)
 end
 
 --rp_admin setmoney name money. This sets, not adds the money.
-function Admin_SetMoney( ply, cmd, args )
+--[[ local function Admin_SetMoney( ply, cmd, args )
 
 	local target = CAKE.FindPlayer(args[1])
 	CAKE.SetCharField( target, "money", tonumber( args[2] ) )
 		
-end
+end ]]--
 
 --rp_admin createitem item_class
-function Admin_CreateItem( ply, cmd, args ) -- Why the fuck wasn't this here on the first place...
+local function Admin_CreateItem( ply, cmd, args ) -- Why the fuck wasn't this here on the first place...
 
-	CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ) );
+	if args[1] then
+		CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ) );
+	else
+		local tbl = {}
+		for k, v in pairs( CAKE.ItemData ) do
+			table.insert( tbl, v.Class .. " - " .. v.Name .. "\n" )
+		end
+		table.sortdesc( tbl )
+		for k, v in ipairs( tbl ) do
+			CAKE.SendConsole( ply, "\t" .. v )
+		end
+	end
 	
 end
 
 --rp_admin listitems, no arguments.
-function Admin_ListItems( ply, cmd, args )
+local function Admin_ListItems( ply, cmd, args )
 	
 	for k, v in pairs( CAKE.ItemData ) do
 	
-		CAKE.SendConsole( ply, v.Class .. "-" .. v.Name .. "\n" )
+		CAKE.SendConsole( ply, "\t" .. v.Class .. " - " .. v.Name .. "\n" )
 	
 	end
 
 end
 
 --rp_admin bring name. Brings a player to your position.
-function Admin_Bring( ply, cmd, args )
+local function Admin_Bring( ply, cmd, args )
 	
-		local target = CAKE.FindPlayer( args[1] )
+	local target = CAKE.FindPlayer( args[1] )
+	
+	if( target != nil and target:IsValid() and target:IsPlayer() ) then
+	
+		target:SetPos( ply:CalcDrop() + Vector( 0, 0, 6 ) );			
+		CAKE.SendChat( ply, "Bringing " .. target:Nick() .. "." );
+		CAKE.SendChat( target, "You are being brought to " .. ply:Nick() .. "." );
 		
-		if( target != nil and target:IsValid() and target:IsPlayer() ) then
+	else
+	
+		CAKE.SendChat( ply , "Cannot find target!");
 		
-			target:SetPos( ply:CalcDrop() + Vector( 0, 0, 6 ) );			
-			CAKE.SendChat( ply, "Bringing " .. target:Nick() .. "." );
-			CAKE.SendChat( target, "You are being brought to " .. ply:Nick() .. "." );
-			
-		else
-		
-			CAKE.SendChat( ply , "Cannot find target!");
-			
-		end
+	end
 	
 end
 
 --rp_admin goto name. Teleports you to a player.
-function Admin_GoTo( ply, cmd, args )
+local function Admin_GoTo( ply, cmd, args )
 	
-		local target = CAKE.FindPlayer( args[1] )
+	local target = CAKE.FindPlayer( args[1] )
+	
+	if( target != nil and target:IsValid() and target:IsPlayer() ) then
+	
+		ply:SetPos( target:CalcDrop() + Vector( 0, 0, 6 ) );
+		CAKE.SendChat( ply, "Teleporting to " .. target:Nick() .. ".");
+		CAKE.SendChat( target, ply:Nick() .. " is teleporting to you." );
 		
-		if( target != nil and target:IsValid() and target:IsPlayer() ) then
+	else
+	
+		CAKE.SendChat( ply , "Cannot find target!");
 		
-			ply:SetPos( target:CalcDrop() + Vector( 0, 0, 6 ) );
-			CAKE.SendChat( ply, "Teleporting to " .. target:Nick() .. ".");
-			CAKE.SendChat( target, ply:Nick() .. " is teleporting to you." );
-			
-		else
-		
-			CAKE.SendChat( ply , "Cannot find target!");
-			
-		end
+	end
 	
 end
 	
 --rp_admin slay name. Kills a player.
-function Admin_Slay( ply, cmd, args )
+local function Admin_Slay( ply, cmd, args )
 
-		local target = CAKE.FindPlayer( args[1] )
+	local target = CAKE.FindPlayer( args[1] )
+	
+	if( target != nil and target:IsValid( ) and target:IsPlayer( ) ) then -- Target found, is player
+	
+		target:Kill();
+		CAKE.SendChat( ply:Nick() .. "has slayed you. =)");
+		CAKE.SendChat( ply, "You have slayed " .. target:Nick() .. ".");
 		
-		if( target != nil and target:IsValid( ) and target:IsPlayer( ) ) then -- Target found, is player
+	elseif( pl == nil) then -- Target was not found
+	
+		CAKE.SendChat( ply , "Cannot find target!");
 		
-			target:Kill();
-			CAKE.SendChat( ply:Nick() .. "has slayed you. =)");
-			CAKE.SendChat( ply, "You have slayed " .. target:Nick() .. ".");
-			
-		elseif( pl == nil) then -- Target was not found
+		return "";
 		
-			CAKE.SendChat( ply , "Cannot find target!");
-			
-			return "";
-			
-		elseif( pl == "err") then -- More than one player of the same name
+	elseif( pl == "err") then -- More than one player of the same name
+	
+		CAKE.SendChat( ply , "Multiple targets selected!");
 		
-			CAKE.SendChat( ply , "Multiple targets selected!");
-			
-			return "";
-			
-		end
+		return "";
+		
+	end
 		
 end
 
 --rp_admin setrank name "rank". Sets a player to a particular admin rank.
-function Admin_SetRank( ply, cmd, args)
+local function Admin_SetRank( ply, cmd, args)
 
 	if #args != 2 then
 		if ValidEntity( ply ) and ply:IsPlayer() then
@@ -435,7 +444,7 @@ function Admin_SetRank( ply, cmd, args)
 end
 
 --rp_admin addspawn. Adds a spawnpoint at your current position.
-function Admin_AddSpawn( ply, cmd, args)
+local function Admin_AddSpawn( ply, cmd, args)
 	
 	if #args == 1 then
 		local pos = ply:GetPos()
@@ -451,9 +460,9 @@ function Admin_AddSpawn( ply, cmd, args)
 end
 
 --rp_admin setmodel name model. Forces someone's model to the model specified ( DOES NOT WORK WITH CLOTHING )
-function Admin_SetModel( ply, cmd, args )
+local function Admin_SetModel( ply, cmd, args )
 
-	target = CAKE.FindPlayer(args[1])
+	local target = CAKE.FindPlayer(args[1])
 
 	if !target then
 		CAKE.SendChat(ply, "Target not found!")
@@ -466,7 +475,7 @@ function Admin_SetModel( ply, cmd, args )
 
 end
 
-function Admin_CreatePropItem( ply, cmd, args )
+local function Admin_CreatePropItem( ply, cmd, args )
 	if !(args[1] and args[2]) then CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin createpropitem \"name\" \"model\" )") return end
 	id = CAKE.CreateItemID()
 	CAKE.SetUData(id, "name", args[1])
@@ -474,7 +483,7 @@ function Admin_CreatePropItem( ply, cmd, args )
 	CAKE.CreateItem( "propitem", ply:CalcDrop( ), Angle( 0,0,0 ), id );
 end
 
-function Admin_TurnIntoItem( ply, cmd, args )
+local function Admin_TurnIntoItem( ply, cmd, args )
 	if !(args[1] and args[2]) then CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin createpropitem \"name\" \"model\" )") return end
 	local entity = ents.GetByIndex( tonumber( args[ 1 ] ))
 	local name = args[2]
@@ -495,6 +504,43 @@ function Admin_TurnIntoItem( ply, cmd, args )
 		entity:SetNWString( "propdescription", name )
 	end
 end
+
+local function Admin_SetPermaModel( ply, cmd, args )
+
+	if( #args != 2 ) then
+	
+		CAKE.SendChat( ply, "Invalid number of arguments! ( rp_admin setpermamodel \"playername\" \"modelname\" (OPTIONAL:\"gender\" )" );
+		return;
+		
+	end
+
+	local target = CAKE.FindPlayer(args[1])
+
+	if !target then
+		CAKE.SendChat(ply, "Target not found!")
+	elseif ValidEntity( target ) then
+		if args[3] then
+			if args[3] == "Female" then
+				CAKE.SetCharField( target, "gender", "Female" )
+			else
+				CAKE.SetCharField( target, "gender", "Male" )
+			end
+		end
+
+		local m = ""
+		if( CAKE.GetCharField( target, "gender" ) == "Female" ) then
+			m = "models/tiramisu/animationtrees/alyxanimtree.mdl"
+			ply:SetNWString( "gender", "Female" )
+		else
+			m = "models/tiramisu/animationtrees/maleanimtree.mdl"
+			ply:SetNWString( "gender", "Male" )
+		end
+		ply:SetModel( m )
+
+		CAKE.SetCharField( target, "model", args[2] )
+		CAKE.SetClothing( target )
+	end
+end
 	
 -- Let's make some ADMIN COMMANDS!
 function PLUGIN.Init( )
@@ -513,12 +559,13 @@ function PLUGIN.Init( )
 	CAKE.AdminCommand( "noclip", Admin_Noclip, "Enter admin only noclip mode", true, true, 1 );
 	CAKE.AdminCommand( "kick", Admin_Kick, "Kick someone on the server", true, true, 2 );
 	CAKE.AdminCommand( "setmodel", Admin_SetModel, "Set someone's model to something", true, true, 2 );
+	CAKE.AdminCommand( "setpermamodel", Admin_SetModel, "Set someone's model permanently to something", true, true, 2 );
 	CAKE.AdminCommand( "ban", Admin_Ban, "Ban someone on the server", true, true, 3 );
 	CAKE.AdminCommand( "superban", Admin_SuperBan, "Ban someone on the server ( Permanent allowed )", true, true, 4 );
 	CAKE.AdminCommand( "setconvar", Admin_SetConVar, "Set a Convar", true, true, 4 );
 	CAKE.AdminCommand( "listvars", Admin_ListVars, "List convars", true, true, 4 );
 	CAKE.AdminCommand( "createitem", Admin_CreateItem, "Creates an item", true, true, 4 );
-	CAKE.AdminCommand( "setmoney", Admin_SetMoney, "Set the money of another player", true, true, 4 )
+	-- CAKE.AdminCommand( "setmoney", Admin_SetMoney, "Set the money of another player", true, true, 4 )
 	CAKE.AdminCommand( "addspawn", Admin_AddSpawn, "Add a new spawn point on your position.", true, true, 4 )
 	CAKE.AdminCommand( "bring", Admin_Bring, "Brings a player to you", true, true, 3);
 	CAKE.AdminCommand( "goto", Admin_GoTo, "Takes you to a player", true, true, 3 );

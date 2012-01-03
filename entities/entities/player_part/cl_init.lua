@@ -1,27 +1,33 @@
 include('shared.lua')
 
-local lolpos
+CLOTHING_FULL = 0
+CLOTHING_BODY = 1
+CLOTHING_HEAD = 2
+CLOTHING_HANDS = 3
+CLOTHING_HEADANDBODY = 4
+CLOTHING_BODYANDHANDS = 5
+CLOTHING_HEADANDHANDS = 6
+
+
+--Enums for the DTVars, they are the same than the DTVar unique ID
+CLOTHING_TYPE = 1
+CLOTHING_PARENTINDEX = 2 --The entity index of the parent.
+CLOTHING_HEADRATIO = 1 
+CLOTHING_BODYRATIO = 2
+CLOTHING_HANDRATIO = 3
 
 function ENT:Draw()
 
-	if CAKE.ForceDraw then
-			self.Entity:DrawModel()
+	if !hook.Call("ShouldDrawLocalPlayer", GAMEMODE) then
+		return
 	end
-
-	if self.Entity:GetParent() == LocalPlayer() then
-		if !CAKE.Thirdperson:GetBool() and !CAKE.MiddleDown then
-			if !gamemode.Call( "ShouldDrawLocalPlayer" ) then
-				return
-			end
-		end
-	end
-
-
+	
+	self.Entity:DrawModel()
 	self.Entity:DrawShadow( true )
 	
 end
 
-local function BoneScale( self, realboneid, scale )
+function ENT:BoneScale( realboneid, scale )
 
 	local matBone = self:GetBoneMatrix( realboneid )
 	if matBone then
@@ -31,85 +37,7 @@ local function BoneScale( self, realboneid, scale )
 
 end
 
-function SolveIKForArm( self, laterality )
-
-	local shoulderid = self:LookupBone( "ValveBiped.Bip01_" .. laterality .. "_UpperArm" ) 
-	local shoulderpos, shoulderang = self:GetBonePosition( shoulderid )
-	local elbowid = self:LookupBone( "ValveBiped.Bip01_" .. laterality .. "_Forearm" )
-	local elbowpos, elbowang = self:GetBonePosition( elbowid )
-	local uparmlength = 11.5
-	local armlength = uparmlength * 2
-
-	local wristnormal = self.Entity:GetParent():GetAimVector():Normalize()
-	local wristdest = wristnormal * armlength
-	local targetang = self.Entity:GetParent():GetAimVector():Angle()
-
-	self:SetBonePosition( shoulderid, shoulderpos, targetang )
-	self:SetBonePosition( elbowid, elbowpos, targetang )
-	/*
-	if shoulderpos:Distance(wristdest) >= armlength then -- We don't even need to bend the arm!
-		-- just return some simple values :)
-		local wristnormal = wristdest:Normalize()
-		local wristdest = wristnormal * armlength
-		local shoulderang = wristdest:Normalize():Angle()
-		local elbowpos = wristnormal * uparmlength
-		return shoulderang, shoulderang
-	end
-
-
-
-	if shoulderpos:Distance(wristdest) >= uparmlength then
-		--What we're doing here is assuming that the length of the arm and the forearm are the same. The end result will be off by a couple of inches but it makes the entire equation so easy to solve.
-		local height = Vector(0, 0, 0):Distance(wristdest) - armlength
-		--The end result 
-		local destinationangle = math.asin( height / uparmlength ) * -1
-		shoulderang:RotateAroundAxis( shoulderang:Up(), destinationangle )
-		elbowang:RotateAroundAxis( elbowang:Up(), destinationangle * -1 )
-
-	end
-	*/
-
-end
-
-local body = {
-	"ValveBiped.Bip01_Head1",
-	"ValveBiped.Bip01_L_Hand",
-	"ValveBiped.Bip01_L_Finger0",
-	"ValveBiped.Bip01_L_Finger1",
-	"ValveBiped.Bip01_L_Finger2",
-	"ValveBiped.Bip01_L_Finger3",
-	"ValveBiped.Bip01_L_Finger4",
-	"ValveBiped.Bip01_L_Finger01",
-	"ValveBiped.Bip01_L_Finger02",
-	"ValveBiped.Bip01_L_Finger11",
-	"ValveBiped.Bip01_L_Finger12",
-	"ValveBiped.Bip01_L_Finger21",
-	"ValveBiped.Bip01_L_Finger22",
-	"ValveBiped.Bip01_L_Finger31",
-	"ValveBiped.Bip01_L_Finger32",
-	"ValveBiped.Bip01_L_Finger41",
-	"ValveBiped.Bip01_L_Finger42",
-	"ValveBiped.Bip01_R_Hand",
-	"ValveBiped.Bip01_R_Finger0",
-	"ValveBiped.Bip01_R_Finger1",
-	"ValveBiped.Bip01_R_Finger2",
-	"ValveBiped.Bip01_R_Finger3",
-	"ValveBiped.Bip01_R_Finger4",
-	"ValveBiped.Bip01_R_Finger01",
-	"ValveBiped.Bip01_R_Finger02",
-	"ValveBiped.Bip01_R_Finger11",
-	"ValveBiped.Bip01_R_Finger12",
-	"ValveBiped.Bip01_R_Finger21",
-	"ValveBiped.Bip01_R_Finger22",
-	"ValveBiped.Bip01_R_Finger31",
-	"ValveBiped.Bip01_R_Finger32",
-	"ValveBiped.Bip01_R_Finger41",
-	"ValveBiped.Bip01_R_Finger42",
-	"ValveBiped.Bip01_R_Hand",
-
-}
-
-local gloves = {
+ENT.HandBones = { --All of the bones that could possibly exist in a player's hand.
 	"ValveBiped.Bip01_L_Hand",
 	"ValveBiped.Bip01_L_Finger0",
 	"ValveBiped.Bip01_L_Finger1",
@@ -145,7 +73,7 @@ local gloves = {
 	"ValveBiped.Bip01_R_Hand"
 }
 
-local head = {
+ENT.HeadBones = { --All of the bones related to the head.
 	"ValveBiped.Bip01_Head1",
 	"ValveBiped.Bip01_Neck1",
 	"Bip01_ponytail",
@@ -244,87 +172,98 @@ local head = {
 	"Neck1"
 	
 }
-local bodyaddup = {
-}
-local headaddup = {
-	["ValveBiped.Bip01_Head1"] = 3
-}
-/*---------------------------------------------------------
-   Name: BuildBonePositions
-   Desc:
----------------------------------------------------------*/
-function ENT:BuildBonePositions( NumBones, NumPhysBones )
+local index
+function ENT:BuildBonePositions( n, physbones )
 
-	local tbl = {}
-	local bodyinflate = {}
-	local headinflate = {}
-	local index = 0
-	local inverse = false
-	local exceptions = {}
-	if self.Entity:GetDTInt( 1 ) == 0 then
-		inverse = true
-	elseif self.Entity:GetDTInt( 1 ) == 1 then
-		exceptions = body
-		inverse = true
-	elseif self.Entity:GetDTInt( 1 ) == 2 then
-		exceptions = head
-	elseif self.Entity:GetDTInt( 1 ) == 3 then
-		exceptions = gloves
-	elseif self.Entity:GetDTInt( 1 ) == 4 then
-		exceptions = gloves
-		inverse = true
-	elseif self.Entity:GetDTInt( 1 ) == 5 then
-		exceptions = head
-		inverse = true
-	end
-	for k, v in pairs( exceptions ) do
-		index = self.Entity:LookupBone( v )
-		if index != 0 then
-			table.insert( tbl, index )
-		end
-	end
-	for k, v in pairs( bodyaddup ) do
-		index = self.Entity:LookupBone( k )
-		if index != 0 then
-			bodyinflate[ k ] = index
-		end
-	end
-	for k, v in pairs( headaddup ) do
-		index = self.Entity:LookupBone( k )
-		if index != 0 then
-			headinflate[ k ] = index
-		end
-	end
-	
-	for i=0, NumBones do
-		if inverse then
-			if ( table.HasValue( tbl, i ) ) then
-				BoneScale( self, i, 0.01 )
+	if !self.HeadBonesIndex then
+		self.HeadBonesIndex = {}
+		for _,bone in pairs(self.HeadBones) do
+			index = self.Entity:LookupBone(bone)
+			if index then
+				table.insert(self.HeadBonesIndex, index)
 			end
-			if ( table.HasValue( bodyinflate, i ) ) then
-				for k, v in pairs( bodyinflate ) do
-					if i == v then
-						--BoneScale( self, i, bodyaddup[ k ]  )
-						break
-					end
-				end
+		end
+	end
+
+	if !self.HandBonesIndex then
+		self.HandBonesIndex = {}
+		for _,bone in pairs(self.HandBones) do
+			index = self.Entity:LookupBone(bone)
+			if index then
+				table.insert(self.HandBonesIndex, index)
 			end
+		end
+	end
+
+	if self.Entity:GetDTInt( CLOTHING_TYPE ) == CLOTHING_FULL then --Don't do anything.
+		if table.HasValue(self.HeadBonesIndex, i) then --If they're part of the head
+			self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_HEADRATIO)) --Scale to head ratio
+		elseif table.HasValue(self.HandBonesIndex, i) then --If they're part of the hands
+			self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_HANDRATIO)) --Scale to hand ratio
 		else
-			if ( !table.HasValue( tbl, i, 0 ) ) then
-				BoneScale( self, i, 0.01 )
+			--Else they're part of the body.
+			self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_BODYRATIO)) --Scale to body ratio
+		end
+	elseif self.Entity:GetDTInt( CLOTHING_TYPE ) == CLOTHING_BODY then --Scale down hands and head
+		for i=0, n do
+			if table.HasValue(self.HeadBonesIndex, i) or table.HasValue(self.HandBonesIndex, i) then
+				self:BoneScale(i,0) -- Scale them down if they're either hands or head bones.
+			else
+				--Else they're part of the body.
+				self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_BODYRATIO)) --Scale to body ratio
 			end
-			if ( table.HasValue( headinflate, i ) ) then
-				for k, v in pairs( headinflate ) do
-					if i == v then
-						BoneScale( self, i, self.Entity:GetDTInt( headaddup[ k ] ) )
-						break
-					end
-				end
+		end
+	elseif self.Entity:GetDTInt( CLOTHING_TYPE ) == CLOTHING_HEAD then --Scale down everything but the head.
+		for i=0, n do
+			if !table.HasValue(self.HeadBonesIndex, i) then
+				self:BoneScale(i,0) -- Scale them down if they're not part of the head
+			else
+				--They're part of the head.
+				self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_HEADRATIO))--Scale them to the head
+			end
+		end
+	elseif self.Entity:GetDTInt( CLOTHING_TYPE ) == CLOTHING_HANDS then --Keep just the hands
+		for i=0, n do
+			if !table.HasValue(self.HandBonesIndex, i) then
+				self:BoneScale(i,0) -- Scale them down if they're not part of the hand
+			else
+				--They're part of the hand.
+				self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_HANDRATIO)) --Scale to hand ratio
+			end
+		end
+	elseif self.Entity:GetDTInt( CLOTHING_TYPE ) == CLOTHING_HEADANDBODY then --Keep everything but the hands.
+		for i=0, n do
+			if table.HasValue(self.HandBonesIndex, i) then
+				self:BoneScale(i,0) -- Scale them down if they're part of the hands
+			elseif table.HasValue(self.HeadBonesIndex, i) then
+				self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_HEADRATIO))--Scale head bones to the head ratio
+			else
+				--If they're not part of head or hands, then they're part of the body.
+				self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_BODYRATIO)) --Scale to body ratio
+			end
+		end
+	elseif self.Entity:GetDTInt( CLOTHING_TYPE ) == CLOTHING_BODYANDHANDS then --Keep everything but the head
+		for i=0, n do
+			if table.HasValue(self.HeadBonesIndex, i) then
+				self:BoneScale(i, 0) --Scale them down if they're part of the head.
+			elseif table.HasValue(self.HandBonesIndex, i) then
+				self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_HANDRATIO)) --Scale to hand ratio
+			else
+				--If they're not part of head or hands, then they're part of the body.
+				self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_BODYRATIO)) --Scale to body ratio
+			end
+		end
+	elseif self.Entity:GetDTInt( CLOTHING_TYPE ) == CLOTHING_HEADANDHANDS then --Keep everything but the body
+		for i=0, n do
+			if table.HasValue(self.HeadBonesIndex, i) then
+				self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_HEADRATIO)) --Scale to head ratio
+			elseif table.HasValue(self.HandBonesIndex, i) then
+				self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_HANDRATIO)) --Scale to hand ratio
+			else
+				self:BoneScale(i, 0)
 			end
 		end
 	end
-
-	--SolveIKForArm( self, "R" )
 
 end
 

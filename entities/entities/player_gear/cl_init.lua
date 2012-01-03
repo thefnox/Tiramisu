@@ -21,13 +21,10 @@ function ENT:Draw()
 		return
 	end
 
-	if self.Entity:GetDTEntity( 1 )  == LocalPlayer() then
-		if !CAKE.Thirdperson:GetBool() and !CAKE.MiddleDown then
-			if !gamemode.Call( "ShouldDrawLocalPlayer" ) then
-				return
-			end
-		end
+	if !hook.Call("ShouldDrawLocalPlayer", GAMEMODE) then
+		return
 	end
+	
 	self.Entity:DrawModel()
 	self.Entity:DrawShadow( false )
 	
