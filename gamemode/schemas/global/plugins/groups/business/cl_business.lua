@@ -27,7 +27,7 @@ local function OpenBusiness()
 
 	if BusinessTable then
 
-		BusinessFrame = vgui.Create( "DFrameTransparent" )
+		BusinessFrame = vgui.Create( "DFrame" )
 		BusinessFrame:SetSize( 532, 433 )
 		BusinessFrame:Center()
 		BusinessFrame:SetTitle( "Business" )

@@ -24,7 +24,7 @@ end)
 local function DrawTime( )
 
 	if !CAKE.MinimalHUD:GetBool() or CAKE.MenuOpen then 
-		if GetGlobalString( "time" ) != "Loading.." then
+		if GetGlobalString( "time" ) != "Loading.." and GetGlobalString( "time" ) != "" then
 			struc.text = CAKE.FindDayName() .. ", " .. GetGlobalString( "time" )
 			struc.pos = { ScrW() - 10, 10 } -- Pos x, y
 			draw.Text( struc )

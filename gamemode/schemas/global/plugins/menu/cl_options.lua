@@ -11,7 +11,7 @@ end)
 
 local function OpenOptions()
 
-	PlayerMenu = vgui.Create( "DFrameTransparent" )
+	PlayerMenu = vgui.Create( "DFrame" )
 	PlayerMenu:SetSize( 640, 480 )
 	PlayerMenu:SetTitle( "Options" )
 	PlayerMenu:SetVisible( true )

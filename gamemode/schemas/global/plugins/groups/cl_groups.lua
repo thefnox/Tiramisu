@@ -24,7 +24,7 @@ function CAKE.GetRankPermission( name )
 end
 
 local function OpenGroupAdministrator()
-    local frame = vgui.Create( "DFrameTransparent" )
+    local frame = vgui.Create( "DFrame" )
     frame:SetSize( 500, 378 )
     frame:Center()
     frame:SetTitle( "Group Editing" )
@@ -84,7 +84,7 @@ local function OpenGroupAdministrator()
             frame:Remove()
             frame = nil
         end
-        local rankframe = vgui.Create( "DFrameTransparent" )
+        local rankframe = vgui.Create( "DFrame" )
         rankframe:SetSize( 250, 300 )
         rankframe:Center()
         rankframe:SetTitle( "Create New Rank" )
@@ -140,7 +140,7 @@ local function OpenGroupAdministrator()
 end
 
 local function OpenUserAdministrator( rank, name, steamid, online )
-    local frame = vgui.Create( "DFrameTransparent" )
+    local frame = vgui.Create( "DFrame" )
     frame:SetSize( 200, 250 )
     frame:Center()
     frame:SetTitle( "Character info: " .. name )
@@ -203,7 +203,7 @@ end )
 
 datastream.Hook( "DisplayRoster", function( handler, id, encoded, decoded )
     
-    local frame = vgui.Create( "DFrameTransparent" )
+    local frame = vgui.Create( "DFrame" )
     frame:SetSize( 450, 328 )
     frame:Center()
     frame:SetTitle( "Roster Search Results" )
@@ -261,7 +261,7 @@ usermessage.Hook( "DisplayInvite",  function( um )
 end)
 
 local function OpenGroups()
-    PlayerMenu = vgui.Create( "DFrameTransparent" )
+    PlayerMenu = vgui.Create( "DFrame" )
     PlayerMenu:SetSize( 250, 300 )
     PlayerMenu:Center()
     PlayerMenu:SetTitle( "My Group" )
@@ -370,7 +370,7 @@ usermessage.Hook( "EditRank", function( um )
     
     local handle = um:ReadString()
     
-    local editframe = vgui.Create( "DFrameTransparent" )
+    local editframe = vgui.Create( "DFrame" )
     editframe:SetSize( 250, 300 )
     editframe:Center()
     editframe:SetTitle( "Editing rank: " .. handle )

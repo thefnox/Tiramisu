@@ -27,7 +27,6 @@ include( "plugins.lua" ); -- Plugin system
 include( "client_resources.lua" ); -- Sends files to the client
 include( "sh_animations.lua" ) --Animaaaaations.
 include( "sh_anim_tables.lua" ) --Animation tables
-include( "sh_stats.lua" ) --Stats
 
 resource.AddFile( "models/tiramisu/animationtrees/alyxanimtree.mdl" )
 resource.AddFile( "models/tiramisu/animationtrees/combineanimtree.mdl" )

@@ -44,8 +44,13 @@ function CAKE.FindYear()
 end
 
 function CAKE.IsLeapYear()
-	
+
 	local year = CAKE.FindYear()
+
+	if year < 1582 then
+		return false --Gregorian calendar wasn't set, therefore, leap years do not yet exist.
+	end
+
 	if ( year % 4 ) == 0 then
 		return true
 	end
@@ -129,6 +134,10 @@ local centurytable = {
 }
 
 function CAKE.FindDayName()
+
+	if CAKE.FindYear() < 1582 then
+		return "Unknown"
+	end
 	
 	local centurynumber = centurytable[ CAKE.FindCentury() ] or 0
 	local last2digits = CAKE.FindYear() - ( CAKE.FindCentury() - 1 ) * 100

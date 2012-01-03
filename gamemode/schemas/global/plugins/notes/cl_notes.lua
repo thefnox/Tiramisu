@@ -1,6 +1,6 @@
 function ccWrite(ply, cmd, args)
 	
-	WriteMenu = vgui.Create( "DFrameTransparent" )
+	WriteMenu = vgui.Create( "DFrame" )
 	WriteMenu:SetSize( 640, 480 )
 	WriteMenu:SetTitle( "Write" )
 	WriteMenu:SetVisible( true )
@@ -34,7 +34,7 @@ concommand.Add( "rp_write", ccWrite )
 
 function noteRead( handler, id, encoded, decoded )
 
-	ReadMenu = vgui.Create( "DFrameTransparent" )
+	ReadMenu = vgui.Create( "DFrame" )
 	ReadMenu:SetSize( 640, 480 )
 	ReadMenu:SetTitle( decoded["title"] )
 	ReadMenu:SetVisible( true )

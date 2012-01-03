@@ -4,7 +4,7 @@ CLPLUGIN.Author = "F-Nox/Big Bang"
 
 local function OpenScoreboard()
 
-	PlayerMenu = vgui.Create( "DFrameTransparent" )
+	PlayerMenu = vgui.Create( "DFrame" )
 	PlayerMenu:SetSize( 640, 480 )
 	PlayerMenu:SetTitle( "Scoreboard" )
 	PlayerMenu:SetVisible( true )

@@ -74,7 +74,7 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 	
 		trace = util.TraceHull( {
 			start = EyePos(),
-			endpos = EyePos() + ( gui.ScreenToVector( ScrW()/2, ScrH()/2 ) * 5120 ),
+			endpos = EyePos() + ( gui.ScreenToVector( ScrW()/2, ScrH()/2 ) * 30000 ),
 			filter = LocalPlayer(),
 			mask = MASK_SHOT,
 			mins = Vector(-12,-12,-12),
@@ -82,7 +82,7 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 		} )
 
 		--Hit Correction
-		if ValidEntity(trace.Entity) and !trace.Entity:IsWorld() then
+		if ValidEntity(trace.Entity) and !trace.HitWorld and !trace.HitSky then
 			local head = trace.Entity:LookupBone("ValveBiped.Bip01_Head1")
 			if head then
 				hitpos = Lerp( 0.3, trace.HitPos, trace.Entity:GetBonePosition(head) )

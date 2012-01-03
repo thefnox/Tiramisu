@@ -32,7 +32,7 @@ function MakeContainerUp( um )
 	local ent = um:ReadEntity()
 	local size = um:ReadShort()
 
-	local ContainerInfo = vgui.Create( "DFrameTransparent" )
+	local ContainerInfo = vgui.Create( "DFrame" )
 	ContainerInfo:SetSize( 540, 408 )
 	ContainerInfo:SetTitle( "The container holds inside..." )
 	ContainerInfo:SetVisible( true )

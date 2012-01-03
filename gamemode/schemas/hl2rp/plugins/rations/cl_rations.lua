@@ -4,7 +4,7 @@ hook.Add( "ScoreboardShow", "HL2RPRationsDisplay", function()
 	    RationFrame:Remove()
 	end
 
-	RationFrame = vgui.Create( "DFrameTransparent" )
+	RationFrame = vgui.Create( "DFrame" )
 	RationFrame:SetSize( 90, 74 )
 	RationFrame:SetTitle( "Rations" )
 	RationFrame:ShowCloseButton( false ) 

@@ -37,6 +37,84 @@ local params = {
 }
 local tabmaterial = CreateMaterial("TabMaterial","UnlitGeneric",params);
 
+function CAKE.DrawQuickMenu()
+	if QuickMenu then
+		QuickMenu:Remove()
+		Quickmenu = nil
+	end
+
+	QuickMenu = vgui.Create("DFrame");
+	QuickMenu:SetSize( ScrW()/4, ScrH() )
+	QuickMenu:SetPos( 0, 0 )
+	QuickMenu:SetTitle( "" )
+	QuickMenu:SetDraggable( false ) -- Draggable by mouse?
+	QuickMenu:ShowCloseButton( false ) -- Show the close button?
+	local fade = 0
+	local x, y
+	local gradient = surface.GetTextureID("gui/gradient")
+	QuickMenu.Paint = function()
+		if QuickMenu then
+			if !QuickMenu.FadeOut then
+				fade = Lerp( 10 * RealFrameTime(), fade, 255 )
+			else
+				fade = Lerp( 10 * RealFrameTime(), fade, 0 )
+				if fade < 5 then
+					QuickMenu:Remove()
+				end
+			end
+			x, y = QuickMenu:ScreenToLocal( 0, 0 )
+			surface.SetTexture( gradient )
+			surface.SetDrawColor( 0, 0, 0, fade ) 
+			surface.DrawTexturedRectUV( x, y, QuickMenu:GetWide(), QuickMenu:GetTall(), QuickMenu:GetWide(), QuickMenu:GetWide() )
+			surface.SetDrawColor( 0, 0, 0, fade ) 
+			surface.DrawTexturedRectUV(  x, y, QuickMenu:GetWide(), QuickMenu:GetTall(), QuickMenu:GetWide(), QuickMenu:GetWide() )
+		end
+	end
+
+	local titlelabel = Label( "Main Menu", QuickMenu )
+	titlelabel:SetSize( QuickMenu:GetWide() - 25, 40 )
+	titlelabel:SetFont( "TiramisuTitlesFont" )
+	titlelabel:SetTextColor(Color(255, 255, 255, 0))
+	titlelabel:SetPos( 25, QuickMenu:GetTall() / 6)
+	titlelabel.PaintOver = function()
+		titlelabel:SetTextColor(Color(255, 255, 255, fade))
+	end
+
+	local startpos = QuickMenu:GetTall() / 4 - #CAKE.MenuTabs * 40
+	local lastpos = startpos
+	for k, v in pairs( CAKE.MenuTabs ) do
+		lastpos = lastpos + 40
+		local label = vgui.Create( "DButton", QuickMenu )
+		label:SetDrawBorder( false )
+		label:SetText( "" )
+		label:SetDrawBackground( false )
+		label.DoClick = function()
+			CAKE.SetActiveTab(k)
+		end
+		label:SetSize( QuickMenu:GetWide()-10, 28 )
+		label:SetTextColor(Color(255, 255, 255, 0))
+		label:SetTextColorHovered(CAKE.BaseColor)
+		label:SetPos( 10, lastpos)
+		label.FuckingColor = label:GetTextColor()
+		label.OnCursorEntered = function()
+			label.FuckingColor = label:GetTextColorHovered()
+		end
+		label.OnCursorExited = function()
+			label.FuckingColor = label:GetTextColor()
+		end
+		label.Paint = function()
+			 draw.SimpleTextOutlined( k, "TiramisuTitlesFont", label:GetWide()/2, 0, Color(label.FuckingColor.r,label.FuckingColor.g,label.FuckingColor.b,fade), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,fade))
+		end
+	end
+
+end
+
+function CAKE.HideQuickMenu()
+	if QuickMenu then
+		QuickMenu.FadeOut = true
+	end
+end
+
 function GM:ScoreboardShow( )
 
 	CAKE.ContextEnabled = true;
@@ -44,46 +122,8 @@ function GM:ScoreboardShow( )
 	gui.EnableScreenClicker( true )
 	HiddenButton:SetVisible( true );
 
-	if QuickMenu then
-		QuickMenu:Remove()
-		Quickmenu = nil
-	end
+	CAKE.DrawQuickMenu()
 
-	QuickMenu = vgui.Create("DFrame");
-	QuickMenu:SetSize( 260, 400 )
-	QuickMenu:SetPos( ScrW() + 130, 200 )
-	QuickMenu:SetTitle( "" )
-	QuickMenu:SetDraggable( false ) -- Draggable by mouse?
-	QuickMenu:ShowCloseButton( false ) -- Show the close button?
-	QuickMenu.Paint = function() end
-
-	local lastpos = 0
-	for k, v in pairs( CAKE.MenuTabs ) do
-		lastpos = lastpos + 30
-		local label = vgui.Create( "DImageButton", QuickMenu )
-		label.m_Image:SetMaterial( tabmaterial )
-		label:SetSize( 256, 28 )
-		label.DoClick = function()
-			CAKE.SetActiveTab(k)
-		end
-		label.Paint = function() end
-		label.PaintOver = function()
-			draw.DrawText(k, "TiramisuTabsFont", 80, 8, Color(255, 255, 255, 255),TEXT_ALIGN_CENTER)
-		end
-		label:SetPos( 5, lastpos)
-		label:SetExpensiveShadow( 1, Color( 10, 10, 10, 255 ) )
-	end
-
-	local posx, posy
-	timer.Create( "quickmenuscrolltimer", 0.01, 0, function()
-		if QuickMenu then
-			posx, posy = QuickMenu:GetPos( )
-			QuickMenu:SetPos( Lerp( 0.2, posx, ScrW() - 128 ), 200 )
-		else
-			timer.Destroy( "quickmenuscrolltimer" )
-		end
-	end )
-	
 end
 
 function GM:ScoreboardHide( )
@@ -97,14 +137,11 @@ function GM:ScoreboardHide( )
 		HiddenButton:SetVisible( false );
 	end
 
-	local posx, posy
-	if QuickMenu then
-		QuickMenu:Remove()
-		QuickMenu = nil
-	end
 	if VitalsMenu then
 		VitalsMenu:Remove()
 		VitalsMenu = nil
 	end
+
+	CAKE.HideQuickMenu()
 	
 end

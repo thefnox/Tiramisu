@@ -1,7 +1,7 @@
 --HTML Page tab.
 
 local function OpenForums()
-	PlayerMenu = vgui.Create( "DFrameTransparent" )
+	PlayerMenu = vgui.Create( "DFrame" )
 	PlayerMenu:SetSize( 700, 520 )
 	PlayerMenu:SetTitle( "Forums" )
 	PlayerMenu:SetVisible( true )

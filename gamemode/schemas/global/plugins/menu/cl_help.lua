@@ -74,7 +74,7 @@ function OpenHelp()
 		CloseHelp()
 	end
 
-	PlayerMenu = vgui.Create( "DFrameTransparent" )
+	PlayerMenu = vgui.Create( "DFrame" )
 	PlayerMenu:SetSize( 400, 400 )
 	PlayerMenu:Center()
 	PlayerMenu:SetTitle( "Help Menu" )

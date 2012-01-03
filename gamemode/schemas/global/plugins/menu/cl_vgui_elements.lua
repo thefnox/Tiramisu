@@ -158,20 +158,20 @@ function PANEL:Paint()
 
 	x, y = self:ScreenToLocal( 0, 0 ) 
 	color = self.Color or CAKE.BaseColor or Color( 100, 100, 115, 150 )
-	   
+	
 	// Background 
 	surface.SetMaterial( matBlurScreen ) 
 	surface.SetDrawColor( 255, 255, 255, 255 ) 
-	   
+	
 	matBlurScreen:SetMaterialFloat( "$blur", 5 ) 
 	render.UpdateScreenEffectTexture() 
-	   
+	
 	surface.DrawTexturedRect( x, y, ScrW(), ScrH() ) 
 
 	if ( self.m_bBackgroundBlur ) then
 		Derma_DrawBackgroundBlur( self, self.m_fCreateTime )
 	end
-	   
+	
 	surface.SetDrawColor( color.r, color.g, color.b, 150 ) 
 	surface.DrawRect( x, y, ScrW(), ScrH() ) 
 
@@ -196,7 +196,7 @@ function PANEL:Paint()
 	surface.SetDrawColor( math.Clamp( color.r - 50, 0, 255 ), math.Clamp( color.g - 50,0, 255 ), math.Clamp( color.b - 50, 0, 255 ), 255 ) 
 	surface.DrawOutlinedRect( 0, 0, self:GetWide(), self:GetTall() )
 	surface.DrawLine( 0, 23, self:GetWide(), 23 )
-	   
+	
 	return true 
 end
 
@@ -263,7 +263,7 @@ function PANEL:IsActive()
  
 end
 
-derma.DefineControl( "DFrameTransparent", "Cool transparent DFrame", PANEL, "EditablePanel" )
+--derma.DefineControl( "DFrame", "Cool transparent DFrame", PANEL, "EditablePanel" )
 
 --PlayerPanel. A 3D panel that draws the player and his/her clothing and gear. With mouse rotation/zooming.
 
@@ -276,11 +276,11 @@ AccessorFunc( PANEL, "fFOV",					"FOV" )
 AccessorFunc( PANEL, "vLookatPos",			  "LookAt" )
 AccessorFunc( PANEL, "colAmbientLight", "AmbientLight" )
 AccessorFunc( PANEL, "colColor",				"Color" )
-AccessorFunc( PANEL, "bAnimated",			   "Animated" )
+AccessorFunc( PANEL, "bAnimated",			"Animated" )
  
  
 /*---------------------------------------------------------
-   Name: Init
+Name: Init
 ---------------------------------------------------------*/
 function PANEL:Init()
 

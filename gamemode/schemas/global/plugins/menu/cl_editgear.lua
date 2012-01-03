@@ -42,7 +42,7 @@ local function HandleGearEditing( entity, bone, item, name )
 				frame = nil
 			end
 
-			local frame = vgui.Create( "DFrameTransparent", PlayerMenu )
+			local frame = vgui.Create( "DFrame", PlayerMenu )
 			frame:SetSize( 360, 423 )
 			frame:Center()
 			frame:SetTitle( "Choose the item you want to use for your gear" )
@@ -88,7 +88,7 @@ function EditGear()
 	PlayerMenu:SetTitle( "" )
 	PlayerMenu.Paint = function()
 
-		Derma_DrawBackgroundBlur( PlayerMenu, 0 )
+		CAKE.DrawBlurScreen()
 
 	end
 	PlayerMenu:MakePopup()
@@ -98,7 +98,7 @@ function EditGear()
 	PlayerModel:SetPos( ScrW() / 2 - 150, ScrH() / 2 - 300 )
 
 
-	EditMenu = vgui.Create( "DFrameTransparent", PlayerMenu )
+	EditMenu = vgui.Create( "DFrame", PlayerMenu )
 	EditMenu:SetSize( 260, 450 )
 	EditMenu:ShowCloseButton( false )
 	EditMenu:SetPos( ScrW() / 2 - 370, ScrH() / 2 - 285 )
@@ -326,7 +326,7 @@ end
 function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name )
 
 	if PlayerMenu then
-		EditorFrame = vgui.Create( "DFrameTransparent", PlayerMenu ) -- Creates the frame itself
+		EditorFrame = vgui.Create( "DFrame", PlayerMenu ) -- Creates the frame itself
 		EditorFrame:Center() -- Position on the players screen
 		EditorFrame:SetSize( 280, 260 ) -- Size of the frame
 		EditorFrame:SetDeleteOnClose( true )

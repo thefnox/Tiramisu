@@ -37,7 +37,7 @@ function RCLICK.Click(target,ply)
 
 	local bone = BoneList[1]
 
-	local Window = vgui.Create( "DFrameTransparent" )
+	local Window = vgui.Create( "DFrame" )
 	Window:SetTitle( "Create an item" )
 	Window:SetDraggable( false )
 	Window:ShowCloseButton( false )

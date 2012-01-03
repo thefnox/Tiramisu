@@ -17,7 +17,7 @@ function OpenCharacterMenu( hideclosebutton )
 		CharacterMenu:SetTitle( "" )
 		CharacterMenu.Paint = function()
 
-			Derma_DrawBackgroundBlur( CharacterMenu, 0 )
+			CAKE.DrawBlurScreen()
 
 		end
 		CharacterMenu:MakePopup()

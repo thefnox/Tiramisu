@@ -4,6 +4,7 @@ Kicking around on a piece of ground in your home town
 Waiting for someone or something to show you the way
 
 Time - Pink Floyd */
+CAKE.DateEnabled = true
 CAKE.DefaultTime = "1 1 2011 1"
 
 
@@ -76,12 +77,37 @@ function CAKE.SendTime()
 		if string.sub(tostring(nHours),1,1) == "0" then
 			nHours = " " ..string.sub(tostring(nHours), 2, 2)
 		end
-		
-		SetGlobalString("time", CAKE.ClockMonth.. "/" .. CAKE.ClockDay .. "/" .. CAKE.ClockYear.. " - " .. nHours .. ":" .. nMins .. timez)
+		if CAKE.DateEnabled then
+			SetGlobalString("time", CAKE.ClockMonth.. "/" .. CAKE.ClockDay .. "/" .. CAKE.ClockYear.. " - " .. nHours .. ":" .. nMins .. timez)
+		else
+			SetGlobalString("time", "")
+		end
 	end
 	
 end
 
+local function AdminSetDate( ply, cmd, args )
+	if #args < 3 then
+		CAKE.SendConsole(ply, "Invalid number of arguments! ( rp_admin setdate monthnumber daynumber year )")
+		return
+	end
+	CAKE.ClockMonth = math.Clamp( tonumber(args[1]),1, 12)
+	CAKE.ClockYear = tonumber( args[3] )
+	if CAKE.ClockMonth == 2 then
+		if CAKE.IsLeapYear(CAKE.ClockYear) then --It measures ever since the Gregorian calendar was made lol.
+			CAKE.ClockDay = math.Clamp( tonumber(args[2]), 1, 29 )
+		else
+			CAKE.ClockDay = math.Clamp( tonumber(args[2]), 1, 28 )
+		end
+	else
+		CAKE.ClockDay = math.Clamp( tonumber(args[2]), 1, 31 )
+	end
+	CAKE.SendTime()
+	CAKE.SaveTime()
+end
+
+
 function PLUGIN.Init()
 	CAKE.InitTime()
+	CAKE.AdminCommand( "setdate", AdminSetDate , "Sets the current date (month day year)", true, true, 3 );
 end

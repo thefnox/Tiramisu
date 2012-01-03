@@ -584,7 +584,7 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 	--Everything related to the layout of the inventory goes here.
 
 	LoadPositions()
-	CAKE.InventoryFrame = vgui.Create( "DFrameTransparent" )
+	CAKE.InventoryFrame = vgui.Create( "DFrame" )
 	CAKE.InventoryFrame:SetSize( 560, 260 )
 	if CAKE.MinimalHUD:GetBool() then
 		CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, ScrH() )
