@@ -1,17 +1,17 @@
 -- Define the table of player information.
-CAKE.PlayerData = {  };
+CAKE.PlayerData = {  }
 
 -- This is to be used only by the main player table.
-CAKE.PlayerDataFields = {  };
+CAKE.PlayerDataFields = {  }
 
 -- This is to be used only by the characters table.
-CAKE.CharacterDataFields = {  };
+CAKE.CharacterDataFields = {  }
 
-local meta = FindMetaTable( "Player" );
+local meta = FindMetaTable( "Player" )
 
 function CAKE.FormatCharString( ply )
 	
-	return ply:SteamID( ) .. "-" .. ply:GetNWString( "uid" );
+	return ply:SteamID( ) .. "-" .. ply:GetNWString( "uid" )
 	
 end
 
@@ -19,14 +19,14 @@ end
 -- For example, STEAM_0:1:5947214 would turn into 015947214
 function CAKE.FormatText( SteamID )
 
-	local SteamID = CAKE.NilFix(SteamID, "STEAM_0:0:0");
+	local SteamID = CAKE.NilFix(SteamID, "STEAM_0:0:0")
 
-	s = string.gsub( SteamID,"STEAM","" );
-	s = string.gsub( s,":","" );
-	s = string.gsub( s,"_","" );
-	s = string.gsub( s," ","" );
+	s = string.gsub( SteamID,"STEAM","" )
+	s = string.gsub( s,":","" )
+	s = string.gsub( s,"_","" )
+	s = string.gsub( s," ","" )
 	
-	return s;
+	return s
 	
 end
 
@@ -36,13 +36,13 @@ function CAKE.AddDataField( fieldtype, fieldname, default )
 	
 	if( fieldtype == 1 ) then
 	
-		CAKE.DayLog( "script.txt", "Adding player data field " .. fieldname .. " with default value of " .. tostring( default ) );
-		CAKE.PlayerDataFields[ fieldname ] = CAKE.ReferenceFix(default);
+		CAKE.DayLog( "script.txt", "Adding player data field " .. fieldname .. " with default value of " .. tostring( default ) )
+		CAKE.PlayerDataFields[ fieldname ] = CAKE.ReferenceFix(default)
 		
 	elseif( fieldtype == 2 ) then
 	
-		CAKE.DayLog( "script.txt", "Adding character data field " .. fieldname .. " with default value of " .. tostring( default ) );
-		CAKE.CharacterDataFields[ fieldname ] = CAKE.ReferenceFix(default);
+		CAKE.DayLog( "script.txt", "Adding character data field " .. fieldname .. " with default value of " .. tostring( default ) )
+		CAKE.CharacterDataFields[ fieldname ] = CAKE.ReferenceFix(default)
 		
 		if( type( default ) == "table" ) then
 			default = table.concat( default, "," )
@@ -69,34 +69,34 @@ end
 -- Load a player's data
 function CAKE.LoadPlayerDataFile( ply )
 
-	local SteamID = CAKE.FormatText( ply:SteamID( ) );
+	local SteamID = CAKE.FormatText( ply:SteamID( ) )
 	
-	CAKE.PlayerData[ SteamID ]  = {  };
+	CAKE.PlayerData[ SteamID ]  = {  }
 	
 	if( CAKE.HasSavedData( ply ) ) then	
 		
-		CAKE.DayLog( "script.txt", "Loading player data file for " .. ply:SteamID( ) );
+		CAKE.DayLog( "script.txt", "Loading player data file for " .. ply:SteamID( ) )
 		
 		-- Read the data from their data file
-		local Data_Raw = file.Read( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" );
+		local Data_Raw = file.Read( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" )
 		
 		-- Convert the data into a table
-		local Data_Table = CAKE.NilFix(glon.decode( Data_Raw ), { });
+		local Data_Table = CAKE.NilFix(glon.decode( Data_Raw ), { })
 		
 		-- Insert the table into the data table
-		CAKE.PlayerData[ SteamID ] = Data_Table;
+		CAKE.PlayerData[ SteamID ] = Data_Table
 		
 		-- Retrieve the data table for easier access
-		local PlayerTable = CAKE.PlayerData[ SteamID ];
-		local CharTable = CAKE.PlayerData[ SteamID ][ "characters" ];
+		local PlayerTable = CAKE.PlayerData[ SteamID ]
+		local CharTable = CAKE.PlayerData[ SteamID ][ "characters" ]
 
 		-- If any values were loaded and they aren't in the DataFields table, delete them from the player.
 		for _, v in pairs( PlayerTable ) do
 			
 			if( CAKE.PlayerDataFields[ _ ] == nil ) then
 			
-				CAKE.DayLog( "script.txt", "Invalid player data field '" .. tostring( _ ) .. "' in " .. ply:SteamID( ) .. ", removing." );
-				CAKE.PlayerData[ SteamID ][ _ ] = nil;
+				CAKE.DayLog( "script.txt", "Invalid player data field '" .. tostring( _ ) .. "' in " .. ply:SteamID( ) .. ", removing." )
+				CAKE.PlayerData[ SteamID ][ _ ] = nil
 				
 			end
 			
@@ -107,8 +107,8 @@ function CAKE.LoadPlayerDataFile( ply )
 			
 			if( PlayerTable[ fieldname ] == nil ) then
 			
-				CAKE.DayLog( "script.txt", "Missing player data field '" .. tostring( fieldname ) .. "' in " .. ply:SteamID( ) .. ", inserting with default value of '" .. tostring(default) .. "'" );
-				CAKE.PlayerData[ SteamID ][ fieldname ] = CAKE.ReferenceFix(default);
+				CAKE.DayLog( "script.txt", "Missing player data field '" .. tostring( fieldname ) .. "' in " .. ply:SteamID( ) .. ", inserting with default value of '" .. tostring(default) .. "'" )
+				CAKE.PlayerData[ SteamID ][ fieldname ] = CAKE.ReferenceFix(default)
 				
 			end
 			
@@ -129,8 +129,8 @@ function CAKE.LoadPlayerDataFile( ply )
 
 				if( CAKE.CharacterDataFields[ k ] == nil ) then
 				
-					CAKE.DayLog( "script.txt", "Invalid character data field '" .. tostring( _ ) .. "' in character " .. ply:SteamID( ) .. "-" .. _ .. ", removing." );
-					CAKE.PlayerData[ SteamID ][ "characters" ][ _ ][ k ] = nil;
+					CAKE.DayLog( "script.txt", "Invalid character data field '" .. tostring( _ ) .. "' in character " .. ply:SteamID( ) .. "-" .. _ .. ", removing." )
+					CAKE.PlayerData[ SteamID ][ "characters" ][ _ ][ k ] = nil
 					
 				end
 				
@@ -145,8 +145,8 @@ function CAKE.LoadPlayerDataFile( ply )
 			
 				if( char[ fieldname ] == nil ) then
 				
-					CAKE.DayLog( "script.txt", "Missing character data field '" .. tostring( fieldname ) .. "' in character " .. ply:SteamID( ) .. "-" .. _ .. ", inserting with default value of '" .. tostring(default) .. "'" );
-					CAKE.PlayerData[ SteamID ][ "characters" ][ _ ][ fieldname ] = CAKE.ReferenceFix(default);
+					CAKE.DayLog( "script.txt", "Missing character data field '" .. tostring( fieldname ) .. "' in character " .. ply:SteamID( ) .. "-" .. _ .. ", inserting with default value of '" .. tostring(default) .. "'" )
+					CAKE.PlayerData[ SteamID ][ "characters" ][ _ ][ fieldname ] = CAKE.ReferenceFix(default)
 					
 				end
 				
@@ -154,22 +154,22 @@ function CAKE.LoadPlayerDataFile( ply )
 			
 		end
 		
-		CAKE.SavePlayerData(ply);
+		CAKE.SavePlayerData(ply)
 		
 	else
 		
 		-- Seems they don't have a player table. Let's create a default one for them.
 		
-		CAKE.DayLog( "script.txt", "Creating new data file for " .. ply:SteamID( ) );
+		CAKE.DayLog( "script.txt", "Creating new data file for " .. ply:SteamID( ) )
 		
-		CAKE.PlayerData[ SteamID ] = {  };
+		CAKE.PlayerData[ SteamID ] = {  }
 		
 		-- Let's get the default fields and add them to the table.
 		for fieldname, default in pairs( CAKE.PlayerDataFields ) do
 			
 			if( CAKE.PlayerData[ fieldname ] == nil ) then
 			
-				CAKE.PlayerData[ SteamID ][ fieldname ] = CAKE.ReferenceFix(default);
+				CAKE.PlayerData[ SteamID ][ fieldname ] = CAKE.ReferenceFix(default)
 				
 			end
 			
@@ -179,7 +179,7 @@ function CAKE.LoadPlayerDataFile( ply )
 		ply.FirstTimeJoining = true
 		
 		-- We won't make a character, obviously. That is done later.
-		CAKE.SavePlayerData(ply);
+		CAKE.SavePlayerData(ply)
 		
 	end
 	
@@ -187,128 +187,114 @@ end
 
 function CAKE.ResendCharData( ply ) -- Network all of the player's character data
 
-	local SteamID = CAKE.FormatText( ply:SteamID() );
+	local SteamID = CAKE.FormatText( ply:SteamID() )
 	
-		if( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ] == nil ) then
-			return;
+	if( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ] == nil ) then
+		return
+	end
+
+	ply:SetNWString( "name", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "name" ] or "" )
+	ply:SetNWString( "title", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "title" ] or "" )
+	-- ply:SetNWInt( "money", tonumber( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "money" ] ) or 0 )
+
+	for k, v in pairs( CAKE.PlayerData[ SteamID ][ "characters" ] ) do -- Send them all their characters for selection
+		if v then
+			umsg.Start( "ReceiveChar", ply )
+				umsg.Long( tonumber(k) )
+				umsg.String( v[ "name" ] )
+				umsg.String( v[ "model" ] )
+				umsg.String( v[ "title" ] )
+			umsg.End( )
 		end
-		
-		--What the hell? Who coded this?
-		/*
-		for fieldname, data in pairs( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ] ) do
-		
-			if( type( data ) != "table" ) then
-			
-				ply:SetNWString( fieldname, tostring( data ) );
-			
-			end
+	end
 
-		end
-		*/
-		--When there's just a small set of variables we gotta send as NWVars
-
-		ply:SetNWString( "name", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "name" ] or "" )
-		ply:SetNWString( "title", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "title" ] or "" )
-		-- ply:SetNWInt( "money", tonumber( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "money" ] ) or 0 )
-
-		for k, v in pairs( CAKE.PlayerData[ SteamID ][ "characters" ] ) do -- Send them all their characters for selection
-			if v then
-				umsg.Start( "ReceiveChar", ply );
-					umsg.Long( tonumber(k) );
-					umsg.String( v[ "name" ] );
-					umsg.String( v[ "model" ] );
-					umsg.String( v[ "title" ] );
-				umsg.End( );
-			end
-		end
-
-		umsg.Start( "DisplayCharacterList" , ply )
-		umsg.End()
+	umsg.Start( "DisplayCharacterList" , ply )
+	umsg.End()
+	
 end
 
 function CAKE.SetPlayerField( ply, fieldname, data )
 
-	local SteamID = CAKE.FormatText( ply:SteamID() );
-		-- Check to see if this is a valid field
-		if( CAKE.PlayerDataFields[ fieldname ] ) then
-		
-			CAKE.PlayerData[ SteamID ][ fieldname ] = data;
-			CAKE.SavePlayerData(ply);
-		
-		else
+	local SteamID = CAKE.FormatText( ply:SteamID() )
+	-- Check to see if this is a valid field
+	if( CAKE.PlayerDataFields[ fieldname ] ) then
 	
-			return "";
-		
-		end
+		CAKE.PlayerData[ SteamID ][ fieldname ] = data
+		CAKE.SavePlayerData(ply)
+	
+	else
+
+		return ""
+	
+	end
 		
 	
 end
 	
 function CAKE.GetPlayerField( ply, fieldname )
 
-	local SteamID = CAKE.FormatText( ply:SteamID() );
+	local SteamID = CAKE.FormatText( ply:SteamID() )
 	
 		-- Check to see if this is a valid field
 		if( CAKE.PlayerDataFields[ fieldname ] ) then
 		
-			return CAKE.NilFix(CAKE.PlayerData[ SteamID ][ fieldname ], "");
+			return CAKE.NilFix(CAKE.PlayerData[ SteamID ][ fieldname ], "")
 		
 		else
 	
-			return "";
+			return ""
 		
 		end
 end
 
 function CAKE.SetCharField( ply, fieldname, data )
 
-	local SteamID = CAKE.FormatText( ply:SteamID() );
-		-- Check to see if this is a valid field
-		if( CAKE.CharacterDataFields[ fieldname ] ) then
-	
-			CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ] = data;
-			CAKE.SavePlayerData(ply);
-			
-		else
-	
-			return "";
+	local SteamID = CAKE.FormatText( ply:SteamID() )
+	-- Check to see if this is a valid field
+	if( CAKE.CharacterDataFields[ fieldname ] ) then
+
+		CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ] = data
+		CAKE.SavePlayerData(ply)
 		
-		end
+	else
+
+		return ""
+	
+	end
 		
 end
 	
 function CAKE.GetCharField( ply, fieldname )
-		-- Check to see if this is a valid field
-		if( CAKE.CharacterDataFields[ fieldname ] ) then
-			if CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ] and CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ] and CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ] then
-				if CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ] then
-					return CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ]
-				else
-					--Field is not yet set.
-					CAKE.SetCharField( ply, fieldname, CAKE.CharacterDataFields[ fieldname ])
-					return CAKE.CharacterDataFields[ fieldname ]
-				end
-				--return CAKE.NilFix(CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ], CAKE.CharacterDataFields[ fieldname ]);
+	-- Check to see if this is a valid field
+	if( CAKE.CharacterDataFields[ fieldname ] ) then
+		if CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ] and CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ] and CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ] then
+			if CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ] then
+				return CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ]
 			else
-				--Character not loaded, return default
+				--Field is not yet set.
+				CAKE.SetCharField( ply, fieldname, CAKE.CharacterDataFields[ fieldname ])
 				return CAKE.CharacterDataFields[ fieldname ]
 			end
 		else
-			return false
+			--Character not loaded, return default
+			return CAKE.CharacterDataFields[ fieldname ]
 		end
+	else
+		return false
+	end
 end
 
 function CAKE.SavePlayerData( ply )
 	if ValidEntity( ply ) then
-		local keys = glon.encode(CAKE.PlayerData[CAKE.FormatText( ply:SteamID() )]);
-		file.Write( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" , keys);
+		local keys = glon.encode(CAKE.PlayerData[CAKE.FormatText( ply:SteamID() )])
+		file.Write( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" , keys)
 	end
 end
 
 function CAKE.RemoveCharacter( ply, id )
-	local SteamID = CAKE.FormatText( ply:SteamID() );
+	local SteamID = CAKE.FormatText( ply:SteamID() )
 	table.Empty( CAKE.PlayerData[ SteamID ][ "characters" ][ id ] )
-	CAKE.PlayerData[ SteamID ][ "characters" ][ id ] = nil;
+	CAKE.PlayerData[ SteamID ][ "characters" ][ id ] = nil
 	CAKE.SavePlayerData( ply )
 	CAKE.ResendCharData( ply )
 end

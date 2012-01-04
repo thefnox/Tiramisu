@@ -155,7 +155,7 @@ local function OpenUserAdministrator( rank, name, steamid, online )
     local label
     label = vgui.Create( "DLabel" )
     label:SetText( name )
-    label:SetFont( "TiramisuTimeFont" )
+    label:SetFont( "Tiramisu18Font" )
     panel:AddItem( label )
 
     label = vgui.Create( "DLabel" )
@@ -242,7 +242,7 @@ datastream.Hook( "DisplayRoster", function( handler, id, encoded, decoded )
         
         local label = vgui.Create( "DLabel" )
         label:SetText( "No results." )
-        label:SetFont( "TiramisuTimeFont" )
+        label:SetFont( "Tiramisu18Font" )
         panel:AddItem( label )
 
     end
@@ -278,7 +278,7 @@ local function OpenGroups()
     if CAKE.Group and CAKE.Group[ "Name" ] != "none" then
         label = vgui.Create( "DLabel" )
         label:SetText( CAKE.Group[ "Name"] )
-        label:SetFont( "TiramisuTimeFont")
+        label:SetFont( "Tiramisu18Font")
         panel:AddItem( label )
 
         label = vgui.Create( "DLabel" )
@@ -333,7 +333,7 @@ local function OpenGroups()
     else
         label = vgui.Create( "DLabel" )
         label:SetText( "You don't belong to any groups yet!")
-        label:SetFont( "TiramisuTimeFont")
+        label:SetFont( "Tiramisu18Font")
         panel:AddItem( label )
 
         button = vgui.Create( "DButton" )

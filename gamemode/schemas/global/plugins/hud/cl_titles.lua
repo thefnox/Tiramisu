@@ -106,11 +106,11 @@ hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DDoorTitles", function()
 					viewpos = LocalPlayer():GetShootPos()
 					alpha = math.Clamp( viewpos:Distance( door:GetPos() ) * - 1 + 300, 0, 255 )
 					cam.Start3D2D(doordata.position, doordata.angles, 0.12 );
-						draw.SimpleTextOutlined( CAKE.GetDoorTitle( door ), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
+						draw.SimpleTextOutlined( CAKE.GetDoorTitle( door ), "Tiramisu32Font", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
 					cam.End3D2D()
 									
 					cam.Start3D2D(doordata.positionBack, doordata.anglesBack, 0.12);
-						draw.SimpleTextOutlined( CAKE.GetDoorTitle( door ), "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
+						draw.SimpleTextOutlined( CAKE.GetDoorTitle( door ), "Tiramisu32Font", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
 					cam.End3D2D()
 				end
 			end
@@ -141,9 +141,9 @@ hook.Add( "PostDrawTranslucentRenderables", "Tiramisu3DPlayerTitles", function( 
 		            position = position - angle:Right() * 28
 		            cam.Start3D2D( position, angle, 0.12 )
 		            	if v:GetNWBool( "chatopen", false ) then
-		            		draw.DrawText( "Typing...", "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+		            		draw.DrawText( "Typing...", "Tiramisu32Font", 0, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 		            	end
-		            	draw.DrawText( v:Nick(), "TiramisuTitlesFont", 0, 40, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+		            	draw.DrawText( v:Nick(), "Tiramisu32Font", 0, 40, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 		                mlabel:Draw( 0, 70, TEXT_ALIGN_CENTER )
 		            cam.End3D2D()
 
@@ -151,9 +151,9 @@ hook.Add( "PostDrawTranslucentRenderables", "Tiramisu3DPlayerTitles", function( 
 		            angle:RotateAroundAxis( angle:Up(), 180 )
 		            cam.Start3D2D( position, angle, 0.12 )
 		            	if v:GetNWBool( "chatopen", false ) then
-		            		draw.DrawText( "Typing...", "TiramisuTitlesFont", 0, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+		            		draw.DrawText( "Typing...", "Tiramisu32Font", 0, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 		            	end
-		            	draw.DrawText( v:Nick(), "TiramisuTitlesFont", 0, 40, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
+		            	draw.DrawText( v:Nick(), "Tiramisu32Font", 0, 40, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
 		                mlabel:Draw( 0, 70, TEXT_ALIGN_CENTER )
 		            cam.End3D2D()
 		        end

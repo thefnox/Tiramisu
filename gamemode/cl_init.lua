@@ -1,11 +1,15 @@
 -- Set up the gamemode
-DeriveGamemode( "sandbox" );
+CAKE = {  }
+DeriveGamemode( "sandbox" )
+require( "datastream" )
+
+--Load up the configuration file
+include( "configuration.lua" )
 
 --Initializing global variables. Don't touch this
-CAKE = {  };
 CAKE.ItemData = {}
-CAKE.Running = false;
-CAKE.Loaded = false;
+CAKE.Running = false
+CAKE.Loaded = false
 CAKE.Skin = "Tiramisu"
 CAKE.CharCreate = function() end
 CAKE.Clothing = "none"
@@ -13,7 +17,7 @@ CAKE.Helmet = "none"
 CAKE.Gear = {}
 CAKE.ClothingTbl = {}
 CAKE.MyGroup = {}
-readysent = false;
+readysent = false
 CAKE.MenuTabs = {}
 CAKE.ActiveTab = nil
 CAKE.MenuOpen = false
@@ -26,27 +30,26 @@ CAKE.ActiveNotifications = {}
 
 --Schema configuration options
 
-CAKE.MenuFont = "Harabara" -- The default font for the whole schema
-CAKE.BaseColor = Color( 100, 100, 115, 150 ) --The schema's default color. Can be set in game
-CAKE.Webpage = "http://deadzonerebirth.wikia.com/" --Set this to whatever you want to, it'll be accessible on the "Forums" tab
 CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 0, true, true ) -- Set this to 1 to have thirdperson enabled by default.
 CAKE.ThirdpersonDistance = CreateClientConVar( "rp_thirdpersondistance", 50, true, true ) --Maximum thirdperson distance
 CAKE.CameraSmoothFactor = CreateClientConVar( "rp_camerasmooth", 12, true, true ) --Camera smoothing factor, affects speed.
+CAKE.FirstpersonBody = CreateClientConVar( "rp_firstpersonbody", 0, true, true ) --The return of first person legs!
+CAKE.StayCrouched = CreateClientConVar( "rp_crouchtoggle", 0, true, true ) -- Enables crouch toggle.
+CAKE.TitleDrawDistance = CreateClientConVar( "rp_titledrawdistance", 600, true, true ) --Maximum distance a player can be to have his or her title drawn
+CAKE.MinimalHUD = CreateClientConVar( "rp_minimalhud", 0, true, true ) --Disables HUD elements for a more clear view.
 CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true ) --Set this to 0 to have headbob disabled by default.
-CAKE.UseIntro = true --Set this to false if you want the player to go directly into the character menu when they join
-CAKE.IntroText = "Welcome to Tiramisu" -- Character menu and intro text. NOTE, the HL2RP scheme changes this
-CAKE.IntroSubtitle = "A ROLEPLAY REVOLUTION" -- Character menu and intro subtitle. If you want this gone just set it to ""
-CAKE.ChatFont = "ChatFont" -- Main font used in chatting
 
-surface.CreateFont(CAKE.MenuFont, 32, 500, true, false, "TiramisuTitlesFont", false, true) -- Biggest font used. Used in 3D titles and main character title.
-surface.CreateFont(CAKE.MenuFont, 18, 500, true, false, "TiramisuTimeFont", true, false ) -- Second biggest used. 
-surface.CreateFont(CAKE.MenuFont, 14, 500, true, false, "TiramisuSubtitlesFont", false, true) -- A moderate size font used for the main title's subtitle
-surface.CreateFont(CAKE.MenuFont, 12, 400, true, false, "TiramisuTabsFont", true ) -- Smallest, used in tabs and the quick menu
-surface.CreateFont("DefaultSmallDropShadow", ScreenScale(5), 500, true, false, "TiramisuWhisperFont", true ) -- Used only for whispering
-surface.CreateFont("Trebuchet18", ScreenScale(10), 700, true, false, "TiramisuYellFont", true ) -- Used only for yelling
+surface.CreateFont(CAKE.MenuFont2, 48, 500, true, false, "Tiramisu48Font", false, true) -- Biggest font used.
+surface.CreateFont(CAKE.MenuFont2, 32, 500, true, false, "Tiramisu32Font", false, true) -- Second biggest font used. Used in 3D titles and main character title.
+surface.CreateFont(CAKE.MenuFont2, 24, 500, true, false, "Tiramisu24Font", false, true) -- Third biggest font used. Used in 3D titles and main character title.
+surface.CreateFont(CAKE.MenuFont, 18, 500, true, false, "Tiramisu18Font", true, false ) -- Big font used for button labels.
+surface.CreateFont(CAKE.MenuFont, 18, 500, true, false, "Tiramisu16Font", true, false ) -- Mid size button used for category headers.
+surface.CreateFont(CAKE.MenuFont, 14, 500, true, false, "Tiramisu14Font", false, true) -- A moderate size font used for the main title's subtitle
+surface.CreateFont(CAKE.MenuFont, 14, 300, true, false, "TiramisuDefaultFont") -- Replacement for "Default"
+surface.CreateFont(CAKE.MenuFont, 12, 400, true, false, "Tiramisu12Font", true ) -- Smallest, used in tabs and the quick menu
+surface.CreateFont(CAKE.WhisperFont, ScreenScale(5), 500, true, false, "TiramisuWhisperFont", true ) -- Used only for whispering
+surface.CreateFont(CAKE.YellFont, ScreenScale(10), 700, true, false, "TiramisuYellFont", true ) -- Used only for yelling
 
-
-require( "datastream" )
 -- Client Includes
 include( "sh_animations.lua" )
 include( "sh_anim_tables.lua" )
@@ -54,14 +57,14 @@ include( "shared.lua" )
 include( "cl_binds.lua" )
 include( "cl_skin.lua" )
 
-CAKE.Loaded = true;
+CAKE.Loaded = true
 
 -- Initialize the gamemode
 function GM:Initialize( )
 
-	CAKE.Running = true;
+	CAKE.Running = true
 
-	self.BaseClass:Initialize( );
+	self.BaseClass:Initialize( )
 
 end
 
@@ -69,8 +72,8 @@ function GM:Think( )
 
 	if( vgui and readysent == false ) then -- VGUI is initalized, tell the server we're ready for character creation.
 	
-		LocalPlayer( ):ConCommand( "rp_ready\n" );
-		readysent = true;
+		LocalPlayer( ):ConCommand( "rp_ready\n" )
+		readysent = true
 		
 	end
 	
@@ -136,7 +139,7 @@ function CAKE.AddRightClicks(schema)
 		local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/" .. v
 		RCLICK = { }
 		include( path )
-		table.insert(RclickTable, RCLICK);
+		table.insert(RclickTable, RCLICK)
 	end
 end
 
@@ -181,14 +184,14 @@ function CAKE.AddItems( schema )
 	for k, v in pairs( list ) do
 		if v != "." and v != ".." then
 			if string.GetExtensionFromFilename( v ) and string.GetExtensionFromFilename( v ) == "lua" then
-				ITEM = {  };
-				include( path .. v );
+				ITEM = {  }
+				include( path .. v )
 				for k,v in pairs(ITEM) do
 					if type(v) == "function" then
 						ITEM[k] = nil
 					end
 				end
-				CAKE.ItemData[ ITEM.Class ] = ITEM;
+				CAKE.ItemData[ ITEM.Class ] = ITEM
 			end
 		end
 	end

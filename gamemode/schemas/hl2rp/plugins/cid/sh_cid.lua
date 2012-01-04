@@ -21,10 +21,10 @@ if SERVER then
 else
 
 	local struc = {}
-	struc.pos = { 10, 2 } -- Pos x, y
+	struc.pos = { ScrW(), ScrH() - 20 } -- Pos x, y
 	struc.color = Color(230,230,230,255 ) -- Red
-	struc.font = "TiramisuTimeFont" -- Font
-	struc.xalign = TEXT_ALIGN_LEFT -- Horizontal Alignment
+	struc.font = "Tiramisu18Font" -- Font
+	struc.xalign = TEXT_ALIGN_RIGHT -- Horizontal Alignment
 	struc.yalign = TEXT_ALIGN_LEFT -- Vertical Alignment
 
 	hook.Add( "HUDPaint", "HL2RPDrawCID", function()

@@ -40,6 +40,8 @@ resource.AddFile( "materials/tiramisu/gearhandler.vmt")
 resource.AddFile( "materials/tiramisu/gearhandler.vtf")
 resource.AddFile( "materials/tiramisu/tabbutton2.vmt" )
 resource.AddFile( "resource/fonts/harabara.ttf")
+resource.AddFile( "resource/fonts/YanoneKaffeesatz-Bold.ttf")
+resource.AddFile( "resource/fonts/YanoneKaffeesatz-Regular.ttf")
 
 CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ); -- Load the schema and plugins, this is NOT initializing.
 

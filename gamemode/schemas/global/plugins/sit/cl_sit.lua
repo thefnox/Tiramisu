@@ -5,7 +5,6 @@ usermessage.Hook( "ToggleFreescroll", function( um )
 
 	local bool = um:ReadBool()
 
-	gui.EnableScreenClicker( bool )
 	CAKE.ForceFreeScroll = bool
 	CAKE.FreeScroll = bool
 	

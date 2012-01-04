@@ -657,7 +657,7 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 	    CAKE.InventorySlot[ i ] = icon
 	    CAKE.InventorySlot[ i ].PaintOver = function()
 	        surface.SetTextColor(Color(255,255,255,255))
-	        surface.SetFont("TiramisuTabsFont")
+	        surface.SetFont("Tiramisu12Font")
 	        surface.SetTextPos( 3, 3);
 	        surface.DrawText( "ALT+" .. i - 1 )
 	        if CAKE.InventorySlot[ i ]:GetAmount() > 1 then

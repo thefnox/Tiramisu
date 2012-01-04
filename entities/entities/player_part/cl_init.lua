@@ -196,13 +196,15 @@ function ENT:BuildBonePositions( n, physbones )
 	end
 
 	if self.Entity:GetDTInt( CLOTHING_TYPE ) == CLOTHING_FULL then --Don't do anything.
-		if table.HasValue(self.HeadBonesIndex, i) then --If they're part of the head
-			self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_HEADRATIO)) --Scale to head ratio
-		elseif table.HasValue(self.HandBonesIndex, i) then --If they're part of the hands
-			self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_HANDRATIO)) --Scale to hand ratio
-		else
-			--Else they're part of the body.
-			self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_BODYRATIO)) --Scale to body ratio
+		for i=0, n do
+			if table.HasValue(self.HeadBonesIndex, i) then --If they're part of the head
+				self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_HEADRATIO)) --Scale to head ratio
+			elseif table.HasValue(self.HandBonesIndex, i) then --If they're part of the hands
+				self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_HANDRATIO)) --Scale to hand ratio
+			else
+				--Else they're part of the body.
+				self:BoneScale(i, self.Entity:GetDTFloat(CLOTHING_BODYRATIO)) --Scale to body ratio
+			end
 		end
 	elseif self.Entity:GetDTInt( CLOTHING_TYPE ) == CLOTHING_BODY then --Scale down hands and head
 		for i=0, n do
@@ -262,6 +264,15 @@ function ENT:BuildBonePositions( n, physbones )
 			else
 				self:BoneScale(i, 0)
 			end
+		end
+	end
+
+	if !(CAKE.Thirdperson:GetBool() and CAKE.ThirdpersonDistance:GetInt() != 0 ) and !CAKE.FreeScroll and !CAKE.ForceDraw and CAKE.FirstpersonBody:GetBool() then
+		--First person, but with body visible
+		for i=0, n do
+			if table.HasValue(self.HeadBonesIndex, i) then --If they're part of the head
+				self:BoneScale(i, 0) -- Scale them down so they don't get in the way.
+			end		
 		end
 	end
 

@@ -25,6 +25,13 @@ function ITEM:Pickup(ply)
 end
 
 function ITEM:Write(ply)
+	if !ply:HasItem("paper") then
+		myid = self:GetNWString("id")
+		if !CAKE.GetUData(myid, "uses") then
+			CAKE.SetUData(myid, "uses", 50)
+			CAKE.SetUData(myid, "name", "Paper " .. 50)
+		end
+	end
 	id = self:GetNWString("id")
 	ply:GiveItem("paper", id)
 	self:Remove()

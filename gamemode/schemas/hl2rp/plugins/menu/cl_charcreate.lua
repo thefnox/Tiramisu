@@ -61,7 +61,7 @@ local function CharacterCreation()
 
 		label = vgui.Create( "DLabel" )
 		label:SetText( "Create your character" )
-		label:SetFont( "TiramisuTimeFont" )
+		label:SetFont( "Tiramisu18Font" )
 		panel:AddItem( label )
 
 		label = vgui.Create( "DLabel" )
@@ -138,7 +138,7 @@ local function CharacterCreation()
 		gobacklabel:SetPos( (ScrW() / 2 )- 160, ScrH() + 500  )
 		gobacklabel.Paint = function() end
 		gobacklabel.PaintOver = function()
-			draw.SimpleText( "Go Back", "TiramisuTimeFont", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
+			draw.SimpleText( "Go Back", "Tiramisu18Font", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
 			x,y = gobacklabel:GetPos()
 			if !gobacklabel.SlideOut then
 				gobacklabel:SetPos( (ScrW() / 2 )- 160, Lerp( 0.1, y, ScrH() / 2 + 230 ))
@@ -164,7 +164,7 @@ local function CharacterCreation()
 		createlabel:SetPos( ScrW() / 2 + 20, ScrH() + 500  )
 		createlabel.Paint = function() end
 		createlabel.PaintOver = function()
-			draw.SimpleText( "Finish Creation", "TiramisuTimeFont", 70, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
+			draw.SimpleText( "Finish Creation", "Tiramisu18Font", 70, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
 			x,y = createlabel:GetPos()
 			if !createlabel.SlideOut then
 				createlabel:SetPos( ScrW() / 2 + 20, Lerp( 0.1, y, ScrH() / 2 + 230 ))

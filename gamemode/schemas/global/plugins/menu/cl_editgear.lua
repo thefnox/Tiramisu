@@ -110,6 +110,7 @@ function EditGear()
 
 	local ClothingList = vgui.Create( "DPanelList" )
 	ClothingList:SetSize( 300, 432  )
+	ClothingList:SetPadding( 3 )
 	PropertySheet:AddSheet( "Clothing", ClothingList, "gui/silkicons/user", false, false, "Edit your clothes" )
 
 	local ClothesCategory = vgui.Create("DCollapsibleCategory")
@@ -311,7 +312,7 @@ function EditGear()
 	closelabel:SetPos( (ScrW() / 2 )- 60, ScrH() + 500  )
 	closelabel.Paint = function() end
 	closelabel.PaintOver = function()
-		draw.SimpleText( "Close Menu", "TiramisuTimeFont", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Close Menu", "Tiramisu18Font", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
 		x,y = closelabel:GetPos()
 		closelabel:SetPos( (ScrW() / 2 )- 40, Lerp( 0.1, y, ScrH() / 2 + 230 ))
 	end

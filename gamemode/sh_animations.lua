@@ -213,39 +213,6 @@ if SERVER then
 		ply:SetNWAngle( "tiramisulookat", Angle( tonumber(args[1] or 0), tonumber(args[2] or 0), 0))
 	end)
 
-	function GM:SetupMove( ply, mv ) --Sets up accelerated running
-		if ply:KeyDown(IN_SPEED) and ply:KeyDown(IN_FORWARD) then
-			if( ValidEntity(ply:GetActiveWeapon()) and Anims.DetectHoldType(ply:GetActiveWeapon():GetHoldType()) == "default") then
-				if !ply:KeyDown( IN_MOVELEFT ) and !ply:KeyDown( IN_MOVERIGHT ) then
-					ply.IsRunning = true
-					ply:SetRunSpeed( Lerp( 0.01, ply:GetRunSpeed(), CAKE.ConVars[ "RunSpeed" ] ))
-				else
-					ply.IsRunning = true
-					ply:SetRunSpeed( Lerp( 0.01, ply:GetRunSpeed(), CAKE.ConVars[ "RunSpeed" ] * 0.75 ))				
-				end
-			else
-				ply.IsRunning = true
-				ply:SetRunSpeed( Lerp( 0.01, ply:GetRunSpeed(), CAKE.ConVars[ "RunSpeed" ] * 0.66 ))
-			end
-		else
-			if ply.IsRunning and ply:KeyDown(IN_FORWARD) then
-				ply:SetRunSpeed( Lerp( 0.1, ply:GetRunSpeed(), CAKE.ConVars[ "WalkSpeed" ] ))
-				ply:SetWalkSpeed( ply:GetRunSpeed() )
-				if ply:GetWalkSpeed() < 160 then
-					ply.IsRunning = false
-				end
-			elseif ply.IsRunning and !ply:KeyDown(IN_FORWARD) then
-				ply:SetRunSpeed( Lerp( 0.1, ply:GetRunSpeed(), 0 ))
-				ply:SetVelocity( ply:GetForward() * ply:GetRunSpeed() / 10 )
-				if ply:GetRunSpeed() < CAKE.ConVars[ "WalkSpeed" ] then
-					ply.IsRunning = false
-				end
-			else
-				ply:SetRunSpeed( CAKE.ConVars[ "WalkSpeed" ] )
-				ply:SetWalkSpeed( CAKE.ConVars[ "WalkSpeed" ] )
-			end
-		end
-	end
 
 	concommand.Add( "t_setpersonality", function( ply, cmd, args )
 		ply:SetPersonality( args[1] )
@@ -519,40 +486,40 @@ function GM:HandlePlayerJumping( ply ) --Handles jumping
 	end
 	
 	if ply.Jumping then
-	if ply.FirstJumpFrame then
-		ply.FirstJumpFrame = false
-		ply:AnimRestartMainSequence()
-	end
-	
-	if ply:WaterLevel() >= 2 then
-		ply.Jumping = false
-		ply:AnimRestartMainSequence()
-				end
-				
-	if (CurTime() - ply.JumpStartTime) > 0.4 then --If we have been on the air for more than 0.4 seconds, then we're meant to play the land animation.
-		if ply:OnGround() and !ply.Landing and ply:GetMoveType() == MOVETYPE_WALK then
-							ply.Landing = true
-							timer.Simple( 0.3, function()
-									ply.Landing = false
-									ply.Jumping = false
-							end)
-						return true
+		if ply.FirstJumpFrame then
+			ply.FirstJumpFrame = false
+			ply:AnimRestartMainSequence()
 		end
-				else
-					if ply:OnGround() and !ply.Landing then
-						ply.Jumping = false
-		ply:AnimRestartMainSequence()
+		
+		if ply:WaterLevel() >= 2 then
+			ply.Jumping = false
+			ply:AnimRestartMainSequence()
 					end
-	end
-	
-	if ply.Jumping then --If we're still on a part of the jumping sequence, that means we're either on the process of jumping or landing.
-			  if !ply.Landing then 
-		ply.CalcIdeal = ACT_JUMP
-			  else
-						ply.CalcIdeal = ACT_LAND
+					
+		if (CurTime() - ply.JumpStartTime) > 0.4 then --If we have been on the air for more than 0.4 seconds, then we're meant to play the land animation.
+			if ply:OnGround() and !ply.Landing and ply:GetMoveType() == MOVETYPE_WALK then
+				ply.Landing = true
+				timer.Simple( 0.3, function()
+						ply.Landing = false
+						ply.Jumping = false
+				end)
+				return true
 			end
-	return true
-	end
+		else
+			if ply:OnGround() and !ply.Landing then
+				ply.Jumping = false
+				ply:AnimRestartMainSequence()
+			end
+		end
+		
+		if ply.Jumping then --If we're still on a part of the jumping sequence, that means we're either on the process of jumping or landing.
+			if !ply.Landing then 
+				ply.CalcIdeal = ACT_JUMP
+			else
+				ply.CalcIdeal = ACT_LAND
+			end
+			return true
+		end
 	end
 	
 	return false
@@ -737,6 +704,10 @@ function GM:CalcMainActivity( ply, velocity )
 				ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "idle" ] )
 			end
 		end
+	end
+
+	if CLIENT and CAKE.ForceDraw then
+		return ACT_IDLE, ply.CalcSeqOverride
 	end
 
 	return ply.CalcIdeal, ply.CalcSeqOverride

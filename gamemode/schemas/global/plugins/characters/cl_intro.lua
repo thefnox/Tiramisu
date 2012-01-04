@@ -43,13 +43,13 @@ function CAKE.InitIntro()
 
 	titlelabel = vgui.Create( "DLabel", CharacterMenu )
 	titlelabel:SetText( CAKE.IntroText )
-	titlelabel:SetFont( "TiramisuTitlesFont" )
+	titlelabel:SetFont( "Tiramisu32Font" )
 	titlelabel:SizeToContents()
 	titlelabel:SetPos( ScrW() / 2 - titlelabel:GetWide() / 2, -100 )
 
 	subtitlelabel = vgui.Create( "DLabel", CharacterMenu )
 	subtitlelabel:SetText( CAKE.IntroSubtitle )
-	subtitlelabel:SetFont( "TiramisuSubtitlesFont" )
+	subtitlelabel:SetFont( "Tiramisu14Font" )
 	subtitlelabel:SizeToContents()
 	subtitlelabel:SetPos( ScrW() / 2 - subtitlelabel:GetWide() / 2 + 46, -68 )
 

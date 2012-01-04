@@ -291,12 +291,7 @@ function CAKE.StringRequest( strTitle, strText, strDefaultText, fnEnter, fnCance
 		Window:SetTitle( strTitle or "Message Title (First Parameter)" )
 		Window:SetDraggable( false )
 		Window:ShowCloseButton( false )
-		if color then
-		    Window:SetColor( color )
-		else
-		    Window:SetColor( CAKE.BaseColor )
-		end
-		
+
 	local InnerPanel = vgui.Create( "DPanel", Window )
 	
 	local Text = vgui.Create( "DLabel", InnerPanel )
@@ -363,12 +358,7 @@ function CAKE.ChoiceRequest( strTitle, strText, tbl, fnEnter, fnCancel, strButto
 		Window:SetTitle( strTitle or "Message Title (First Parameter)" )
 		Window:SetDraggable( false )
 		Window:ShowCloseButton( false )
-		if color then
-		    Window:SetColor( color )
-		else
-		    Window:SetColor( CAKE.BaseColor )
-		end
-		
+
 	local InnerPanel = vgui.Create( "DPanel", Window )
 	
 	local Text = vgui.Create( "DLabel", InnerPanel )

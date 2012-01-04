@@ -21,32 +21,39 @@ local function OpenOptions()
 	PlayerMenu:Center()
 	
 	local Options = vgui.Create( "DPanelList", PlayerMenu )
-	Options:SetPadding(20);
+	Options:Dock( LEFT )
+	Options:SetWidth( 310 )
+	Options:DockMargin( 0, 0, 5, 0 )
+	Options:SetPadding(20)
 	Options:SetSpacing(5)
-	Options:EnableHorizontal(false);
-	Options:EnableVerticalScrollbar(true);
+	Options:EnableHorizontal(false)
+	Options:EnableVerticalScrollbar(true)
 	Options:SetAutoSize(false)
 	
 	local ThirdpersonCheck = vgui.Create( "DCheckBoxLabel"  )
 	ThirdpersonCheck:SetText( "Toggle thirdperson camera" )
-	ThirdpersonCheck:SetConVar( "rp_thirdperson" ) -- ConCommand must be a 1 or 0 value
+	ThirdpersonCheck:SetConVar( "rp_thirdperson" ) 
 	Options:AddItem( ThirdpersonCheck )
-	
 	
 	local HeadbobCheck = vgui.Create( "DCheckBoxLabel"  )
 	HeadbobCheck:SetText( "Toggle head bobbing" )
-	HeadbobCheck:SetConVar( "rp_headbob" ) -- ConCommand must be a 1 or 0 value
+	HeadbobCheck:SetConVar( "rp_headbob" ) 
 	Options:AddItem( HeadbobCheck )
-
-	local PortraitCheck = vgui.Create( "DCheckBoxLabel" )
-	PortraitCheck:SetText( "Toggle permanent view of character portrait" )
-	PortraitCheck:SetConVar( "rp_displaycharportrait" ) -- ConCommand must be a 1 or 0 value
-	Options:AddItem( PortraitCheck )
 
 	local MinimalCheck = vgui.Create( "DCheckBoxLabel" )
 	MinimalCheck:SetText( "Toggle minimal HUD" )
-	MinimalCheck:SetConVar( "rp_minimalhud" ) -- ConCommand must be a 1 or 0 value
+	MinimalCheck:SetConVar( "rp_minimalhud" ) 
 	Options:AddItem( MinimalCheck )
+
+	local CrouchCheck = vgui.Create( "DCheckBoxLabel" )
+	CrouchCheck:SetText( "Enable toggled crouching" )
+	CrouchCheck:SetConVar("rp_crouchtoggle" ) 
+	Options:AddItem( CrouchCheck )
+
+	local FirstpersonBody = vgui.Create( "DCheckBoxLabel" )
+	FirstpersonBody:SetText( "Enable firstperson body visibility" )
+	FirstpersonBody:SetConVar( "rp_firstpersonbody") 
+	Options:AddItem( FirstpersonBody )
 
 	local ThirdpersonDistance = vgui.Create( "DNumSlider" )
 	ThirdpersonDistance:SetText( "Thirdperson Distance" )
@@ -73,19 +80,20 @@ local function OpenOptions()
 	Options:AddItem( CameraSmoothFactor )
 	
 	local Custom = vgui.Create( "DPanelList", PlayerMenu )
-	Custom:SetPadding(20);
+	Custom:Dock( FILL )
+	Custom:SetPadding(20)
 	Custom:SetSpacing(5)
-	Custom:EnableHorizontal(false);
-	Custom:EnableVerticalScrollbar(true);
+	Custom:EnableHorizontal(false)
+	Custom:EnableVerticalScrollbar(true)
 	Custom:SetAutoSize(false)
 
-	local schemecolormixer = vgui.Create( "DColorMixer");
-	schemecolormixer:SetColor( Color( 0, 0, 255, 255 ) )
+	local schemecolormixer = vgui.Create( "DColorMixer")
+	schemecolormixer:SetColor( CAKE.BaseColor )
 	schemecolormixer:SetSize( 200, 150 )
 	
 	local SchemeColor = vgui.Create( "DLabel" )
 	SchemeColor:SetText( "Scheme Color" )
-	SchemeColor:SetFont( "Trebuchet24" )
+	SchemeColor:SetFont( "Tiramisu24Font" )
 	function SchemeColor:PaintOver()
 		SchemeColor:SetTextColor( schemecolormixer:GetColor() )
 	end
@@ -102,13 +110,13 @@ local function OpenOptions()
 	Custom:AddItem( schemecolormixer )
 	Custom:AddItem( SetSchemeColor )
 
-	local colormixer = vgui.Create( "DColorMixer");
+	local colormixer = vgui.Create( "DColorMixer")
 	colormixer:SetColor( Color( 0, 0, 255, 255 ) )
 	colormixer:SetSize( 200, 150 )
 	
 	local OOCColor = vgui.Create( "DLabel" )
 	OOCColor:SetText( "OOC Color" )
-	OOCColor:SetFont( "Trebuchet24" )
+	OOCColor:SetFont( "Tiramisu24Font" )
 	function OOCColor:PaintOver()
 		OOCColor:SetTextColor( colormixer:GetColor() )
 	end
@@ -122,14 +130,6 @@ local function OpenOptions()
 	Custom:AddItem( OOCColor )
 	Custom:AddItem( colormixer )
 	Custom:AddItem( SetOOCColor )
-
-	local hozdivider = vgui.Create( "DHorizontalDivider", PlayerMenu )
-	hozdivider:SetPos( 0, 23 )
-	hozdivider:SetSize( 640, 457)
-	hozdivider:SetLeftWidth(310)
-	hozdivider:SetLeft( Options )
-	hozdivider:SetRight( Custom )
-	hozdivider:SetDividerWidth( 4 )
 
 end
 

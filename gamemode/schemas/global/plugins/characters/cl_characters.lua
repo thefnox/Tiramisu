@@ -24,7 +24,7 @@ function OpenCharacterMenu( hideclosebutton )
 
 		local titlelabel = vgui.Create( "DLabel", CharacterMenu )
 		titlelabel:SetText( CAKE.IntroText )
-		titlelabel:SetFont( "TiramisuTitlesFont" )
+		titlelabel:SetFont( "Tiramisu32Font" )
 		titlelabel:SizeToContents()
 		titlelabel:SetPos( ScrW() / 2 - titlelabel:GetWide() / 2, 0 )
 		local x, y
@@ -35,7 +35,7 @@ function OpenCharacterMenu( hideclosebutton )
 
 		local subtitlelabel = vgui.Create( "DLabel", CharacterMenu )
 		subtitlelabel:SetText( CAKE.IntroSubtitle )
-		subtitlelabel:SetFont( "TiramisuSubtitlesFont" )
+		subtitlelabel:SetFont( "Tiramisu14Font" )
 		subtitlelabel:SizeToContents()
 		subtitlelabel:SetPos( ScrW() / 2 - subtitlelabel:GetWide() / 2 + 46, 0 )
 		subtitlelabel.PaintOver = function()
@@ -174,7 +174,7 @@ function CreateMenuButtons()
 	spawnlabel:SetPos( (ScrW() / 2 )- 60, ScrH() + 500  )
 	spawnlabel.Paint = function() end
 	spawnlabel.PaintOver = function()
-		draw.SimpleText( "Spawn", "TiramisuTimeFont", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Spawn", "Tiramisu18Font", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
 		x,y = spawnlabel:GetPos()
 		if !spawnlabel.SlideOut then
 			spawnlabel:SetPos( (ScrW() / 2 )- 60, Lerp( 0.1, y, ScrH() / 2 + 230 ))
@@ -201,7 +201,7 @@ function CreateMenuButtons()
 	disconnectlabel:SetPos( (ScrW() / 2 )- 160, ScrH() + 500  )
 	disconnectlabel.Paint = function() end
 	disconnectlabel.PaintOver = function()
-		draw.SimpleText( "Disconnect", "TiramisuTimeFont", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Disconnect", "Tiramisu18Font", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
 		x,y = disconnectlabel:GetPos()
 		if !disconnectlabel.SlideOut then
 			disconnectlabel:SetPos( (ScrW() / 2 )- 160, Lerp( 0.1, y, ScrH() / 2 + 230 ))
@@ -224,7 +224,7 @@ function CreateMenuButtons()
 	createcharacter:SetPos( (ScrW() / 2 ) + 20, ScrH() + 500  )
 	createcharacter.Paint = function() end
 	createcharacter.PaintOver = function()
-		draw.SimpleText( "Create New Character", "TiramisuTimeFont", 100, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Create New Character", "Tiramisu18Font", 100, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
 		x,y = createcharacter:GetPos()
 		if !createcharacter.SlideOut then
 			createcharacter:SetPos( (ScrW() / 2 ) + 20, Lerp( 0.1, y, ScrH() / 2 + 230 ))
@@ -287,7 +287,6 @@ usermessage.Hook( "characterselection",  function( um )
 			OpenCharacterMenu( true )
 		end
 	end
-	InitHiddenButton()
 	
 end )
 

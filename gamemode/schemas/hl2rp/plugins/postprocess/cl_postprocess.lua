@@ -26,4 +26,4 @@ local function HL2RPPostProcess()
 	DrawMotionBlur( 0.4, blurmultiply, 0 )
  
 end
-hook.Add( "RenderScreenspaceEffects", "HL2RPPostProcess", HL2RPPostProcess )
+--hook.Add( "RenderScreenspaceEffects", "HL2RPPostProcess", HL2RPPostProcess )

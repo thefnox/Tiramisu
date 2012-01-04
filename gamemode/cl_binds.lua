@@ -1,41 +1,14 @@
-
-
-CAKE.ContextEnabled = false;
-
-local function ToggleThirdperson( um )
-
+usermessage.Hook( "togglethirdperson", function(um)
 	if CAKE.Thirdperson:GetBool() then
 		RunConsoleCommand( "rp_thirdperson", "0" )
 	else
 		RunConsoleCommand( "rp_thirdperson", "1" )
 	end
+end)
 
-end
-usermessage.Hook( "togglethirdperson", ToggleThirdperson)
-
-local function ToggleInventory( um )
-
+usermessage.Hook( "toggleinventory", function(um)
 	CAKE.SetActiveTab( "Inventory" )
-
-end
-usermessage.Hook( "toggleinventory", ToggleInventory)
-
-function GM:PlayerBindPress( ply, bind, pressed )
-
-	if( LocalPlayer( ):GetNWInt( "charactercreate" ) == 1 ) then
-	
-		if( bind == "+forward" or bind == "+back" or bind == "+moveleft" or bind == "+moveright" or bind == "+jump" or bind == "+duck" ) then return true; end -- Disable ALL movement keys.
-	
-	end
-
-end
-
-local params = {
-	["$basetexture"] = "tiramisu/tabbutton2",
-	["$translucent"] = 1,
-	["$color"] = "{" .. CAKE.BaseColor.r .. " " .. CAKE.BaseColor.g .. " " .. CAKE.BaseColor.b .. "}"
-}
-local tabmaterial = CreateMaterial("TabMaterial","UnlitGeneric",params);
+end)
 
 function CAKE.DrawQuickMenu()
 	if QuickMenu then
@@ -49,35 +22,17 @@ function CAKE.DrawQuickMenu()
 	QuickMenu:SetTitle( "" )
 	QuickMenu:SetDraggable( false ) -- Draggable by mouse?
 	QuickMenu:ShowCloseButton( false ) -- Show the close button?
-	local fade = 0
-	local x, y
-	local gradient = surface.GetTextureID("gui/gradient")
 	QuickMenu.Paint = function()
-		if QuickMenu then
-			if !QuickMenu.FadeOut then
-				fade = Lerp( 10 * RealFrameTime(), fade, 255 )
-			else
-				fade = Lerp( 10 * RealFrameTime(), fade, 0 )
-				if fade < 5 then
-					QuickMenu:Remove()
-				end
-			end
-			x, y = QuickMenu:ScreenToLocal( 0, 0 )
-			surface.SetTexture( gradient )
-			surface.SetDrawColor( 0, 0, 0, fade ) 
-			surface.DrawTexturedRectUV( x, y, QuickMenu:GetWide(), QuickMenu:GetTall(), QuickMenu:GetWide(), QuickMenu:GetWide() )
-			surface.SetDrawColor( 0, 0, 0, fade ) 
-			surface.DrawTexturedRectUV(  x, y, QuickMenu:GetWide(), QuickMenu:GetTall(), QuickMenu:GetWide(), QuickMenu:GetWide() )
-		end
+		derma.SkinHook( "Paint", "QuickMenu", QuickMenu )
 	end
 
 	local titlelabel = Label( "Main Menu", QuickMenu )
 	titlelabel:SetSize( QuickMenu:GetWide() - 25, 40 )
-	titlelabel:SetFont( "TiramisuTitlesFont" )
+	titlelabel:SetFont( "Tiramisu48Font" )
 	titlelabel:SetTextColor(Color(255, 255, 255, 0))
 	titlelabel:SetPos( 25, QuickMenu:GetTall() / 6)
 	titlelabel.PaintOver = function()
-		titlelabel:SetTextColor(Color(255, 255, 255, fade))
+		titlelabel:SetTextColor(Color(255, 255, 255, QuickMenu.FadeAlpha or 255))
 	end
 
 	local startpos = QuickMenu:GetTall() / 4 - #CAKE.MenuTabs * 40
@@ -86,7 +41,8 @@ function CAKE.DrawQuickMenu()
 		lastpos = lastpos + 40
 		local label = vgui.Create( "DButton", QuickMenu )
 		label:SetDrawBorder( false )
-		label:SetText( "" )
+		label:SetText("")
+		label.LabelText = k
 		label:SetDrawBackground( false )
 		label.DoClick = function()
 			CAKE.SetActiveTab(k)
@@ -103,8 +59,9 @@ function CAKE.DrawQuickMenu()
 			label.FuckingColor = label:GetTextColor()
 		end
 		label.Paint = function()
-			 draw.SimpleTextOutlined( k, "TiramisuTitlesFont", label:GetWide()/2, 0, Color(label.FuckingColor.r,label.FuckingColor.g,label.FuckingColor.b,fade), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,fade))
+			derma.SkinHook( "Paint", "QuickMenuLabel", label )
 		end
+		label.PaintOver = function() end
 	end
 
 end
@@ -115,12 +72,17 @@ function CAKE.HideQuickMenu()
 	end
 end
 
+function CAKE.EntityIsItem(targ)
+	if target and target:GetClass() == "item_prop" then
+		return CAKE.ItemData[target:GetNWString("Class")]
+	end
+end
+
 function GM:ScoreboardShow( )
 
 	CAKE.ContextEnabled = true;
 	CAKE.MenuOpen = true
 	gui.EnableScreenClicker( true )
-	HiddenButton:SetVisible( true );
 
 	CAKE.DrawQuickMenu()
 
@@ -130,18 +92,107 @@ function GM:ScoreboardHide( )
 
 	CAKE.MenuOpen = false
 	CAKE.ContextEnabled = false;
-	if !CAKE.FreeScroll or !CAKE.ForceFreeScroll then
-		gui.EnableScreenClicker( false )
-	end
-	if HiddenButton then
-		HiddenButton:SetVisible( false );
-	end
-
-	if VitalsMenu then
-		VitalsMenu:Remove()
-		VitalsMenu = nil
-	end
+	gui.EnableScreenClicker( false )
 
 	CAKE.HideQuickMenu()
 	
+end
+
+--Right click trace code.
+function GM:GUIMousePressed(mc)
+	if mc == MOUSE_RIGHT then
+		local distance = 200
+		if LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 0 then
+			distance = 5000
+		end
+		local ang = gui.ScreenToVector(gui.MouseX(), gui.MouseY());
+		local tracedata = {}
+		tracedata.start = CAKE.CameraPos
+		tracedata.endpos = CAKE.CameraPos+(ang*2000)
+		if !CAKE.Thirdperson:GetBool() then
+			tracedata.filter = LocalPlayer()
+		end
+		local trace = util.TraceLine(tracedata)
+		
+		if trace.StartPos:Distance( trace.HitPos ) <= distance then
+			local target = trace.Entity
+			local submenus = {}
+			local ContextMenu = DermaMenu()
+			if ValidEntity( target ) or target:IsWorld() then
+				if ValidEntity( target ) and target:GetClass() == "item_prop" then
+					item = CAKE.ItemData[target:GetNWString("Class")]
+					for k,v in pairs(item.RightClick or {}) do
+						ContextMenu:AddOption(k, function() CAKE.SelectedEnt = false LocalPlayer():ConCommand("rp_useitem " ..target:EntIndex().. " " .. v) end)
+					end
+				end
+
+				for k,v in pairs (RclickTable) do
+					if v.Condition(target) then 
+						if v.SubMenu then
+							if !submenus[ v.SubMenu ] then
+								submenus[ v.SubMenu ] = ContextMenu:AddSubMenu( v.SubMenu )
+							end
+							submenus[ v.SubMenu ]:AddOption(v.Name, function() CAKE.SelectedEnt = false v.Click(target, LocalPlayer()) end)
+						else
+							ContextMenu:AddOption(v.Name, function() CAKE.SelectedEnt = false v.Click(target, LocalPlayer()) end)
+						end
+					end
+				end
+				
+				ContextMenu:Open();
+			end
+		end
+	end
+end
+
+local CrouchToggle = false
+local StayCrouch = false
+function GM:PlayerBindPress( ply, bind, pressed )
+
+	if( LocalPlayer( ):GetNWInt( "charactercreate" ) == 1 ) then
+	
+		if( bind == "+forward" or bind == "+back" or bind == "+moveleft" or bind == "+moveright" or bind == "+jump" or bind == "+duck" ) then return true end -- Disable ALL movement keys.
+	
+	end
+
+	if bind == "+duck" and CAKE.StayCrouched:GetBool() and !ply:InVehicle() then
+
+		if StayCrouch then StayCrouch = !StayCrouch return true end
+
+		if CrouchToggle then
+			RunConsoleCommand( "-duck" )
+		else
+			RunConsoleCommand( "+duck" )
+		end
+
+		CrouchToggle = !CrouchToggle
+		StayCrouch = true
+		return true
+		
+	end
+
+
+end
+
+local nodraw = 
+{ 
+
+	"CHudHealth",
+	"CHudAmmo",
+	"CHudSecondaryAmmo",
+	"CHudBattery",
+
+ }
+	
+--Disables default HUD elements
+function GM:HUDShouldDraw( name )
+
+	for k, v in pairs( nodraw ) do
+	
+		if( name == v ) then return false; end
+	
+	end
+	
+	return true;
+
 end

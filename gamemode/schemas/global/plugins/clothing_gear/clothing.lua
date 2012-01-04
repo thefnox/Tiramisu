@@ -118,14 +118,13 @@ function CAKE.SetClothing( ply, clothing, helmet )
 			end
 			item = helmet
 		else
-			if !helmet then
-				CAKE.HandleClothing( ply, clothing, CLOTHING_BODY )
+			if !helmet and !ply:ItemHasFlag( clothing, "nogloves" ) then
+				CAKE.HandleClothing( ply, clothing, CLOTHING_BODYANDHANDS )
+				CAKE.HandleClothing( ply, "none", CLOTHING_HEAD )
+			elseif !helmet and ply:ItemHasFlag( clothing, "nogloves" ) then --If the head is the same as the body, you only have to make the hands.
+				CAKE.HandleClothing( ply, clothing , CLOTHING_BODY )
 				CAKE.HandleClothing( ply, "none", CLOTHING_HEADANDHANDS )
-			elseif ply:ItemHasFlag( clothing, "nogloves" ) then --If the head is the same as the body, you only have to make the hands.
-				CAKE.HandleClothing( ply, clothing , CLOTHING_HEADANDBODY )
-				CAKE.HandleClothing( ply, "none", CLOTHING_HANDS )
-			else --If body, head and hands are all the same, make a single clothing entity.
-				
+			elseif helmet == clothing then --If body, head and hands are all the same, make a single clothing entity.
 				CAKE.HandleClothing( ply, clothing , CLOTHING_FULL )
 			end
 			item = clothing
@@ -186,14 +185,14 @@ function CAKE.TestClothing( ply, model, clothing, helmet, headratio, bodyratio, 
 			item = helmet
 		else
 			if !helmet then
-				CAKE.HandleClothing( ply, clothing, CLOTHING_BODY )
+				CAKE.HandleClothing( ply, clothing, CLOTHING_BODYANDHANDS )
 				CAKE.HandleClothing( ply, "none", CLOTHING_HEAD )
-				CAKE.HandleClothing( ply, "none", CLOTHING_HANDS )
-			elseif ply:ItemHasFlag( clothing, "nogloves" ) then --If the head is the same as the body, you only have to make the hands.
-				CAKE.HandleClothing( ply, clothing , CLOTHING_HEADANDBODY, model )
-				CAKE.HandleClothing( ply, "none", CLOTHING_HANDS , model )
+			elseif !helmet and ply:ItemHasFlag( clothing, "nogloves" ) then --If the head is the same as the body, you only have to make the hands.
+				CAKE.HandleClothing( ply, clothing , CLOTHING_BODY )
+				CAKE.HandleClothing( ply, "none", CLOTHING_HEADANDHANDS )
 			else --If body, head and hands are all the same, make a single clothing entity.
-				CAKE.HandleClothing( ply, clothing , CLOTHING_FULL, model)
+				
+				CAKE.HandleClothing( ply, clothing , CLOTHING_FULL )
 			end
 			item = clothing
 		end

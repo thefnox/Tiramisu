@@ -41,7 +41,6 @@ function RCLICK.Click(target,ply)
 	Window:SetTitle( "Create an item" )
 	Window:SetDraggable( false )
 	Window:ShowCloseButton( false )
-	Window:SetColor( CAKE.BaseColor )
 
 	local InnerPanel = vgui.Create( "DPanelList", Window )
 	InnerPanel:SetSpacing( 5 )
