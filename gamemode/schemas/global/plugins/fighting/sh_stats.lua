@@ -37,13 +37,15 @@ end
 
 if CLIENT then
 	usermessage.Hook( "Tiramisu.SendStamina", function(um)
-		LocalPlayer():SetStamina( um:ReadFloat() )
-		if LocalPlayer():GetStamina() == 100 then
-			timer.Simple( 3, function()
-				LocalPlayer().TiramisuStaminaRegen = false
-			end)
-		else
-			LocalPlayer().TiramisuStaminaRegen = true
+		if LocalPlayer().SetStamina then
+			LocalPlayer():SetStamina( um:ReadFloat() )
+			if LocalPlayer():GetStamina() == 100 then
+				timer.Simple( 3, function()
+					LocalPlayer().TiramisuStaminaRegen = false
+				end)
+			else
+				LocalPlayer().TiramisuStaminaRegen = true
+			end
 		end
 	end)
 
@@ -55,9 +57,16 @@ else
 	hook.Add( "PlayerSpawn", "Tiramisu.ResetStamina", function( ply )
 		ply:SetStamina( 100 )
 		timer.Create( "Tiramisu.StaminaRecovery." .. ply:SteamID(), 1, 0, function()
-			ply:SetStamina(ply:GetStamina() + CAKE.Stats.Stamina.BaseRegenRate)
+			if ValidEntity( ply ) then
+				ply:SetStamina(ply:GetStamina() + CAKE.Stats.Stamina.BaseRegenRate)
+			end
 		end)
 	end)
+
+	hook.Add( "PlayerDisconnected", "Tiramisu.DestroyResetStaminaTimer", function( ply )
+		timer.Destroy("Tiramisu.StaminaRecovery." .. ply:SteamID())
+	end)
+
 	hook.Add( "SetupMove", "Tiramisu.DrainStaminaWhenRunning", function( ply, mv )
 		if ply:GetStamina() < 10 then
 			ply.NormalJump = ply:GetJumpPower()

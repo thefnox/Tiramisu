@@ -18,7 +18,7 @@ CLOTHING_HANDRATIO = 3
 
 function ENT:Draw()
 
-	if !hook.Call("ShouldDrawLocalPlayer", GAMEMODE) then
+	if self.Entity:GetParent() == LocalPlayer() and !hook.Call("ShouldDrawLocalPlayer", GAMEMODE) then
 		return
 	end
 	
@@ -267,7 +267,7 @@ function ENT:BuildBonePositions( n, physbones )
 		end
 	end
 
-	if !(CAKE.Thirdperson:GetBool() and CAKE.ThirdpersonDistance:GetInt() != 0 ) and !CAKE.FreeScroll and !CAKE.ForceDraw and CAKE.FirstpersonBody:GetBool() then
+	if self.Entity:GetParent() == LocalPlayer() and !(CAKE.Thirdperson:GetBool() and CAKE.ThirdpersonDistance:GetInt() != 0 ) and !CAKE.FreeScroll and !CAKE.ForceDraw and CAKE.FirstpersonBody:GetBool() then
 		--First person, but with body visible
 		for i=0, n do
 			if table.HasValue(self.HeadBonesIndex, i) then --If they're part of the head

@@ -13,7 +13,7 @@ function OpenCharacterMenu( hideclosebutton )
 		CharacterMenu:SetSize( ScrW(), ScrH() )
 		CharacterMenu:Center()
 		CharacterMenu:SetDraggable( false )
-		CharacterMenu:ShowCloseButton( !hideclosebutton )
+		CharacterMenu:ShowCloseButton( false )
 		CharacterMenu:SetTitle( "" )
 		CharacterMenu.Paint = function()
 
@@ -30,7 +30,7 @@ function OpenCharacterMenu( hideclosebutton )
 		local x, y
 		titlelabel.PaintOver = function()
 			x,y = titlelabel:GetPos()
-			titlelabel:SetPos( x, Lerp( 0.15, y, 70 ))
+			titlelabel:SetPos( x, Lerp( RealFrameTime() * 12, y, 70 ))
 		end
 
 		local subtitlelabel = vgui.Create( "DLabel", CharacterMenu )
@@ -40,7 +40,7 @@ function OpenCharacterMenu( hideclosebutton )
 		subtitlelabel:SetPos( ScrW() / 2 - subtitlelabel:GetWide() / 2 + 46, 0 )
 		subtitlelabel.PaintOver = function()
 			x,y = subtitlelabel:GetPos()
-			subtitlelabel:SetPos( x, Lerp( 0.15, y, 103 ))
+			subtitlelabel:SetPos( x, Lerp( RealFrameTime() * 12, y, 103 ))
 		end
 
 
@@ -50,10 +50,10 @@ function OpenCharacterMenu( hideclosebutton )
 		PlayerModel.PaintOver = function()
 			if PlayerModel.SlideOut then
 				x, y = PlayerModel:GetPos()
-				PlayerModel:SetPos( Lerp( 0.1, x, ScrW() / 2 - 400 ), ScrH() / 2 - 300 )
+				PlayerModel:SetPos( Lerp( RealFrameTime() * 10, x, ScrW() / 2 - 400 ), ScrH() / 2 - 300 )
 			else
 				x, y = PlayerModel:GetPos()
-				PlayerModel:SetPos( Lerp( 0.1, x, ScrW() / 2 - 100 ), ScrH() / 2 - 300 )
+				PlayerModel:SetPos( Lerp( RealFrameTime() * 10, x, ScrW() / 2 - 100 ), ScrH() / 2 - 300 )
 			end
 		end
 	else
@@ -63,7 +63,7 @@ function OpenCharacterMenu( hideclosebutton )
 	end
 
 	CreateCharList( )
-	CreateMenuButtons()
+	CreateMenuButtons( !hideclosebutton )
 
 end
 
@@ -85,9 +85,9 @@ function CreateCharList( )
 			charpanel.Think = function()
 				x,y = charpanel:GetPos()
 				if !charpanel.SlideOut then
-					charpanel:SetPos( Lerp( 0.1, x, ScrW() / 2 - 330 ),ScrH() / 2 - 270 )
+					charpanel:SetPos( Lerp( RealFrameTime() * 10, x, ScrW() / 2 - 330 ),ScrH() / 2 - 270 )
 				else
-					charpanel:SetPos( Lerp( 0.1, x, -500 ),ScrH() / 2 - 270 )
+					charpanel:SetPos( Lerp( RealFrameTime() * 10, x, -500 ),ScrH() / 2 - 270 )
 					if x < 0 then
 						charpanel:Remove()
 						charpanel = nil		
@@ -167,7 +167,7 @@ function CreateCharList( )
 	end
 end
 
-function CreateMenuButtons()
+function CreateMenuButtons( canclose )
 	local spawnlabel = vgui.Create( "DButton", CharacterMenu )
 	spawnlabel:SetSize( 80, 26 )
 	spawnlabel:SetText( "" )
@@ -177,9 +177,9 @@ function CreateMenuButtons()
 		draw.SimpleText( "Spawn", "Tiramisu18Font", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
 		x,y = spawnlabel:GetPos()
 		if !spawnlabel.SlideOut then
-			spawnlabel:SetPos( (ScrW() / 2 )- 60, Lerp( 0.1, y, ScrH() / 2 + 230 ))
+			spawnlabel:SetPos( (ScrW() / 2 )- 60, Lerp( RealFrameTime() * 10, y, ScrH() / 2 + 200 ))
 		else
-			spawnlabel:SetPos( (ScrW() / 2 )- 60, Lerp( 0.1, y, ScrH() + 500 ))
+			spawnlabel:SetPos( (ScrW() / 2 )- 60, Lerp( RealFrameTime() * 10, y, ScrH() + 500 ))
 			if y > ScrH() then
 				spawnlabel:Remove()
 				spawnlabel = nil
@@ -204,9 +204,9 @@ function CreateMenuButtons()
 		draw.SimpleText( "Disconnect", "Tiramisu18Font", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
 		x,y = disconnectlabel:GetPos()
 		if !disconnectlabel.SlideOut then
-			disconnectlabel:SetPos( (ScrW() / 2 )- 160, Lerp( 0.1, y, ScrH() / 2 + 230 ))
+			disconnectlabel:SetPos( (ScrW() / 2 )- 160, Lerp( RealFrameTime() * 10, y, ScrH() / 2 + 200 ))
 		else
-			disconnectlabel:SetPos( (ScrW() / 2 )- 160, Lerp( 0.1, y, ScrH() + 500  ))
+			disconnectlabel:SetPos( (ScrW() / 2 )- 160, Lerp( RealFrameTime() * 10, y, ScrH() + 500  ))
 			if y > ScrH() then
 				disconnectlabel:Remove()
 				disconnectlabel = nil
@@ -227,9 +227,9 @@ function CreateMenuButtons()
 		draw.SimpleText( "Create New Character", "Tiramisu18Font", 100, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
 		x,y = createcharacter:GetPos()
 		if !createcharacter.SlideOut then
-			createcharacter:SetPos( (ScrW() / 2 ) + 20, Lerp( 0.1, y, ScrH() / 2 + 230 ))
+			createcharacter:SetPos( (ScrW() / 2 ) + 20, Lerp( RealFrameTime() * 10, y, ScrH() / 2 + 200 ))
 		else
-			createcharacter:SetPos( (ScrW() / 2 ) + 20, Lerp( 0.1, y, ScrH() + 500 ))
+			createcharacter:SetPos( (ScrW() / 2 ) + 20, Lerp( RealFrameTime() * 10, y, ScrH() + 500 ))
 			if y > ScrH() then
 				createcharacter:Remove()
 				createcharacter = nil
@@ -244,6 +244,31 @@ function CreateMenuButtons()
 		PlayerModel.SlideOut = true
 		RunConsoleCommand( "rp_begincreate" )
 	end 
+
+	if canclose then
+		local x, y 
+		local closelabel = vgui.Create( "DButton", CharacterMenu )
+		closelabel:SetSize( 80, 26 )
+		closelabel:SetText( "" )
+		closelabel:SetPos( (ScrW() / 2 )- 60, ScrH() + 500  )
+		closelabel.Paint = function() end
+		closelabel.PaintOver = function()
+			draw.SimpleText( "Close Menu", "Tiramisu18Font", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
+			x,y = closelabel:GetPos()
+			if !createcharacter.SlideOut then
+				closelabel:SetPos( (ScrW() / 2 )- 40, Lerp( RealFrameTime() * 10, y, ScrH() / 2 + 250 ))
+			else
+				closelabel:SetPos( (ScrW() / 2 )- 40, Lerp( RealFrameTime() * 10, y, ScrH() / 2 + 500 ))
+				if y > ScrH() then
+					closelabel:Remove()
+					closelabel = nil
+				end
+			end
+		end
+		closelabel.DoClick = function()
+			CloseCharacterMenu()
+		end
+	end
 
 end
 

@@ -276,7 +276,7 @@ function SKIN:PaintTargetInfo()
 		draw.DrawText( tr.Entity:GetNWString( "Description" ), "Tiramisu18Font", screenpos.x + 2, screenpos.y + 22, Color( 0, 0, 0, 255 ), 1 )
 		draw.DrawText( tr.Entity:GetNWString( "Description" ), "Tiramisu18Font", screenpos.x, screenpos.y + 20, Color( 255, 255, 255, 255 ), 1 )
 
-	elseif ( tr.Entity:GetClass( ) == "item_prop" and tr.Entity:GetPos( ):Dsistance( CAKE.CameraPos ) > 200 ) then
+	elseif ( tr.Entity:GetClass( ) == "item_prop" and tr.Entity:GetPos( ):Distance( CAKE.CameraPos ) > 200 ) then
 		--If the entity is further away than 200 units, we draw only it's name, but greyed out to indicate that you can't use it unless you get closer.
 
 		local screenpos = tr.Entity:GetPos( ):ToScreen( )

@@ -181,6 +181,7 @@ local nodraw =
 	"CHudAmmo",
 	"CHudSecondaryAmmo",
 	"CHudBattery",
+	"CHudDeathNotice",
 
  }
 	
@@ -189,10 +190,18 @@ function GM:HUDShouldDraw( name )
 
 	for k, v in pairs( nodraw ) do
 	
-		if( name == v ) then return false; end
+		if( name == v ) then return false end
 	
 	end
 	
-	return true;
+	return true
 
+end
+
+function GM:HUDDrawTargetID()
+     return false
+end
+
+function GM:HUDDrawScoreBoard()
+	return false
 end
