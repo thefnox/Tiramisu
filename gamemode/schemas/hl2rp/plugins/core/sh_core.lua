@@ -31,12 +31,12 @@ if SERVER then
 
 	--Currency data.
 	CURRENCY = {}
-	CURRENCY.Name        = "Credits";
+	CURRENCY.Name        = "Credits"
 	CURRENCY.Slang       = "credit"
 	CURRENCY.Abr         = "Credits"
 	CAKE.RegisterCurrency( CURRENCY )
 
-	CAKE.AddDataField( 2, "cid", "000000" ); 
+	CAKE.AddDataField( 2, "cid", "000000" ) 
 
 else
 	CAKE.IntroText = "Welcome to City " .. CAKE.CityNumber -- Character menu and intro text

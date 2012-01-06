@@ -1,5 +1,5 @@
-CAKE.Schemas = {  };
-CAKE.Schemafile = {  };
+CAKE.Schemas = {  }
+CAKE.Schemafile = {  }
 
 function CAKE.LoadSchema( schema )
 
@@ -19,7 +19,7 @@ function CAKE.LoadSchema( schema )
 	end
 	
 	table.insert( CAKE.Schemafile, schema )
-	CAKE.DayLog( "script.txt", "Loading schema " .. SCHEMA.Name .. " by " .. SCHEMA.Author .. " ( " .. SCHEMA.Description .. " )" );
+	CAKE.DayLog( "script.txt", "Loading schema " .. SCHEMA.Name .. " by " .. SCHEMA.Author .. " ( " .. SCHEMA.Description .. " )" )
 
 
 	-- Use the new plugin system
@@ -27,11 +27,11 @@ function CAKE.LoadSchema( schema )
 	CAKE.LoadPlugin( schema )
 
 	-- Load the items
-	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/items/*.lua" );
+	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/items/*.lua" )
 	
 	for k, v in pairs( list ) do 
 	
-		CAKE.LoadItem( schema, v );
+		CAKE.LoadItem( schema, v )
 		
 	end
 
@@ -45,7 +45,7 @@ function CAKE.LoadSchema( schema )
 	
 	for k, v in pairs( list ) do
 	
-		CAKE.LoadRClick( schema, v );
+		CAKE.LoadRClick( schema, v )
 		
 	end
 	
@@ -55,9 +55,11 @@ end
 function CAKE.InitSchemas( )
 
 	for _, SCHEMA in ipairs( CAKE.Schemas ) do
-
-		SCHEMA.SetUp( );
-		
+		if !file.Exists( CAKE.Name .. "/" .. SCHEMA.Name .. ".txt" ) then
+			print( "Initializing " .. SCHEMA.Name )
+			file.Write( CAKE.Name .. "/" .. SCHEMA.Name .. ".txt", "" )
+			SCHEMA.SetUp( )
+		end
 	end
 	
 end

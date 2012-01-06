@@ -11,7 +11,18 @@ CAKE.CurAng = Angle(0, 0, 0)
 CAKE.FreeScrollAng = Angle( 0, 0, 0 )
 CAKE.OTSAng = false
 
-usermessage.Hook( "recieveragdoll", function( um )
+local wep
+local function IronsightsOn()
+	if ValidEntity( LocalPlayer():GetActiveWeapon() ) then
+		wep = LocalPlayer():GetActiveWeapon()
+		if wep:GetNWBool( "Ironsights", false ) then
+			return true
+		end
+	end
+	return false
+end
+
+usermessage.Hook( "Tiramisu.ReceiveRagdoll", function( um )
 	
 	CAKE.ViewRagdoll = ents.GetByIndex( um:ReadShort() )
 
@@ -30,6 +41,9 @@ timer.Create( "TiramisuLookAtTimer", 0.2, 0, function()
 end)
 
 hook.Add("ShouldDrawLocalPlayer","TiramisuDrawLocalPlayerCamera", function()
+	if IronsightsOn() then
+		return false
+	end
 	if CAKE.ForceDraw then
 		return true
 	end
@@ -73,113 +87,120 @@ local mYaw = GetConVar( "m_yaw" )
 local middleDown = false
 
 hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
-
-	if input.IsMouseDown(MOUSE_MIDDLE) then
-		CAKE.FreeScroll = true
-	else
-		CAKE.FreeScroll = false		
-	end
-
-	if CAKE.ForceFreeScroll then
-		CAKE.FreeScroll = true
-	end
-
-	if CAKE.FreeScroll then
-		cmd:SetViewAngles(CAKE.LastViewAng or cmd:GetViewAngles())
-		CAKE.FreeScrollAng = CAKE.FreeScrollAng + Angle( cmd:GetMouseY() * mPitch:GetFloat(), cmd:GetMouseX() * -mYaw:GetFloat(), 0 )
-		CAKE.FreeScrollAng.p = math.Clamp( math.NormalizeAngle( CAKE.FreeScrollAng.p ), -89, 89 )
-	else
-		CAKE.FreeScrollAng = Angle( 0, 0, 0 )
-		CAKE.FreeScroll = false
-		if CAKE.Thirdperson:GetBool() and !LocalPlayer():GetNWBool( "aiming", false ) then
-			if firstpersonswitch and CAKE.LastViewAng then
-				CAKE.LastAng = CAKE.LastViewAng
-				CAKE.OldAngles = CAKE.LastAng
-				CAKE.CurAng = CAKE.LastAng
-				--CAKE.RealAng = CAKE.CurAng
-				firstpersonswitch = false
-				stillcamera = false
-			else
-				CAKE.RealAng = cmd:GetViewAngles()
-			end
-			CAKE.RealAng = cmd:GetViewAngles()
-			if cmd:GetButtons() & IN_FORWARD > 0 or cmd:GetButtons() & IN_BACK > 0 then
-				CAKE.LastViewAng = CAKE.CurAng
-				CAKE.DiffReal = CAKE.CurAng - CAKE.RealAng
-				cmd:SetViewAngles(CAKE.CurAng)
-				CAKE.RealAng = CAKE.CurAng
-				stillcamera = false
-			else
-				timer.UnPause("TiramisuLookAtTimer")
-				stillcamera = true
-				CAKE.DiffReal = Angle( 0, 0, 0 )
-				cmd:SetViewAngles(CAKE.LastViewAng)
-			end
-			CAKE.CorrectionAngle = 0
-		elseif CAKE.Thirdperson:GetBool() and LocalPlayer():GetNWBool( "aiming", false ) then
-			if !CAKE.OTSAng then
-				CAKE.OTSAng = cmd:GetViewAngles()
-			end
-			CAKE.OTSAng = CAKE.OTSAng + Angle( cmd:GetMouseY() * mPitch:GetFloat(), cmd:GetMouseX() * -mYaw:GetFloat(), 0 )
-			CAKE.OTSAng.p = math.Clamp( math.NormalizeAngle( CAKE.OTSAng.p ), -89, 89 )
-		
-			trace = util.TraceHull( {
-				start = EyePos(),
-				endpos = EyePos() + ( gui.ScreenToVector( ScrW()/2, ScrH()/2 ) * 30000 ),
-				filter = LocalPlayer(),
-				mask = MASK_SHOT,
-				mins = Vector(-12,-12,-12),
-				maxs = Vector( 12, 12, 12),
-			} )
-
-			--Hit Correction
-			if ValidEntity(trace.Entity) and !trace.HitWorld and !trace.HitSky then
-				local head = trace.Entity:LookupBone("ValveBiped.Bip01_Head1")
-				if head then
-					hitpos = Lerp( 0.3, trace.HitPos, trace.Entity:GetBonePosition(head) )
-				else
-					hitpos = Lerp( 0.3, trace.HitPos, trace.Entity:LocalToWorld(trace.Entity:OBBCenter()))
-				end
-			else
-				hitpos = trace.HitPos
-			end
-
-			hitpos = hitpos - trace.HitNormal
-			
-			vecMove.x = cmd:GetForwardMove()
-			vecMove.y = cmd:GetSideMove()
-			vecMove.z = cmd:GetUpMove()
-			
-			ang = math.rad( cmd:GetViewAngles().y - CAKE.OTSAng.y )
-			ca = math.cos( ang )
-			sa = math.sin( ang )
-			
-			cmd:SetForwardMove( vecMove.x * ca - vecMove.y * sa )
-			cmd:SetSideMove( vecMove.x * sa + vecMove.y * ca )
-			cmd:SetUpMove( vecMove.z )
-			
-			LocalPlayer():LagCompensation( true )
-			CAKE.DiffReal = ( hitpos - EyePos() ):Angle() + LocalPlayer():GetPunchAngle()
-			CAKE.DiffReal.r = 0
-			LocalPlayer():LagCompensation( false )
-			
-			cmd:SetViewAngles( CAKE.DiffReal )
-
-			stillcamera = false
-			firstpersonswitch = true
-			CAKE.DiffReal = Angle( 0, 0, 0 )
+	
+	if !IronsightsOn() then
+		if input.IsMouseDown(MOUSE_MIDDLE) then
+			CAKE.FreeScroll = true
 		else
-			CAKE.OTSAng = false
-			stillcamera = false
-			firstpersonswitch = true
-			CAKE.DiffReal = Angle( 0, 0, 0 )
-			CAKE.LastViewAng = cmd:GetViewAngles()
+			CAKE.FreeScroll = false		
+		end
+
+		if CAKE.ForceFreeScroll then
+			CAKE.FreeScroll = true
+		end
+
+		if CAKE.FreeScroll then
+			cmd:SetViewAngles(CAKE.LastViewAng or cmd:GetViewAngles())
+			CAKE.FreeScrollAng = CAKE.FreeScrollAng + Angle( cmd:GetMouseY() * mPitch:GetFloat(), cmd:GetMouseX() * -mYaw:GetFloat(), 0 )
+			CAKE.FreeScrollAng.p = math.Clamp( math.NormalizeAngle( CAKE.FreeScrollAng.p ), -89, 89 )
+		else
+			CAKE.FreeScrollAng = Angle( 0, 0, 0 )
+			CAKE.FreeScroll = false
+			if CAKE.Thirdperson:GetBool() and !LocalPlayer():GetNWBool( "aiming", false ) then
+				if firstpersonswitch and CAKE.LastViewAng then
+					CAKE.LastAng = CAKE.LastViewAng
+					CAKE.OldAngles = CAKE.LastAng
+					CAKE.CurAng = CAKE.LastAng
+					--CAKE.RealAng = CAKE.CurAng
+					firstpersonswitch = false
+					stillcamera = false
+				else
+					CAKE.RealAng = cmd:GetViewAngles()
+				end
+				CAKE.RealAng = cmd:GetViewAngles()
+				if cmd:GetButtons() & IN_FORWARD > 0 or cmd:GetButtons() & IN_BACK > 0 then
+					CAKE.LastViewAng = CAKE.CurAng
+					CAKE.DiffReal = CAKE.CurAng - CAKE.RealAng
+					cmd:SetViewAngles(CAKE.CurAng)
+					CAKE.RealAng = CAKE.CurAng
+					stillcamera = false
+				else
+					timer.UnPause("TiramisuLookAtTimer")
+					stillcamera = true
+					CAKE.DiffReal = Angle( 0, 0, 0 )
+					cmd:SetViewAngles(CAKE.LastViewAng)
+				end
+				CAKE.CorrectionAngle = 0
+			elseif CAKE.Thirdperson:GetBool() and LocalPlayer():GetNWBool( "aiming", false ) then
+				if !CAKE.OTSAng then
+					CAKE.OTSAng = cmd:GetViewAngles()
+				end
+				CAKE.OTSAng = CAKE.OTSAng + Angle( cmd:GetMouseY() * mPitch:GetFloat(), cmd:GetMouseX() * -mYaw:GetFloat(), 0 )
+				CAKE.OTSAng.p = math.Clamp( math.NormalizeAngle( CAKE.OTSAng.p ), -89, 89 )
+			
+				trace = util.TraceHull( {
+					start = EyePos(),
+					endpos = EyePos() + ( gui.ScreenToVector( ScrW()/2, ScrH()/2 ) * 30000 ),
+					filter = LocalPlayer(),
+					mask = MASK_SHOT,
+					mins = Vector(-12,-12,-12),
+					maxs = Vector( 12, 12, 12),
+				} )
+
+				--Hit Correction
+				if ValidEntity(trace.Entity) and !trace.HitWorld and !trace.HitSky then
+					local head = trace.Entity:LookupBone("ValveBiped.Bip01_Head1")
+					if head then
+						hitpos = Lerp( 0.3, trace.HitPos, trace.Entity:GetBonePosition(head) )
+					else
+						hitpos = Lerp( 0.3, trace.HitPos, trace.Entity:LocalToWorld(trace.Entity:OBBCenter()))
+					end
+				else
+					hitpos = trace.HitPos
+				end
+
+				hitpos = hitpos - trace.HitNormal
+				
+				vecMove.x = cmd:GetForwardMove()
+				vecMove.y = cmd:GetSideMove()
+				vecMove.z = cmd:GetUpMove()
+				
+				ang = math.rad( cmd:GetViewAngles().y - CAKE.OTSAng.y )
+				ca = math.cos( ang )
+				sa = math.sin( ang )
+				
+				cmd:SetForwardMove( vecMove.x * ca - vecMove.y * sa )
+				cmd:SetSideMove( vecMove.x * sa + vecMove.y * ca )
+				cmd:SetUpMove( vecMove.z )
+				
+				LocalPlayer():LagCompensation( true )
+				CAKE.DiffReal = ( hitpos - EyePos() ):Angle() + LocalPlayer():GetPunchAngle()
+				CAKE.DiffReal.r = 0
+				LocalPlayer():LagCompensation( false )
+				
+				cmd:SetViewAngles( CAKE.DiffReal )
+
+				stillcamera = false
+				firstpersonswitch = true
+				CAKE.DiffReal = Angle( 0, 0, 0 )
+			else
+				CAKE.OTSAng = false
+				stillcamera = false
+				firstpersonswitch = true
+				CAKE.DiffReal = Angle( 0, 0, 0 )
+				CAKE.LastViewAng = cmd:GetViewAngles()
+			end
 		end
 	end
 end )
 
 local head
 hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
+
+	if IronsightsOn() then
+		CAKE.CameraPos = pos
+		return GAMEMODE:CalcView(ply, pos , angles ,fov)
+	end
 
 	if CAKE.FreeScroll then --Rotate around the player/objective
 
@@ -316,7 +337,7 @@ hook.Add( "UpdateAnimation", "TiramisuAnimateRotate", function( ply, velocity, m
 			end
 		end
 	else
-		if CAKE.LastViewAng and !CAKE.Thirdperson:GetBool() then
+		if CAKE.LastViewAng and !CAKE.Thirdperson:GetBool() and !CAKE.ForceDraw then
 			ply:SetPoseParameter("aim_pitch", CAKE.LastViewAng.p - 5 )
 			ply:SetPoseParameter("head_pitch", CAKE.LastViewAng.p + 10 )
 		end

@@ -1,22 +1,22 @@
-CAKE.ItemData = {  };
-CAKE.UData = {  };
+CAKE.ItemData = {  }
+CAKE.UData = {  }
 
 function CAKE.LoadItem( schema, filename )
 
-	local path = "schemas/" .. schema .. "/items/" .. filename;
+	local path = "schemas/" .. schema .. "/items/" .. filename
 	AddResource("lua", path)
 	
-	ITEM = {  };
+	ITEM = {  }
 	
-	include( path );
+	include( path )
 	
-	CAKE.ItemData[ ITEM.Class ] = ITEM;
+	CAKE.ItemData[ ITEM.Class ] = ITEM
 	
 end
 
 function CAKE.SaveUData( id )
 	local savetable = glon.encode(CAKE.UData[id])
-	file.Write( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. id .. ".txt" , savetable);
+	file.Write( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. id .. ".txt" , savetable)
 end
 
 function CAKE.LoadUData( id )
@@ -43,146 +43,134 @@ end
 
 function CAKE.CreateItemID()
 	local repnum = 0
-	local uidfile = file.Read( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" );
+	local uidfile = file.Read( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
 	while(uidfile) do
-		uidfile = file.Read( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" );
+		uidfile = file.Read( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
 	end
 	return os.time() .. repnum
 end
 
 function CAKE.SendItemData( ply )
-	datastream.StreamToClients( ply, "NetworkItemData", CAKE.ItemData );
+	datastream.StreamToClients( ply, "NetworkItemData", CAKE.ItemData )
 end
 
 function CAKE.CreateItem( class, pos, ang, id )
 
 	if !id then id = CAKE.CreateItemID() end
 	
-	if( CAKE.ItemData[ class ] == nil ) then return; end
+	if( CAKE.ItemData[ class ] == nil ) then return end
 	
-	local itemtable = CAKE.ItemData[ class ];
+	local itemtable = CAKE.ItemData[ class ]
 	
-	local item = ents.Create( "item_prop" );
+	local item = ents.Create( "item_prop" )
 	item.uiid = id
 	
 	if string.match( class, "clothing" ) or string.match( class, "helmet" ) then
 		item:SetModel( "models/props_c17/suitcase_passenger_physics.mdl" )
 	else
-		item:SetModel( CAKE.GetUData(id, "model") or itemtable.Model );
+		item:SetModel( CAKE.GetUData(id, "model") or itemtable.Model )
 	end
 
 	for k, v in pairs( itemtable ) do
-		item[ k ] = v;
+		item[ k ] = v
 	end
 
-	item:SetAngles( ang );
-	item:SetPos( pos );
+	item:SetAngles( ang )
+	item:SetPos( pos )
 	
 	item:SetNWString("Name", CAKE.GetUData(id, "name") or itemtable.Name)
 	item:SetNWString("Class", itemtable.Class)
 	item:SetNWString("id", id)
 	
-	item:Spawn( );
-	item:Activate( );
+	item:Spawn( )
+	item:Activate( )
 	return item
 	
 end
 
 function ccDropItem( ply, cmd, args )
 	
-		local inv = CAKE.GetCharField( ply, "inventory" );
-		for k, v in pairs( inv ) do
-			if v[2] == args[1] then
-				if( string.match( v[1], "weapon" ) )then
-					CAKE.DropWeapon( ply, args[ 1 ] )
-					CAKE.RemoveGearItem( ply, args[ 1 ] )
-					ply:RefreshInventory( )
-					
-					return
-				end
-				CAKE.RestoreClothing( ply )
-				CAKE.RestoreGear( ply )
-				CAKE.CreateItem( v[1], ply:CalcDrop( ), Angle( 0,0,0 ), v[2] );
-				ply:TakeItemID( args[ 1 ] );
-					
-				ply:RefreshInventory( )
+	local inv = CAKE.GetCharField( ply, "inventory" )
+	for k, v in pairs( inv ) do
+		if v[2] == args[1] then
+			if( string.match( v[1], "weapon" ) )then
+				CAKE.DropWeapon( ply, args[ 1 ] )
+				CAKE.RemoveGearItem( ply, args[ 1 ] )
 				return
 			end
+			CAKE.RestoreClothing( ply )
+			CAKE.RestoreGear( ply )
+			CAKE.CreateItem( v[1], ply:CalcDrop( ), Angle( 0,0,0 ), v[2] )
+			ply:TakeItemID( args[ 1 ] )
+				
+			return
 		end
+	end
 end
-concommand.Add( "rp_dropitem", ccDropItem );
+concommand.Add( "rp_dropitem", ccDropItem )
 
 function ccDropItemUnspecific( ply, cmd, args )
 	
-		local inv = CAKE.GetCharField( ply, "inventory" );
-		for k, v in pairs( inv ) do
-			if v[1] == args[1] then
-				if( string.match( v[1], "weapon" ) )then
-					CAKE.DropWeapon( ply, args[ 1 ] )
-					CAKE.RemoveGearItem( ply, args[ 1 ] )
-					ply:RefreshInventory( )
-					
-					return
-				end
-				CAKE.RestoreClothing( ply )
-				CAKE.RestoreGear( ply )
-				CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ), v[2] );
-				ply:TakeItem( args[ 1 ] );
-					
-				ply:RefreshInventory( )
+	local inv = CAKE.GetCharField( ply, "inventory" )
+	for k, v in pairs( inv ) do
+		if v[1] == args[1] then
+			if( string.match( v[1], "weapon" ) )then
+				CAKE.DropWeapon( ply, args[ 1 ] )
+				CAKE.RemoveGearItem( ply, args[ 1 ] )
+				
 				return
 			end
+			CAKE.RestoreClothing( ply )
+			CAKE.RestoreGear( ply )
+			CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ), v[2] )
+			ply:TakeItem( args[ 1 ] )
+				
+			return
 		end
+	end
 end
-concommand.Add( "rp_dropitemunspecific", ccDropItemUnspecific );
+concommand.Add( "rp_dropitemunspecific", ccDropItemUnspecific )
 
 function ccDropAllItem( ply, cmd, args )
 	
-		local inv = CAKE.GetCharField( ply, "inventory" );
+		local inv = CAKE.GetCharField( ply, "inventory" )
 		for k, v in pairs( inv ) do
 			if( v[1] == args[ 1 ] ) then
 				if( string.match( v[1], "weapon" ) )then
 					CAKE.DropWeapon( ply, args[ 1 ] )
 					CAKE.RemoveGearItem( ply, args[ 1 ] )
-					ply:RefreshInventory( )
 					
 					return
 				else
 					CAKE.RestoreClothing( ply )
 					CAKE.RestoreGear( ply )
-					CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ), v[2] );
-					ply:TakeItem( args[ 1 ] );
+					CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ), v[2] )
+					ply:TakeItem( args[ 1 ] )
 				end
 			end
 		end
 	
-	
-	
-	ply:RefreshInventory( )
-	
 end
-concommand.Add( "rp_dropallitem", ccDropAllItem );
+concommand.Add( "rp_dropallitem", ccDropAllItem )
 
 function ccPickupItem( ply, cmd, args )
 
-	local item = ents.GetByIndex( tonumber( args[ 1 ] ) );
+	local item = ents.GetByIndex( tonumber( args[ 1 ] ) )
 	
 	if( item != nil and item:IsValid( ) and item:GetClass( ) == "item_prop" and item:GetPos( ):Distance( ply:GetShootPos( ) ) < 200 ) then
 		if string.match( item.Class, "zipties" ) then
 			ply:Give( item.Class )
 		end
-		item:Pickup( ply );
-		ply:GiveItem( item.Class, item:GetNWString("id") );
+		item:Pickup( ply )
+		ply:GiveItem( item.Class, item:GetNWString("id") )
 	end
 
-	ply:RefreshInventory( )
-
 end
-concommand.Add( "rp_pickup", ccPickupItem );
+concommand.Add( "rp_pickup", ccPickupItem )
 
 function ccUseItem( ply, cmd, args )
 	
-	local item = ents.GetByIndex( tonumber( args[ 1 ] ) );
+	local item = ents.GetByIndex( tonumber( args[ 1 ] ) )
 	
 	if( item != nil and item:IsValid( ) and item:GetClass( ) == "item_prop" and item:GetPos( ):Distance( ply:GetShootPos( ) ) < 100 ) then
 		
@@ -190,19 +178,17 @@ function ccUseItem( ply, cmd, args )
 			if( string.match( item.Class, "weapon" ) ) then
 				ply:Give( item.Class )
 			end
-			item:Pickup( ply );
-			ply:GiveItem( item.Class );
+			item:Pickup( ply )
+			ply:GiveItem( item.Class )
 			CAKE.SavePlayerData( ply )
 		else
-			item:UseItem( ply );
+			item:UseItem( ply )
 		end
 		
 	end
 
-	ply:RefreshInventory( )
-
 end
-concommand.Add( "rp_useitem", ccUseItem );
+concommand.Add( "rp_useitem", ccUseItem )
 
 function ccUseOnInventory( ply, cmd, args )
 	id = ply:HasItem( args [ 1 ] )
@@ -219,7 +205,7 @@ function ccUseOnInventory( ply, cmd, args )
 				if( string.match( item.Class, "weapon" ) ) then
 					ply:Give( item.Class )
 				end
-				item:Pickup( ply );
+				item:Pickup( ply )
 
 				for k,v in pairs(CAKE.GetCharField(ply, "inventory")) do
 					PrintTable(v)
@@ -230,15 +216,14 @@ function ccUseOnInventory( ply, cmd, args )
 				ply:TakeItem( item.Class )
 				if funcrun then
 					funcrun = CAKE.ItemData[ args [ 1 ] ][funcrun]
-					funcrun(item, ply );
+					funcrun(item, ply )
 				else
-					item:UseItem( ply );
+					item:UseItem( ply )
 				end
 			end
 			
 		end
 	end
-	ply:RefreshInventory( )
 
 end
 concommand.Add( "rp_useinventory", ccUseOnInventory)	
@@ -259,35 +244,34 @@ function ccUseOnInventoryID( ply, cmd, args )
 				if( string.match( class, "weapon" ) ) then
 					ply:Give( class )
 				end
-				item:Pickup( ply );
+				item:Pickup( ply )
 				CAKE.SavePlayerData( ply )
 			else
 				
 				ply:TakeItemID( id )
 				if funcrun then
 					funcrun = CAKE.ItemData[ class ][funcrun]
-					funcrun(item, ply );
+					funcrun(item, ply )
 				else
-					item:UseItem( ply );
+					item:UseItem( ply )
 				end
 			end
 			
 		end
 	end
-	ply:RefreshInventory( )
 
 end
 concommand.Add( "rp_useinventoryid", ccUseOnInventoryID)
 
-local meta = FindMetaTable( "Player" );
+local meta = FindMetaTable( "Player" )
 
 function meta:GiveItem( class, id )
 
 	if !id then id = CAKE.CreateItemID() end
-	CAKE.DayLog( "economy.txt", "Adding item '" .. class .. "' to " .. CAKE.FormatCharString( self ) .. " inventory" );
-	local inv = CAKE.GetCharField( self, "inventory" );
-	table.insert( inv, {class, id} );
-	CAKE.SetCharField( self, "inventory", inv);
+	CAKE.DayLog( "economy.txt", "Adding item '" .. class .. "' to " .. CAKE.FormatCharString( self ) .. " inventory" )
+	local inv = CAKE.GetCharField( self, "inventory" )
+	table.insert( inv, {class, id} )
+	CAKE.SetCharField( self, "inventory", inv)
 	
 	if string.match( class, "weapon" ) then
 		if !table.HasValue( CAKE.GetCharField( self, "inventory" ), class ) then
@@ -299,35 +283,37 @@ function meta:GiveItem( class, id )
 			self:Give( class )
 		end 
 	end
+	self:RefreshInventory()
 
 end
 
 function meta:TakeItem( class )
-	local inv = CAKE.GetCharField(self, "inventory" );
+	local inv = CAKE.GetCharField(self, "inventory" )
 	
 	for k, v in pairs( inv ) do
 		if( v[1] == class ) then
-			inv[ k ] = nil;
-			CAKE.SetCharField( self, "inventory", inv);
-			CAKE.DayLog( "economy.txt", "Removing item '" .. class .. "' from " .. CAKE.FormatCharString( self ) .. " inventory" );
-			return v[2];
+			inv[ k ] = nil
+			CAKE.SetCharField( self, "inventory", inv)
+			CAKE.DayLog( "economy.txt", "Removing item '" .. class .. "' from " .. CAKE.FormatCharString( self ) .. " inventory" )
+			return v[2]
 		end
 	end
-	
+	self:RefreshInventory()
+
 end
 
 function meta:TakeItemID( id )
-	local inv = CAKE.GetCharField(self, "inventory" );
+	local inv = CAKE.GetCharField(self, "inventory" )
 	
 	for k, v in pairs( inv ) do
 		if( v[2] == id ) then
-			inv[ k ] = nil;
-			CAKE.SetCharField( self, "inventory", inv);
-			CAKE.DayLog( "economy.txt", "Removing item '" .. v[1] .. "' from " .. CAKE.FormatCharString( self ) .. " inventory" );
-			return v[1];
+			inv[ k ] = nil
+			CAKE.SetCharField( self, "inventory", inv)
+			CAKE.DayLog( "economy.txt", "Removing item '" .. v[1] .. "' from " .. CAKE.FormatCharString( self ) .. " inventory" )
+			return v[1]
 		end
 	end
-	
+	self:RefreshInventory()
 	
 end
 
@@ -396,13 +382,13 @@ function meta:GetFlagValue( item, flag )
 		if type( v ) == "table" then
 			for k2, v2 in pairs( v ) do
 				if string.match( v2, flag ) then
-					local exp = string.Explode( ";", v2 )
+					local exp = string.Explode( "", v2 )
 					return exp[2] or true
 				end
 			end
 		end
 		if string.match( v, flag ) then
-			local exp = string.Explode( ";", v )
+			local exp = string.Explode( "", v )
 			return exp[2] or true
 		end
 	end
@@ -412,20 +398,20 @@ function meta:GetFlagValue( item, flag )
 end
 
 function meta:HasItem( class )
-	local inv = CAKE.GetCharField(self, "inventory" );
+	local inv = CAKE.GetCharField(self, "inventory" )
 	for k, v in pairs( inv ) do
 		if( v[1] == class ) then
-			return v[2];
+			return v[2]
 		end
 	end
 	return false
 end
 
 function meta:HasItemID( ID )
-	local inv = CAKE.GetCharField(self, "inventory" );
+	local inv = CAKE.GetCharField(self, "inventory" )
 	for k, v in pairs( inv ) do
 		if( v[2] == ID ) then
-			return v[1];
+			return v[1]
 		end
 	end
 	return false

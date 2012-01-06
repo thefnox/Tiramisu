@@ -15,6 +15,6 @@ end
 	
 function PLUGIN.Init()
 
-	CAKE.AdminCommand( "localsound", Admin_LocalSound, "Play a sound locally, from an entity.", true, true, 1 );
+	CAKE.AdminCommand( "localsound", Admin_LocalSound, "Play a sound locally, from an entity.", true, true, 1 )
 	
 end

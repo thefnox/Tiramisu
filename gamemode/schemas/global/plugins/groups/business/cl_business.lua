@@ -64,9 +64,9 @@ local function OpenBusiness()
 						ContextMenu:Open()
 					end
 					icontable[k].PaintOver = function()
-						surface.SetTextColor(Color(255,255,255,255));
-						surface.SetFont("TabLarge");
-						surface.SetTextPos( icontable[k]:GetWide() - 20, icontable[k]:GetTall() - 14);
+						surface.SetTextColor(Color(255,255,255,255))
+						surface.SetFont("TabLarge")
+						surface.SetTextPos( icontable[k]:GetWide() - 20, icontable[k]:GetTall() - 14)
 						surface.DrawText( icontable[k]:GetItem().Price or "0" )
 					end
 					grid:AddItem( icontable[k] )

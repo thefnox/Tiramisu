@@ -1,5 +1,5 @@
-CAKE.Plugins = {  };
-CAKE.CurrencyData = {  };
+CAKE.Plugins = {  }
+CAKE.CurrencyData = {  }
 
 function CAKE.RegisterCurrency( currency )
 	
@@ -9,7 +9,7 @@ end
 
 function CAKE.LoadRClick( schema, filename )
 
-	local path = "schemas/" .. schema .. "/rclick/" .. filename;
+	local path = "schemas/" .. schema .. "/rclick/" .. filename
 	AddResource("lua", path)
 	
 end
@@ -52,7 +52,7 @@ function CAKE.InitPlugins( )
 		
 		PLUGIN.Name = PLUGIN.Name or "Unnamed Plugin-" .. SysTime()
 
-		CAKE.DayLog("script.txt", "Initializing " .. PLUGIN.Name );
+		CAKE.DayLog("script.txt", "Initializing " .. PLUGIN.Name )
 		
 		if PLUGIN.Init then
 			PLUGIN.Init()

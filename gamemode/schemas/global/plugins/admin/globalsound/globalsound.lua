@@ -14,6 +14,6 @@ end
 	
 function PLUGIN.Init()
 
-	CAKE.AdminCommand( "globalsound", Admin_GlobalSound, "Play a sound globally, to all players.", true, true, 1 );
+	CAKE.AdminCommand( "globalsound", Admin_GlobalSound, "Play a sound globally, to all players.", true, true, 1 )
 	
 end

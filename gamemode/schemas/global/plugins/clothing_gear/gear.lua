@@ -1,6 +1,6 @@
-PLUGIN.Name = "Gear"; -- What is the plugin name
-PLUGIN.Author = "FNox/Big Bang"; -- Author of the plugin
-PLUGIN.Description = "Handles the stuff that you stick on yourself"; -- The description or purpose of the plugin
+PLUGIN.Name = "Gear" -- What is the plugin name
+PLUGIN.Author = "FNox/Big Bang" -- Author of the plugin
+PLUGIN.Description = "Handles the stuff that you stick on yourself" -- The description or purpose of the plugin
 
 --Thanks to the PAC team for this list.
 local BoneList = {

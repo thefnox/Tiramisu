@@ -54,28 +54,28 @@ local function Admin_SetFlag( ply, cmd, args )
 
 end
 
-CAKE.AdminCommand( "setflag", Admin_SetFlag, "Sets a player's combine/rebel flag", true, true, 1 );
+CAKE.AdminCommand( "setflag", Admin_SetFlag, "Sets a player's combine/rebel flag", true, true, 1 )
 
 local function Admin_ListFlags( ply, cmd, args )
 
-	CAKE.SendChat( ply, "---List of Flags---" );
-	CAKE.SendChat( ply, "---Use rp_admin setflag playername flag---\n" );
+	CAKE.SendChat( ply, "---List of Flags---" )
+	CAKE.SendChat( ply, "---Use rp_admin setflag playername flag---\n" )
 
-	CAKE.SendChat( ply, "---CCA\n" );
+	CAKE.SendChat( ply, "---CCA\n" )
 	for rank, tbl in pairs( CAKE.Groups["CCA"]["Ranks"] ) do
 
 		CAKE.SendChat( ply, rank .. " - " .. tbl.formalname .. "\n" )
 		
 	end
 
-	CAKE.SendChat( ply, "---Overwatch\n" );
+	CAKE.SendChat( ply, "---Overwatch\n" )
 	for rank, tbl in pairs( CAKE.Groups["Combine Overwatch"]["Ranks"] ) do
 
 		CAKE.SendChat( ply, rank .. " - " .. tbl.formalname .. "\n" )
 		
 	end
 
-	CAKE.SendChat( ply, "---Resistance\n" );
+	CAKE.SendChat( ply, "---Resistance\n" )
 	for rank, tbl in pairs( CAKE.Groups["Resistance"]["Ranks"] ) do
 
 		CAKE.SendChat( ply, rank .. " - " .. tbl.formalname .. "\n" )
@@ -84,4 +84,4 @@ local function Admin_ListFlags( ply, cmd, args )
 
 end
 
-CAKE.AdminCommand( "listflags", Admin_ListFlags, "Lists all flags", true, true, 1 );
+CAKE.AdminCommand( "listflags", Admin_ListFlags, "Lists all flags", true, true, 1 )

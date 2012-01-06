@@ -1,17 +1,18 @@
-ITEM.Name = "Standard Overwatch Armor";
-ITEM.Class = "clothing_soldier";
-ITEM.Description = "Overwatch edition";
-ITEM.Model = "models/Combine_Soldier.mdl";
-ITEM.Purchaseable = false;
-ITEM.Price = 750;
-ITEM.ItemGroup = 2;
+ITEM.Name = "Standard Overwatch Armor"
+ITEM.Class = "clothing_soldier"
+ITEM.Description = "Overwatch edition"
+ITEM.Model = "models/Combine_Soldier.mdl"
+ITEM.Purchaseable = false
+ITEM.Unusable = true
+ITEM.Price = 750
+ITEM.ItemGroup = 2
 ITEM.Flags = {
-	"armor;120",
-	"shieldratio;0.6",
-	"bulletarmor;0.6",
-	"explosivearmor;1.3",
-	"kineticarmor;0.6",
-	"rigweight;medium"
+	"armor120",
+	"shieldratio0.6",
+	"bulletarmor0.6",
+	"explosivearmor1.3",
+	"kineticarmor0.6",
+	"rigweightmedium"
 }
 ITEM.Content = {
 	"materials/models/combine_soldier/combinesoldiersheet.vmt",
@@ -25,7 +26,7 @@ end
 
 function ITEM:Pickup(ply)
 
-	self:Remove();
+	self:Remove()
 
 end
 

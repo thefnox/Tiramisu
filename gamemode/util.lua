@@ -5,11 +5,11 @@ function CAKE.ReferenceFix(data)
 
 	if(type(data) == "table") then
 	
-		return table.Copy(data);
+		return table.Copy(data)
 		
 	else
 	
-		return data;
+		return data
 		
 	end
 	
@@ -20,11 +20,11 @@ function CAKE.NilFix(val, default)
 
 	if(val == nil) then
 	
-		return default;
+		return default
 	
 	else
 	
-		return val;
+		return val
 		
 	end
 	
@@ -33,31 +33,31 @@ end
 --Finds a player based on its OOC name, its IC name or its SteamID
 function CAKE.FindPlayer(name)
 
-	local ply = nil;
-	local count = 0;
+	local ply = nil
+	local count = 0
 	
 	for k, v in pairs(player.GetAll()) do
 	
 		if(string.find(string.lower(v:Nick()), string.lower(name)) != nil) then
 			
-			ply = v;
+			ply = v
 				
 		end
 			
 		if(string.find(string.lower(v:Name()), string.lower(name)) != nil) then
 			
-			ply = v;
+			ply = v
 				
 		end
 
 		if(string.find(string.lower(v:SteamID()), string.lower(name)) != nil ) then
 		
-			ply = v;
+			ply = v
 			
 		end	
 	end
 	
-	return ply;
+	return ply
 	
 end
 

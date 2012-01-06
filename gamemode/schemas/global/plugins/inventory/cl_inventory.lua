@@ -132,9 +132,9 @@ function PositionSpawnIcon( model, pos )
 	local mn, mx = model:GetRenderBounds()
 	local middle = (mn + mx) * 0.5
 	local size = 0
-	size = math.max( size, math.abs(mn.x) + math.abs(mx.x) );
-	size = math.max( size, math.abs(mn.y) + math.abs(mx.y) );
-	size = math.max( size, math.abs(mn.z) + math.abs(mx.z) );
+	size = math.max( size, math.abs(mn.x) + math.abs(mx.x) )
+	size = math.max( size, math.abs(mn.y) + math.abs(mx.y) )
+	size = math.max( size, math.abs(mn.z) + math.abs(mx.z) )
 	
 	model:SetPos( pos )
 	model:SetAngles( Angle( 0, 180, 0 ) )
@@ -420,9 +420,9 @@ function PANEL:StartDrag()
 			LocalPlayer().DragIcon:SetPos( gui.MousePos() )
 		end
 		LocalPlayer().DragIcon.PaintOver = function()
-			surface.SetTextColor(Color(255,255,255,255));
-			surface.SetFont("TabLarge");
-			surface.SetTextPos( LocalPlayer().DragIcon:GetWide() - 12, LocalPlayer().DragIcon:GetTall() - 14);
+			surface.SetTextColor(Color(255,255,255,255))
+			surface.SetFont("TabLarge")
+			surface.SetTextPos( LocalPlayer().DragIcon:GetWide() - 12, LocalPlayer().DragIcon:GetTall() - 14)
 			surface.DrawText( LocalPlayer().DragAmount )
 		end
 		self:ClearItem()
@@ -506,9 +506,9 @@ end
 --Draws the item count
 function PANEL:PaintOver()
 	if self:GetAmount() > 1 then
-		surface.SetTextColor(Color(255,255,255,255));
-		surface.SetFont("TabLarge");
-		surface.SetTextPos( self:GetWide() - 16, self:GetTall() - 14);
+		surface.SetTextColor(Color(255,255,255,255))
+		surface.SetFont("TabLarge")
+		surface.SetTextPos( self:GetWide() - 16, self:GetTall() - 14)
 		surface.DrawText( self:GetAmount() )
 	end
 end
@@ -658,10 +658,10 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 	    CAKE.InventorySlot[ i ].PaintOver = function()
 	        surface.SetTextColor(Color(255,255,255,255))
 	        surface.SetFont("Tiramisu12Font")
-	        surface.SetTextPos( 3, 3);
+	        surface.SetTextPos( 3, 3)
 	        surface.DrawText( "ALT+" .. i - 1 )
 	        if CAKE.InventorySlot[ i ]:GetAmount() > 1 then
-	            surface.SetTextPos( CAKE.InventorySlot[ i ]:GetWide() - 16, CAKE.InventorySlot[ i ]:GetTall() - 14);
+	            surface.SetTextPos( CAKE.InventorySlot[ i ]:GetWide() - 16, CAKE.InventorySlot[ i ]:GetTall() - 14)
 	            surface.DrawText( CAKE.InventorySlot[ i ]:GetAmount() )
 	        end
 	    end

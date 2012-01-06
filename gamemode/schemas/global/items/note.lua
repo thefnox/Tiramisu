@@ -1,10 +1,10 @@
-ITEM.Name = "Note";
-ITEM.Class = "note";
-ITEM.Description = "";
-ITEM.Model = "models/props_c17/paper01.mdl";
-ITEM.Purchaseable = false;
-ITEM.Price = 0;
-ITEM.ItemGroup = 1;
+ITEM.Name = "Note"
+ITEM.Class = "note"
+ITEM.Description = ""
+ITEM.Model = "models/props_c17/paper01.mdl"
+ITEM.Purchaseable = false
+ITEM.Price = 0
+ITEM.ItemGroup = 1
 ITEM.Stack = false
 ITEM.Unusable = true
 ITEM.RightClick = {

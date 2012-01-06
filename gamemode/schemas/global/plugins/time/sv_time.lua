@@ -12,13 +12,13 @@ function CAKE.InitTime() -- Load the time from a text file or default value, thi
 
 	local clumpedtime = CAKE.DefaultTime
 	
-	if(file.Exists(CAKE.Name .. "/Time/" .. CAKE.ConVars[ "Schema" ] .. "/time.txt")) then
+	if(file.Exists(CAKE.Name .. "/time/" .. CAKE.ConVars[ "Schema" ] .. "/time.txt")) then
 	
-		clumpedtime = file.Read(CAKE.Name .. "/Time/" .. CAKE.ConVars[ "Schema" ] .. "/time.txt")
+		clumpedtime = file.Read(CAKE.Name .. "/time/" .. CAKE.ConVars[ "Schema" ] .. "/time.txt")
 		
 	else
 	
-		file.Write(CAKE.Name .. "/Time/" .. CAKE.ConVars[ "Schema" ] .. "/time.txt", clumpedtime )
+		file.Write(CAKE.Name .. "/time/" .. CAKE.ConVars[ "Schema" ] .. "/time.txt", clumpedtime )
 		
 	end
 
@@ -46,7 +46,7 @@ end
 function CAKE.SaveTime()
 
 	local clumpedtime = CAKE.ClockDay .. " " .. CAKE.ClockMonth .. " " .. CAKE.ClockYear .. " " .. CAKE.ClockMins
-	file.Write(CAKE.Name .. "/Time/" .. CAKE.ConVars[ "Schema" ] .. "/time.txt", clumpedtime)
+	file.Write(CAKE.Name .. "/time/" .. CAKE.ConVars[ "Schema" ] .. "/time.txt", clumpedtime)
 	
 end
 
@@ -54,17 +54,17 @@ end
 function CAKE.SendTime()
 	
 	if CAKE.ClockYear then
-		local nHours = string.format("%02.f", math.floor(CAKE.ClockMins / 60));
-		local nMins = string.format("%02.f", math.floor(CAKE.ClockMins - (nHours*60)));
+		local nHours = string.format("%02.f", math.floor(CAKE.ClockMins / 60))
+		local nMins = string.format("%02.f", math.floor(CAKE.ClockMins - (nHours*60)))
 		
 		if(tonumber(nHours) > 12) then 
 		
 			nHours = nHours - 12
-			timez = "PM";
+			timez = "PM"
 			
 		else
 		
-			timez = "AM";
+			timez = "AM"
 			
 		end
 		
@@ -109,5 +109,5 @@ end
 
 function PLUGIN.Init()
 	CAKE.InitTime()
-	CAKE.AdminCommand( "setdate", AdminSetDate , "Sets the current date (month day year)", true, true, 3 );
+	CAKE.AdminCommand( "setdate", AdminSetDate , "Sets the current date (month day year)", true, true, 3 )
 end

@@ -1,27 +1,34 @@
 -- You can change these in the schema definition file as well.
 
-CAKE.ConVars = {  };
+CAKE.ConVars = {  }
 
-CAKE.ConVars[ "DefaultHealth" ] = 100; -- How much health do they start with
-CAKE.ConVars[ "WalkSpeed" ] = 100; -- How fast do they walk
-CAKE.ConVars[ "RunSpeed" ] = 450; -- How fast do they run
-CAKE.ConVars[ "TalkRange" ] = 300; -- This is the range of talking.
-CAKE.ConVars[ "SuicideEnabled" ] = false; -- Can players compulsively suicide by using kill
-CAKE.ConVars[ "Default_Gravgun" ] = "1"; -- Are players banned from the gravity gun when they first start.
-CAKE.ConVars[ "Default_Physgun" ] = "1"; -- Are players banned from the physics gun when they first start.
-CAKE.ConVars[ "Default_Money" ] = 800; -- How much money do the characters start out with.
-CAKE.ConVars[ "Default_Title" ] = "Citizen"; -- What is their title when they create their character.
-CAKE.ConVars[ "Default_Inventory" ] = {  }; -- What inventory do characters start out with when they are first made. This cannot be setconvar'd
-CAKE.ConVars[ "Default_Weapons" ] = {  }; -- What inventory do characters start out with when they are first made. This cannot be setconvar'd
-CAKE.ConVars[ "Default_Ammo" ] = {  }; --The default ammo table your character will have on spawn.
-CAKE.ConVars[ "Default_Clothing" ] = { };--Clothing you can choose on startup
-CAKE.ConVars[ "Respawn_Timer" ] = 5 --Time in seconds that it takes for people to be allowed to respawn.
-CAKE.ConVars[ "Schema" ] = "hl2rp"; -- What folder is schema data being loaded from?
+CAKE.ConVars[ "Schema" ] = "hl2rp" -- What folder is schema data being loaded from?
 
+CAKE.ConVars[ "WalkSpeed" ] = 100 -- How fast do they walk
+CAKE.ConVars[ "RunSpeed" ] = 450 -- How fast do they run
+CAKE.ConVars[ "TalkRange" ] = 300 -- This is the range of talking.
+CAKE.ConVars[ "SuicideEnabled" ] = false -- Can players compulsively suicide by using kill
+CAKE.ConVars[ "Default_Gravgun" ] = "1" -- Are players banned from the gravity gun when they first start.
+CAKE.ConVars[ "Default_Physgun" ] = "1" -- Are players banned from the physics gun when they first start.
+CAKE.ConVars[ "Default_Money" ] = 800 -- How much money do the characters start out with.
+CAKE.ConVars[ "Default_Title" ] = "Citizen" -- What is their title when they create their character.
+CAKE.ConVars[ "Default_Inventory" ] = {  } -- What inventory do characters start out with when they are first made. This cannot be setconvar'd
+CAKE.ConVars[ "Default_Weapons" ] = {  } -- What inventory do characters start out with when they are first made. This cannot be setconvar'd
+CAKE.ConVars[ "Default_Ammo" ] = {  } --The default ammo table your character will have on spawn.
+CAKE.ConVars[ "Default_Clothing" ] = { }--Clothing you can choose on startup
+
+CAKE.ConVars[ "StartWithBlackScreen" ] = true --Set this to true if you want people to be welomed with a black screen.
+CAKE.ConVars[ "Prop_Damage" ] = false --Set this to true if you want props to damage people.
 CAKE.ConVars[ "LoseWeaponsOnDeath" ] = false --Set this to true if you want people to lose their guns once they die.
 CAKE.ConVars[ "LoseItemsOnDeath" ] = false --Set this to true if you want people to lose their items once they die. LoseWeaponsOnDeath must be set to true for this to work
+CAKE.ConVars[ "ReturnToSpawnOnDeath" ] = true --Set this to true if you want people to return to the spawn point every time they are killed.
+CAKE.ConVars[ "FadeToBlackOnDeath" ] = true --Set this to false if you want to disable the fade to black that occurs 5 seconds before death.
+CAKE.ConVars[ "Respawn_Timer" ] = 10 --Time in seconds that it takes for people to be allowed to respawn.
+CAKE.ConVars[ "Instant_Respawn" ] = false --Respawn instantly or allow people to lay dead for a while.
+CAKE.ConVars[ "DeathRagdoll_Linger" ] = 20 --Time in seconds that it takes for ragdolls to dissapear, set to 0 if you want corpses to stay forever
 
-CAKE.ConVars[ "Tiramisu" ] = "1.2";
+
+CAKE.ConVars[ "Tiramisu" ] = "1.2"
 
 --Stats for the fighting system, plus stamina
 
@@ -30,6 +37,12 @@ CAKE.Stats = {}
 CAKE.Stats.Stamina = {}
 CAKE.Stats.Stamina.BaseRegenRate = 2 --This is the percentage recovered per second.
 CAKE.Stats.Stamina.BaseRunCost = 2 --The amount of stamina consumed per second of running. Set this to 0 to disable it.
+
+CAKE.Stats.Health = {}
+CAKE.Stats.Health.BaseRegenRate = 1 --This is the amount of health recovered per second. Sit this to 0 to disable health regeneration.
+CAKE.Stats.Health.MaxRegenPerc = 60 --Percentage of health that can be regenerated. Set this to a lower amount if you wish for health to not fully regenerate
+CAKE.Stats.Health.Max = 10000 --Maximum possible health amount.
+CAKE.Stats.Health.Base = 100 --The base amount of health a player begins with.
 
 --And finally, some clientside stuff.
 

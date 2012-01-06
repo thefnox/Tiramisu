@@ -1,10 +1,11 @@
-ITEM.Name = "Laboratory Coat";
-ITEM.Class = "clothing_labcoat";
-ITEM.Description = "Lab coat for those smarter gentlemen";
-ITEM.Model = "models/Kleiner.mdl";
-ITEM.Purchaseable = true;
-ITEM.Price = 100;
-ITEM.ItemGroup = 1;
+ITEM.Name = "Laboratory Coat"
+ITEM.Class = "clothing_labcoat"
+ITEM.Description = "Lab coat for those smarter gentlemen"
+ITEM.Model = "models/Kleiner.mdl"
+ITEM.Unusable = true
+ITEM.Purchaseable = true
+ITEM.Price = 100
+ITEM.ItemGroup = 1
 ITEM.Flags = {
 	"nogloves"
 }
@@ -14,10 +15,10 @@ end
 
 function ITEM:Pickup(ply)
 
-	self:Remove();
+	self:Remove()
 
 end
 
 function ITEM:UseItem(ply)
-	self:Remove();
+	self:Remove()
 end

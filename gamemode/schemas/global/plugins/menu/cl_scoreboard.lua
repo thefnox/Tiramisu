@@ -16,45 +16,45 @@ local function OpenScoreboard()
 	Scoreboard = vgui.Create( "DPanelList", PlayerMenu )
 	Scoreboard:SetSize( 630, 448 )
 	Scoreboard:SetPos( 5, 28 )
-	Scoreboard:SetPadding(0);
-	Scoreboard:SetSpacing(0);
+	Scoreboard:SetPadding(0)
+	Scoreboard:SetSpacing(0)
 
 	-- Let's draw the SCOREBOARD.
 	
 	for k, v in pairs(player.GetAll()) do
-		local DataList = vgui.Create("DPanelList");
+		local DataList = vgui.Create("DPanelList")
 		DataList:SetAutoSize( true )
 		
-		local CollapsableCategory = vgui.Create("DCollapsibleCategory");
+		local CollapsableCategory = vgui.Create("DCollapsibleCategory")
 		CollapsableCategory:SetExpanded( 0 )
-		CollapsableCategory:SetLabel( v:Nick() );
-		Scoreboard:AddItem(CollapsableCategory);
+		CollapsableCategory:SetLabel( v:Nick() )
+		Scoreboard:AddItem(CollapsableCategory)
 		
-		local spawnicon = vgui.Create( "SpawnIcon");
+		local spawnicon = vgui.Create( "SpawnIcon")
 		spawnicon:SetModel(v:GetNWString( "model", "models/kleiner.mdl") )
-		spawnicon:SetSize( 64, 64 );
-		DataList:AddItem(spawnicon);
+		spawnicon:SetSize( 64, 64 )
+		DataList:AddItem(spawnicon)
 		
 		local DataList2 = vgui.Create( "DPanelList" )
 		DataList2:SetAutoSize( true )
 		
-		local label = vgui.Create("DLabel");
-		label:SetText("OOC Name: " .. v:Name());
-		DataList2:AddItem(label);
+		local label = vgui.Create("DLabel")
+		label:SetText("OOC Name: " .. v:Name())
+		DataList2:AddItem(label)
 
 		DataList2:AddItem(MarkupLabel( "Title:" .. v:GetNWString("title"), 620, DataList2 ))
 		
-		local Divider = vgui.Create("DHorizontalDivider");
-		Divider:SetLeft(spawnicon);
-		Divider:SetRight(DataList2);
-		Divider:SetLeftWidth(64);
-		Divider:SetHeight(64);
+		local Divider = vgui.Create("DHorizontalDivider")
+		Divider:SetLeft(spawnicon)
+		Divider:SetRight(DataList2)
+		Divider:SetLeftWidth(64)
+		Divider:SetHeight(64)
 		
-		DataList:AddItem(spawnicon);
-		DataList:AddItem(DataList2);
-		DataList:AddItem(Divider);
+		DataList:AddItem(spawnicon)
+		DataList:AddItem(DataList2)
+		DataList:AddItem(Divider)
 		
-		CollapsableCategory:SetContents(DataList);
+		CollapsableCategory:SetContents(DataList)
 	end
 	
 

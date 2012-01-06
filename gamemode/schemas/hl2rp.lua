@@ -1,7 +1,7 @@
-SCHEMA.Name = "Half Life 2 RP";
-SCHEMA.Author = "FNox";
-SCHEMA.Description = "Pretend you have a life!";
-SCHEMA.Base = "global";
+SCHEMA.Name = "Half Life 2 RP"
+SCHEMA.Author = "FNox"
+SCHEMA.Description = "Pretend you have a life!"
+SCHEMA.Base = "global"
 
 function SCHEMA.SetUp( )
 

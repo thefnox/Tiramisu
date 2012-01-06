@@ -16,7 +16,7 @@ function RCLICK.Click(target,ply)
 		"Super Administrator"
 	},
 	function( text )
-		ply:ConCommand("rp_admin setrank \"" .. target:Nick() .. "\" \""  .. text .. "\"" )
+		ply:ConCommand("rp_admin setrank \"" .. target:Nick() .. "\" \"" .. text .."\"")
 	end,
 	function() end, "Accept", "Cancel")
 

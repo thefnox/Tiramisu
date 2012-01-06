@@ -3,7 +3,7 @@ function AddResource( res_type, path )
 
 	if( string.lower( res_type ) == "lua" ) then
 	
-		AddCSLuaFile( path );
+		AddCSLuaFile( path )
 		CAKE.DayLog( "script.txt", "Added clientside lua file '" .. path .. "'" )
 		
 	else
@@ -40,9 +40,9 @@ end)
 
 -- LUA Files
 AddResource( "lua", "configuration.lua" ) --Tiramisu's configuration file.
-AddResource( "lua", "shared.lua" ); -- Shared Functions
-AddResource( "lua", "cl_binds.lua" ); -- Binds
-AddResource( "lua", "cl_init.lua"); -- The initialization of clientside gamemode
-AddResource( "lua", "sh_animations.lua"); -- Animations
-AddResource( "lua", "sh_anim_tables.lua"); -- Animations
+AddResource( "lua", "shared.lua" ) -- Shared Functions
+AddResource( "lua", "cl_binds.lua" ) -- Binds
+AddResource( "lua", "cl_init.lua") -- The initialization of clientside gamemode
+AddResource( "lua", "sh_animations.lua") -- Animations
+AddResource( "lua", "sh_anim_tables.lua") -- Animations
 AddResource( "lua", "cl_skin.lua" ) --The skin

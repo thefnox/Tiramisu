@@ -56,9 +56,9 @@ local function HandleGearEditing( entity, bone, item, name )
 
 			for k, v in pairs(InventoryTable) do
 				if !string.match( v.Class, "clothing" ) and !string.match( v.Class, "helmet" ) then
-				    local spawnicon = vgui.Create( "SpawnIcon");
+				    local spawnicon = vgui.Create( "SpawnIcon")
 				    spawnicon:SetIconSize( 64 )
-				    spawnicon:SetModel(v.Model);
+				    spawnicon:SetModel(v.Model)
 				    spawnicon:SetToolTip(v.Name)
 				    spawnicon.DoClick = function()
 				        RunConsoleCommand( "rp_setgear", v.Class, bone, v.ID )
@@ -390,7 +390,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name )
 		end
 		EditList:AddItem( removebutton )
 		
-		PropertySheet:AddSheet( "General", EditList, "gui/silkicons/group", false, false, "Edit general settings");
+		PropertySheet:AddSheet( "General", EditList, "gui/silkicons/group", false, false, "Edit general settings")
 
 		local PosList = vgui.Create( "DPanelList" )
 		PosList:SetPos( 25,25 )
@@ -446,7 +446,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name )
 		end
 		PosList:AddItem( resetbutton )
 		
-		PropertySheet:AddSheet( "Position", PosList, "gui/silkicons/anchor", false, false, "Edit gear's position");
+		PropertySheet:AddSheet( "Position", PosList, "gui/silkicons/anchor", false, false, "Edit gear's position")
 
 			local AngList = vgui.Create( "DPanelList" )
 		AngList:SetPos( 25,25 )
@@ -505,7 +505,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name )
 		end
 		AngList:AddItem( resetbutton )
 
-		PropertySheet:AddSheet( "Angles", AngList, "gui/silkicons/application_view_detail", false, false, "Edit gear's angles");
+		PropertySheet:AddSheet( "Angles", AngList, "gui/silkicons/application_view_detail", false, false, "Edit gear's angles")
 
 		local ScaleList = vgui.Create( "DPanelList" )
 		ScaleList:SetPos( 25,25 )
@@ -560,7 +560,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name )
 			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", "1,1,1" )
 		end
 		ScaleList:AddItem( resetbutton )
-		PropertySheet:AddSheet( "Scale", ScaleList, "gui/silkicons/magnifier", false, false, "Edit gear's scale");
+		PropertySheet:AddSheet( "Scale", ScaleList, "gui/silkicons/magnifier", false, false, "Edit gear's scale")
 
 		EditorFrame.Close = function()
 			CAKE.Query( "Save Changes for " .. name, "Save",

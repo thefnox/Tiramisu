@@ -98,7 +98,7 @@ function CreateCharList( )
 
 			for k, v in pairs(ExistingChars) do
 
-				local plist = vgui.Create("DPanelList");
+				local plist = vgui.Create("DPanelList")
 				plist:SetAutoSize( false )
 				plist:SetSize( 185, 85 )
 
@@ -115,7 +115,7 @@ function CreateCharList( )
 				plist2:EnableHorizontal( true )
 				plist2:SetAutoSize( true )
 
-				local title = vgui.Create("MarkupLabel");
+				local title = vgui.Create("MarkupLabel")
 				title:SetText(v['title'])
 				title:SetMaxSize( 110, 58 )
 				plist2:AddItem(title)
@@ -143,24 +143,24 @@ function CreateCharList( )
 				end
 				plist3:AddItem( deletechar )
 
-				local divider = vgui.Create("DHorizontalDivider");
-				divider:SetLeft(spawnicon);
-				divider:SetRight(plist2);
-				divider:SetLeftWidth(64);
-				divider:SetHeight(64);
+				local divider = vgui.Create("DHorizontalDivider")
+				divider:SetLeft(spawnicon)
+				divider:SetRight(plist2)
+				divider:SetLeftWidth(64)
+				divider:SetHeight(64)
 
-				local vdivider = vgui.Create("DVerticalDivider");
-				vdivider:SetTop(divider);
-				vdivider:SetBottom(plist3);
-				vdivider:SetTopHeight(68);
+				local vdivider = vgui.Create("DVerticalDivider")
+				vdivider:SetTop(divider)
+				vdivider:SetBottom(plist3)
+				vdivider:SetTopHeight(68)
 
-				plist:AddItem(spawnicon);
+				plist:AddItem(spawnicon)
 				plist:AddItem(plist3)
-				plist:AddItem(plist2);
-				plist:AddItem(divider);
-				plist:AddItem(vdivider);
+				plist:AddItem(plist2)
+				plist:AddItem(divider)
+				plist:AddItem(vdivider)
 
-				ccategory:SetContents(plist);
+				ccategory:SetContents(plist)
 				charpanel:AddItem(ccategory)
 
 		end
@@ -324,11 +324,11 @@ end)
 
 local function ReceiveChar( data )
 
-	local n = data:ReadLong( );
+	local n = data:ReadLong( )
 	ExistingChars[ n ] = {  }
-	ExistingChars[ n ][ 'name' ] = data:ReadString( );
-	ExistingChars[ n ][ 'model' ] = data:ReadString( );
-	ExistingChars[ n ][ 'title' ] = data:ReadString( );
+	ExistingChars[ n ][ 'name' ] = data:ReadString( )
+	ExistingChars[ n ][ 'model' ] = data:ReadString( )
+	ExistingChars[ n ][ 'title' ] = data:ReadString( )
 	
 end
-usermessage.Hook( "ReceiveChar", ReceiveChar );
+usermessage.Hook( "ReceiveChar", ReceiveChar )

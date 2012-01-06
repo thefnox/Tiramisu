@@ -31,6 +31,6 @@ end
 
 function PLUGIN.Init( )
 
-    CAKE.AdminCommand( "forcejoin", Admin_ForceJoin, "Force a player into a group at a set rank.", true, true, 3 );
-    CAKE.AdminCommand( "giverankbis", Admin_GiveRankBusiness, "Gives a player created group's rank business.", true, true, 4 );
+    CAKE.AdminCommand( "forcejoin", Admin_ForceJoin, "Force a player into a group at a set rank.", true, true, 3 )
+    CAKE.AdminCommand( "giverankbis", Admin_GiveRankBusiness, "Gives a player created group's rank business.", true, true, 4 )
 end

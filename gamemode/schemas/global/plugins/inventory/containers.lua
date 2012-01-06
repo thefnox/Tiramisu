@@ -1,6 +1,6 @@
-PLUGIN.Name = "Containers"; -- What is the plugin name
-PLUGIN.Author = "Ryaga/BadassMC"; -- Author of the plugin
-PLUGIN.Description = "Containers,"; -- The description or purpose of the plugin
+PLUGIN.Name = "Containers" -- What is the plugin name
+PLUGIN.Author = "Ryaga/BadassMC" -- Author of the plugin
+PLUGIN.Description = "Containers," -- The description or purpose of the plugin
 
 CAKE.Containers = {}
 
@@ -114,7 +114,7 @@ function CAKE.InteractCont( ply, cmd, args )
 	end
 	
 end
-concommand.Add( "rp_intcont", CAKE.InteractCont );	
+concommand.Add( "rp_intcont", CAKE.InteractCont )	
 
 --Sends all container contents to the player.
 function CAKE.GetContents( ply, cmd, args )
@@ -147,6 +147,6 @@ function CAKE.GetContents( ply, cmd, args )
 	print("End pop")
 	
 end
-concommand.Add( "rp_opencont", CAKE.GetContents );	
+concommand.Add( "rp_opencont", CAKE.GetContents )	
 
 CAKE.AddCType("models/props_c17/FurnitureDrawer001a.mdl", 10)

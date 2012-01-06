@@ -1,6 +1,6 @@
-PLUGIN.Name = "Clothing"; -- What is the plugin name
-PLUGIN.Author = "Big Bang"; -- Author of the plugin
-PLUGIN.Description = "Enables you to wear fucking clothes :D"; -- The description or purpose of the plugin
+PLUGIN.Name = "Clothing" -- What is the plugin name
+PLUGIN.Author = "Big Bang" -- Author of the plugin
+PLUGIN.Description = "Enables you to wear fucking clothes :D" -- The description or purpose of the plugin
 
 --0: No bone resizing.
 --1: Body only, no head nor hands.
@@ -361,12 +361,12 @@ end
 
 function PLUGIN.Init()
 	
-	CAKE.AddDataField( 2, "gloves", "none" ); --What you're wearing on your hands
-	CAKE.AddDataField( 2, "clothing", "none" ); --What you're wearing on your body
-	CAKE.AddDataField( 2, "helmet", "none" ); --What you're wearing on your head
-	CAKE.AddDataField( 2, "headratio", 1 ); --for those bighead guys.
-	CAKE.AddDataField( 2, "bodyratio", 1 ); --Thick bones, or maybe you're just fat.
-	CAKE.AddDataField( 2, "handratio", 1 ); --You know what they say about big hands.
-	CAKE.AddDataField( 2, "specialmodel", "none" );
+	CAKE.AddDataField( 2, "gloves", "none" ) --What you're wearing on your hands
+	CAKE.AddDataField( 2, "clothing", "none" ) --What you're wearing on your body
+	CAKE.AddDataField( 2, "helmet", "none" ) --What you're wearing on your head
+	CAKE.AddDataField( 2, "headratio", 1 ) --for those bighead guys.
+	CAKE.AddDataField( 2, "bodyratio", 1 ) --Thick bones, or maybe you're just fat.
+	CAKE.AddDataField( 2, "handratio", 1 ) --You know what they say about big hands.
+	CAKE.AddDataField( 2, "specialmodel", "none" )
 	
 end

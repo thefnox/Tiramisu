@@ -1,16 +1,16 @@
-ITEM.Name = "Standard Police Armor";
-ITEM.Class = "clothing_police";
-ITEM.Description = "The standard for metrocops.";
-ITEM.Model = "models/Police.mdl";
-ITEM.Purchaseable = false;
-ITEM.Price = 500;
-ITEM.ItemGroup = 2;
+ITEM.Name = "Standard Police Armor"
+ITEM.Class = "clothing_police"
+ITEM.Description = "The standard for metrocops."
+ITEM.Model = "models/Police.mdl"
+ITEM.Purchaseable = false
+ITEM.Price = 500
+ITEM.ItemGroup = 2
 ITEM.Flags = {
-	"armor;70",
-	"shieldratio;0.7",
-	"explosivearmor;1.5",
-	"kineticarmor;0.6",
-	"bulletarmor;0.7"
+	"armor70",
+	"shieldratio0.7",
+	"explosivearmor1.5",
+	"kineticarmor0.6",
+	"bulletarmor0.7"
 }
 ITEM.Content = {
 	"materials/models/police/metrocop_sheet.vmt",
@@ -22,7 +22,7 @@ end
 
 function ITEM:Pickup(ply)
 
-	self:Remove();
+	self:Remove()
 
 end
 

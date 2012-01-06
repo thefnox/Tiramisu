@@ -46,7 +46,7 @@ function ccBuyItem(ply, cmd, args)
 end
 concommand.Add( "rp_buyitem", ccBuyItem)	
 
-local meta = FindMetaTable( "Player" );
+local meta = FindMetaTable( "Player" )
 
 --Sends a player's business data through Datastream.
 function meta:RefreshBusiness()

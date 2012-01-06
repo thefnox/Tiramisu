@@ -2,7 +2,7 @@
 function CAKE.SendChat( ply, msg, font, channel )
 	
 	if ValidEntity( ply ) and ply:IsPlayer() then
-		--ply:PrintMessage( 3, msg );
+		--ply:PrintMessage( 3, msg )
 		datastream.StreamToClients( ply, "TiramisuAddToChat", {
 			["text"] = msg,
 			["font"] = font or false,
@@ -26,7 +26,7 @@ end
 function CAKE.SendConsole( ply, msg )
 
 	if ply:IsPlayer() then
-		ply:PrintMessage( 2, msg );
+		ply:PrintMessage( 2, msg )
 	else
 		print( msg )
 	end
@@ -37,107 +37,12 @@ end
 function CAKE.SendError( ply, msg )
 
 	if ply:IsPlayer() then
-		umsg.Start( "senderror", ply )
+		umsg.Start( "Tiramisu.SendError", ply )
 			umsg.String( msg )
 		umsg.End()
 	else
 		print( msg )
 	end
-end
-
-DecayingRagdolls = {};
-
---Handles death ragdoll creation.
-function CAKE.DeathMode( ply )
-	
-	if ValidEntity( ply.deathrag ) then
-		ply.deathrag:Remove()
-		ply.deathrag = nil
-	end
-
-	if CAKE.ConVars[ "LoseWeaponsOnDeath" ] then
-		if CAKE.ConVars[ "LoseItemsOnDeath" ] then
-			for k, v in pairs( CAKE.GetCharField( ply, "inventory" ) ) do
-				ply:TakeItem( v )
-			end
-		end
-		for k, v in pairs( CAKE.GetCharField( ply, "weapons" ) ) do
-			ply:TakeItem( v )
-		end
-		ply:RemoveAllAmmo( )
-		CAKE.SetCharField( ply, "weapons", {} )
-		CAKE.SetCharField( ply, "ammo", {} )
-	end
-	
-	CAKE.DayLog( "script.txt", "Starting death mode for " .. ply:SteamID( ) );
-	local mdl = ply:GetModel( )
-	
-	local rag = ents.Create( "prop_ragdoll" )
-	rag:SetModel( mdl )
-	rag:SetPos( ply:GetPos( ) )
-	rag:SetAngles( ply:GetAngles( ) )
-	rag.isdeathdoll = true;
-	rag.ply = ply;
-	rag:Spawn( )
-	
-	if( ply.Clothing ) then
-		for k, v in pairs( ply.Clothing ) do
-			if( ValidEntity( v ) ) then
-				v:SetParent( rag )
-				v:Initialize()
-			end
-		end
-	end
-	
-	rag.BonemergeGearEntity = ents.Create( "player_gearhandler" )
-	rag.BonemergeGearEntity:SetPos( rag:GetPos() + Vector( 0, 0, 80 ) )
-	rag.BonemergeGearEntity:SetAngles( rag:GetAngles() )
-	rag.BonemergeGearEntity:SetModel("models/tiramisu/gearhandler.mdl")
-	rag.BonemergeGearEntity:SetParent( rag )
-	rag.BonemergeGearEntity:SetNoDraw( true )
-	rag.BonemergeGearEntity:SetSolid( SOLID_NONE )
-	rag.BonemergeGearEntity:Spawn()
-			
-	if( ply.Gear ) then
-		for k, v in pairs( ply.Gear ) do
-			if( ValidEntity( v ) ) then
-				v:SetParent( rag.BonemergeGearEntity )
-				v:SetDTEntity( 1, rag )
-				v:Initialize()
-			end
-		end
-	end
-	
-	rag.clothing = ply.Clothing
-	ply.Clothing = nil
-	ply.Gear = nil
-	
-	--ply:SetViewEntity( rag );
-
-	rag:GetPhysicsObject():ApplyForceCenter( ply:GetVelocity() )
-	rag:GetPhysicsObject():SetVelocity( ply:GetVelocity() )
-
-	ply.deathrag = rag;
-	
-	ply:SetNWInt( "deathmode", 1 )
-	ply:SetNWInt("deathmoderemaining", CAKE.ConVars[ "Respawn_Timer" ] )
-
-	timer.Simple( 1, function()
-		umsg.Start( "recieveragdoll", ply )
-			umsg.Short( rag:EntIndex() )
-		umsg.End()
-	end)
-	
-	ply.deathtime = 0;
-	ply.nextsecond = CurTime( ) + 1;
-	
-	timer.Simple( CAKE.ConVars[ "Respawn_Timer" ], function()
-	
-		ply:SetNWInt( "deathmode", 0 )
-		ply:SetViewEntity( ply );
-
-	end)
-	
 end
 
 --Toggles unconcious status.
@@ -177,14 +82,14 @@ function CAKE.UnconciousMode( ply )
 				ply.unconciousrag = nil
 			end
 			
-			CAKE.DayLog( "script.txt", "Starting unconcious mode for " .. ply:SteamID( ) );
+			CAKE.DayLog( "script.txt", "Starting unconcious mode for " .. ply:SteamID( ) )
 			local mdl = ply:GetModel( )
 			
 			local rag = ents.Create( "prop_ragdoll" )
 			rag:SetModel( mdl )
 			rag:SetPos( ply:GetPos( ) )
 			rag:SetAngles( ply:GetAngles( ) )
-			rag.ply = ply;
+			rag.ply = ply
 			rag:Spawn( )
 
 			if( ply.Clothing ) then
@@ -227,7 +132,7 @@ function CAKE.UnconciousMode( ply )
 			ply:SetNWBool( "unconciousmode", true ) 
 			
 			timer.Simple( 1, function()
-				umsg.Start( "recieveragdoll", ply )
+				umsg.Start( "Tiramisu.ReceiveRagdoll", ply )
 					umsg.Short( rag:EntIndex() )
 				umsg.End()
 				umsg.Start( "ToggleFreescroll", ply )
@@ -235,10 +140,10 @@ function CAKE.UnconciousMode( ply )
 				umsg.End()
 			end)
 			
-			ply.unconciousrag = rag;
+			ply.unconciousrag = rag
 			
-			ply.unconcioustime = 0;
-			ply.nextsecond = CurTime( ) + 1;
+			ply.unconcioustime = 0
+			ply.nextsecond = CurTime( ) + 1
 			
 			ply:Lock()
 			
@@ -253,7 +158,7 @@ function CAKE.UnconciousMode( ply )
 			if ply:GetActiveWeapon():IsValid() then
 				ply:GetActiveWeapon():SetNoDraw( false )
 			end
-			umsg.Start( "recieveragdoll", ply )
+			umsg.Start( "Tiramisu.ReceiveRagdoll", ply )
 				umsg.Short( nil )
 			umsg.End()
 			umsg.Start( "ToggleFreescroll", ply )
@@ -278,7 +183,7 @@ function CAKE.UnconciousMode( ply )
 		if ply:GetActiveWeapon():IsValid() then
 			ply:GetActiveWeapon():SetNoDraw( false )
 		end
-		umsg.Start( "recieveragdoll", ply )
+		umsg.Start( "Tiramisu.ReceiveRagdoll", ply )
 			umsg.Short( nil )
 		umsg.End()
 		umsg.Start( "ToggleFreescroll", ply )
@@ -297,7 +202,7 @@ function CAKE.UnconciousMode( ply )
 end
 
 
-local meta = FindMetaTable( "Player" );
+local meta = FindMetaTable( "Player" )
 
 function meta:ConCommand( cmd ) --Rewriting this due to Garry fucking it up.
 	umsg.Start( "runconcommand", self )
@@ -317,23 +222,23 @@ end
 function CAKE.ChangeMoney( ply, amount ) -- Modify someone's money amount.
 
 	-- Come on, Nori, how didn't you see the error in this?
-	--if( ( CAKE.GetCharField( ply, "money" ) - amount ) < 0 ) then return; end 
+	--if( ( CAKE.GetCharField( ply, "money" ) - amount ) < 0 ) then return end 
 	
-	CAKE.DayLog( "economy.txt", "Changing " .. ply:SteamID( ) .. "-" .. ply:GetNWString( "uid" ) .. " money by " .. tostring( amount ) );
+	CAKE.DayLog( "economy.txt", "Changing " .. ply:SteamID( ) .. "-" .. ply:GetNWString( "uid" ) .. " money by " .. tostring( amount ) )
 	
-	CAKE.SetCharField( ply, "money", CAKE.GetCharField( ply, "money" ) + amount );
+	CAKE.SetCharField( ply, "money", CAKE.GetCharField( ply, "money" ) + amount )
 	if CAKE.GetCharField( ply, "money" ) < 0 then -- An actual negative number block
-		CAKE.SetCharField( ply, "money", 0 );
+		CAKE.SetCharField( ply, "money", 0 )
 		ply:SetNWInt("money", 0 )
 	else
-		ply:SetNWInt("money", tonumber( CAKE.GetCharField( ply, "money" ) ));
+		ply:SetNWInt("money", tonumber( CAKE.GetCharField( ply, "money" ) ))
 	end
 
 end
 
 function CAKE.DrugPlayer( pl, mul ) -- DRUG DAT BITCH
 
-	mul = mul / 10 * 2;
+	mul = mul / 10 * 2
 
 	pl:ConCommand("pp_motionblur 1")
 	pl:ConCommand("pp_motionblur_addalpha " .. 0.05 * mul)

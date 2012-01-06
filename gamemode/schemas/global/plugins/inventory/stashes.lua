@@ -1,6 +1,6 @@
-PLUGIN.Name = "Item Stashes"; -- What is the plugin name
-PLUGIN.Author = "Ryaga"; -- Author of the plugin
-PLUGIN.Description = "Allows you to place random caches of items around your map"; -- The description or purpose of the plugin
+PLUGIN.Name = "Item Stashes" -- What is the plugin name
+PLUGIN.Author = "Ryaga" -- Author of the plugin
+PLUGIN.Description = "Allows you to place random caches of items around your map" -- The description or purpose of the plugin
 
 CAKE.StashPoints = {}
 CAKE.StashItems = {}

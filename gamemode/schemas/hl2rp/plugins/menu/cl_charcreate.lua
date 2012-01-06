@@ -181,9 +181,9 @@ local function CharacterCreation()
 			CharName = string.sub(nametext:GetValue(), 1, 64)
 
 			RunConsoleCommand("rp_startcreate")
-			RunConsoleCommand("rp_setmodel", SelectedModel );
-			RunConsoleCommand("rp_changename", CharName );
-			RunConsoleCommand("rp_title", Title1 );
+			RunConsoleCommand("rp_setmodel", SelectedModel )
+			RunConsoleCommand("rp_changename", CharName )
+			RunConsoleCommand("rp_title", Title1 )
 			RunConsoleCommand("rp_setage", Age )
 			RunConsoleCommand("rp_setgender", Gender )
 			RunConsoleCommand("rp_setcid")

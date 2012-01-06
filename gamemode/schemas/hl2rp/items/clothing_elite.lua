@@ -1,17 +1,18 @@
-ITEM.Name = "Elite Armor";
-ITEM.Class = "clothing_elite";
-ITEM.Description = "Heavy armor designed for the very elite.";
-ITEM.Model = "models/Combine_Super_Soldier.mdl";
-ITEM.Purchaseable = false;
-ITEM.Price = 1000;
-ITEM.ItemGroup = 2;
+ITEM.Name = "Elite Armor"
+ITEM.Class = "clothing_elite"
+ITEM.Description = "Heavy armor designed for the very elite."
+ITEM.Model = "models/Combine_Super_Soldier.mdl"
+ITEM.Purchaseable = false
+ITEM.Price = 1000
+ITEM.Unusable = true
+ITEM.ItemGroup = 2
 ITEM.Flags = {
-	"armor;180",
-	"shieldratio;0.8",
-	"bulletarmor;0.5",
-	"explosivearmor;1.2",
-	"kineticarmor;0.6",
-	"rigweight;heavy"
+	"armor180",
+	"shieldratio0.8",
+	"bulletarmor0.5",
+	"explosivearmor1.2",
+	"kineticarmor0.6",
+	"rigweightheavy"
 }
 ITEM.Content = {
 	"materials/models/combine_soldier/combine_elite.vmt",
@@ -24,7 +25,7 @@ end
 
 function ITEM:Pickup(ply)
 
-	self:Remove();
+	self:Remove()
 
 end
 

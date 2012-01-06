@@ -70,9 +70,10 @@ end
 
 function GM:Think( )
 
-	if( vgui and readysent == false ) then -- VGUI is initalized, tell the server we're ready for character creation.
+	if( vgui and !readysent ) then -- VGUI is initalized, tell the server we're ready for character creation.
 	
 		LocalPlayer( ):ConCommand( "rp_ready\n" )
+		CAKE.EnableBlackScreen( CAKE.ConVars[ "StartWithBlackScreen" ], CAKE.ConVars[ "StartWithBlackScreen" ] )
 		readysent = true
 		
 	end
@@ -130,6 +131,29 @@ usermessage.Hook("addschema", function(data)
 	CAKE.AddClientsidePlugins(schema)
 	CAKE.AddItems(schema)
 end )
+
+usermessage.Hook( "Tiramisu.EnableBlackScreen", function( um)
+	CAKE.EnableBlackScreen( um:ReadBool(), false )
+end)
+
+usermessage.Hook( "Tiramisu.SendError", function( um )
+	
+	local text = um:ReadString()
+	CAKE.Message( text, "Message", "OK" )
+
+end)
+
+usermessage.Hook( "Tiramisu.DisplayRespawnButton", function(um)
+	local button = vgui.Create( "DButton" )
+	button:SetText( "Respawn" )
+	button:SetSize( 74, 25 )
+	button:SetPos( ScrW() / 2 - 32, 90 )
+	button.DoClick = function()
+		RunConsoleCommand( "rp_acceptdeath" )
+		button:Remove()
+		button = nil
+	end
+end)
 
 RclickTable = {}
 
@@ -205,13 +229,6 @@ function CAKE.RegisterCharCreate( passedfunc )
 
 end
 
-usermessage.Hook( "senderror", function( um )
-	
-	local text = um:ReadString()
-	CAKE.Message( text, "Message", "OK" )
-
-end)
-
 function CAKE.RegisterMenuTab( name, func, closefunc ) --The third argument is the function used for closing your panel.
 	CAKE.MenuTabs[ name ] = {}
 	CAKE.MenuTabs[ name ][ "function" ] = func or function() end
@@ -240,44 +257,106 @@ function CAKE.SetActiveTab( name )
 	CAKE.ActiveTab = name
 end
 
-local matBlurScreen = Material( "pp/blurscreen" ), x, y, n
-local gradientup = surface.GetTextureID("gui/gradient_up")
-local gradientdown = surface.GetTextureID("gui/gradient_down")
+local blackscreenalpha = 0
+hook.Add( "PostDrawHUD", "Tiramisu.DrawBlackScreen", function()
+	if CAKE.DrawBlackScreen then
+		if !CAKE.ForceBlackScreen then
+			blackscreenalpha = Lerp( RealFrameTime() * 1.5, blackscreenalpha, 255 )
+		else
+			blackscreenalpha = 255
+		end
+		surface.SetDrawColor( 0, 0, 0, blackscreenalpha )
+		surface.DrawRect( -1, -1, ScrW() + 1, ScrH() + 1 )
+	else
+		if blackscreenalpha != 0 then
+			blackscreenalpha = Lerp( RealFrameTime(), blackscreenalpha, 0 )
+			surface.SetDrawColor( 0, 0, 0, blackscreenalpha )
+			surface.DrawRect( -1, -1, ScrW() + 1, ScrH() + 1 )
+		end
+	end
+end)
+
+function CAKE.EnableBlackScreen( bool, force )
+	CAKE.DrawBlackScreen, CAKE.ForceBlackScreen = bool, force
+end
+
 function CAKE.DrawBlurScreen()
-	color = CAKE.BaseColor or Color( 100, 100, 115, 150 )
+	derma.SkinHook( "Paint", "BlurScreen" )
+end
 
-	// new hip way of doing gradients
-
-	x,y = ScrW(), ScrH()
-
-	surface.SetTexture(gradientdown)
-	surface.SetDrawColor( 0, 0, 0, 250 ) 
-	surface.DrawTexturedRectUV( 0, 0, x, y/5 , 0, y/5, y/5 )
-	surface.SetTexture(gradientup)
-	surface.DrawTexturedRectUV( 0, y - y/5, x, y/5 , 0, y/5, y/5 )
-	surface.SetTexture()
-	
-	// Background 
-	surface.SetMaterial( matBlurScreen ) 
-	surface.SetDrawColor( 255, 255, 255, 255 ) 
-	
-	matBlurScreen:SetMaterialFloat( "$blur", 5 ) 
-	render.UpdateScreenEffectTexture() 
-	
-	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() ) 
-	
-	surface.SetDrawColor( color.r, color.g, color.b, 150 ) 
-	surface.DrawRect( 0, 0, ScrW(), ScrH() ) 
-
-
-	// Pretentious line bullshit :P
-	x = math.floor( ScrW() / 5 )
-	y = math.floor( ScrH() / 5 )
-
-	surface.SetDrawColor( 50, 50, 50, 110 ) 
-
-	for i = 1, ScrW() / 5 * 2  do
-		surface.DrawLine( ( i * 5 ),0, 0, ( i * 5 ) )
+--This function was made by Nori, not me, as many other parts of the gamemode. This one's special though, since it's from Cakescript G3 lol.
+function CAKE.CalculateDoorTextPosition(door, reversed)
+	local traceData = {}
+	local obbCenter = door:OBBCenter()
+	local obbMaxs = door:OBBMaxs()
+	local obbMins = door:OBBMins()
+		
+	traceData.endpos = door:LocalToWorld(obbCenter)
+	traceData.filter = ents.FindInSphere(traceData.endpos, 20)
+		
+	for k, v in pairs(traceData.filter) do
+		if (v == door) then
+			traceData.filter[k] = nil
+		end
+	end
+		
+	local length = 0
+	local size = obbMins - obbMaxs
+		
+	size.x = math.abs(size.x)
+	size.y = math.abs(size.y)
+	size.z = math.abs(size.z)
+		
+	if (size.z < size.x and size.z < size.y) then
+		length = size.z
+		
+		if (reverse) then
+			traceData.start = traceData.endpos - (door:GetUp() * length)
+		else
+			traceData.start = traceData.endpos + (door:GetUp() * length)
+		end
+	elseif (size.x < size.y) then
+		length = size.x
+		width = size.y
+			
+		if (reverse) then
+			traceData.start = traceData.endpos - (door:GetForward() * length)
+		else
+			traceData.start = traceData.endpos + (door:GetForward() * length)
+		end
+	elseif (size.y < size.x) then
+		length = size.y
+		
+		if (reverse) then
+			traceData.start = traceData.endpos - (door:GetRight() * length)
+		else
+		
+			traceData.start = traceData.endpos + (door:GetRight() * length)
+		end
 	end
 
+	local trace = util.TraceLine(traceData)
+	local angles = trace.HitNormal:Angle()
+	
+	if (trace.HitWorld and !reversed) then
+		return CAKE.CalculateDoorTextPosition(door, true)
+	end
+		
+	angles:RotateAroundAxis(angles:Forward(), 90)
+	angles:RotateAroundAxis(angles:Right(), 90)
+	
+	local position = trace.HitPos - ( ( (traceData.endpos - trace.HitPos):Length() * 2) + 2 ) * trace.HitNormal
+	local anglesBack = trace.HitNormal:Angle()
+	local positionBack = trace.HitPos + (trace.HitNormal * 2)
+		
+	anglesBack:RotateAroundAxis(anglesBack:Forward(), 90)
+	anglesBack:RotateAroundAxis(anglesBack:Right(), -90)
+	
+	return {
+		positionBack = positionBack,
+		anglesBack = anglesBack,
+		position = position,
+		HitWorld = trace.HitWorld,
+		angles = angles,
+	}
 end

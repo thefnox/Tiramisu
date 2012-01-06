@@ -53,7 +53,7 @@ local function OpenGroupAdministrator()
     end
     editpanel:AddItem( button )
 
-    psheet:AddSheet("Description", editpanel, "gui/silkicons/wrench", false, false, "Editing Group Description");
+    psheet:AddSheet("Description", editpanel, "gui/silkicons/wrench", false, false, "Editing Group Description")
 
     local rankpanel = vgui.Create( "DPanelList" )
     rankpanel:SetSpacing( 10 )
@@ -135,7 +135,7 @@ local function OpenGroupAdministrator()
     end
     rankpanel:AddItem( button )
 
-    psheet:AddSheet("Ranks", rankpanel, "gui/silkicons/user", false, false, "Rank Editor");
+    psheet:AddSheet("Ranks", rankpanel, "gui/silkicons/user", false, false, "Rank Editor")
 
 end
 

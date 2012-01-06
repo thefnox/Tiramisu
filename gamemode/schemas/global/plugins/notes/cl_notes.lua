@@ -46,10 +46,10 @@ function noteRead( handler, id, encoded, decoded )
 	local LineList = vgui.Create( "DPanelList", ReadMenu )
 	LineList:SetPos( 5, 30 )
 	LineList:SetSize( 630, 445 )
-	LineList:SetPadding(20);
+	LineList:SetPadding(20)
 	LineList:SetSpacing(5)
-	LineList:EnableHorizontal(false);
-	LineList:EnableVerticalScrollbar(true);
+	LineList:EnableHorizontal(false)
+	LineList:EnableVerticalScrollbar(true)
 	LineList:SetAutoSize(false)
 	
 	local linetable = string.Explode( "\n", decoded["text"] )
@@ -70,4 +70,4 @@ function noteRead( handler, id, encoded, decoded )
 
 	ReadMenu:MakePopup()
 end
-datastream.Hook( "ReadStream", noteRead );
+datastream.Hook( "ReadStream", noteRead )

@@ -16,7 +16,7 @@ function CAKE.DrawQuickMenu()
 		Quickmenu = nil
 	end
 
-	QuickMenu = vgui.Create("DFrame");
+	QuickMenu = vgui.Create("DFrame")
 	QuickMenu:SetSize( ScrW()/4, ScrH() )
 	QuickMenu:SetPos( 0, 0 )
 	QuickMenu:SetTitle( "" )
@@ -80,7 +80,7 @@ end
 
 function GM:ScoreboardShow( )
 
-	CAKE.ContextEnabled = true;
+	CAKE.ContextEnabled = true
 	CAKE.MenuOpen = true
 	gui.EnableScreenClicker( true )
 
@@ -91,7 +91,7 @@ end
 function GM:ScoreboardHide( )
 
 	CAKE.MenuOpen = false
-	CAKE.ContextEnabled = false;
+	CAKE.ContextEnabled = false
 	gui.EnableScreenClicker( false )
 
 	CAKE.HideQuickMenu()
@@ -105,7 +105,7 @@ function GM:GUIMousePressed(mc)
 		if LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 0 then
 			distance = 5000
 		end
-		local ang = gui.ScreenToVector(gui.MouseX(), gui.MouseY());
+		local ang = gui.ScreenToVector(gui.MouseX(), gui.MouseY())
 		local tracedata = {}
 		tracedata.start = CAKE.CameraPos
 		tracedata.endpos = CAKE.CameraPos+(ang*2000)
@@ -139,7 +139,7 @@ function GM:GUIMousePressed(mc)
 					end
 				end
 				
-				ContextMenu:Open();
+				ContextMenu:Open()
 			end
 		end
 	end
@@ -173,29 +173,21 @@ function GM:PlayerBindPress( ply, bind, pressed )
 
 
 end
-
-local nodraw = 
-{ 
-
-	"CHudHealth",
-	"CHudAmmo",
-	"CHudSecondaryAmmo",
-	"CHudBattery",
-	"CHudDeathNotice",
-
- }
 	
 --Disables default HUD elements
 function GM:HUDShouldDraw( name )
 
-	for k, v in pairs( nodraw ) do
-	
-		if( name == v ) then return false end
-	
+	if name == "CHudCloseCaption" or name == "CHudWeaponSelection" or name == "CHudMenu" or name == "CHudGMod" or name == "CHudDamageIndicator" then
+		return true
 	end
-	
-	return true
 
+	return false
+
+end
+
+--Disables dead notices
+function GM:DrawDeathNotice()
+	return
 end
 
 function GM:HUDDrawTargetID()

@@ -59,8 +59,8 @@ end
 --Saves all permaprops to file.
 function CAKE.SavePermaProps()
 
-	local keys = glon.encode(CAKE.PermaProps[ game.GetMap( ) ]);
-	file.Write( CAKE.Name .. "/PermaProps/" .. CAKE.ConVars[ "Schema" ] .. "/" .. game.GetMap( ) .. ".txt" , keys);
+	local keys = glon.encode(CAKE.PermaProps[ game.GetMap( ) ])
+	file.Write( CAKE.Name .. "/PermaProps/" .. CAKE.ConVars[ "Schema" ] .. "/" .. game.GetMap( ) .. ".txt" , keys)
 
 end
 
@@ -86,7 +86,7 @@ end)
 local function Admin_AddPermaProp( ply, cmd, args )
 
 	local tr = ply:GetEyeTrace()
-	local trent = tr.Entity;
+	local trent = tr.Entity
 	CAKE.AddPermaProp( trent:GetModel(), trent:GetPos(), trent:GetAngles() )
 
 end
@@ -95,7 +95,7 @@ end
 local function Admin_RemovePermaProp( ply, cmd, args )
 	
 	local tr = ply:GetEyeTrace()
-	local trent = tr.Entity;
+	local trent = tr.Entity
 	CAKE.RemovePermaProp( trent )
 	
 end
@@ -113,6 +113,6 @@ hook.Add("CanTool", "TiramisuToolPermapropProtection", function(ply, tr, toolmod
 end)
 
 function PLUGIN.Init()
-	CAKE.AdminCommand( "addpermaprop", Admin_AddPermaProp, "Add a permanent prop", true, true, 2 );
-	CAKE.AdminCommand( "removepermaprop", Admin_RemovePermaProp, "Remove a permanent prop", true, true, 2 );
+	CAKE.AdminCommand( "addpermaprop", Admin_AddPermaProp, "Add a permanent prop", true, true, 2 )
+	CAKE.AdminCommand( "removepermaprop", Admin_RemovePermaProp, "Remove a permanent prop", true, true, 2 )
 end

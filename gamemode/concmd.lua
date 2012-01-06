@@ -3,13 +3,13 @@ function ccSetTitle( ply, cmd, args )
 
 	local title = table.concat( args, " " )
 
-	CAKE.SetCharField( ply, "title", title );
-	ply:SetNWString("title", title);
+	CAKE.SetCharField( ply, "title", title )
+	ply:SetNWString("title", title)
 	
-	return;
+	return
 	
 end
-concommand.Add( "rp_title", ccSetTitle );
+concommand.Add( "rp_title", ccSetTitle )
 
 -- Change IC Name
 function ccChangeName( ply, cmd, args )
@@ -27,44 +27,44 @@ function ccChangeName( ply, cmd, args )
 	end
 
 end
-concommand.Add( "rp_changename", ccChangeName );
+concommand.Add( "rp_changename", ccChangeName )
 
 --Gives money to a target player.
 function ccGiveMoney( ply, cmd, args )
 	
 	if( player.GetByID( args[ 1 ] ) != nil ) then
 	
-		local target = player.GetByID( args[ 1 ] );
+		local target = player.GetByID( args[ 1 ] )
 		
 		if( tonumber( args[ 2 ] ) > 0 ) then
 		
 			if( tonumber( CAKE.GetCharField( ply, "money" ) ) >= tonumber( args[ 2 ] ) ) then
 			
-				CAKE.ChangeMoney( target, args[ 2 ] );
-				CAKE.ChangeMoney( ply, 0 - args[ 2 ] );
-				CAKE.SendChat( ply, "You gave " .. target:Nick( ) .. " " .. args[ 2 ] .. " credits!" );
-				CAKE.SendChat( target, ply:Nick( ) .. " gave you " .. args[ 2 ] .. " credits!" );
+				CAKE.ChangeMoney( target, args[ 2 ] )
+				CAKE.ChangeMoney( ply, 0 - args[ 2 ] )
+				CAKE.SendChat( ply, "You gave " .. target:Nick( ) .. " " .. args[ 2 ] .. " credits!" )
+				CAKE.SendChat( target, ply:Nick( ) .. " gave you " .. args[ 2 ] .. " credits!" )
 				
 			else
 			
-				CAKE.SendChat( ply, "You do not have that many tokens!" );
+				CAKE.SendChat( ply, "You do not have that many tokens!" )
 				
 			end
 			
 		else
 		
-			CAKE.SendChat( ply, "Invalid amount of money!" );
+			CAKE.SendChat( ply, "Invalid amount of money!" )
 			
 		end
 		
 	else
 	
-		CAKE.SendChat( ply, "Target not found!" );
+		CAKE.SendChat( ply, "Target not found!" )
 		
 	end
 	
 end
-concommand.Add( "rp_givemoney", ccGiveMoney );	
+concommand.Add( "rp_givemoney", ccGiveMoney )	
 
 --Makes you fall unconcious.
 local function ccKnockOut( ply, cmd, args )

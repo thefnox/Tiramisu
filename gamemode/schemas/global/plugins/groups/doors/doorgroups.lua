@@ -6,7 +6,7 @@ hook.Add( "KeyPress", "TiramisuHandleDoors", function( ply, key )
 			local groupdoor = CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or 0
 			if type( groupdoor ) == "table" then groupdoor = groupdoor[1] end
 			if doorgroup == groupdoor then --lol
-				entity:Fire( "IN_USE", "", 0 );
+				entity:Fire( "IN_USE", "", 0 )
 			end
 		end
 		if( entity:GetClass() == "item_prop" ) then
@@ -20,11 +20,11 @@ end)
 function Admin_AddDoor(ply, cmd, args)
 	
 	local tr = ply:GetEyeTrace()
-	local trent = tr.Entity;
+	local trent = tr.Entity
 	
-	if(!CAKE.IsDoor(trent)) then ply:PrintMessage(3, "You must be looking at a door!"); return; end
+	if(!CAKE.IsDoor(trent)) then ply:PrintMessage(3, "You must be looking at a door!") return end
 
-	if(table.getn(args) < 1) then ply:PrintMessage(3, "Specify a doorgroup!"); return; end
+	if(table.getn(args) < 1) then ply:PrintMessage(3, "Specify a doorgroup!") return end
 	
 	local pos = trent:GetPos()
 	local Door = {}
@@ -38,7 +38,7 @@ function Admin_AddDoor(ply, cmd, args)
 	
 	table.insert(CAKE.Doors, Door)
 	
-	CAKE.SendChat(ply, "Door added");
+	CAKE.SendChat(ply, "Door added")
 
 	trent.doorgroup = Door["doorgroup"]
 	trent.building = Door["building"]
@@ -54,7 +54,7 @@ function Admin_SetDoorGroup(ply, cmd, args)
 	
 	local ent = ents.GetByIndex( args[1] )
 
-	if(table.getn(args) < 2) then ply:PrintMessage(3, "Specify a doorgroup!"); return; end
+	if(table.getn(args) < 2) then ply:PrintMessage(3, "Specify a doorgroup!") return end
 
 	ent.doorgroup = tonumber(args[2])
 
@@ -86,7 +86,7 @@ function Admin_SetDoorBuilding(ply, cmd, args)
 	
 	local ent = ents.GetByIndex( args[1] )
 
-	if(table.getn(args) < 2) then ply:PrintMessage(3, "Specify a building!"); return; end
+	if(table.getn(args) < 2) then ply:PrintMessage(3, "Specify a building!") return end
 
 	ent.building = tonumber(args[2])
 
@@ -118,7 +118,7 @@ function Admin_SetDoorTitle(ply, cmd, args)
 	
 	local ent = ents.GetByIndex( args[1] )
 
-	if(table.getn(args) < 2) then ply:PrintMessage(3, "Specify a title!"); return; end
+	if(table.getn(args) < 2) then ply:PrintMessage(3, "Specify a title!") return end
 
 	ent.title = args[2]
 	CAKE.SetDoorTitle( ent, args[2] )
@@ -151,7 +151,7 @@ function Admin_SetDoorPurchaseable(ply, cmd, args)
 	
 	local ent = ents.GetByIndex( args[1] )
 
-	if(table.getn(args) < 2) then ply:PrintMessage(3, "Specify if purchaseable!"); return; end
+	if(table.getn(args) < 2) then ply:PrintMessage(3, "Specify if purchaseable!") return end
 
 	ent.purchaseable = tonumber(args[2])
 
@@ -184,7 +184,7 @@ function PLUGIN.Init()
 	CAKE.AdminCommand( "adddoor", Admin_AddDoor, "Add group permissions to a door", true, true, 4 )
 	CAKE.AdminCommand( "setdoorgroup", Admin_SetDoorGroup, "Set door group access", true, true, 4 )
 	CAKE.AdminCommand( "setdoorbuilding", Admin_SetDoorBuilding, "Assign a door to a building", true, true, 4 )
-	CAKE.AdminCommand( "setdoortitle", Admin_SetDoorTitle, "Set a door's default title", true, true, 4 );
-	CAKE.AdminCommand( "setdoorpurchaseable", Admin_SetDoorPurchaseable, "Set a door's purchaseable status", true, true, 4 );
+	CAKE.AdminCommand( "setdoortitle", Admin_SetDoorTitle, "Set a door's default title", true, true, 4 )
+	CAKE.AdminCommand( "setdoorpurchaseable", Admin_SetDoorPurchaseable, "Set a door's purchaseable status", true, true, 4 )
 	
 end

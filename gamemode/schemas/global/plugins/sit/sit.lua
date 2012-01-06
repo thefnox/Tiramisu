@@ -1,6 +1,6 @@
-PLUGIN.Name = "Sitting"; -- What is the plugin name
-PLUGIN.Author = "Ryaga/BadassMC"; -- Author of the plugin
-PLUGIN.Description = "Handles the process of putting your ass on top of something"; -- The description or purpose of the plugin
+PLUGIN.Name = "Sitting" -- What is the plugin name
+PLUGIN.Author = "Ryaga/BadassMC" -- Author of the plugin
+PLUGIN.Description = "Handles the process of putting your ass on top of something" -- The description or purpose of the plugin
 
 CAKE.Chairs = {
 	[ "models/props_c17/furniturecouch001a.mdl" ] = {
@@ -39,7 +39,7 @@ end
 
 --Saves all chairs to file
 function CAKE.SaveChairs()
-	local keys = glon.encode(CAKE.Chairs);
+	local keys = glon.encode(CAKE.Chairs)
 	file.Write( CAKE.Name .. "/chairs.txt", keys )
 end
 
@@ -223,6 +223,6 @@ hook.Add( "PlayerSpawn", "TiramisuStandOnSpawn", function( ply )
 end)
 
 function PLUGIN.Init()
-	CAKE.AdminCommand( "createchair", ccCreateSit, "Add a chair", true, true, 2 );
-	CAKE.AdminCommand( "editchair", ccEditSit, "Edit a chair's coordinates", true, true, 2 );
+	CAKE.AdminCommand( "createchair", ccCreateSit, "Add a chair", true, true, 2 )
+	CAKE.AdminCommand( "editchair", ccEditSit, "Edit a chair's coordinates", true, true, 2 )
 end

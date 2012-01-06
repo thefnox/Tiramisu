@@ -1,30 +1,30 @@
 -- Set up the gamemode
-DeriveGamemode( "sandbox" );
-GM.Name = "Tiramisu";
+DeriveGamemode( "sandbox" )
+GM.Name = "Tiramisu"
 
 -- Define global variables
-CAKE = {  };
-CAKE.Running = false;
-CAKE.Loaded = false;
+CAKE = {  }
+CAKE.Running = false
+CAKE.Loaded = false
 
 -- Server Includes
 require( "glon" )
 if not(datastream) then  
-    require("datastream");  
+    require("datastream")  
 end  
 
-include( "shared.lua" ); -- Shared Functions
-include( "log.lua" ); -- Logging functions
-include( "configuration.lua" ); -- Configuration data
-include( "player_data.lua" ); -- Player data functions
-include( "player_util.lua" ); -- Player functions
-include( "admin.lua" ); -- Admin functions
-include( "concmd.lua" ); -- Concommands
+include( "shared.lua" ) -- Shared Functions
+include( "log.lua" ) -- Logging functions
+include( "configuration.lua" ) -- Configuration data
+include( "player_data.lua" ) -- Player data functions
+include( "player_util.lua" ) -- Player functions
+include( "admin.lua" ) -- Admin functions
+include( "concmd.lua" ) -- Concommands
 include( "items.lua" ) --Items
-include( "util.lua" ); -- Functions
-include( "schema.lua" ); -- Schema system
-include( "plugins.lua" ); -- Plugin system
-include( "client_resources.lua" ); -- Sends files to the client
+include( "util.lua" ) -- Functions
+include( "schema.lua" ) -- Schema system
+include( "plugins.lua" ) -- Plugin system
+include( "client_resources.lua" ) -- Sends files to the client
 include( "sh_animations.lua" ) --Animaaaaations.
 include( "sh_anim_tables.lua" ) --Animation tables
 
@@ -38,14 +38,12 @@ resource.AddFile( "models/tiramisu/animationtrees/barneyanimtree.mdl" )
 resource.AddFile( "models/tiramisu/gearhandler.mdl")
 resource.AddFile( "materials/tiramisu/gearhandler.vmt")
 resource.AddFile( "materials/tiramisu/gearhandler.vtf")
-resource.AddFile( "materials/tiramisu/tabbutton2.vmt" )
-resource.AddFile( "resource/fonts/harabara.ttf")
 resource.AddFile( "resource/fonts/YanoneKaffeesatz-Bold.ttf")
 resource.AddFile( "resource/fonts/YanoneKaffeesatz-Regular.ttf")
 
-CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ); -- Load the schema and plugins, this is NOT initializing.
+CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ) -- Load the schema and plugins, this is NOT initializing.
 
-CAKE.Loaded = true; -- Tell the server that we're loaded up
+CAKE.Loaded = true -- Tell the server that we're loaded up
 
 function GM:Initialize( ) -- Initialize the gamemode
 	
@@ -53,36 +51,36 @@ function GM:Initialize( ) -- Initialize the gamemode
 	-- Plugins need to be initialized before gamemode and schema so it can modify the way that the plugins and schema actually work.
 	-- AKA, hooks.
 	
-	CAKE.DayLog( "script.txt", "Plugins Initializing" );
-	CAKE.InitPlugins( );
+	CAKE.DayLog( "script.txt", "Plugins Initializing" )
+	CAKE.InitPlugins( )
 
-	CAKE.DayLog( "script.txt", "Schemas Initializing" );
-	CAKE.InitSchemas( );
+	CAKE.DayLog( "script.txt", "Schemas Initializing" )
+	CAKE.InitSchemas( )
 	
-	CAKE.DayLog( "script.txt", "Gamemode Initializing" );
+	CAKE.DayLog( "script.txt", "Gamemode Initializing" )
 	
 	--Timer to save the current gamemode time
-	timer.Create( "timesave", 120, 0, CAKE.SaveTime );
+	timer.Create( "timesave", 120, 0, CAKE.SaveTime )
 
 	--Timer to send the time to the player
-	timer.Create( "sendtime", 1, 0, CAKE.SendTime );
+	timer.Create( "sendtime", 1, 0, CAKE.SendTime )
 	
-	CAKE.Running = true;
+	CAKE.Running = true
 	
 end
 
 -- Player Initial Spawn
 function GM:PlayerInitialSpawn( ply )
 	
-	ply.LastOOC = -100000; -- This is so people can talk for the first time without having to wait.
+	ply.LastOOC = -100000 -- This is so people can talk for the first time without having to wait.
 	
 	for k, v in ipairs( CAKE.Schemafile ) do
-		umsg.Start( "addschema", ply );
+		umsg.Start( "addschema", ply )
 			
 			print(v)
-			umsg.String( v );
+			umsg.String( v )
 			
-		umsg.End( );
+		umsg.End( )
 	end
 
 	for k, v in pairs( CAKE.CurrencyData ) do
@@ -94,12 +92,12 @@ function GM:PlayerInitialSpawn( ply )
 	end
 
 	-- Set some default variables
-	ply.Ready = false;
-	ply:SetNWBool( "chatopen", false );
+	ply.Ready = false
+	ply:SetNWBool( "chatopen", false )
 	ply:SetModel( "models/kleiner.mdl" )
 
 	-- Load their data, or create a new datafile for them.
-	CAKE.LoadPlayerDataFile( ply );
+	CAKE.LoadPlayerDataFile( ply )
 	
 	self.BaseClass:PlayerInitialSpawn( ply )
 
@@ -111,16 +109,20 @@ end
 function GM:PlayerSpawn( ply )
 
 	if( !ply:IsCharLoaded() ) then
-		return; -- Player data isn't loaded. This is an initial spawn.
+		return -- Player data isn't loaded. This is an initial spawn.
 	end
 	
 	CAKE.SavePlayerData( ply )
 	
-	umsg.Start( "recieveragdoll", ply )
+	umsg.Start( "Tiramisu.ReceiveRagdoll", ply )
 		umsg.Short( nil )
 	umsg.End()--This is to reset the player's view back to their character after they die.
+
+	umsg.Start("Tiramisu.EnableBlackScreen", ply) --This is to disable the black screen after the player spawns.
+		umsg.Bool( false )
+	umsg.End()
 	
-	ply:StripWeapons( );
+	ply:StripWeapons( )
 	
 	if( ply:GetNWInt( "deathmode" ) == 1 ) then
 	
@@ -133,7 +135,7 @@ function GM:PlayerSpawn( ply )
 		ply:SetViewEntity( ply )
 	end
 	
-	timer.Create( ply:SteamID() .. "savetimer", 10, 0, function()
+	timer.Create( ply:SteamID() .. "savetimer", 30, 0, function()
 		if ValidEntity( ply ) then
 			CAKE.SavePlayerData( ply )
 		end
@@ -161,56 +163,17 @@ function GM:PlayerDisconnected( ply )
 end
 
 
-function GM:PlayerDeath(ply)
-	
-	CAKE.StandUp( ply )
-	CAKE.DeathMode(ply);
-
-end
-
-function GM:PlayerDeathThink(ply)
-
-	ply.nextsecond = CAKE.NilFix(ply.nextsecond, CurTime())
-	ply.deathtime = CAKE.NilFix(ply.deathtime, CAKE.ConVars[ "Respawn_Timer" ]);
-	
-	if(CurTime() > ply.nextsecond) then
-	
-		if(ply.deathtime < CAKE.ConVars[ "Respawn_Timer" ]) then
-		
-			ply.deathtime = ply.deathtime + 1;
-			ply.nextsecond = CurTime() + 1;
-			ply:SetNWInt("deathmoderemaining", CAKE.ConVars[ "Respawn_Timer" ] - ply.deathtime);
-			
-		else
-			CAKE.StandUp( ply )
-			ply:Spawn()
-			ply.deathtime = nil;
-			ply.nextsecond = nil;
-			ply:SetNWInt("deathmoderemaining", 0);
-			
-		end
-		
-	end
-	
-end
-
-function GM:DoPlayerDeath( ply, attacker, dmginfo )
-
-	-- We don't want kills, deaths, nor ragdolls being made. Kthx.
-	
-end
-
 function GM:PlayerSpawnSWEP( ply, class )
 
-	if( CAKE.PlayerRank( ply ) > 0 ) then return true; end
-	return false;
+	if( CAKE.PlayerRank( ply ) > 0 ) then return true end
+	return false
 	
 end
 
 function GM:PlayerGiveSWEP( ply )
 
-	if( CAKE.PlayerRank( ply ) > 0 ) then return true; end
-	return false; 
+	if( CAKE.PlayerRank( ply ) > 0 ) then return true end
+	return false 
 	
 end
 
@@ -245,21 +208,7 @@ end
 -- NO SENT FOR YOU.
 function GM:PlayerSpawnSENT( ply, class )
 	
-	if( CAKE.PlayerRank( ply ) > 0 ) then return true; end
-	return false;
-	
-end
-
--- Disallows suicide
-function GM:CanPlayerSuicide( ply )
-
-	if( !CAKE.ConVars[ "SuicideEnabled" ] ) then
-	
-		ply:ChatPrint( "Suicide is disabled!" )
-		return false
-		
-	end
-	
-	return true;
+	if( CAKE.PlayerRank( ply ) > 0 ) then return true end
+	return false
 	
 end

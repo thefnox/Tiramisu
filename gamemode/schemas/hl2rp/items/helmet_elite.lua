@@ -1,13 +1,14 @@
-ITEM.Name = "Elite Helmet";
-ITEM.Class = "helmet_elite";
-ITEM.Description = "Advanced protection. In visor display and all";
-ITEM.Model = "models/Combine_Super_Soldier.mdl";
-ITEM.Purchaseable = false;
-ITEM.Price = 350;
-ITEM.ItemGroup = 2;
+ITEM.Name = "Elite Helmet"
+ITEM.Class = "helmet_elite"
+ITEM.Description = "Advanced protection. In visor display and all"
+ITEM.Model = "models/Combine_Super_Soldier.mdl"
+ITEM.Purchaseable = false
+ITEM.Unusable = true
+ITEM.Price = 350
+ITEM.ItemGroup = 2
 ITEM.Flags = {
-	"overlay;1",
-	"headprotection;0.8"
+	"overlay1",
+	"headprotection0.8"
 }
 ITEM.Content = {
 	"materials/models/combine_soldier/combine_elite.vmt",
@@ -20,7 +21,7 @@ end
 
 function ITEM:Pickup(ply)
 
-	self:Remove();
+	self:Remove()
 
 end
 

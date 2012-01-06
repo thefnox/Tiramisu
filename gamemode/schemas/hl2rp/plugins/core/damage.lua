@@ -1,6 +1,6 @@
-PLUGIN.Name = "Damage Systems"; -- What is the plugin name
-PLUGIN.Author = "Big Bang"; -- Author of the plugin
-PLUGIN.Description = "Calculates damage and damage effects"; -- The description or purpose of the plugin
+PLUGIN.Name = "Damage Systems" -- What is the plugin name
+PLUGIN.Author = "Big Bang" -- Author of the plugin
+PLUGIN.Description = "Calculates damage and damage effects" -- The description or purpose of the plugin
 
 --Calculates the protection ratio of an item.
 function CAKE.CalculateShields( ply, item, helmet )
@@ -71,8 +71,9 @@ function GM:ScalePlayerDamage( ply, hitgroup, dmginfo )
 			local randomchance = math.random( 1, 40 )
 			if( randomchance == 5 ) then
 				local wep = ply:GetActiveWeapon( )
-				if( wep:GetClass() != "hands" and wep:GetClass() != "gmod_tool" and wep:GetClass() != "weapon_physcannon" and wep:GetClass() != "weapon_physgun" ) then
-					CAKE.DropWeapon( ply, ply:GetActiveWeapon( ) )
+				local class = wep:GetClass()
+				if( class != "hands" and class != "gmod_tool" and class != "weapon_physcannon" and class != "weapon_physgun" ) then
+					CAKE.DropWeapon( ply, class )
 				end
 			end
 			dmginfo:ScaleDamage( 0.7 )

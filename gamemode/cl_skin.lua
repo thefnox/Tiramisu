@@ -180,119 +180,6 @@ function SKIN:PaintQuickMenuLabel(panel)
 end
 
 /*---------------------------------------------------------
-	Stamina Bar
----------------------------------------------------------*/
-local perc, alpha
-alpha = 230
-function SKIN:PaintStaminaBar()
-	if CAKE.MinimalHUD:GetBool() then
-		if LocalPlayer().TiramisuStaminaRegen and alpha != 230 then
-			alpha = Lerp( 10 * RealFrameTime(), alpha, 230 )
-		else
-			alpha = Lerp( 10 * RealFrameTime(), alpha, 0 )
-		end
-	else
-		alpha = 230
-	end
-	perc = LocalPlayer():GetStamina() / 100
-	if alpha != 0 then
-		--perc = math.Clamp( perc - 0.001, 0, 1 )
-		draw.RoundedBoxEx( 4, ScrW()/2 - 150, 0, 300, 31, Color( 50, 50, 50, alpha ), false, false, false, true )
-		surface.SetDrawColor( Color( 10, 10, 10, alpha ) )
-		surface.DrawRect( ScrW()/2 - 147, 2, 293, 26 )
-		draw.SimpleText(tostring(math.ceil(perc * 100)) .. "%", "Tiramisu12Font", ScrW()/2 - 144 + 287, 9, Color(255,255,255,alpha), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT)
-		if perc != 0 then
-			draw.RoundedBoxEx( 2, ScrW()/2 - 144, 5, 287 * perc, 20, Color( 200, 200, 50, alpha ), false, false, false, true )
-			draw.RoundedBoxEx( 2, ScrW()/2 - 140, 8, 280 * perc, 4, Color( 255, 255, 255, math.Clamp( alpha - 180, 0, 50) ), false, false, false, true )
-		end
-		draw.SimpleText("STAMINA", "Tiramisu12Font", ScrW()/2 - 144 + math.Clamp( 287 * perc, 41, 287), 9, Color(255,255,255,alpha), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT)
-	end
-end
-
-/*---------------------------------------------------------
-	DeathMessage
----------------------------------------------------------*/
-function SKIN:PaintDeathMessage()
-	if LocalPlayer():GetNWInt("deathmode", 0 ) == 1 then
-		draw.DrawText( "You have been mortally wounded. Wait " .. tostring( LocalPlayer( ):GetNWInt( "deathmoderemaining" ) ) .. " seconds", "Tiramisu18Font", ScrW( ) / 2,60, Color( 255,255,255,255 ), TEXT_ALIGN_CENTER )
-	end
-	
-	if LocalPlayer():GetNWBool("unconciousmode", false ) then
-		draw.DrawText( "You have been knocked out. Type 'rp_wakeup' on console.", "Tiramisu18Font", ScrW( ) / 2 ,60, Color( 255,255,255,255 ), TEXT_ALIGN_CENTER )
-	end
-end
-
-/*---------------------------------------------------------
-	TiramisuClock, draws current gamemode time and player title.
----------------------------------------------------------*/
-local struc = {}
-struc.pos = { ScrW() - 10, 10 } -- Pos x, y
-struc.color = Color(230,230,230,255 ) -- Red
-struc.font = "Tiramisu18Font" -- Font
-struc.xalign = TEXT_ALIGN_RIGHT -- Horizontal Alignment
-struc.yalign = TEXT_ALIGN_RIGHT -- Vertical Alignment
-
-function SKIN:PaintTiramisuClock()
-	local markuplbl = markup.Parse( "<color=230,230,230,255><font=TiramisuTimeFont>" .. LocalPlayer():GetNWString( "title", "Connecting..." ) .. "</font></color>", 300 )
-	if !CAKE.MinimalHUD:GetBool() or CAKE.MenuOpen then 
-		if GetGlobalString( "time" ) != "Loading.." and GetGlobalString( "time" ) != "" then
-			struc.text = CAKE.FindDayName() .. ", " .. GetGlobalString( "time" )
-			struc.pos = { ScrW() - 10, 10 } -- Pos x, y
-			draw.Text( struc )
-		else
-			struc.text = GetGlobalString( "time" )
-			struc.pos = { ScrW() - 10, 10 } -- Pos x, y
-			draw.Text( struc )
-		end
-	end
-	if CAKE.MenuOpen then
-		struc.text = LocalPlayer():Nick()
-		struc.pos = { ScrW() - 10, 30 }
-		draw.Text( struc )
-		markuplbl:Draw( ScrW() - 10, 50, TEXT_ALIGN_RIGHT )
-	end
-end
-
-/*---------------------------------------------------------
-	TargetInfo, messages over items and props
----------------------------------------------------------*/
-
-function SKIN:PaintTargetInfo()
-	local ang = gui.ScreenToVector(gui.MouseX(), gui.MouseY())
-	local tracedata = {}
-	tracedata.start = CAKE.CameraPos
-	tracedata.endpos = CAKE.CameraPos+(ang*300)
-	tracedata.filter = LocalPlayer()
-	local tr = util.TraceLine(tracedata)
-	
-	if( !tr.HitNonWorld ) then return end
-	
-	if( tr.Entity:GetClass( ) == "item_prop" and tr.Entity:GetPos( ):Distance( CAKE.CameraPos ) <= 200 ) then
-		--If the entity is nearby, we draw it's name and description fully.
-
-		local screenpos = tr.Entity:GetPos( ):ToScreen( )
-		draw.DrawText( tr.Entity:GetNWString( "Name" ), "Tiramisu18Font", screenpos.x + 2, screenpos.y + 2, Color( 0, 0, 0, 255 ), 1 )	
-		draw.DrawText( tr.Entity:GetNWString( "Name" ), "Tiramisu18Font", screenpos.x, screenpos.y, Color( 255, 255, 255, 255 ), 1 )
-		draw.DrawText( tr.Entity:GetNWString( "Description" ), "Tiramisu18Font", screenpos.x + 2, screenpos.y + 22, Color( 0, 0, 0, 255 ), 1 )
-		draw.DrawText( tr.Entity:GetNWString( "Description" ), "Tiramisu18Font", screenpos.x, screenpos.y + 20, Color( 255, 255, 255, 255 ), 1 )
-
-	elseif ( tr.Entity:GetClass( ) == "item_prop" and tr.Entity:GetPos( ):Distance( CAKE.CameraPos ) > 200 ) then
-		--If the entity is further away than 200 units, we draw only it's name, but greyed out to indicate that you can't use it unless you get closer.
-
-		local screenpos = tr.Entity:GetPos( ):ToScreen( )
-		draw.DrawText( tr.Entity:GetNWString( "Name" ), "Tiramisu18Font", screenpos.x + 2, screenpos.y + 2, Color( 0, 0, 0, 185 ), 1 )	
-		draw.DrawText( tr.Entity:GetNWString( "Name" ), "Tiramisu18Font", screenpos.x, screenpos.y, Color( 125, 125, 125, 185 ), 1 )
-
-	elseif tr.Entity:GetNWString( "propdescription", "" ) != "" and tr.Entity:GetPos( ):Distance( LocalPlayer( ):GetPos( ) ) < 200 then
-		--if it's a prop with a description added to it, you can read it's description only if you're 200 units near.
-
-		local screenpos = tr.Entity:GetPos( ):ToScreen( )
-		draw.DrawText( tr.Entity:GetNWString( "propdescription" ), "Tiramisu18Font", screenpos.x + 2, screenpos.y + 2, Color( 0, 0, 0, 255 ), 1 )
-		draw.DrawText( tr.Entity:GetNWString( "propdescription" ), "Tiramisu18Font", screenpos.x, screenpos.y, Color( 255, 255, 255, 255 ), 1 )
-	end
-end
-
-/*---------------------------------------------------------
 	TiramisuChatBox
 ---------------------------------------------------------*/
 
@@ -350,6 +237,183 @@ function SKIN:PaintTiramisuChatBox(panel)
 	surface.DrawOutlinedRect( 0, 0, panel:GetWide(), panel:GetTall() )
 
 end
+
+
+--------------------
+--------------------
+----HUD ELEMENTS----
+--------------------
+--------------------
+
+/*---------------------------------------------------------
+	Stamina Bar
+---------------------------------------------------------*/
+local perc, alpha
+alpha = 230
+function SKIN:PaintStaminaBar()
+	if CAKE.MinimalHUD:GetBool() then
+		if LocalPlayer().TiramisuStaminaRegen and alpha != 230 then
+			alpha = Lerp( 10 * RealFrameTime(), alpha, 230 )
+		else
+			alpha = Lerp( 10 * RealFrameTime(), alpha, 0 )
+		end
+	else
+		alpha = 230
+	end
+	perc = LocalPlayer():GetStamina() / 100
+	if alpha != 0 then
+		--perc = math.Clamp( perc - 0.001, 0, 1 )
+		draw.RoundedBoxEx( 4, ScrW()/2 - 150, 0, 300, 31, Color( 50, 50, 50, alpha ), false, false, false, true )
+		surface.SetDrawColor( Color( 10, 10, 10, alpha ) )
+		surface.DrawRect( ScrW()/2 - 147, 2, 293, 26 )
+		draw.SimpleText(tostring(math.ceil(perc * 100)) .. "%", "Tiramisu12Font", ScrW()/2 - 144 + 287, 9, Color(255,255,255,alpha), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT)
+		if perc != 0 then
+			draw.RoundedBoxEx( 2, ScrW()/2 - 144, 5, 287 * perc, 20, Color( 200, 200, 50, alpha ), false, false, false, true )
+			draw.RoundedBoxEx( 2, ScrW()/2 - 140, 8, 280 * perc, 4, Color( 255, 255, 255, math.Clamp( alpha - 180, 0, 50) ), false, false, false, true )
+		end
+		draw.SimpleText("STAMINA", "Tiramisu12Font", ScrW()/2 - 144 + math.Clamp( 287 * perc, 41, 287), 9, Color(255,255,255,alpha), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT)
+	end
+end
+
+/*---------------------------------------------------------
+	DeathMessage
+---------------------------------------------------------*/
+function SKIN:PaintDeathMessage()
+	if LocalPlayer():GetNWInt("deathmode", 0 ) == 1 then
+		if LocalPlayer():GetNWInt( "deathmoderemaining" ) < 5 and LocalPlayer():GetNWInt( "deathmoderemaining" ) != 0 then
+			CAKE.EnableBlackScreen( CAKE.ConVars[ "FadeToBlackOnDeath" ] )
+		end
+		if LocalPlayer():GetNWInt( "deathmoderemaining" ) > 0 then
+			draw.DrawText( "You have been mortally wounded. Wait " .. tostring( LocalPlayer( ):GetNWInt( "deathmoderemaining" ) ) .. " seconds", "Tiramisu18Font", ScrW( ) / 2,60, Color( 255,255,255,255 ), TEXT_ALIGN_CENTER )
+		elseif !CAKE.ConVars[ "Instant_Respawn" ] then
+			draw.DrawText( "Press the button to respawn or type rp_acceptdeath in console.", "Tiramisu18Font", ScrW( ) / 2,60, Color( 255,255,255,255 ), TEXT_ALIGN_CENTER )
+		end
+	end
+	
+	if LocalPlayer():GetNWBool("unconciousmode", false ) then
+		draw.DrawText( "You have been knocked out. Type 'rp_wakeup' on console.", "Tiramisu18Font", ScrW( ) / 2 ,60, Color( 255,255,255,255 ), TEXT_ALIGN_CENTER )
+	end
+end
+
+/*---------------------------------------------------------
+	TiramisuClock, draws current gamemode time and player title.
+---------------------------------------------------------*/
+local struc = {}
+struc.pos = { ScrW() - 10, 10 } -- Pos x, y
+struc.color = Color(230,230,230,255 ) -- Red
+struc.font = "Tiramisu18Font" -- Font
+struc.xalign = TEXT_ALIGN_RIGHT -- Horizontal Alignment
+struc.yalign = TEXT_ALIGN_RIGHT -- Vertical Alignment
+
+function SKIN:PaintTiramisuClock()
+	local markuplbl = markup.Parse( "<color=230,230,230,255><font=TiramisuTimeFont>" .. LocalPlayer():GetNWString( "title", "Connecting..." ) .. "</font></color>", 300 )
+	if !CAKE.MinimalHUD:GetBool() or CAKE.MenuOpen then 
+		if GetGlobalString( "time" ) != "Loading.." and GetGlobalString( "time" ) != "" then
+			struc.text = CAKE.FindDayName() .. ", " .. GetGlobalString( "time" )
+			struc.pos = { ScrW() - 10, 10 } -- Pos x, y
+			draw.Text( struc )
+		else
+			struc.text = GetGlobalString( "time" )
+			struc.pos = { ScrW() - 10, 10 } -- Pos x, y
+			draw.Text( struc )
+		end
+	end
+	if CAKE.MenuOpen then
+		struc.text = LocalPlayer():Nick()
+		struc.pos = { ScrW() - 10, 30 }
+		draw.Text( struc )
+		markuplbl:Draw( ScrW() - 10, 50, TEXT_ALIGN_RIGHT )
+	end
+end
+
+/*---------------------------------------------------------
+	TargetInfo, messages over items and props
+---------------------------------------------------------*/
+local screenpos
+function SKIN:PaintTargetInfo()
+	for _, ent in pairs( ents.FindInSphere( LocalPlayer():GetPos(), 500 ) ) do
+		if ValidEntity( ent ) and !ent:IsWorld() and LocalPlayer():CanTraceTo(ent) then
+			if ent:GetClass() == "item_prop" then
+				screenpos = ent:LocalToWorld(ent:OBBCenter())
+				if screenpos:Distance( LocalPlayer():GetPos() ) > 200 then
+					screenpos = screenpos:ToScreen()
+					draw.SimpleText( ent:GetNWString( "Name",""), "Tiramisu18Font", screenpos.x, screenpos.y, Color(150,150,150,150),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+				else
+					screenpos = screenpos:ToScreen()
+					draw.SimpleTextOutlined( ent:GetNWString( "Name",""), "Tiramisu18Font", screenpos.x, screenpos.y, Color(255,255,255,255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER,2,Color(0,0,0,255))
+					draw.SimpleTextOutlined( ent:GetNWString( "Description",""), "Tiramisu18Font", screenpos.x, screenpos.y+20, Color(255,255,255,255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER,2,Color(0,0,0,255))
+				end
+			elseif ent:GetNWString( "propdescription", "" ) != "" then
+				screenpos = ent:LocalToWorld(ent:OBBCenter()):ToScreen()
+				draw.SimpleTextOutlined( ent:GetNWString( "propdescription",""), "Tiramisu18Font", screenpos.x, screenpos.y, Color(255,255,255,255 ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER,2,Color(0,0,0,255))
+			end
+		end
+	end
+end
+
+/*---------------------------------------------------------
+	BlurScreen, used in the fullscreen editors
+---------------------------------------------------------*/
+local x, y, n
+local gradientup = surface.GetTextureID("gui/gradient_up")
+local gradientdown = surface.GetTextureID("gui/gradient_down")
+function SKIN:PaintBlurScreen()
+	color = CAKE.BaseColor or Color( 100, 100, 115, 150 )
+
+	// new hip way of doing gradients
+
+	x,y = ScrW(), ScrH()
+
+	surface.SetTexture(gradientdown)
+	surface.SetDrawColor( 0, 0, 0, 250 ) 
+	surface.DrawTexturedRectUV( 0, 0, x, y/5 , 0, y/5, y/5 )
+	surface.SetTexture(gradientup)
+	surface.DrawTexturedRectUV( 0, y - y/5, x, y/5 , 0, y/5, y/5 )
+	surface.SetTexture()
+	
+	// Background 
+	surface.SetMaterial( matBlurScreen ) 
+	surface.SetDrawColor( 255, 255, 255, 255 ) 
+	
+	matBlurScreen:SetMaterialFloat( "$blur", 5 ) 
+	render.UpdateScreenEffectTexture() 
+	
+	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() ) 
+	
+	surface.SetDrawColor( color.r, color.g, color.b, 150 ) 
+	surface.DrawRect( 0, 0, ScrW(), ScrH() ) 
+
+
+	// Pretentious line bullshit :P
+	x = math.floor( ScrW() / 5 )
+	y = math.floor( ScrH() / 5 )
+
+	surface.SetDrawColor( 50, 50, 50, 110 ) 
+
+	for i = 1, ScrW() / 5 * 2  do
+		surface.DrawLine( ( i * 5 ),0, 0, ( i * 5 ) )
+	end
+
+end
+
+/*---------------------------------------------------------
+	TiramisuCrosshair
+---------------------------------------------------------*/
+local trace, pos
+function SKIN:PaintTiramisuCrosshair()
+	trace = LocalPlayer():GetEyeTrace()
+	pos = trace.HitPos:ToScreen()
+	if pos.visible then
+		if !trace.HitWorld then
+			surface.SetDrawColor( 200, 50, 50, 220 )
+		else
+			surface.SetDrawColor( 220, 220, 220, 220 )
+		end
+		surface.DrawLine( pos.x - 5, pos.y, pos.x + 5, pos.y )
+		surface.DrawLine( pos.x, pos.y - 5, pos.x, pos.y + 5 )
+	end
+end
+
 
 
 derma.DefineSkin( "Tiramisu", "Made to look like some good stuff", SKIN )

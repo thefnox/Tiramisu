@@ -55,12 +55,14 @@ if CLIENT then
 	end)
 else
 	hook.Add( "PlayerSpawn", "Tiramisu.ResetStamina", function( ply )
-		ply:SetStamina( 100 )
-		timer.Create( "Tiramisu.StaminaRecovery." .. ply:SteamID(), 1, 0, function()
-			if ValidEntity( ply ) then
-				ply:SetStamina(ply:GetStamina() + CAKE.Stats.Stamina.BaseRegenRate)
-			end
-		end)
+		if ply:IsCharLoaded() then
+			ply:SetStamina( 100 )
+			timer.Create( "Tiramisu.StaminaRecovery." .. ply:SteamID(), 1, 0, function()
+				if ValidEntity( ply ) then
+					ply:SetStamina(ply:GetStamina() + CAKE.Stats.Stamina.BaseRegenRate)
+				end
+			end)
+		end
 	end)
 
 	hook.Add( "PlayerDisconnected", "Tiramisu.DestroyResetStaminaTimer", function( ply )
@@ -74,7 +76,7 @@ else
 		else
 			ply:SetJumpPower( ply.NormalJump or ply:GetJumpPower() )
 		end
-		if ply:OnGround() and ply:KeyDown( IN_JUMP ) and !ply.StaminaOnJump then
+		if ply:OnGround() and ply:KeyDown( IN_JUMP ) and ply:KeyDownLast() != IN_JUMP and !ply.StaminaOnJump then
 			ply:AddStamina( CAKE.Stats.Stamina.BaseRunCost * -5 )
 			ply.StaminaOnJump = true
 		elseif ply:OnGround() and ply.StaminaOnJump and !ply.Landing then
@@ -142,4 +144,53 @@ end
 
 function meta:AddStamina( amount )
 	self:SetStamina( self:GetStamina() + amount )
+end
+
+
+--Health
+
+if CLIENT then
+
+	function meta:GetMaxHealth()
+		return self.MaxHealth or 100
+	end
+
+	usermessage.Hook( "Tiramisu.SendMaxHealth", function(um)
+		LocalPlayer().MaxHealth = um:ReadFloat()
+		if LocalPlayer().MaxHealth == LocalPlayer():Health() then
+			timer.Simple( 3, function()
+				LocalPlayer().TiramisuHealthRegen = false
+			end)
+		else
+			LocalPlayer().TiramisuHealthRegen = true
+		end
+	end)
+
+	hook.Add( "HUDPaint", "Tiramisu.DrawHealthBar", function()
+		--See cl_skin.lua for it.
+	end)
+else
+	hook.Add( "PlayerSpawn", "Tiramisu.ResetHealth", function( ply )
+		if ply:IsCharLoaded() then
+			ply:SetMaxHealth( math.Clamp(CAKE.GetCharField( ply, "health" ),1, CAKE.Stats.Health.Max))
+			umsg.Start("Tiramisu.SendMaxHealth", ply )
+				umsg.Float(CAKE.GetCharField( ply, "health" ))
+			umsg.End()
+			timer.Create( "Tiramisu.HealthRecovery." .. ply:SteamID(), 1, 0, function()
+				if ValidEntity( ply ) then
+					if (ply:Health() + CAKE.Stats.Health.BaseRegenRate) / ply:GetMaxHealth() * 100 <= CAKE.Stats.Health.MaxRegenPerc then
+						ply:SetHealth(ply:Health() + CAKE.Stats.Health.BaseRegenRate)
+					end
+				end
+			end)
+		end
+	end)
+
+	hook.Add( "PlayerDisconnected", "Tiramisu.DestroyResetHealthTimer", function( ply )
+		timer.Destroy("Tiramisu.HealthRecovery." .. ply:SteamID())
+	end)
+end
+
+function PLUGIN.Init()
+	CAKE.AddDataField( 2, "health", CAKE.Stats.Health.Base )
 end

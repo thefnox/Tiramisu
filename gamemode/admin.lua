@@ -6,7 +6,7 @@ function CAKE.AnnounceAction( ply, action )
 
 	local s
 	if ply:IsPlayer() then
-		s = "[ ADMIN ] " .. ply:Name( ) .. " " .. action;
+		s = "[ ADMIN ] " .. ply:Name( ) .. " " .. action
 
 		for k, v in pairs( player.GetAll( ) ) do
 
@@ -14,7 +14,7 @@ function CAKE.AnnounceAction( ply, action )
 			
 		end
 	else
-		s = "[ ADMIN ] Console " .. action;
+		s = "[ ADMIN ] Console " .. action
 
 		for k, v in pairs( player.GetAll( ) ) do
 
@@ -28,14 +28,14 @@ end
 -- This will create an admin function.
 function CAKE.AdminCommand( ccName, func, description, CanRunFromConsole, CanRunFromAdmin, MinRank )
 
-		local cmd = {  };
-		cmd.func = func;
-		cmd.desc = description;
-		cmd.CanRunFromConsole = CAKE.NilFix(CanRunFromConsole, true);
-		cmd.CanRunFromAdmin = CAKE.NilFix(CanRunFromAdmin, true);
-		cmd.MinRank = CAKE.NilFix(MinRank, 0);
+		local cmd = {  }
+		cmd.func = func
+		cmd.desc = description
+		cmd.CanRunFromConsole = CAKE.NilFix(CanRunFromConsole, true)
+		cmd.CanRunFromAdmin = CAKE.NilFix(CanRunFromAdmin, true)
+		cmd.MinRank = CAKE.NilFix(MinRank, 0)
 
-		CAKE.AdminCommands[ ccName ] = cmd;
+		CAKE.AdminCommands[ ccName ] = cmd
 	
 end
 
@@ -121,33 +121,33 @@ end
 -- Syntax is rp_admin command args
 function ccAdmin( ply, cmd, args )
 
-	local cmd = CAKE.NilFix( CAKE.AdminCommands[args[ 1 ]], 0);
+	local cmd = CAKE.NilFix( CAKE.AdminCommands[args[ 1 ]], 0)
 	
 	if( cmd == 0 ) then
 	
-		CAKE.SendChat( ply, "That is not a valid command!" );
-		return;
+		CAKE.SendChat( ply, "That is not a valid command!" )
+		return
 		
 	end
 	
-	local func = cmd.func; -- Retrieve the function
-	local CanRunFromConsole = cmd.CanRunFromConsole; -- Can it be run from the console
-	local CanRunFromAdmin = cmd.CanRunFromAdmin; -- Can it be run from a player's console
+	local func = cmd.func -- Retrieve the function
+	local CanRunFromConsole = cmd.CanRunFromConsole -- Can it be run from the console
+	local CanRunFromAdmin = cmd.CanRunFromAdmin -- Can it be run from a player's console
 	local MinRank = cmd.MinRank
 	local CMDName = args[1]
 	
-	table.remove( args, 1 ); -- Remove the admin command from the arguments
+	table.remove( args, 1 ) -- Remove the admin command from the arguments
 	args = parseAdminArgs(args)
 	if args == 4 then CAKE.SendChat(ply, "Three quotes in one word? What are you doing.") return end
 	if( ply:EntIndex( ) == 0 ) then -- We're dealing with a console
 		
 		if( CanRunFromConsole ) then
 		
-			func( ply, cmd, args );
+			func( ply, cmd, args )
 			
 		else
 
-			CAKE.PrintConsole( "You cannot run this command from server console!" );
+			CAKE.PrintConsole( "You cannot run this command from server console!" )
 			
 		end
 		

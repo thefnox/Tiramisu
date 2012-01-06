@@ -1,6 +1,6 @@
 RCLICK.Name = "Open"
 
-usermessage.Hook("PopulateCont", function() CONTAINER = {} end);
+usermessage.Hook("PopulateCont", function() CONTAINER = {} end)
 usermessage.Hook("AddItemCont", function(um)
 
 	class = um:ReadString()
@@ -153,7 +153,7 @@ hozdivider:SetDividerWidth( 12 )
 
 
 end
-usermessage.Hook("EndPopulate", MakeContainerUp);
+usermessage.Hook("EndPopulate", MakeContainerUp)
 
 
 function RCLICK.Condition(target)

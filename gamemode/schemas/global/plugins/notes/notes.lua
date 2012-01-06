@@ -21,4 +21,4 @@ function write( ply, handler, id, encoded, decoded )
 	end
 
 end
-datastream.Hook( "NoteStream", write );
+datastream.Hook( "NoteStream", write )

@@ -1,10 +1,10 @@
-ITEM.Name = "SPAS-12 Shotgun";
-ITEM.Class = "weapon_shotgun";
-ITEM.Description = "Overwatch Edition";
-ITEM.Model = "models/weapons/w_shotgun.mdl";
-ITEM.Purchaseable = true;
-ITEM.Price = 600;
-ITEM.ItemGroup = 2;
+ITEM.Name = "SPAS-12 Shotgun"
+ITEM.Class = "weapon_shotgun"
+ITEM.Description = "Overwatch Edition"
+ITEM.Model = "models/weapons/w_shotgun.mdl"
+ITEM.Purchaseable = true
+ITEM.Price = 600
+ITEM.ItemGroup = 2
 ITEM.Offset = Vector( 0,-3,0 )
 ITEM.OffsetAngle = Angle( 45,0,0 )
 ITEM.Bone = "chest"
@@ -18,12 +18,12 @@ end
 
 function ITEM:Pickup(ply)
 
-	self:Remove();
+	self:Remove()
 
 end
 
 function ITEM:UseItem(ply)
 
-	self:Remove();
+	self:Remove()
 
 end

@@ -1,10 +1,10 @@
-ITEM.Name = "Paper";
-ITEM.Class = "paper";
-ITEM.Description = "";
-ITEM.Model = "models/props_junk/garbage_newspaper001a.mdl";
-ITEM.Purchaseable = true;
-ITEM.Price = 50;
-ITEM.ItemGroup = 1;
+ITEM.Name = "Paper"
+ITEM.Class = "paper"
+ITEM.Description = ""
+ITEM.Model = "models/props_junk/garbage_newspaper001a.mdl"
+ITEM.Purchaseable = true
+ITEM.Price = 50
+ITEM.ItemGroup = 1
 ITEM.Stack = true
 ITEM.Unusable = true
 ITEM.RightClick = {

@@ -9,10 +9,10 @@ function CAKE.LoadDoors()
 
 	if(file.Exists(CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt")) then
 
-		local rawdata = file.Read( CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt");
+		local rawdata = file.Read( CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt")
 		local tabledata = glon.decode( rawdata )
 		
-		CAKE.Doors = tabledata;
+		CAKE.Doors = tabledata
 		local entities
 
 		for _, door in pairs( CAKE.Doors ) do
@@ -34,8 +34,8 @@ end
 
 function CAKE.SaveDoors()
 
-	local keys = glon.encode(CAKE.Doors);
-	file.Write(CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt", keys);
+	local keys = glon.encode(CAKE.Doors)
+	file.Write(CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt", keys)
 
 end
 
@@ -90,63 +90,63 @@ end
 
 function ccLockDoor( ply, cmd, args )
 	
-	local entity = ents.GetByIndex( tonumber( args[ 1 ] ) );
-	local door = ents.GetByIndex( tonumber( args[ 1 ] ) );
+	local entity = ents.GetByIndex( tonumber( args[ 1 ] ) )
+	local door = ents.GetByIndex( tonumber( args[ 1 ] ) )
 	local doorgroup = CAKE.GetDoorGroup(entity) or 0
 	local groupdoor = CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or 0
 	if( CAKE.IsDoor( door ) ) then
 		if( ( door.owner != nil ) and door.owner == ply ) or ply:IsSuperAdmin() or ply:IsAdmin() then
-			door:Fire( "lock", "", 0 );
-			CAKE.SendChat( ply, "Door locked!" );
+			door:Fire( "lock", "", 0 )
+			CAKE.SendChat( ply, "Door locked!" )
 		else
 			if type( groupdoor ) == "table" then groupdoor = groupdoor[1] end
 			if doorgroup == groupdoor then --lol
-				door:Fire( "lock", "", 0 );
-				CAKE.SendChat( ply, "Door locked!" );
+				door:Fire( "lock", "", 0 )
+				CAKE.SendChat( ply, "Door locked!" )
 			else
-				CAKE.SendChat( ply, "This is not your door!" );
+				CAKE.SendChat( ply, "This is not your door!" )
 			end
 		end
 	end
 
 end
-concommand.Add( "rp_lockdoor", ccLockDoor );
+concommand.Add( "rp_lockdoor", ccLockDoor )
 
 function ccUnLockDoor( ply, cmd, args )
 	
-	local entity = ents.GetByIndex( tonumber( args[ 1 ] ) );
-	local door = ents.GetByIndex( tonumber( args[ 1 ] ) );
+	local entity = ents.GetByIndex( tonumber( args[ 1 ] ) )
+	local door = ents.GetByIndex( tonumber( args[ 1 ] ) )
 	local doorgroup = CAKE.GetDoorGroup(entity) or 0
 	local groupdoor = CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or 0
 	if( CAKE.IsDoor( door ) ) then
 		if( ( door.owner != nil ) and door.owner == ply ) or ply:IsSuperAdmin() or ply:IsAdmin() then
-			door:Fire( "unlock", "", 0 );
-			CAKE.SendChat( ply, "Door unlocked!" );
+			door:Fire( "unlock", "", 0 )
+			CAKE.SendChat( ply, "Door unlocked!" )
 		else
 			if type( groupdoor ) == "table" then groupdoor = groupdoor[1] end
 			if doorgroup == groupdoor then --lol
-				door:Fire( "unlock", "", 0 );
-				CAKE.SendChat( ply, "Door unlocked!" );
+				door:Fire( "unlock", "", 0 )
+				CAKE.SendChat( ply, "Door unlocked!" )
 			else
-				CAKE.SendChat( ply, "This is not your door!" );
+				CAKE.SendChat( ply, "This is not your door!" )
 			end
 		end
 	end
 
 
 end
-concommand.Add( "rp_unlockdoor", ccUnLockDoor );
+concommand.Add( "rp_unlockdoor", ccUnLockDoor )
 
 function ccPurchaseDoor( ply, cmd, args )
-	local door = ents.GetByIndex( tonumber( args[ 1 ] ) );
+	local door = ents.GetByIndex( tonumber( args[ 1 ] ) )
 	
-	local pos = door:GetPos( );
+	local pos = door:GetPos( )
 	
 		
 	if( CAKE.GetDoorGroup( door ) and !door.purchaseable ) then
 		
-		CAKE.SendChat( ply, "This is not a purchaseable door!" );
-		return;
+		CAKE.SendChat( ply, "This is not a purchaseable door!" )
+		return
 			
 	end
 
@@ -169,35 +169,35 @@ function ccPurchaseDoor( ply, cmd, args )
 						end
 					end
 				end
-				CAKE.SendChat( ply, "Building Owned" );
+				CAKE.SendChat( ply, "Building Owned" )
 			else
 				if( tonumber( CAKE.GetCharField( ply, "money" ) ) >= 50 ) then
 					
 					-- Enough money to start off, let's start the rental.
-					CAKE.ChangeMoney( ply, -50 );
-					door.owner = ply;
-					CAKE.SendChat( ply, "Door Owned" );
+					CAKE.ChangeMoney( ply, -50 )
+					door.owner = ply
+					CAKE.SendChat( ply, "Door Owned" )
 
 				end
 			end
 			
 		elseif( door.owner == ply ) then
 		
-			door.owner = nil;
-			CAKE.ChangeMoney( ply, 50 );
+			door.owner = nil
+			CAKE.ChangeMoney( ply, 50 )
 			CAKE.SetDoorTitle( door, "" )
-			CAKE.SendChat( ply, "Door Unowned" );
+			CAKE.SendChat( ply, "Door Unowned" )
 			
 		else
 		
-			CAKE.SendChat( ply, "This door is already rented by someone else!" );
+			CAKE.SendChat( ply, "This door is already rented by someone else!" )
 			
 		end
 	
 	end
 	
 end
-concommand.Add( "rp_purchasedoor", ccPurchaseDoor );
+concommand.Add( "rp_purchasedoor", ccPurchaseDoor )
 
 local function ccDoorTitle( ply, cmd, args )
 
