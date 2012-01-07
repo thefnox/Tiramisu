@@ -70,18 +70,6 @@ else
 	end)
 
 	hook.Add( "SetupMove", "Tiramisu.DrainStaminaWhenRunning", function( ply, mv )
-		if ply:GetStamina() < 10 then
-			ply.NormalJump = ply:GetJumpPower()
-			ply:SetJumpPower(0)
-		else
-			ply:SetJumpPower( ply.NormalJump or ply:GetJumpPower() )
-		end
-		if ply:OnGround() and ply:KeyDown( IN_JUMP ) and ply:KeyDownLast() != IN_JUMP and !ply.StaminaOnJump then
-			ply:AddStamina( CAKE.Stats.Stamina.BaseRunCost * -5 )
-			ply.StaminaOnJump = true
-		elseif ply:OnGround() and ply.StaminaOnJump and !ply.Landing then
-			ply.StaminaOnJump = false
-		end
 		if ply:KeyDown(IN_SPEED) and ply:KeyDown(IN_FORWARD) then
 			if !ply.IsRunning then
 				if ply:GetStamina() > 10 then

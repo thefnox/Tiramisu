@@ -162,25 +162,31 @@ function ccSelectChar( ply, cmd, args )
 	local SteamID = CAKE.FormatText(ply:SteamID())
 	
 	if( CAKE.PlayerData[ SteamID ][ "characters" ][ uid ] != nil ) then
+		local char = CAKE.PlayerData[ SteamID ][ "characters" ][ uid ]
+		local special = char[ "specialmodel" ]
+		if special == "none" or special == "" then
+			if( char[ "gender" ] == "Female" ) then
+				ply:SetModel( "models/Tiramisu/AnimationTrees/femaleanimtree.mdl" )
+				ply:SetNWString( "gender", "Female" )
+			else
+				ply:SetModel( "models/Tiramisu/AnimationTrees/maleanimtree.mdl" )
+				ply:SetNWString( "gender", "Male" )
+			end
+			ply:SetMaterial("models/null")
 
-		if( CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "gender" ] == "Female" ) then
-			ply:SetModel( "models/Tiramisu/AnimationTrees/femaleanimtree.mdl" )
-			ply:SetNWString( "gender", "Female" )
+			CAKE.TestClothing( ply, char[ "model" ], char[ "clothing" ], char[ "helmet" ], char[ "headratio" ],char[ "bodyratio" ], char[ "handratio" ], char[ "clothingid" ], char[ "helmetid" ])
+
+			local tbl = char[ "gear" ]
+			CAKE.RemoveAllGear( ply )
+
+			for k, v in pairs( tbl ) do
+				CAKE.HandleGear( ply, v[ "item" ], v[ "bone" ], v[ "itemid" ], v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )
+			end
+			
+			CAKE.SendGearToClient( ply )
 		else
-			ply:SetModel( "models/Tiramisu/AnimationTrees/maleanimtree.mdl" )
-			ply:SetNWString( "gender", "Male" )
+			ply:SetModel( tostring( special ) )
 		end
-	
-		CAKE.TestClothing( ply, CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "model" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "clothing" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "helmet" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "headratio" ],CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "bodyratio" ], CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "handratio" ])
-
-		local tbl = CAKE.PlayerData[ SteamID ][ "characters" ][ uid ][ "gear" ]
-		CAKE.RemoveAllGear( ply )
-
-		for k, v in pairs( tbl ) do
-			CAKE.HandleGear( ply, v[ "item" ], v[ "bone" ], v[ "itemid" ], v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )
-		end
-		
-		CAKE.SendGearToClient( ply )
 
 	else
 		

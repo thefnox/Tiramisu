@@ -483,15 +483,27 @@ local function Admin_CreatePropItem( ply, cmd, args )
 	CAKE.CreateItem( "propitem", ply:CalcDrop( ), Angle( 0,0,0 ), id )
 end
 
+local function Admin_CreateClothing( ply, cmd, args )
+	if !(args[1] and args[2]) then CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin createclothing \"name\" \"type(body or head)\" \"model\" )") return end
+	id = CAKE.CreateItemID()
+	CAKE.SetUData(id, "name", args[1])
+	CAKE.SetUData(id, "model", args[3])
+	if args[2] == "body" then
+		CAKE.CreateItem( "clothing_base", ply:CalcDrop( ), Angle( 0,0,0 ), id )
+	elseif args[2] == "head" then
+		CAKE.CreateItem( "helmet_base", ply:CalcDrop( ), Angle( 0,0,0 ), id )
+	end
+end
+
 local function Admin_TurnIntoItem( ply, cmd, args )
-	if !(args[1] and args[2]) then CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin createpropitem \"name\" \"model\" )") return end
+	if !(args[1] and args[2]) then CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin converttoitem \"name\" \"model\" )") return end
 	local entity = ents.GetByIndex( tonumber( args[ 1 ] ))
 	local name = args[2]
 	local pickable = util.tobool( args[3] )
 	local wearable = util.tobool( args[4] )
 	local bone = args[5] or "pelvis"
 	if pickable then
-		id = CAKE.CreateItemID()
+		local id = CAKE.CreateItemID()
 		CAKE.SetUData(id, "name", name)
 		CAKE.SetUData(id, "model", entity:GetModel())
 		if wearable then
@@ -502,6 +514,25 @@ local function Admin_TurnIntoItem( ply, cmd, args )
 		entity:Remove()
 	else
 		entity:SetNWString( "propdescription", name )
+	end
+end
+
+local function Admin_TurnIntoClothing( ply, cmd, args )
+	if !(args[1] and args[2]) then CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin converttoclothing \"entity\" \"name\" \"type\" )") return end
+	local entity = ents.GetByIndex( tonumber( args[ 1 ] ))
+	local type = args[3]
+	local name = args[2]
+	local id = CAKE.CreateItemID()
+	CAKE.SetUData(id, "name", name )
+	CAKE.SetUData(id, "model", entity:GetModel())
+	if type == "body" then
+		print(util.tobool(args[4]))
+		CAKE.SetUData(id, "nogloves", util.tobool(args[4]))
+		CAKE.CreateItem( "clothing_base", entity:GetPos(), entity:GetAngles(), id )
+		entity:Remove()
+	elseif type == "head" then
+		CAKE.CreateItem( "helmet_base", entity:GetPos(), entity:GetAngles(), id )
+		entity:Remove()
 	end
 end
 
@@ -535,10 +566,11 @@ local function Admin_SetPermaModel( ply, cmd, args )
 			m = "models/tiramisu/animationtrees/maleanimtree.mdl"
 			ply:SetNWString( "gender", "Male" )
 		end
+		ply:SetMaterial( "" )
 		ply:SetModel( m )
 
 		CAKE.SetCharField( target, "model", args[2] )
-		CAKE.SetClothing( target )
+		CAKE.RestoreClothing( target )
 	end
 end
 	
@@ -572,7 +604,9 @@ function PLUGIN.Init( )
 	CAKE.AdminCommand( "slay", Admin_Slay, "Kills a player", true, true, 3 )
 	CAKE.AdminCommand( "setrank", Admin_SetRank, "Set the rank of another player", true, true, 4 )
 	CAKE.AdminCommand( "createpropitem", Admin_CreatePropItem, "Create an item from a prop.", true, true, 1 )
+	CAKE.AdminCommand( "createclothing", Admin_CreateClothing, "Create a new set of clothing.", true, true, 1 )
 	CAKE.AdminCommand( "converttoitem", Admin_TurnIntoItem, "Turns a prop into an item (Right click on prop)", true, true, 1 )
+	CAKE.AdminCommand( "converttoclothing", Admin_TurnIntoClothing, "Turns a ragdoll into clothing(Right click on prop)", true, true, 1 )
 	
 end
 

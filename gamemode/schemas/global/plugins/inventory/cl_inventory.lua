@@ -687,7 +687,9 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 		if input.IsKeyDown( KEY_LALT )then
 			for i=1, 10 do
 				if input.IsKeyDown( i ) and !keydown[ i ] then
-					CAKE.InventorySlot[ i ]:UseItem()
+					if CAKE.InventorySlot[ i ]:GetItem() then
+						CAKE.InventorySlot[ i ]:UseItem()
+					end
 					keydown[ i ] = true
 				elseif !input.IsKeyDown( i ) and keydown[i] then
 					keydown[ i ] = false

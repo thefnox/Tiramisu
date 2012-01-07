@@ -14,7 +14,7 @@ local function OpenForums()
 	local html = vgui.Create( "HTML" , PlayerMenu )
 	html:SetSize( 690, 487 )
 	html:SetPos( 5, 28 )
-	html:OpenURL( CAKE.Webpage )
+	html:OpenURL( CAKE.ConVars[ "Webpage" ] )
 
 end
 

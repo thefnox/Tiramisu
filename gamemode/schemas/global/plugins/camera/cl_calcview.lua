@@ -25,6 +25,12 @@ end
 usermessage.Hook( "Tiramisu.ReceiveRagdoll", function( um )
 	
 	CAKE.ViewRagdoll = ents.GetByIndex( um:ReadShort() )
+	if ValidEntity(CAKE.ViewRagdoll) and CAKE.ViewRagdoll != LocalPlayer() then
+		CAKE.ForceFreeScroll = true
+	else
+		CAKE.ForceFreeScroll = false
+		CAKE.FreeScroll = false
+	end
 
 end)
 
@@ -341,6 +347,7 @@ hook.Add( "UpdateAnimation", "TiramisuAnimateRotate", function( ply, velocity, m
 			ply:SetPoseParameter("aim_pitch", CAKE.LastViewAng.p - 5 )
 			ply:SetPoseParameter("head_pitch", CAKE.LastViewAng.p + 10 )
 		end
+		ply.CurrentLookAt = Angle( 0, 0, 0 )
 		ply:SetPoseParameter("aim_yaw", 0 )
 		ply:SetPoseParameter("head_yaw", 0 )
 		ply:SetPoseParameter("body_yaw", 0 )

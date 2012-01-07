@@ -4,31 +4,33 @@ CLPLUGIN.Author = "FNox"
 CAKE.Gear = {}
 CAKE.Clothing = "none"
 CAKE.Helmet = "none"
+CAKE.ClothingID = "none"
+CAKE.HelmetID = "none"
 
 local BoneList = {
-		"Pelvis",
-		"Stomach",
-		"Lower back",
-		"Chest",
-		"Upper back",
-		"Neck",
-		"Head",
-		"Right clavicle",
-		"Right upper arm",
-		"Right forearm",
-		"Right hand",
-		"Left clavicle",
-		"Left upper arm",
-		"Left forearm",
-		"Left hand",
-		"Right thigh",
-		"Right calf",
-		"Right foot",
-		"Right toe",
-		"Left thigh",
-		"Left calf",
-		"Left foot",
-		"Left toe"
+	"Pelvis",
+	"Stomach",
+	"Lower back",
+	"Chest",
+	"Upper back",
+	"Neck",
+	"Head",
+	"Right clavicle",
+	"Right upper arm",
+	"Right forearm",
+	"Right hand",
+	"Left clavicle",
+	"Left upper arm",
+	"Left forearm",
+	"Left hand",
+	"Right thigh",
+	"Right calf",
+	"Right foot",
+	"Right toe",
+	"Left thigh",
+	"Left calf",
+	"Left foot",
+	"Left toe"
 }
 
 local function HandleGearEditing( entity, bone, item, name )
@@ -84,7 +86,7 @@ function EditGear()
 	PlayerMenu:SetSize( ScrW(), ScrH() )
 	PlayerMenu:Center()
 	PlayerMenu:SetDraggable( false )
-	PlayerMenu:ShowCloseButton( true )
+	PlayerMenu:ShowCloseButton( false )
 	PlayerMenu:SetTitle( "" )
 	PlayerMenu.Paint = function()
 
@@ -111,6 +113,7 @@ function EditGear()
 	local ClothingList = vgui.Create( "DPanelList" )
 	ClothingList:SetSize( 300, 432  )
 	ClothingList:SetPadding( 3 )
+	ClothingList:EnableVerticalScrollbar( true )
 	PropertySheet:AddSheet( "Clothing", ClothingList, "gui/silkicons/user", false, false, "Edit your clothes" )
 
 	local ClothesCategory = vgui.Create("DCollapsibleCategory")
@@ -135,7 +138,8 @@ function EditGear()
 				button:SetToolTip(v.Description)
 				button.DoClick = function()
 					CAKE.Clothing = v.Class
-					LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
+					CAKE.ClothingID = v.ID
+					RunConsoleCommand("rp_setclothing", CAKE.Clothing, CAKE.Helmet, CAKE.ClothingID, CAKE.HelmetID)
 				end
 				clist:AddItem( button )
 			end
@@ -148,7 +152,8 @@ function EditGear()
 	button:SetToolTip( "Your default clothes" )
 	button.DoClick = function()
 		CAKE.Clothing = "none"
-		LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
+		CAKE.ClothingID = "none"
+		RunConsoleCommand("rp_setclothing", CAKE.Clothing, CAKE.Helmet, CAKE.ClothingID, CAKE.HelmetID)
 	end
 	clist:AddItem( button )
 
@@ -172,7 +177,8 @@ function EditGear()
 			button:SetToolTip(v.Description)
 			button.DoClick = function()
 				CAKE.Helmet = v.Class
-				LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
+				CAKE.HelmetID = v.ID
+				RunConsoleCommand("rp_setclothing", CAKE.Clothing, CAKE.Helmet, CAKE.ClothingID, CAKE.HelmetID)
 			end
 			hlist:AddItem( button )
 		end
@@ -183,7 +189,8 @@ function EditGear()
 	button:SetToolTip( "Your default head" )
 	button.DoClick = function()
 		CAKE.Helmet = "none"
-		LocalPlayer():ConCommand( "rp_setclothing \"" .. CAKE.Clothing .. "\" \"" .. CAKE.Helmet .. "\"" )
+		CAKE.HelmetID = "none"
+		RunConsoleCommand("rp_setclothing", CAKE.Clothing, CAKE.Helmet, CAKE.ClothingID, CAKE.HelmetID)
 	end
 	hlist:AddItem( button )
 

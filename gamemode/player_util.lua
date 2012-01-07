@@ -1,12 +1,13 @@
 --Sends a player a chat message using the enhanced message system.
-function CAKE.SendChat( ply, msg, font, channel )
+function CAKE.SendChat( ply, msg, font, channel, handler )
 	
 	if ValidEntity( ply ) and ply:IsPlayer() then
 		--ply:PrintMessage( 3, msg )
 		datastream.StreamToClients( ply, "TiramisuAddToChat", {
 			["text"] = msg,
 			["font"] = font or false,
-			["channel"] = channel or false 
+			["channel"] = channel or false,
+			["handler"] = handler or ""
 		})
 		/*
 		umsg.Start( "tiramisuaddtochat", ply )
@@ -48,6 +49,8 @@ end
 --Toggles unconcious status.
 function CAKE.UnconciousMode( ply )
 
+	local speed = ply:GetVelocity()
+
 	if ply:Alive() then
 		if !ply:GetNWBool( "unconciousmode", false ) then
 
@@ -73,7 +76,7 @@ function CAKE.UnconciousMode( ply )
 			ply:GodEnable()
 			ply:SetAiming( false )
 
-			if ply:GetActiveWeapon():IsValid() then
+			if ValidEntity(ply:GetActiveWeapon()) then
 				ply:GetActiveWeapon():SetNoDraw( true )
 			end
 			
@@ -91,6 +94,12 @@ function CAKE.UnconciousMode( ply )
 			rag:SetAngles( ply:GetAngles( ) )
 			rag.ply = ply
 			rag:Spawn( )
+
+			local ragphys = rag:GetPhysicsObject()
+			if ragphys:IsValid() then
+				ragphys:AddVelocity( speed*ragphys:GetMass() )
+				--rag:GetPhysicsObject():SetVelocity( ply:GetVelocity() )
+			end
 
 			if( ply.Clothing ) then
 				for k, v in pairs( ply.Clothing ) do
@@ -120,8 +129,6 @@ function CAKE.UnconciousMode( ply )
 				end
 			end
 			
-			
-			rag:GetPhysicsObject():ApplyForceCenter( ply:GetVelocity() )
 
 			rag.clothing = ply.Clothing
 			rag.gear = ply.Gear
@@ -141,13 +148,16 @@ function CAKE.UnconciousMode( ply )
 			end)
 			
 			ply.unconciousrag = rag
-			
 			ply.unconcioustime = 0
-			ply.nextsecond = CurTime( ) + 1
-			
+			timer.Simple( CAKE.ConVars[ "UnconciousTimer" ], function()
+				ply.CanWakeUp = true
+				umsg.Start( "Tiramisu.DisplayWakeUpButton", ply )
+					umsg.Bool( true )
+				umsg.End()
+			end)
 			ply:Lock()
 			
-		else
+		elseif ply:GetNWBool( "unconciousmode", false ) and ply.CanWakeUp then
 			ply:SetNWBool( "unconciousmode", false )
 			ply:SetViewEntity( ply )
 			CAKE.RestoreGear( ply )
@@ -173,6 +183,11 @@ function CAKE.UnconciousMode( ply )
 			if timer.IsTimer( ply:SteamID() .. "unconcioustimer" ) then
 				timer.Destroy( ply:SteamID() .. "unconcioustimer"  )
 			end
+			ply.CanWakeUp = false
+			umsg.Start( "Tiramisu.DisplayWakeUpButton", ply )
+				umsg.Bool( false )
+			umsg.End()
+			ply:SetVelocity( Vector(0,0,0))
 		end
 
 	elseif !ply:Alive() and ply:GetNWBool( "unconciousmode", false ) then 
@@ -198,6 +213,7 @@ function CAKE.UnconciousMode( ply )
 		if timer.IsTimer( ply:SteamID() .. "unconcioustimer" ) then
 			timer.Destroy( ply:SteamID() .. "unconcioustimer"  )
 		end
+		ply.CanWakeUp = false
 	end
 end
 

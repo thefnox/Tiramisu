@@ -30,25 +30,25 @@ CAKE.ActiveNotifications = {}
 
 --Schema configuration options
 
-CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 0, true, true ) -- Set this to 1 to have thirdperson enabled by default.
+CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 1, true, true ) -- Set this to 1 to have thirdperson enabled by default.
 CAKE.ThirdpersonDistance = CreateClientConVar( "rp_thirdpersondistance", 50, true, true ) --Maximum thirdperson distance
 CAKE.CameraSmoothFactor = CreateClientConVar( "rp_camerasmooth", 12, true, true ) --Camera smoothing factor, affects speed.
-CAKE.FirstpersonBody = CreateClientConVar( "rp_firstpersonbody", 0, true, true ) --The return of first person legs!
-CAKE.StayCrouched = CreateClientConVar( "rp_crouchtoggle", 0, true, true ) -- Enables crouch toggle.
+CAKE.FirstpersonBody = CreateClientConVar( "rp_firstpersonbody", 1, true, true ) --The return of first person legs!
+CAKE.StayCrouched = CreateClientConVar( "rp_crouchtoggle", 1, true, true ) -- Enables crouch toggle.
 CAKE.TitleDrawDistance = CreateClientConVar( "rp_titledrawdistance", 600, true, true ) --Maximum distance a player can be to have his or her title drawn
-CAKE.MinimalHUD = CreateClientConVar( "rp_minimalhud", 0, true, true ) --Disables HUD elements for a more clear view.
+CAKE.MinimalHUD = CreateClientConVar( "rp_minimalhud", 1, true, true ) --Disables HUD elements for a more clear view.
 CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true ) --Set this to 0 to have headbob disabled by default.
 
-surface.CreateFont(CAKE.MenuFont2, 48, 500, true, false, "Tiramisu48Font", false, true) -- Biggest font used.
-surface.CreateFont(CAKE.MenuFont2, 32, 500, true, false, "Tiramisu32Font", false, true) -- Second biggest font used. Used in 3D titles and main character title.
-surface.CreateFont(CAKE.MenuFont2, 24, 500, true, false, "Tiramisu24Font", false, true) -- Third biggest font used. Used in 3D titles and main character title.
-surface.CreateFont(CAKE.MenuFont, 18, 500, true, false, "Tiramisu18Font", true, false ) -- Big font used for button labels.
-surface.CreateFont(CAKE.MenuFont, 18, 500, true, false, "Tiramisu16Font", true, false ) -- Mid size button used for category headers.
-surface.CreateFont(CAKE.MenuFont, 14, 500, true, false, "Tiramisu14Font", false, true) -- A moderate size font used for the main title's subtitle
-surface.CreateFont(CAKE.MenuFont, 14, 300, true, false, "TiramisuDefaultFont") -- Replacement for "Default"
-surface.CreateFont(CAKE.MenuFont, 12, 400, true, false, "Tiramisu12Font", true ) -- Smallest, used in tabs and the quick menu
-surface.CreateFont(CAKE.WhisperFont, ScreenScale(5), 500, true, false, "TiramisuWhisperFont", true ) -- Used only for whispering
-surface.CreateFont(CAKE.YellFont, ScreenScale(10), 700, true, false, "TiramisuYellFont", true ) -- Used only for yelling
+surface.CreateFont(CAKE.ConVars[ "MenuFont2" ], 48, 500, true, false, "Tiramisu48Font", false, true) -- Biggest font used.
+surface.CreateFont(CAKE.ConVars[ "MenuFont2" ], 32, 500, true, false, "Tiramisu32Font", false, true) -- Second biggest font used. Used in 3D titles and main character title.
+surface.CreateFont(CAKE.ConVars[ "MenuFont2" ], 24, 500, true, false, "Tiramisu24Font", false, true) -- Third biggest font used. Used in 3D titles and main character title.
+surface.CreateFont(CAKE.ConVars[ "MenuFont" ], 18, 500, true, false, "Tiramisu18Font", true, false ) -- Big font used for button labels.
+surface.CreateFont(CAKE.ConVars[ "MenuFont" ], 18, 500, true, false, "Tiramisu16Font", true, false ) -- Mid size button used for category headers.
+surface.CreateFont(CAKE.ConVars[ "MenuFont" ], 14, 500, true, false, "Tiramisu14Font", false, true) -- A moderate size font used for the main title's subtitle
+surface.CreateFont(CAKE.ConVars[ "MenuFont" ], 14, 300, true, false, "TiramisuDefaultFont") -- Replacement for "Default"
+surface.CreateFont(CAKE.ConVars[ "MenuFont" ], 12, 400, true, false, "Tiramisu12Font", true ) -- Smallest, used in tabs and the quick menu
+surface.CreateFont(CAKE.ConVars[ "WhisperFont" ], ScreenScale(5), 500, true, false, "TiramisuWhisperFont", true ) -- Used only for whispering
+surface.CreateFont(CAKE.ConVars[ "YellFont" ], ScreenScale(10), 700, true, false, "TiramisuYellFont", true ) -- Used only for yelling
 
 -- Client Includes
 include( "sh_animations.lua" )
@@ -58,6 +58,47 @@ include( "cl_binds.lua" )
 include( "cl_skin.lua" )
 
 CAKE.Loaded = true
+
+--Some quick utility stuff
+local sin,cos,rad = math.sin,math.cos,math.rad
+local tmp,s,c
+function surface.DrawNPolyOffset( x, y, radius, sides, rotation )
+	surface.NPoly = surface.NPoly or {}
+	surface.NPoly[sides] = surface.NPoly[sides] or {}
+	rotation = rotation or 0
+
+	x,y = x + radius, y + radius
+
+	if !surface.NPoly[sides][radius .. x .. y .. rotation] then
+		surface.NPoly[sides][radius .. x .. y .. rotation] = {}
+		for i=1,sides do
+			tmp = rad(i*360)/sides
+			s = sin(tmp + rotation)
+			c = cos(tmp + rotation)
+			surface.NPoly[sides][radius .. x .. y .. rotation][i] = {x = x + c*radius,y = y + s*radius,u = (c+1)/2,v = (s+1)/2}
+		end
+	end
+
+	surface.DrawPoly( surface.NPoly[sides][radius .. x .. y .. rotation] )
+end
+
+function surface.DrawNPoly( x, y, radius, sides, rotation )
+	surface.NPoly = surface.NPoly or {}
+	surface.NPoly[sides] = surface.NPoly[sides] or {}
+	rotation = rotation or 0
+
+	if !surface.NPoly[sides][radius .. x .. y .. rotation] then
+		surface.NPoly[sides][radius .. x .. y .. rotation] = {}
+		for i=1,sides do
+			tmp = rad(i*360)/sides
+			s = sin(tmp + rotation)
+			c = cos(tmp + rotation)
+			surface.NPoly[sides][radius .. x .. y .. rotation][i] = {x = x + c*radius,y = y + s*radius,u = (c+1)/2,v = (s+1)/2}
+		end
+	end
+
+	surface.DrawPoly( surface.NPoly[sides][radius .. x .. y .. rotation] )
+end
 
 -- Initialize the gamemode
 function GM:Initialize( )
@@ -73,7 +114,7 @@ function GM:Think( )
 	if( vgui and !readysent ) then -- VGUI is initalized, tell the server we're ready for character creation.
 	
 		LocalPlayer( ):ConCommand( "rp_ready\n" )
-		CAKE.EnableBlackScreen( CAKE.ConVars[ "StartWithBlackScreen" ], CAKE.ConVars[ "StartWithBlackScreen" ] )
+		CAKE.EnableBlackScreen( CAKE.ConVars[ "SpawnWithBlackScreen" ], CAKE.ConVars[ "SpawnWithBlackScreen" ] )
 		readysent = true
 		
 	end
@@ -115,7 +156,7 @@ end)
 
 CurrencyTable = {}
 
-usermessage.Hook( "addcurrency", function( um )
+usermessage.Hook( "Tiramisu.AddCurrency", function( um )
 	local currencydata = {}
 	currencydata.name = um:ReadString()
 	currencydata.slang = um:ReadString()
@@ -125,7 +166,7 @@ end)
 
 Schemas = {}
 
-usermessage.Hook("addschema", function(data)
+usermessage.Hook("Tiramisu.AddSchema", function(data)
 	local schema = data:ReadString()
 	CAKE.AddRightClicks(schema)
 	CAKE.AddClientsidePlugins(schema)
@@ -143,15 +184,47 @@ usermessage.Hook( "Tiramisu.SendError", function( um )
 
 end)
 
+local button 
 usermessage.Hook( "Tiramisu.DisplayRespawnButton", function(um)
-	local button = vgui.Create( "DButton" )
-	button:SetText( "Respawn" )
-	button:SetSize( 74, 25 )
-	button:SetPos( ScrW() / 2 - 32, 90 )
-	button.DoClick = function()
-		RunConsoleCommand( "rp_acceptdeath" )
-		button:Remove()
-		button = nil
+	if um:ReadBool() then
+		gui.EnableScreenClicker( true )
+		button = vgui.Create( "DButton" )
+		button:SetText( "Respawn" )
+		button:SetSize( 74, 25 )
+		button:SetPos( ScrW() / 2 - 32, 90 )
+		button.DoClick = function()
+			RunConsoleCommand( "rp_acceptdeath" )
+			button:Remove()
+			button = nil
+		end
+	else
+		gui.EnableScreenClicker( false )
+		if button then
+			button:Remove()
+			button = nil
+		end
+	end
+end)
+
+local uncbutton
+usermessage.Hook( "Tiramisu.DisplayWakeUpButton", function(um)
+	if um:ReadBool() then
+		gui.EnableScreenClicker( true )
+		uncbutton = vgui.Create( "DButton" )
+		uncbutton:SetText( "Wake up" )
+		uncbutton:SetSize( 74, 25 )
+		uncbutton:SetPos( ScrW() / 2 - 32, 90 )
+		uncbutton.DoClick = function()
+			RunConsoleCommand( "rp_wakeup" )
+			uncbutton:Remove()
+			uncbutton = nil
+		end
+	else
+		gui.EnableScreenClicker( false )
+		if uncbutton then
+			uncbutton:Remove()
+			uncbutton = nil
+		end
 	end
 end)
 

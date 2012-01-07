@@ -254,7 +254,7 @@ function SKIN:PaintStaminaBar()
 	if CAKE.MinimalHUD:GetBool() then
 		if LocalPlayer().TiramisuStaminaRegen and alpha != 230 then
 			alpha = Lerp( 10 * RealFrameTime(), alpha, 230 )
-		else
+		elseif !LocalPlayer().TiramisuStaminaRegen then
 			alpha = Lerp( 10 * RealFrameTime(), alpha, 0 )
 		end
 	else
@@ -276,6 +276,44 @@ function SKIN:PaintStaminaBar()
 end
 
 /*---------------------------------------------------------
+	Health Bar
+---------------------------------------------------------*/
+local perc, alpha
+alpha = 230
+local rot = 0
+function SKIN:PaintHealthBar()
+	if LocalPlayer():Alive() then
+		rot = math.NormalizeAngle( rot + RealFrameTime() )
+		if CAKE.MinimalHUD:GetBool() then
+			if (CAKE.MenuOpen or LocalPlayer().IsDamaged) and alpha != 230 then
+				alpha = Lerp( 10 * RealFrameTime(), alpha, 230 )
+			elseif !(CAKE.MenuOpen or LocalPlayer().IsDamaged) then
+				alpha = Lerp( 10 * RealFrameTime(), alpha, 0 )
+			end
+		else
+			alpha = 230
+		end
+		perc = LocalPlayer():Health() / LocalPlayer():GetMaxHealth()
+		if alpha != 0 then
+			if LocalPlayer():Armor() > 0 then
+				surface.SetDrawColor( Color( 50, 50, 50, alpha ) )
+				surface.DrawNPoly( ScrW()-35, ScrH()/2 + 155, 15, 8, rot )
+				draw.SimpleText(tostring(LocalPlayer():Armor()) .. "%", "Tiramisu12Font", ScrW()-35, ScrH()/2 + 155, Color(200,200,255,alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			end
+			draw.RoundedBoxEx( 4, ScrW()- 31, ScrH()/2 - 150, 31, 300, Color( 50, 50, 50, alpha ), false, false, false, true )
+			surface.SetDrawColor( Color( 10, 10, 10, alpha ) )
+			surface.DrawRect( ScrW() - 28, ScrH()/2 - 147, 26,293 )
+			draw.SimpleText(tostring(math.ceil(perc * 100)) .. "%", "Tiramisu12Font", ScrW() - 17, ScrH()/2 - 144, Color(255,255,255,alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT)
+			if perc != 0 then
+				draw.RoundedBoxEx( 2, ScrW() - 26, ScrH()/2 - 144 + 287 - 287 * perc, 20, 287 * perc, Color( 200, 20, 20, alpha ), false, false, false, true )
+				draw.RoundedBoxEx( 2, ScrW()-22, ScrH()/2 - 140+ 287 - 287 * perc, 4, 280 * perc, Color( 255, 255, 255, math.Clamp( alpha - 180, 0, 50) ), false, false, false, true )
+			end
+			draw.DrawText("H\nE\nA\nL\nT\nH", "Tiramisu12Font", ScrW()-18, ScrH()/2 - 144 + math.Clamp( 287 - 287 * perc, 0, 200), Color(255,255,255,alpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT)
+		end
+	end
+end
+
+/*---------------------------------------------------------
 	DeathMessage
 ---------------------------------------------------------*/
 function SKIN:PaintDeathMessage()
@@ -291,7 +329,7 @@ function SKIN:PaintDeathMessage()
 	end
 	
 	if LocalPlayer():GetNWBool("unconciousmode", false ) then
-		draw.DrawText( "You have been knocked out. Type 'rp_wakeup' on console.", "Tiramisu18Font", ScrW( ) / 2 ,60, Color( 255,255,255,255 ), TEXT_ALIGN_CENTER )
+		draw.DrawText( "You have passed out. Wait a few moments until you can wake up.", "Tiramisu18Font", ScrW( ) / 2 ,60, Color( 255,255,255,255 ), TEXT_ALIGN_CENTER )
 	end
 end
 

@@ -96,45 +96,45 @@ end
 --Removes only the helmet of a player, if wearing any.
 function CAKE.RemoveHelmet( ply )
 	
-	CAKE.SetClothing( ply, CAKE.GetCharField( ply, "clothing" ) )
+	CAKE.SetClothing( ply, CAKE.GetCharField( ply, "clothing" ), CAKE.GetCharField( ply, "clothingid" ) )
 		
 end
 	
 --Main function to set a player's clothing based on at least one item. Helmet is not a necessary argument.
-function CAKE.SetClothing( ply, clothing, helmet )
+function CAKE.SetClothing( ply, clothing, helmet, clothingid, helmetid )
 
 	CAKE.RemoveClothing( ply )
 
 	if ( clothing and ply:HasItem( clothing )) or helmet then
 		local item
 		if helmet and helmet != clothing then
-			if ply:ItemHasFlag( clothing, "nogloves" ) then --Head, body and hands are different
-				CAKE.HandleClothing( ply, clothing, CLOTHING_BODY )
-				CAKE.HandleClothing( ply, helmet, CLOTHING_HEAD )
+			if (CAKE.GetUData( clothingid, "nogloves") or ply:ItemHasFlag( clothing, "nogloves" )) then --Head, body and hands are different
+				CAKE.HandleClothing( ply, clothing, CLOTHING_BODY, clothingid )
+				CAKE.HandleClothing( ply, helmet, CLOTHING_HEAD, helmetid )
 				CAKE.HandleClothing( ply, "none", CLOTHING_HANDS )
 			else --Head and hands are the same, so we just make the head and the body.
-				CAKE.HandleClothing( ply, clothing , CLOTHING_BODYANDHANDS )
-				CAKE.HandleClothing( ply, helmet, CLOTHING_HEAD )
+				CAKE.HandleClothing( ply, clothing , CLOTHING_BODYANDHANDS, clothingid )
+				CAKE.HandleClothing( ply, helmet, CLOTHING_HEAD, helmetid )
 			end
 			item = helmet
 		else
-			if !helmet and !ply:ItemHasFlag( clothing, "nogloves" ) then
-				CAKE.HandleClothing( ply, clothing, CLOTHING_BODYANDHANDS )
-				CAKE.HandleClothing( ply, "none", CLOTHING_HEAD )
-			elseif !helmet and ply:ItemHasFlag( clothing, "nogloves" ) then --If the head is the same as the body, you only have to make the hands.
-				CAKE.HandleClothing( ply, clothing , CLOTHING_BODY )
+			if !helmet and !(CAKE.GetUData( clothingid, "nogloves") or ply:ItemHasFlag( clothing, "nogloves" )) then
+				CAKE.HandleClothing( ply, clothing, CLOTHING_BODYANDHANDS, clothingid )
+				CAKE.HandleClothing( ply, "none", CLOTHING_HEAD, helmetid )
+			elseif !helmet and (CAKE.GetUData( clothingid, "nogloves") or ply:ItemHasFlag( clothing, "nogloves" )) then --If the head is the same as the body, you only have to make the hands.
+				CAKE.HandleClothing( ply, clothing , CLOTHING_BODY, clothingid )
 				CAKE.HandleClothing( ply, "none", CLOTHING_HEADANDHANDS )
 			elseif helmet == clothing then --If body, head and hands are all the same, make a single clothing entity.
-				CAKE.HandleClothing( ply, clothing , CLOTHING_FULL )
+				CAKE.HandleClothing( ply, clothing , CLOTHING_FULL, clothingid )
 			end
 			item = clothing
 		end
 
 		if CAKE.ItemData[ item ] then
 			if ply:GetGender() == "Female" and CAKE.ItemData[ item ].FemaleModel then
-				ply:SetNWString( "model", CAKE.ItemData[ item ].FemaleModel )
+				ply:SetNWString( "model", CAKE.GetUData( clothingid, "model") or CAKE.ItemData[ item ].FemaleModel )
 			else
-				ply:SetNWString( "model", CAKE.ItemData[ item ].Model )
+				ply:SetNWString( "model", CAKE.GetUData( clothingid, "model") or CAKE.ItemData[ item ].Model )
 			end
 		else
 			ply:SetNWString( "model", CAKE.GetCharField( ply, "model" ) )
@@ -142,7 +142,7 @@ function CAKE.SetClothing( ply, clothing, helmet )
 
 	elseif !clothing or clothing == "none" then
 
-		CAKE.HandleClothing( ply, "none" , CLOTHING_FULL )
+		CAKE.HandleClothing( ply, "none" , CLOTHING_FULL, "none" )
 		ply:SetNWString( "model", CAKE.GetCharField( ply, "model" ) )
 
 	end
@@ -167,41 +167,41 @@ function CAKE.ScaleClothing( ply, headratio, bodyratio, handratio )
 end
 
 --Allows you to try a set of clothes without actually owning the item.
-function CAKE.TestClothing( ply, model, clothing, helmet, headratio, bodyratio, handratio )
+function CAKE.TestClothing( ply, model, clothing, helmet, headratio, bodyratio, handratio, clothingid, helmetid )
 
 	CAKE.RemoveClothing( ply )
 
 	if ( clothing and clothing != "none" ) or helmet then
 		local item
 		if helmet and helmet != clothing then
-			if ply:ItemHasFlag( clothing, "nogloves" ) then --Head, body and hands are 
-				CAKE.HandleClothing( ply, clothing, CLOTHING_BODY, model )
-				CAKE.HandleClothing( ply, helmet, CLOTHING_HEAD, model )
-				CAKE.HandleClothing( ply, "none", CLOTHING_HANDS, model )
+			if (CAKE.GetUData( clothingid, "nogloves") or ply:ItemHasFlag( clothing, "nogloves" )) then --Head, body and hands are 
+				CAKE.HandleClothing( ply, clothing, CLOTHING_BODY, clothingid )
+				CAKE.HandleClothing( ply, helmet, CLOTHING_HEAD, helmetid )
+				CAKE.HandleClothing( ply, "none", CLOTHING_HANDS, "none", model )
 			else --Head and hands are the same, so we just make the head and the body.
-				CAKE.HandleClothing( ply, clothing , CLOTHING_BODYANDHANDS, model )
-				CAKE.HandleClothing( ply, helmet, CLOTHING_HEAD, model)
+				CAKE.HandleClothing( ply, clothing , CLOTHING_BODYANDHANDS, clothingid )
+				CAKE.HandleClothing( ply, helmet, CLOTHING_HEAD, "none", model)
 			end
 			item = helmet
 		else
 			if !helmet then
-				CAKE.HandleClothing( ply, clothing, CLOTHING_BODYANDHANDS )
-				CAKE.HandleClothing( ply, "none", CLOTHING_HEAD )
-			elseif !helmet and ply:ItemHasFlag( clothing, "nogloves" ) then --If the head is the same as the body, you only have to make the hands.
-				CAKE.HandleClothing( ply, clothing , CLOTHING_BODY )
-				CAKE.HandleClothing( ply, "none", CLOTHING_HEADANDHANDS )
+				CAKE.HandleClothing( ply, clothing, CLOTHING_BODYANDHANDS, clothingid )
+				CAKE.HandleClothing( ply, "none", CLOTHING_HEAD, "none", model )
+			elseif !helmet and (CAKE.GetUData( clothingid, "nogloves") or ply:ItemHasFlag( clothing, "nogloves" )) then --If the head is the same as the body, you only have to make the hands.
+				CAKE.HandleClothing( ply, clothing , CLOTHING_BODY, clothingid )
+				CAKE.HandleClothing( ply, "none", CLOTHING_HEADANDHANDS, "none", model )
 			else --If body, head and hands are all the same, make a single clothing entity.
 				
-				CAKE.HandleClothing( ply, clothing , CLOTHING_FULL )
+				CAKE.HandleClothing( ply, clothing , CLOTHING_FULL, clothingid )
 			end
 			item = clothing
 		end
 
 		if CAKE.ItemData[ item ] then
 			if ply:GetGender() == "Female" and CAKE.ItemData[ item ].FemaleModel then
-				ply:SetNWString( "model", CAKE.ItemData[ item ].FemaleModel )
+				ply:SetNWString( "model", CAKE.GetUData( clothingid, "model") or CAKE.ItemData[ item ].FemaleModel )
 			else
-				ply:SetNWString( "model", CAKE.ItemData[ item ].Model )
+				ply:SetNWString( "model", CAKE.GetUData( clothingid, "model") or CAKE.ItemData[ item ].Model )
 			end
 		else
 			ply:SetNWString( "model", model )
@@ -209,7 +209,7 @@ function CAKE.TestClothing( ply, model, clothing, helmet, headratio, bodyratio, 
 			
 	elseif !clothing or clothing == "none" then
 
-		CAKE.HandleClothing( ply, "none" , CLOTHING_FULL, model )
+		CAKE.HandleClothing( ply, "none" , CLOTHING_FULL, "none", model )
 		ply:SetNWString( "model", model )
 
 	end
@@ -228,15 +228,15 @@ function CAKE.TestClothing( ply, model, clothing, helmet, headratio, bodyratio, 
 end
 
 --Internal function to handle clothing creation.
-function CAKE.HandleClothing( ply, item, ctype, modeloverride )
+function CAKE.HandleClothing( ply, item, ctype, itemid, modeloverride )
 	
 	local model
 
 	if CAKE.ItemData[ item ] then
 		if ply:GetGender() == "Female" and CAKE.ItemData[ item ].FemaleModel then
-			model = CAKE.ItemData[ item ].FemaleModel
+			model = CAKE.GetUData( itemid, "model") or CAKE.ItemData[ item ].FemaleModel
 		else
-			model = CAKE.ItemData[ item ].Model
+			model = CAKE.GetUData( itemid, "model") or CAKE.ItemData[ item ].Model
 		end
 	else
 		model = modeloverride or CAKE.GetCharField( ply, "model" )
@@ -275,35 +275,51 @@ function CAKE.RestoreClothing( ply )
 	CAKE.RemoveClothing( ply )
 
 	local clothes = CAKE.GetCharField( ply, "clothing" )
-	if !ply:HasItem( clothes ) then
-		CAKE.SetCharField( ply, "clothing", "none" )
-		clothes = none
+	local clothingid = CAKE.GetCharField(ply,"clothingid")
+	if clothingid then
+		if !ply:HasItemID( clothingid ) then
+			CAKE.SetCharField( ply, "clothing", "none" )
+			CAKE.SetCharField( ply, "clothingid", "none" )
+			clothes = "none"
+		end
+	else
+		if !ply.HasItem("clothing") then
+			CAKE.SetCharField( ply, "clothing", "none" )
+			CAKE.SetCharField( ply, "clothingid", "none" )
+			clothes = "none"
+		end
 	end
 
 	local helmet = CAKE.GetCharField( ply, "helmet" )
-	if !ply:HasItem( helmet ) then
-		CAKE.SetCharField( ply, "helmet", "none" )
-		helmet = none
+	local helmetid = CAKE.GetCharField(ply,"helmetid")
+	if helmetid then 
+		if !ply:HasItemID( helmetid ) then
+			CAKE.SetCharField( ply, "helmet", "none" )
+			CAKE.SetCharField( ply, "helmetid", "none" )
+			helmet = "none"
+		end
+	else
+		if !ply:HasItem( helmet ) then
+			CAKE.SetCharField( ply, "helmet", "none" )
+			CAKE.SetCharField( ply, "helmetid", "none" )
+			helmet = "none"
+		end
 	end
-
-	local gloves = CAKE.GetCharField( ply, "gloves" )
 	local special = CAKE.GetCharField( ply, "specialmodel" )
-
 	if special == "none" or special == "" then
 		ply:SetNWBool( "specialmodel", false )
-		CAKE.SetClothing( ply, clothes, helmet, gloves )
+		CAKE.SetClothing( ply, clothes, helmet, clothingid, helmetid )
 	else
 		ply:SetNWBool( "specialmodel", true )
 		ply:SetNWString( "model", tostring( special ) )
 		ply:SetModel( tostring( special ) )
 	end
-
 end
 
 concommand.Add( "rp_setclothing", function( ply, cmd, args )
 	local body = ""
 	local helmet = ""
-	local gloves = ""
+	local clothingid, helmetid = args[3], args[4]
 	
 	if( args[1] == "" or args[1] == "none" )then
 		body = "none"
@@ -317,19 +333,11 @@ concommand.Add( "rp_setclothing", function( ply, cmd, args )
 		helmet = args[2]
 	end
 	
-	if args[3] then
-		if( args[3] == "" or args[3] == "none" )then
-			gloves = "none"
-		else
-			gloves = args[3]
-		end
-	else
-		gloves = body
-	end
-	
-	CAKE.SetClothing( ply, body, helmet )
+	CAKE.SetClothing( ply, body, helmet, clothingid, helmetid )
 	CAKE.SetCharField( ply, "clothing", body )
 	CAKE.SetCharField( ply, "helmet", helmet )
+	CAKE.SetCharField( ply, "clothingid", clothingid )
+	CAKE.SetCharField( ply, "helmetid", helmetid )
 	CAKE.ScaleClothing( ply, 1, 1, 1 )
 
 end)
@@ -363,6 +371,8 @@ function PLUGIN.Init()
 	
 	CAKE.AddDataField( 2, "gloves", "none" ) --What you're wearing on your hands
 	CAKE.AddDataField( 2, "clothing", "none" ) --What you're wearing on your body
+	CAKE.AddDataField( 2, "clothingid", "none" ) -- the item id of your clothing item
+	CAKE.AddDataField( 2, "helmetid", "none" ) -- the item id of your helmet
 	CAKE.AddDataField( 2, "helmet", "none" ) --What you're wearing on your head
 	CAKE.AddDataField( 2, "headratio", 1 ) --for those bighead guys.
 	CAKE.AddDataField( 2, "bodyratio", 1 ) --Thick bones, or maybe you're just fat.

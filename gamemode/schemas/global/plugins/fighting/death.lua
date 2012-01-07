@@ -3,6 +3,9 @@ concommand.Add( "rp_acceptdeath", function(ply, cmd, args)
 	if ply:GetNWInt( "deathmode", 0 ) != 0 and ply:GetNWInt("deathmoderemaining", 0) == 0 then
 		ply:SetNWInt( "deathmode", 0 )
 		ply:SetViewEntity( ply )
+		umsg.Start( "Tiramisu.DisplayRespawnButton", ply )
+			umsg.Bool( false )
+		umsg.End()
 	end
 end)
 
@@ -88,6 +91,9 @@ end
 --Handles death ragdoll creation.
 function CAKE.DeathMode( ply )
 	
+	local speed = ply:GetVelocity()
+
+	timer.Destroy("deadragdollremove".. ply:SteamID())
 	if ValidEntity( ply.deathrag ) then
 		ply.deathrag:Remove()
 		ply.deathrag = nil
@@ -117,6 +123,12 @@ function CAKE.DeathMode( ply )
 	rag.isdeathdoll = true
 	rag.ply = ply
 	rag:Spawn( )
+
+	local ragphys = rag:GetPhysicsObject()
+	if ragphys:IsValid() then
+		ragphys:AddVelocity( speed*ragphys:GetMass() )
+	end
+
 	
 	if( ply.Clothing ) then
 		for k, v in pairs( ply.Clothing ) do
@@ -152,9 +164,6 @@ function CAKE.DeathMode( ply )
 	
 	--ply:SetViewEntity( rag )
 
-	rag:GetPhysicsObject():ApplyForceCenter( ply:GetVelocity() )
-	rag:GetPhysicsObject():SetVelocity( ply:GetVelocity() )
-
 	ply.deathrag = rag
 	
 	ply:SetNWInt( "deathmode", 1 )
@@ -175,6 +184,7 @@ function CAKE.DeathMode( ply )
 			ply:SetViewEntity( ply )
 		else
 			umsg.Start( "Tiramisu.DisplayRespawnButton", ply )
+				umsg.Bool( true )
 			umsg.End()
 		end
 	end)

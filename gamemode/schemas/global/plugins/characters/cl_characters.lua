@@ -23,7 +23,7 @@ function OpenCharacterMenu( hideclosebutton )
 		CharacterMenu:MakePopup()
 
 		local titlelabel = vgui.Create( "DLabel", CharacterMenu )
-		titlelabel:SetText( CAKE.IntroText )
+		titlelabel:SetText( CAKE.ConVars[ "IntroText" ] )
 		titlelabel:SetFont( "Tiramisu32Font" )
 		titlelabel:SizeToContents()
 		titlelabel:SetPos( ScrW() / 2 - titlelabel:GetWide() / 2, 0 )
@@ -34,7 +34,7 @@ function OpenCharacterMenu( hideclosebutton )
 		end
 
 		local subtitlelabel = vgui.Create( "DLabel", CharacterMenu )
-		subtitlelabel:SetText( CAKE.IntroSubtitle )
+		subtitlelabel:SetText( CAKE.ConVars[ "IntroSubtitle" ] )
 		subtitlelabel:SetFont( "Tiramisu14Font" )
 		subtitlelabel:SizeToContents()
 		subtitlelabel:SetPos( ScrW() / 2 - subtitlelabel:GetWide() / 2 + 46, 0 )

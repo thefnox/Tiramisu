@@ -4,13 +4,11 @@ Kicking around on a piece of ground in your home town
 Waiting for someone or something to show you the way
 
 Time - Pink Floyd */
-CAKE.DateEnabled = true
-CAKE.DefaultTime = "1 1 2011 1"
 
 
 function CAKE.InitTime() -- Load the time from a text file or default value, this occurs on gamemode initialization.
 
-	local clumpedtime = CAKE.DefaultTime
+	local clumpedtime = CAKE.ConVars[ "DefaultTime" ]
 	
 	if(file.Exists(CAKE.Name .. "/time/" .. CAKE.ConVars[ "Schema" ] .. "/time.txt")) then
 	
@@ -77,7 +75,7 @@ function CAKE.SendTime()
 		if string.sub(tostring(nHours),1,1) == "0" then
 			nHours = " " ..string.sub(tostring(nHours), 2, 2)
 		end
-		if CAKE.DateEnabled then
+		if CAKE.ConVars[ "DisplayClock" ] then
 			SetGlobalString("time", CAKE.ClockMonth.. "/" .. CAKE.ClockDay .. "/" .. CAKE.ClockYear.. " - " .. nHours .. ":" .. nMins .. timez)
 		else
 			SetGlobalString("time", "")

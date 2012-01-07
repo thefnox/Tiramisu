@@ -2,12 +2,12 @@ datastream.Hook( "TiramisuAddToChat", function( handler, id, encoded, decoded )
 	decoded.text = decoded.text:gsub("<%s*%w*%s*=%s*%w*%s*>", "")
 	decoded.text = decoded.text:gsub("</font>", "")
 	if !decoded.font then
-		decoded.font = CAKE.ChatFont
+		decoded.font = CAKE.ConVars[ "ChatFont" ]
 	end
 	if decoded.channel == "IC" then
-		CAKE.Chatbox:AddLine(  "<color=135,209,255,255><font=" .. decoded.font .. ">" .. decoded.text .. "</font></color>", decoded.channel )
+		CAKE.Chatbox:AddLine(  "<color=135,209,255,255><font=" .. decoded.font .. ">" .. decoded.text .. "</font></color>", decoded.channel, decoded.handler or "" )
 	else
-		CAKE.Chatbox:AddLine(  "<font=" .. decoded.font .. ">" .. decoded.text .. "</font>", decoded.channel )
+		CAKE.Chatbox:AddLine(  "<font=" .. decoded.font .. ">" .. decoded.text .. "</font>", decoded.channel, decoded.handler or "" )
 	end
 
 	for i = 0, decoded.text:len() / 255 do
@@ -24,7 +24,7 @@ datastream.Hook( "TiramisuAddToOOC", function( handler, id, encoded, decoded )
 
 	text = text:gsub("<%s*%w*%s*=%s*%w*%s*>", "")
 	text = text:gsub("</font>", "")
-	CAKE.Chatbox:AddLine(  "<font=" .. CAKE.ChatFont .. "><color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>:" .. text .. "</color></font>", "OOC" )
+	CAKE.Chatbox:AddLine(  "<font=" .. CAKE.ConVars[ "ChatFont" ] .. "><color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>:" .. text .. "</color></font>", "OOC" )
 
 	text = "[OOC]" .. playername .. ": " .. text
 
@@ -68,7 +68,7 @@ function PANEL:Init()
 		end
 		self:AddChannel( "All", "All Messages" )
 		self:AddChannel( "IC", "In Character" )
-		self:AddChannel( "OOC", "Out Of Character" )
+		self:AddChannel( "OOC", "Out Of Character", "// " )
 
 		self.TextEntry = vgui.Create( "DTextEntry", self )
 		self.TextEntry:SetSize( self.Width - 13, 25 )
@@ -95,18 +95,11 @@ function PANEL:Init()
 					table.remove( exp, 1 )
 					RunConsoleCommand("rp_" .. string.sub( command, 2, string.len(command) ), unpack(exp) )
 				else
-					if self.TextEntry:GetValue():len() > 600 then
-						datastream.StreamToServer( "TiramisuChatHandling", { ["text"] = string.sub( string.Replace(self.TextEntry:GetValue(), "\"", "'"), 1, 600 ) } )
-					else
-						datastream.StreamToServer( "TiramisuChatHandling", { ["text"] = string.Replace(self.TextEntry:GetValue(), "\"", "'") } )
-					end
+				datastream.StreamToServer( "TiramisuChatHandling", { ["text"] = (self.PropertySheet:GetActiveTab().handler or "") .. string.sub(string.Replace(self.TextEntry:GetValue(), "\"", "'"), 1, math.Clamp(self.TextEntry:GetValue():len(),1,600)) } )
 				end
-				self.TextEntry:Clear()
-				self:Close()
-			else
-				self.TextEntry:Clear()
-				self:Close()
 			end
+			self.TextEntry:Clear()
+			self:Close()
 		end
 		self.TextEntry.Clear = function()
 			self.TextEntry:SetValue("")
@@ -116,7 +109,7 @@ function PANEL:Init()
 end
 
 --Adds a tab to the chatbox. Can be done while the chatbox is open.
-function PANEL:AddChannel( name, description )
+function PANEL:AddChannel( name, description, handler )
 
 	if !self.Channels[ name ] then
 		local panel = vgui.Create( "DPanelList" )
@@ -128,7 +121,8 @@ function PANEL:AddChannel( name, description )
 			end
 		end
 		self.Channels[ name ] = panel
-		self.PropertySheet:AddSheet( name, panel, "", false, false, description or name )
+		local tab = self.PropertySheet:AddSheet( name, panel, "", false, false, description or name )
+		tab.Tab.handler = handler or ""
 		self.PropertySheet:InvalidateLayout( true, true ) 
 		for _,item in pairs( self.PropertySheet.Items ) do
 			item.Tab.Paint = function()
@@ -149,23 +143,47 @@ function PANEL:AddChannel( name, description )
 end
 
 --Adds a line to a particular channel. If no channel is specified it simply becomes global.
-function PANEL:AddLine( text, channel )
+function PANEL:AddLine( text, channel, handler )
 
-	local label = MarkupLabel( text, self.Width - 25 )
+	local label = MarkupLabel( text, self.Width - 30 )
 	local number = #self.Lines + 1
+	label.numberid = number 
 	self.Lines[ number ] = {}
 	self.Lines[ number ][ "panel" ] = label
 	self.Lines[ number ][ "timestamp" ] = CurTime()
 	self.Channels[ "All" ]:AddItem( label )
+	local tbl = self.Channels[ "All" ]:GetItems()
+	local low = 999999999999
+	local lowest
+	if #tbl > 500 then
+		for k, v in pairs( tbl ) do
+			if v and v.numberid < low then
+				low = v.numberid
+				lowest = k 
+			end
+		end
+		self.Channels[ "All" ]:RemoveItem( tbl[lowest] )
+	end
 
 	if channel then
-		self:AddChannel( channel )
-		label = MarkupLabel( text, self.Width - 25 )
-		local number = #self.Lines + 1
-		self.Lines[ number ] = {}
-		self.Lines[ number ][ "panel" ] = label
-		self.Lines[ number ][ "timestamp" ] = CurTime()
+		self:AddChannel( channel, channel, handler )
+		label = MarkupLabel( text, self.Width - 30 )
+		label.numberid = number 
 		self.Channels[ channel ]:AddItem( label )
+
+		tbl = self.Channels[ channel ]:GetItems()
+		low = 999999999999
+		if #tbl > 500 then
+			for k, v in pairs( tbl ) do
+				if v and v.numberid < low then
+					low = v.numberid
+					lowest = k 
+				end
+			end
+			--We purge it from existance, as this line will necessarily be purged or has already been purged from the All channel. (The All channel will have either 50 or more items)
+			self.Channels[ channel ]:RemoveItem( tbl[lowest] )
+			self.Lines[ low ] = nil
+		end
 	end
 
 	timer.Simple( 0.1, function()
@@ -179,14 +197,6 @@ function PANEL:AddLine( text, channel )
 		end
 	end)
 
-	--Purge previous lines that nobody is going to read.
-	if table.Count( self.Lines ) > 500 then
-		local lastkey = table.GetFirstKey( self.Lines )
-		self.Lines[ lastkey ]["panel"]:Remove()
-		self.Lines[ lastkey ]["panel"] = nil
-		self.Lines[ lastkey ]["timestamp"] = nil
-		self.Lines[ lastkey ] = nil
-	end
 end
 
 	
@@ -236,7 +246,9 @@ function PANEL:Think()
 		end
 	else
 		for k, v in pairs( self.Lines ) do
-			v[ "panel" ]:SetAlpha( 255 )
+			if v[ "panel" ] then
+				v[ "panel" ]:SetAlpha( 255 )
+			end
 		end
 	end
 	if self.Open and input.IsKeyDown(KEY_ESCAPE) then

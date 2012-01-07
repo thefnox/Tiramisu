@@ -24,8 +24,9 @@ function CAKE.LoadUData( id )
 end
 
 function CAKE.SetUData( id, key, value )
-	
-	if not CAKE.UData[id] then
+	if !id then return nil end
+
+	if !CAKE.UData[id] then
 		CAKE.UData[id] = {}
 	end
 	CAKE.UData[id][key] = value
@@ -33,6 +34,8 @@ function CAKE.SetUData( id, key, value )
 end
 
 function CAKE.GetUData(id, key)
+	if !id or id == "none" then return nil end
+
 	if !CAKE.UData[id] then
 		CAKE.LoadUData( id )
 	end
@@ -408,6 +411,7 @@ function meta:HasItem( class )
 end
 
 function meta:HasItemID( ID )
+	if !ID or ID == "none" then return false end
 	local inv = CAKE.GetCharField(self, "inventory" )
 	for k, v in pairs( inv ) do
 		if( v[2] == ID ) then

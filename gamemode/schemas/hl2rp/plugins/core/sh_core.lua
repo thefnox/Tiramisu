@@ -39,8 +39,6 @@ if SERVER then
 	CAKE.AddDataField( 2, "cid", "000000" ) 
 
 else
-	CAKE.IntroText = "Welcome to City " .. CAKE.CityNumber -- Character menu and intro text
-	CAKE.IntroSubtitle = "IT'S SAFER HERE" -- Character menu and intro subtitle. If you want this gone just set it to ""
 	ConversionTable = {}
 	--Basically this is used to add some helpful information about each buy group. That way you can see on what category does the item actually belong, instead of using a number.
 	ConversionTable[1] = {}

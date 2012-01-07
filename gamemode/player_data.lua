@@ -19,7 +19,7 @@ end
 -- For example, STEAM_0:1:5947214 would turn into 015947214
 function CAKE.FormatText( SteamID )
 
-	local SteamID = CAKE.NilFix(SteamID, "STEAM_0:0:0")
+	local SteamID = SteamID or "STEAM_0:0:0"
 
 	s = string.gsub( SteamID,"STEAM","" )
 	s = string.gsub( s,":","" )
@@ -267,9 +267,9 @@ end
 function CAKE.GetCharField( ply, fieldname )
 	-- Check to see if this is a valid field
 	if( CAKE.CharacterDataFields[ fieldname ] ) then
-		if CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ] and CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ] and CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ] then
-			if CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ] then
-				return CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ]
+		if CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ] and CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ] and CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid", "" ) ] then
+			if CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid", "" ) ][ fieldname ] then
+				return CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid", "" ) ][ fieldname ]
 			else
 				--Field is not yet set.
 				CAKE.SetCharField( ply, fieldname, CAKE.CharacterDataFields[ fieldname ])

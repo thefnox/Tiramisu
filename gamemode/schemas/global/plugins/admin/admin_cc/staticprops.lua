@@ -31,7 +31,7 @@ function CAKE.RemovePermaProp( ent )
 		CAKE.PermaProps[ game.GetMap( ) ][ id ] = nil
 	end
 
-	ent.PermaProp = false
+	ent:SetNWBool("permaprop", false)
 	
 	CAKE.SavePermaProps()
 	
@@ -47,7 +47,7 @@ function CAKE.CreatePermaProp( id )
 		prop:SetUnFreezable( false )
 		prop:SetMoveType( MOVETYPE_NONE )
 		prop.PermaID = id
-		prop.PermaProp = true
+		prop:SetNWBool("permaprop", true)
 		prop:Spawn()
 		local phys = prop:GetPhysicsObject()	 
 		if phys and phys:IsValid() then
@@ -82,37 +82,38 @@ hook.Add( "InitPostEntity", "TiramisuPermaProps", function()
 	CAKE.LoadPermaProps()
 end)
 
---rp_admin addpermaprop. Must be looking at the entity you want to make permanent.
+--rp_admin addpermaprop. Right click an entity to make it permanent
 local function Admin_AddPermaProp( ply, cmd, args )
 
-	local tr = ply:GetEyeTrace()
-	local trent = tr.Entity
-	CAKE.AddPermaProp( trent:GetModel(), trent:GetPos(), trent:GetAngles() )
+	local ent = ents.GetByIndex(tonumber(args[1]))
+	ent:SetNWBool("permaprop", true)
+	ent:SetUnFreezable( false )
+	ent:SetMoveType( MOVETYPE_NONE )
+	CAKE.AddPermaProp( ent:GetModel(), ent:GetPos(), ent:GetAngles() )
 
 end
 
---rp_admin removepermaprop. Removes permaprop status from an entity you're looking at.
+--rp_admin removepermaprop. Removes permaprop status from a prop you right clicked
 local function Admin_RemovePermaProp( ply, cmd, args )
 	
-	local tr = ply:GetEyeTrace()
-	local trent = tr.Entity
-	CAKE.RemovePermaProp( trent )
+	local ent = ents.GetByIndex(tonumber(args[1]))
+	CAKE.RemovePermaProp( ent )
 	
 end
 
 hook.Add("OnPhysgunFreeze", "TiramisuPhysgunPermapropProtection", function(weapon, phys, ent, ply)
-	if ent.PermaProp then
+	if ent:GetNWBool("permaprop", false) then
 		return false
 	end
 end)
 
 hook.Add("CanTool", "TiramisuToolPermapropProtection", function(ply, tr, toolmode)
-	if ValidEntity( tr.Entity ) and tr.Entity.PermaProp then
+	if ValidEntity( tr.Entity ) and tr.Entity:GetNWBool("permaprop", false) then
 		return false
 	end
 end)
 
 function PLUGIN.Init()
-	CAKE.AdminCommand( "addpermaprop", Admin_AddPermaProp, "Add a permanent prop", true, true, 2 )
-	CAKE.AdminCommand( "removepermaprop", Admin_RemovePermaProp, "Remove a permanent prop", true, true, 2 )
+	CAKE.AdminCommand( "addpermaprop", Admin_AddPermaProp, "Add a permanent prop", true, true, 1 )
+	CAKE.AdminCommand( "removepermaprop", Admin_RemovePermaProp, "Remove a permanent prop", true, true, 1 )
 end

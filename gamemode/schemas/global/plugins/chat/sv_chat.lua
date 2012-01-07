@@ -11,7 +11,7 @@ end
 
 CAKE.ChatCommands = {  }
 
-function CAKE.SimpleChatCommand( prefix, range, form, channel )
+function CAKE.SimpleChatCommand( prefix, range, form, font, channel )
 
 	-- This is for simple chat commands like /me, /y, /w, etc
 	-- This isn't useful for radio, broadcast, etc.
@@ -28,6 +28,7 @@ function CAKE.SimpleChatCommand( prefix, range, form, channel )
 	-- Also, the range is a multiplier based upon the ConVar "TalkRange".
 	--
 	-- Genius, 'miryt?
+	-- (paramenters channel, range and font allows them to behave like more complex chat commands too :D, they're all optional)
 	
 	local cc = {  }
 	cc.simple = true
@@ -35,6 +36,7 @@ function CAKE.SimpleChatCommand( prefix, range, form, channel )
 	cc.range = range
 	cc.form = form
 	cc.channel = channel
+	cc.font = font
 	
 	CAKE.ChatCommands[ prefix ] = cc
 	
@@ -93,28 +95,13 @@ function GM:PlayerSay( ply, text, team )
 				
 			end
 			
-			
-			local range = CAKE.ConVars[ "TalkRange" ] * cc.range
-			
 			local s = cc.form
 			local s = string.gsub( s, "$1", ply:Nick( ) ) -- IC Name
 			local s = string.gsub( s, "$2", ply:Name( ) ) -- OOC Name
 			local s = string.gsub( s, "$3", args ) -- Text
 			
-			for _, pl in pairs( ents.FindInSphere( ply:GetPos(), range * 2 ) ) do
-				local tracedata = {}
-				tracedata.start = pl:EyePos()
-				tracedata.endpos = ply:EyePos()
-				tracedata.filter = pl
-				tracedata.mask = CONTENTS_SOLID + CONTENTS_MOVEABLE + CONTENTS_OPAQUE + CONTENTS_DEBRIS + CONTENTS_HITBOX + CONTENTS_MONSTER
-				if( pl:IsPlayer() and (pl:EyePos( ):Distance( ply:EyePos( ) ) <= range or util.TraceLine(tracedata).Entity == ply )) then
-				
-					CAKE.SendChat( pl, s, "ChatFont", cc.channel or "IC" )
-				
-				end
-			
-			end
-			
+			CAKE.ICAdd( ply, s, cc.range, cc.font, cc.channel )
+
 			return ""
 			
 		end
@@ -163,18 +150,24 @@ concommand.Add( "rp_ooccolor", ccChangeOOCColor )
 
 --Sends a regular blue IC message.
 
-function CAKE.ICAdd( ply, text )
+function CAKE.ICAdd( ply, text, range, font, channel )
 
-	local range = CAKE.ConVars[ "TalkRange" ]
-		
-	for _, pl in pairs( player.GetAll( ) ) do
-		
-		if( pl:EyePos( ):Distance( ply:EyePos( ) ) <= range ) and pl:IsCharLoaded() then
+	if ply:Alive() then
+		range = range or CAKE.ConVars[ "TalkRange" ]
+
+		for _, pl in pairs( ents.FindInSphere( ply:GetPos(), range * 2 ) ) do
+			local tracedata = {}
+			tracedata.start = pl:EyePos()
+			tracedata.endpos = ply:EyePos()
+			tracedata.filter = pl
+			tracedata.mask = CONTENTS_SOLID + CONTENTS_MOVEABLE + CONTENTS_OPAQUE + CONTENTS_DEBRIS + CONTENTS_HITBOX + CONTENTS_MONSTER
+			if( pl:IsPlayer() and (pl:EyePos( ):Distance( ply:EyePos( ) ) <= range or util.TraceLine(tracedata).Entity == ply )) then
 			
-			CAKE.SendChat( pl, text, "ChatFont", "IC" )
+				CAKE.SendChat( pl, text, font or CAKE.ConVars[ "ChatFont" ], channel or "IC" )
 			
+			end
+		
 		end
-		
 	end
 
 end
@@ -208,7 +201,7 @@ function CAKE.OOCAdd( ply, text )
 	else
 	
 		local TimeLeft = math.ceil(ply.LastOOC + CAKE.ConVars[ "OOCDelay" ] - CurTime())
-		CAKE.SendChat( ply, "Please wait " .. TimeLeft .. " seconds before using OOC chat again!", "ChatFont", "OOC")
+		CAKE.SendChat( ply, "Please wait " .. TimeLeft .. " seconds before using OOC chat again!", CAKE.ConVars[ "ChatFont" ], "OOC")
 		
 	end
 end
@@ -250,7 +243,7 @@ local function ccRoll( ply, cmd, args )
 		
 			if( v:EyePos():Distance( ply:EyePos() ) <= 300 ) then
 			
-				CAKE.SendChat( v, "[Roll] " .. ply:Nick() .. " rolled a " .. roll .. " out of " .. Min .. "-" .. Max .. ".", "ChatFont", "IC")
+				CAKE.SendChat( v, "[Roll] " .. ply:Nick() .. " rolled a " .. roll .. " out of " .. Min .. "-" .. Max .. ".", CAKE.ConVars[ "ChatFont" ], "IC")
 			
 			end
 		
@@ -282,7 +275,7 @@ local function Report( ply, text )
 		
 		if( v:IsAdmin() or v:IsSuperAdmin() ) then
 		
-			CAKE.SendChat( v, ply:Nick() .. " | " .. ply:Name() .. " [" .. ply:SteamID()  .. "] [REPORT]:" .. text, "ChatFont", "Reports" )
+			CAKE.SendChat( v, ply:Nick() .. " | " .. ply:Name() .. " [" .. ply:SteamID()  .. "] [REPORT]:" .. text, CAKE.ConVars[ "ChatFont" ], "Reports" )
 			
 		end
 	
@@ -306,7 +299,7 @@ local function Event( ply, text )
 		
 		for k, v in pairs( player.GetAll( ) ) do
 		
-			CAKE.SendChat( v, "[EVENT]: " .. text, "ChatFont", "IC" )
+			CAKE.SendChat( v, "[EVENT]: " .. text, CAKE.ConVars[ "ChatFont" ], "IC" )
 			
 		end
 	
@@ -324,8 +317,8 @@ local function PersonalMessage( ply, text )
 	local target = CAKE.FindPlayer( exp[1] )
 	table.remove( exp, 1)
 	if target then
-		CAKE.SendChat( target, "[FROM:" .. ply:Nick() .. "]" .. table.concat( exp, " " ), "ChatFont", ply:Name() )
-		CAKE.SendChat( ply, "[TO:" .. target:Nick() .. "]" .. table.concat( exp, " " ), "ChatFont", target:Name() )
+		CAKE.SendChat( target, "[FROM:" .. ply:Nick() .. "]" .. table.concat( exp, " " ), CAKE.ConVars[ "ChatFont" ], ply:Name(), "/pm " .. target:Name())
+		CAKE.SendChat( ply, "[TO:" .. target:Nick() .. "]" .. table.concat( exp, " " ), CAKE.ConVars[ "ChatFont" ], target:Name(),"/pm " .. ply:Name() )
 	else
 		CAKE.SendChat( ply, "Target not found!" )
 	end
@@ -352,7 +345,7 @@ local function RemoveHelmet( ply, text )
 			
 		if( v:EyePos( ):Distance( ply:EyePos( ) ) <= range ) then
 			
-			CAKE.SendChat( v, "*** " .. ply:Nick() .. " removed " .. article .. " helmet.", "ChatFont", "IC" )
+			CAKE.SendChat( v, "*** " .. ply:Nick() .. " removed " .. article .. " helmet.", CAKE.ConVars[ "ChatFont" ], "IC" )
 				
 		end
 			
@@ -375,7 +368,7 @@ local function Advertise( ply, text )
 		
 			for _, pl in pairs(player.GetAll()) do
 			
-				CAKE.SendChat(pl, "[AD] " .. ply:Nick() .. ": " .. text, "ChatFont", "IC" )
+				CAKE.SendChat(pl, "[AD] " .. ply:Nick() .. ": " .. text, CAKE.ConVars[ "ChatFont" ], "IC" )
 		
 			end
 			
@@ -434,7 +427,7 @@ local function Emote( ply, text )
 	local players = ents.FindInSphere( ply:GetPos(), CAKE.ConVars[ "TalkRange" ] * CAKE.ConVars[ "MeRange" ] )
 	for k, v in pairs( players ) do
 		if v:IsPlayer() then
-			CAKE.SendChat( v, "*** " ..  ply:Nick() .. " " .. text, "ChatFont", "IC" )
+			CAKE.SendChat( v, "*** " ..  ply:Nick() .. " " .. text, CAKE.ConVars[ "ChatFont" ], "IC" )
 		end
 	end
 	return ""
@@ -460,24 +453,24 @@ function PLUGIN.Init( ) -- We run this in init, because this is called after the
 	CAKE.ConVars[ "AdvertisePrice" ] = 25 -- How much do advertisements cost
 	CAKE.ConVars[ "OOCDelay" ] = 10 -- How long do you have to wait between OOC Chat
 	
-	CAKE.ConVars[ "YellRange" ] = 1.5 -- How much farther will yell chat go
-	CAKE.ConVars[ "WhisperRange" ] = 0.2 -- How far will whisper chat go
-	CAKE.ConVars[ "MeRange" ] = 1.0 -- How far will me chat go
-	CAKE.ConVars[ "LOOCRange" ] = 1.0 -- How far will LOOC chat go
+	CAKE.ConVars[ "YellRange" ] = 1.5 * CAKE.ConVars[ "TalkRange" ] -- How much farther will yell chat go
+	CAKE.ConVars[ "WhisperRange" ] = 0.2 * CAKE.ConVars[ "TalkRange" ]  -- How far will whisper chat go
+	CAKE.ConVars[ "MeRange" ] = CAKE.ConVars[ "TalkRange" ]  -- How far will me chat go
+	CAKE.ConVars[ "LOOCRange" ] = CAKE.ConVars[ "TalkRange" ]   -- How far will LOOC chat go
 	
 	CAKE.SimpleChatCommand( "/?", CAKE.ConVars[ "MeRange" ], "??? : $3" ) -- Anon chat
-	--CAKE.SimpleChatCommand( "/me", CAKE.ConVars[ "MeRange" ], "*** $1 $3" ) -- Me chat
+	CAKE.SimpleChatCommand( "/me", CAKE.ConVars[ "MeRange" ], "*** $1 $3" ) -- Me chat
 	CAKE.SimpleChatCommand( "/it", CAKE.ConVars[ "MeRange" ], "*** $3" ) -- It chat
 	CAKE.SimpleChatCommand( "/anon", CAKE.ConVars[ "MeRange" ], "???: $3" ) -- It chat
-	--CAKE.SimpleChatCommand( "/y", CAKE.ConVars[ "YellRange" ], "<font=DefaultLarge>$1 [YELL]: $3</font>" ) -- Yell chat
-	--CAKE.SimpleChatCommand( "/w", CAKE.ConVars[ "WhisperRange" ], "<font=DefaultSmall>$1 [WHISPER]: $3</font>" ) -- Whisper chat
+	CAKE.SimpleChatCommand( "/y", CAKE.ConVars[ "YellRange" ], "$1 [YELL]: $3", "TiramisuYellFont" ) -- Yell chat
+	CAKE.SimpleChatCommand( "/w", CAKE.ConVars[ "WhisperRange" ], "$1 [WHISPER]: $3</font>", "TiramisuWhisperFont" ) -- Whisper chat
 	CAKE.SimpleChatCommand( ".//", CAKE.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3", "OOC" ) -- Local OOC Chat
 	CAKE.SimpleChatCommand( "[[", CAKE.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3", "OOC" ) -- Local OOC Chat
 
 	CAKE.ChatCommand( "/ad", Advertise )
-	CAKE.ChatCommand( "/y", Yell)
-	CAKE.ChatCommand( "/me", Emote)
-	CAKE.ChatCommand( "/w", Whisper)
+	--CAKE.ChatCommand( "/y", Yell)
+	--CAKE.ChatCommand( "/me", Emote)
+	--CAKE.ChatCommand( "/w", Whisper)
 	CAKE.ChatCommand( "/event", Event )	-- Advertisements
 	CAKE.ChatCommand( "/removehelmet", RemoveHelmet )
 	CAKE.ChatCommand( "/pm", PersonalMessage )

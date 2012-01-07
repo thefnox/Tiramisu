@@ -193,6 +193,7 @@ if SERVER then
 					ply:SetNWString( "gender", "Male" )
 				end
 				ply:SetModel( m )
+				ply:SetMaterial("models/null")
 				ply:SetPersonality( CAKE.GetCharField( ply, "personality" ))
 			else
 				ply:SetModel("models/kleiner.mdl");
@@ -456,6 +457,7 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 		--print("HEAD YAW:", ply:GetPoseParameter("head_yaw"))
 	elseif SERVER or ply != LocalPlayer() then
 		--This set of boneparameters are all set to 0 to avoid having the engine setting them to something else, thus resulting in  awkwardly twisted models
+		ply.CurrentLookAt = Angle( 0, 0, 0 )
 		ply:SetPoseParameter("aim_yaw", 0 )
 		ply:SetPoseParameter("head_yaw", 0 )
 		ply:SetPoseParameter("body_yaw", 0 )

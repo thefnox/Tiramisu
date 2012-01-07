@@ -1,6 +1,5 @@
 -- Set up the gamemode
 DeriveGamemode( "sandbox" )
-GM.Name = "Tiramisu"
 
 -- Define global variables
 CAKE = {  }
@@ -41,6 +40,7 @@ resource.AddFile( "materials/tiramisu/gearhandler.vtf")
 resource.AddFile( "resource/fonts/YanoneKaffeesatz-Bold.ttf")
 resource.AddFile( "resource/fonts/YanoneKaffeesatz-Regular.ttf")
 
+GM.Name = "Tiramisu " .. CAKE.ConVars[ "Tiramisu" ]
 CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ) -- Load the schema and plugins, this is NOT initializing.
 
 CAKE.Loaded = true -- Tell the server that we're loaded up
@@ -75,7 +75,7 @@ function GM:PlayerInitialSpawn( ply )
 	ply.LastOOC = -100000 -- This is so people can talk for the first time without having to wait.
 	
 	for k, v in ipairs( CAKE.Schemafile ) do
-		umsg.Start( "addschema", ply )
+		umsg.Start( "Tiramisu.AddSchema", ply )
 			
 			print(v)
 			umsg.String( v )
@@ -84,7 +84,7 @@ function GM:PlayerInitialSpawn( ply )
 	end
 
 	for k, v in pairs( CAKE.CurrencyData ) do
-		umsg.Start( "addcurrency", ply )
+		umsg.Start( "Tiramisu.AddCurrency", ply )
 			umsg.String( v.Name )
 			umsg.String( v.Slang )
 			umsg.String( v.Abr )
@@ -205,10 +205,20 @@ function GM:ShowSpare2( ply )
 
 end
 
--- NO SENT FOR YOU.
+-- NO SENT FOR YOU. Unless you're an admin
 function GM:PlayerSpawnSENT( ply, class )
 	
 	if( CAKE.PlayerRank( ply ) > 0 ) then return true end
 	return false
 	
+end
+
+--Useless for RP, so we disable gravity gun punting
+function GM:GravGunPunt( ply, ent )
+	return false
+end
+
+--Even more useless for RP are sprays.
+function GM:PlayerSpray(ply)
+	return true
 end
