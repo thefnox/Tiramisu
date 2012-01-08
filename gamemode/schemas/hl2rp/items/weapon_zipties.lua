@@ -2,6 +2,7 @@ ITEM.Name = "Zipties"
 ITEM.Class = "weapon_zipties"
 ITEM.Description = "Good for boundin'."
 ITEM.Model = "models/Items/combine_rifle_ammo01.mdl"
+ITEM.Unusable = true
 ITEM.Purchaseable = true
 ITEM.Price = 500
 ITEM.ItemGroup = 2

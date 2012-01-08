@@ -2,7 +2,8 @@ Anims.Male = {}
 Anims.Male[ "models" ] = {
 	"models/humans/group01/male_01.mdl",
 	"models/combine_soldier.mdl",
-	"models/police.mdl"
+	"models/police.mdl",
+	"models/barney.mdl"
 }
 Anims.Male[ "default" ] = { 
 	[ "idle" ] = "&switch:models/humans/group01/male_01.mdl;ACT_IDLE",
@@ -23,16 +24,16 @@ Anims.Male[ "default" ] = {
 	[ "flinch" ] = {
 		["explosion"] = "&switch:models/humans/group01/male_01.mdl;ACT_GESTURE_FLINCH_BLAST"
 	},
-		[ "crouch" ] = {
-				[ "idle" ] = "&switch:models/humans/group01/male_01.mdl;ACT_COVER_LOW",
-				[ "walk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_CROUCH",
-				[ "aimidle" ] = "&switch:models/humans/group01/male_01.mdl;ACT_RANGE_AIM_SMG1_LOW",
-				[ "aimwalk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
-		},
-		[ "aim" ] = {
-	[ "idle" ] = "&switch:models/humans/group01/male_01.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
-	[ "walk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
-	[ "run" ] = "&switch:models/humans/group01/male_01.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
+	[ "crouch" ] = {
+			[ "idle" ] = "&switch:models/humans/group01/male_01.mdl;ACT_COVER_LOW",
+			[ "walk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_CROUCH",
+			[ "aimidle" ] = "&switch:models/humans/group01/male_01.mdl;ACT_RANGE_AIM_SMG1_LOW",
+			[ "aimwalk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
+	},
+	[ "aim" ] = {
+		[ "idle" ] = "&switch:models/humans/group01/male_01.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
+		[ "walk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+		[ "run" ] = "&switch:models/humans/group01/male_01.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
 	}
 }
 Anims.Male[ "relaxed" ] = { 
@@ -54,17 +55,17 @@ Anims.Male[ "relaxed" ] = {
 	[ "flinch" ] = {
 	["explosion"] = "&switch:models/humans/group01/male_01.mdl;ACT_GESTURE_FLINCH_BLAST"
 	},
-		[ "crouch" ] = {
-				[ "idle" ] = "&sequence:models/humans/group01/male_01.mdl;roofidle2",
-				[ "walk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_CROUCH",
-				[ "aimidle" ] = "&switch:models/humans/group01/male_01.mdl;ACT_RANGE_AIM_SMG1_LOW",
-				[ "aimwalk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
-		},
-		[ "aim" ] = {
-			[ "idle" ] = "&sequence:models/humans/group01/male_01.mdl;Man_Gun",
-			[ "walk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
-			[ "run" ] = "&switch:models/humans/group01/male_01.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
+	[ "crouch" ] = {
+			[ "idle" ] = "&sequence:models/humans/group01/male_01.mdl;roofidle2",
+			[ "walk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_CROUCH",
+			[ "aimidle" ] = "&switch:models/humans/group01/male_01.mdl;ACT_RANGE_AIM_SMG1_LOW",
+			[ "aimwalk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
 	},
+	[ "aim" ] = {
+		[ "idle" ] = "&switch:models/humans/group01/male_01.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
+		[ "walk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+		[ "run" ] = "&switch:models/humans/group01/male_01.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
+	}
 }
 Anims.Male[ "headstrong" ] = { 
 	[ "idle" ] = "&sequence:models/barney.mdl;ACT_IDLE",
@@ -85,17 +86,17 @@ Anims.Male[ "headstrong" ] = {
 	[ "flinch" ] = {
 		["explosion"] = "&switch:models/barney.mdl;ACT_GESTURE_FLINCH_BLAST"
 	},
-		[ "crouch" ] = {
-				[ "idle" ] = "&sequence:models/barney.mdl;roofidle2",
-				[ "walk" ] = "&switch:models/barney.mdl;ACT_WALK_CROUCH",
-				[ "aimidle" ] = "&switch:models/barney.mdl;ACT_RANGE_AIM_SMG1_LOW",
-				[ "aimwalk" ] = "&switch:models/barney.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
-		},
-		[ "aim" ] = {
-			[ "idle" ] = "&sequence:models/barney.mdl;Man_Gun",
-			[ "walk" ] = "&switch:models/barney.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
-			[ "run" ] = "&switch:models/barney.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
+	[ "crouch" ] = {
+			[ "idle" ] = "&switch:models/humans/group01/male_01.mdl;ACT_COVER_LOW",
+			[ "walk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_CROUCH",
+			[ "aimidle" ] = "&switch:models/humans/group01/male_01.mdl;ACT_RANGE_AIM_SMG1_LOW",
+			[ "aimwalk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
 	},
+	[ "aim" ] = {
+		[ "idle" ] = "&switch:models/humans/group01/male_01.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
+		[ "walk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+		[ "run" ] = "&switch:models/humans/group01/male_01.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
+	}
 }
 Anims.Male[ "frustrated" ] = { 
 	[ "idle" ] = "&sequence:models/humans/group01/male_01.mdl;LineIdle02",
@@ -116,17 +117,17 @@ Anims.Male[ "frustrated" ] = {
 	[ "flinch" ] = {
 	["explosion"] = "&switch:models/humans/group01/male_01.mdl;ACT_GESTURE_FLINCH_BLAST"
 	},
-		[ "crouch" ] = {
-				[ "idle" ] = "&sequence:models/humans/group01/male_01.mdl;roofidle2",
-				[ "walk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_CROUCH",
-				[ "aimidle" ] = "&switch:models/humans/group01/male_01.mdl;ACT_RANGE_AIM_SMG1_LOW",
-				[ "aimwalk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
-		},
-		[ "aim" ] = {
-			[ "idle" ] = "&sequence:models/humans/group01/male_01.mdl;Man_Gun",
-			[ "walk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
-			[ "run" ] = "&switch:models/humans/group01/male_01.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
+	[ "crouch" ] = {
+			[ "idle" ] = "&switch:models/humans/group01/male_01.mdl;ACT_COVER_LOW",
+			[ "walk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_CROUCH",
+			[ "aimidle" ] = "&switch:models/humans/group01/male_01.mdl;ACT_RANGE_AIM_SMG1_LOW",
+			[ "aimwalk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_CROUCH_AIM_RIFLE"
 	},
+	[ "aim" ] = {
+		[ "idle" ] = "&switch:models/humans/group01/male_01.mdl;ACT_IDLE_AIM_RIFLE_STIMULATED",
+		[ "walk" ] = "&switch:models/humans/group01/male_01.mdl;ACT_WALK_AIM_RIFLE_STIMULATED",
+		[ "run" ] = "&switch:models/humans/group01/male_01.mdl;ACT_RUN_AIM_RIFLE_STIMULATED"
+	}
 }
 Anims.Male[ "pistol" ] = {
 	[ "idle" ] = "ACT_IDLE",
@@ -143,7 +144,7 @@ Anims.Male[ "pistol" ] = {
 	[ "walk" ] = "&switch:models/police.mdl;ACT_WALK_AIM_PISTOL",
 	[ "run" ] = "&switch:models/police.mdl;ACT_RUN_AIM_PISTOL"
 	},
-		[ "fire" ] = "ACT_GESTURE_RANGE_ATTACK_PISTOL",
+	[ "fire" ] = "ACT_GESTURE_RANGE_ATTACK_PISTOL",
 	[ "reload" ] = "ACT_GESTURE_RELOAD_PISTOL"
 }
 Anims.Male[ "ar2" ] = {
@@ -588,7 +589,7 @@ Anims.Female[ "slam" ] = {
 ["fire"] = "ACT_PICKUP_RACK"
 }
 
-util.PrecacheModel("models/tiramisu/gearhandler.mdl")
+util.PrecacheModel("models/gibs/agibs.mdl")
 for _,mdl in pairs(Anims.Male[ "models" ]) do
 	util.PrecacheModel( mdl )
 end

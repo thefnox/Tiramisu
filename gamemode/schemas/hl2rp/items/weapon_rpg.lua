@@ -2,6 +2,7 @@ ITEM.Name = "RPG-7"
 ITEM.Class = "weapon_rpg"
 ITEM.Description = "Aim away from face."
 ITEM.Model = "models/weapons/w_rocket_launcher.mdl"
+ITEM.Unusable = true
 ITEM.Purchaseable = true
 ITEM.Price = 800
 ITEM.ItemGroup = 2

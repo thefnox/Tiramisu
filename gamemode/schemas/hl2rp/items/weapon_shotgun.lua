@@ -2,6 +2,7 @@ ITEM.Name = "SPAS-12 Shotgun"
 ITEM.Class = "weapon_shotgun"
 ITEM.Description = "Overwatch Edition"
 ITEM.Model = "models/weapons/w_shotgun.mdl"
+ITEM.Unusable = true
 ITEM.Purchaseable = true
 ITEM.Price = 600
 ITEM.ItemGroup = 2

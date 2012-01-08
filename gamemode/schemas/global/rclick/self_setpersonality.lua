@@ -1,4 +1,4 @@
-RCLICK.Name = "Set Personality"
+RCLICK.Name = "Set Mood"
 
 function RCLICK.Condition(target)
 

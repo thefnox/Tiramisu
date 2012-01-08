@@ -378,6 +378,7 @@ function CAKE.SendGearToClient( ply )
 							umsg.String( v.item )
 							umsg.String( v.bone )
 							umsg.String( v.name or v.item )
+							umsg.String( v.itemid or "none" )
 						umsg.End( )
 					end
 				end

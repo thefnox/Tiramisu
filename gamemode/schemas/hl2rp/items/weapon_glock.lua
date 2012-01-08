@@ -2,6 +2,7 @@ ITEM.Name = "Glock 18 Pistol"
 ITEM.Class = "weapon_glock"
 ITEM.Description = "Semi auto, polymer built, 9mm. Highly reliable."
 ITEM.Model = "models/weapons/w_pist_glock18.mdl"
+ITEM.Unusable = true
 ITEM.Purchaseable = true
 ITEM.Price = 350
 ITEM.ItemGroup = 2

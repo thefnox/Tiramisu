@@ -2,6 +2,7 @@ ITEM.Name = "USP Match"
 ITEM.Class = "weapon_pistol"
 ITEM.Description = "Police Standard"
 ITEM.Model = "models/weapons/w_pistol.mdl"
+ITEM.Unusable = true
 ITEM.Purchaseable = true
 ITEM.Price = 200
 ITEM.ItemGroup = 2

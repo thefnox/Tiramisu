@@ -486,6 +486,7 @@ end
 function PANEL:OpenMenu()
 
 	local ContextMenu = DermaMenu()
+	if self:GetItem() then
 		if !self:GetItem().Unusable then
 			ContextMenu:AddOption("Use", function() self:UseItem() end)
 		end
@@ -495,6 +496,9 @@ function PANEL:OpenMenu()
 		if self:GetItem().Wearable or string.match( self:GetItem().Class, "clothing_" ) or string.match( self:GetItem().Class, "helmet_" ) then
 			ContextMenu:AddOption("Wear", function() RunConsoleCommand( "rp_wearitem", self:GetItem().Class, self:GetItem().ID ) end)
 		end
+		if CAKE.WoreItems and table.HasValue( CAKE.WoreItems, self:GetItem().ID ) then
+			ContextMenu:AddOption("Take Off", function() RunConsoleCommand( "rp_takeoffitem", self:GetItem().Class, self:GetItem().ID ) end)
+		end
 		if self:GetItem().Wearable and !string.match( self:GetItem().Class, "clothing_" ) and !string.match( self:GetItem().Class, "helmet_" ) then
 			local attachto = ContextMenu:AddSubMenu( "Attach to" )
 			for _, bone in pairs( BoneList ) do
@@ -503,6 +507,7 @@ function PANEL:OpenMenu()
 		end
 		ContextMenu:AddOption("Drop", function() self:DropItem() end)
 		if self.Amount > 1 then ContextMenu:AddOption("Drop All", function() self:DropAllItem() end) end
+	end
 	ContextMenu:Open()
 	
 end
@@ -534,6 +539,11 @@ function PANEL:Paint()
 	x, y = self:ScreenToLocal( 0, 0 )
 	surface.SetDrawColor(50,50,50,255)
 	surface.DrawOutlinedRect( 0, 0, self:GetWide(), self:GetTall() )
+	if CAKE.WoreItems and self:GetItem() and table.HasValue( CAKE.WoreItems, self:GetItem().ID ) then
+		surface.SetDrawColor(255,0,0,255)
+		surface.DrawOutlinedRect( 1, 1, self:GetWide()-1, self:GetTall()-1 )
+		surface.DrawOutlinedRect( 2, 2, self:GetWide()-2, self:GetTall()-2 )
+	end
 end
 
 --Draws the item count

@@ -187,15 +187,9 @@ if SERVER then
 	hook.Add( "PlayerSetModel", "TiramisuSetAnimTrees", function( ply )
 		if !ply:GetNWBool( "specialmodel", false ) then
 			if(ply:IsCharLoaded()) then
-				local m = ""
-				if( CAKE.GetCharField( ply, "gender" ) == "Female" ) then
-					m = "models/tiramisu/animationtrees/alyxanimtree.mdl"
-					ply:SetNWString( "gender", "Female" )
-				else
-					m = "models/humans/group01/male_01.mdl"
-					ply:SetNWString( "gender", "Male" )
-				end
-				ply:SetModel( m )
+				local m = CAKE.GetCharField( ply, "gender" )
+				ply:SetModel( Anims[m][ "models" ][1] )
+				ply:SetNWString( "gender", m )
 				ply:SetMaterial("models/null")
 				ply:AddEffects( EF_NOSHADOW )
 				ply:SetPersonality( CAKE.GetCharField( ply, "personality" ))
@@ -773,10 +767,11 @@ function GM:DoAnimationEvent( ply, event, data ) -- This is for gestures.
 
 		if Anims[ ply:GetGender() ][ holdtype ][ "fire" ] then
 			if !string.match( Anims[ ply:GetGender() ][ holdtype ][ "fire" ], "&lua" ) then
-				if( string.match( Anims[ ply:GetGender() ][ holdtype ][ "fire" ], "GESTURE" ) ) then
-					ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, FindEnumeration(  Anims[ ply:GetGender() ][ holdtype ][ "fire" ] ) ) -- Not a sequence, so I don't use HandleSequence here.
+				local ideal, override = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "fire" ] )
+				if override == -1 then
+					ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ideal )
 				else
-					ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "fire" ] )
+					ply.CalcSeqOverride = override
 				end
 			else
 				exp = string.Explode( ";", string.gsub( Anims[ ply:GetGender() ][ holdtype ][ "fire" ], "&", "" ) )

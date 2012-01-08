@@ -2,6 +2,7 @@ ITEM.Name = "AR-2 Rifle"
 ITEM.Class = "weapon_ar2"
 ITEM.Description = "Pulse Rifle Technology"
 ITEM.Model = "models/weapons/w_irifle.mdl"
+ITEM.Unusable = true
 ITEM.Purchaseable = true
 ITEM.Price = 850
 ITEM.ItemGroup = 2

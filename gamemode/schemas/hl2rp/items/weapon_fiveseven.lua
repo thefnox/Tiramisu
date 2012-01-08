@@ -2,6 +2,7 @@ ITEM.Name = "FN FIVESEVEN 5.7MM Pistol"
 ITEM.Class = "weapon_fiveseven"
 ITEM.Description = "Semi auto, polygonal rifling, 5.7mm. Some of the very best pistols available."
 ITEM.Model = "models/weapons/w_pist_fiveseven.mdl"
+ITEM.Unusable = true
 ITEM.Purchaseable = true
 ITEM.Price = 300
 ITEM.ItemGroup = 2

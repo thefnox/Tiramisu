@@ -2,6 +2,7 @@ ITEM.Name = "Colt .357"
 ITEM.Class = "weapon_357"
 ITEM.Description = "Old and reliable, even for these times."
 ITEM.Model = "models/weapons/w_357.mdl"
+ITEM.Unusable = true
 ITEM.Purchaseable = true
 ITEM.Price = 400
 ITEM.ItemGroup = 2

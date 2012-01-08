@@ -158,7 +158,7 @@ if CLIENT then
 	end)
 
 	hook.Add( "HUDPaint", "Tiramisu.DrawHealthBar", function()
-		--See cl_skin.lua for it.
+		derma.SkinHook( "Paint", "HealthBar" )
 	end)
 else
 	hook.Add( "PlayerSpawn", "Tiramisu.ResetHealth", function( ply )

@@ -307,7 +307,8 @@ end
 
 function meta:TakeItemID( id )
 	local inv = CAKE.GetCharField(self, "inventory" )
-	
+	CAKE.RemoveClothingID( self, id )
+	CAKE.RemoveGearItemID( self, id )
 	for k, v in pairs( inv ) do
 		if( v[2] == id ) then
 			inv[ k ] = nil
@@ -317,6 +318,9 @@ function meta:TakeItemID( id )
 		end
 	end
 	self:RefreshInventory()
+	CAKE.SendClothingToClient( self )
+	CAKE.SaveGear( self )
+	CAKE.SendGearToClient( self )
 	
 end
 

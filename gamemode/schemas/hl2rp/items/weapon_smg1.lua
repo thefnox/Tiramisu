@@ -2,6 +2,7 @@ ITEM.Name = "MP-7"
 ITEM.Class = "weapon_smg1"
 ITEM.Description = "Rapid-fire submachine gun."
 ITEM.Model = "models/weapons/w_smg1.mdl"
+ITEM.Unusable = true
 ITEM.Purchaseable = true
 ITEM.Price = 350
 ITEM.ItemGroup = 2

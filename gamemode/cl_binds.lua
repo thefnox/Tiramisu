@@ -101,7 +101,7 @@ end
 --Right click trace code.
 function GM:GUIMousePressed(mc)
 	if mc == MOUSE_RIGHT then
-		local distance = 200
+		local distance = 500
 		if LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 0 then
 			distance = 5000
 		end
@@ -114,7 +114,7 @@ function GM:GUIMousePressed(mc)
 		end
 		local trace = util.TraceLine(tracedata)
 		
-		if trace.StartPos:Distance( trace.HitPos ) <= distance then
+		if trace.StartPos:Distance( LocalPlayer():EyePos() ) <= distance then
 			local target = trace.Entity
 			local submenus = {}
 			local ContextMenu = DermaMenu()
@@ -127,7 +127,7 @@ function GM:GUIMousePressed(mc)
 				end
 
 				for k,v in pairs (RclickTable) do
-					if v.Condition(target) then 
+					if v.Condition and v.Condition(target) then 
 						if v.SubMenu then
 							if !submenus[ v.SubMenu ] then
 								submenus[ v.SubMenu ] = ContextMenu:AddSubMenu( v.SubMenu )

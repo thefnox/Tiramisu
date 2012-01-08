@@ -2,6 +2,7 @@ ITEM.Name = "Stunstick"
 ITEM.Class = "weapon_stunstick"
 ITEM.Description = "Good for stunnin'."
 ITEM.Model = "models/weapons/w_stunbaton.mdl"
+ITEM.Unusable = true
 ITEM.Purchaseable = false
 ITEM.Price = 200
 ITEM.ItemGroup = 2

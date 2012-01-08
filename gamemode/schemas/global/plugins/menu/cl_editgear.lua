@@ -2,6 +2,7 @@ CLPLUGIN.Name = "Edit Gear"
 CLPLUGIN.Author = "FNox"
 
 CAKE.Gear = {}
+CAKE.WoreItems = {}
 CAKE.Clothing = "none"
 CAKE.Helmet = "none"
 CAKE.ClothingID = "none"
@@ -32,6 +33,27 @@ local BoneList = {
 	"Left foot",
 	"Left toe"
 }
+
+local function FetchWoreItems()
+	CAKE.WoreItems = {}
+
+	for _, bone in pairs(CAKE.Gear) do
+		for k, v in pairs( bone ) do
+			if v.itemid and v.itemid != "none" then
+				table.insert( CAKE.WoreItems, v.itemid )
+			end
+		end
+	end
+
+	for _, ent in pairs(CAKE.ClothingTbl) do
+		if ent then
+			if ent.itemid and ent.itemid != "none" then
+				table.insert( CAKE.WoreItems, ent.itemid )
+			end
+		end
+	end
+
+end
 
 local function HandleGearEditing( entity, bone, item, name )
 
@@ -645,6 +667,7 @@ usermessage.Hook( "addgear", function( um )
 	local item = um:ReadString()
 	local bone = um:ReadString()
 	local name = um:ReadString()
+	local itemid = um:ReadString()
 
 	if CAKE.Gear and !CAKE.Gear[ bone ] then
 		CAKE.Gear[ bone ] = {}
@@ -654,11 +677,13 @@ usermessage.Hook( "addgear", function( um )
 	tbl.item = item
 	tbl.entity = entity
 	tbl.name = name
+	tbl.itemid = itemid
 
 	table.insert( CAKE.Gear[ bone ], tbl )
 	if RefreshGearTree then
 		RefreshGearTree()
 	end
+	FetchWoreItems()
 
 end)
 
@@ -666,10 +691,13 @@ usermessage.Hook( "addclothing", function( um )
 
 	local entity = ents.GetByIndex( um:ReadShort() )
 	local item = um:ReadString()
+	local itemid = um:ReadString()
 
 	entity.item = item 
+	entity.itemid = itemid
 
 	table.insert( CAKE.ClothingTbl, entity )
+	FetchWoreItems()
 
 end)
 

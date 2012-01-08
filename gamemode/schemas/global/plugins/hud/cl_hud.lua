@@ -12,10 +12,6 @@ hook.Add( "HUDPaint", "TiramisuDrawCrosshair", function()
 	end
 end)
 
-hook.Add( "HUDPaint", "TiramisuDrawHealthAndArmor", function()
-	derma.SkinHook( "Paint", "HealthBar" )
-end)
-
 hook.Add( "PostDrawHUD","TiramisuHUDMessages", function()
 	derma.SkinHook( "Paint", "DeathMessage" ) --Messages displayed when dead/unconcious
 end)

@@ -27,9 +27,6 @@ include( "client_resources.lua" ) -- Sends files to the client
 include( "sh_animations.lua" ) --Animaaaaations.
 include( "sh_anim_tables.lua" ) --Animation tables
 
-resource.AddFile( "models/tiramisu/gearhandler.mdl")
-resource.AddFile( "materials/tiramisu/gearhandler.vmt")
-resource.AddFile( "materials/tiramisu/gearhandler.vtf")
 resource.AddFile( "resource/fonts/YanoneKaffeesatz-Bold.ttf")
 resource.AddFile( "resource/fonts/YanoneKaffeesatz-Regular.ttf")
 

@@ -33,24 +33,13 @@ concommand.Add( "rp_takeoffitem", function( ply, cmd, args )
 	local item = args[1]
 	local itemid = args[2]
 
-	if string.match( item, "clothing_" ) then
-
-		CAKE.SetClothing( ply, nil, nil, CAKE.GetCharField( ply, "helmet" ), CAKE.GetCharField( ply, "helmetid" ) )
-		CAKE.SetCharField( ply, "clothing", "none" )
-		CAKE.SetCharField( ply, "clothingid", false )
-
-	elseif string.match( item, "helmet_" ) then
-
-		CAKE.RemoveHelmet( ply )
-		CAKE.SetCharField( ply, "helmet", "none" )
-		CAKE.SetCharField( ply, "helmetid", false )
-
+	if string.match( item, "clothing_" ) or string.match( item, "helmet_" ) then
+		CAKE.RemoveClothingID( ply, itemid )
+		CAKE.SendClothingToClient( ply )
 	else
-
 		CAKE.RemoveGearItemID( ply, itemid )
 		CAKE.SaveGear( ply )
 		CAKE.SendGearToClient( ply )
-
 	end
 
 end)

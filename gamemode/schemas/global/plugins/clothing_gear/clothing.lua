@@ -53,8 +53,9 @@ hook.Add( "PlayerSetModel", "TiramisuSpawnClothing", function( ply )
 		ply.BonemergeGearEntity = ents.Create( "player_gearhandler" )
 		ply.BonemergeGearEntity:SetPos( ply:GetPos() + ply:GetUp() * 80 )
 		ply.BonemergeGearEntity:SetAngles( ply:GetAngles() )
-		ply.BonemergeGearEntity:SetModel("models/tiramisu/gearhandler.mdl")
+		ply.BonemergeGearEntity:SetModel("models/gibs/agibs.mdl")
 		ply.BonemergeGearEntity:SetParent( ply )
+		ply.BonemergeGearEntity:SetMaterial("models/null")
 		ply.BonemergeGearEntity:SetNoDraw( true )
 		ply.BonemergeGearEntity:SetSolid( SOLID_NONE )
 		ply.BonemergeGearEntity:Spawn()
@@ -80,17 +81,32 @@ function CAKE.RemoveClothing( ply )
 
 	if ply.Clothing then
 		for k, v in pairs( ply.Clothing ) do
-			if type( v ) != "table" then
-				if ValidEntity( v ) then
-					v:Remove()
-					v = nil
-				end
+			if ValidEntity( v ) then
+				v:Remove()
+				v = nil
 			end
 		end
 	end
 
 	ply.Clothing = {}	
 
+end
+
+function CAKE.RemoveClothingID( ply, itemid )
+	if ply.Clothing then
+		for k, v in pairs( ply.Clothing ) do
+			if ValidEntity( v ) and v.itemid == itemid then
+				if string.match( v.item, "clothing_" ) then
+					CAKE.SetCharField( ply,"clothing", "none" )
+					CAKE.SetCharField( ply,"clothingid", "none" )
+				elseif string.match( v.item, "helmet_" ) then
+					CAKE.SetCharField( ply,"helmet", "none" )
+					CAKE.SetCharField( ply,"helmetid", "none" )
+				end
+				CAKE.RestoreClothing( ply )
+			end
+		end
+	end
 end
 
 --Removes only the helmet of a player, if wearing any.
@@ -174,13 +190,13 @@ function CAKE.TestClothing( ply, model, clothing, helmet, headratio, bodyratio, 
 	if ( clothing and clothing != "none" ) or helmet then
 		local item
 		if helmet and helmet != clothing then
-			if (CAKE.GetUData( clothingid, "nogloves") or ply:ItemHasFlag( clothing, "nogloves" )) then --Head, body and hands are 
+			if (CAKE.GetUData( clothingid, "nogloves") or ply:ItemHasFlag( clothing, "nogloves" )) then --Head, body and hands are all different 
 				CAKE.HandleClothing( ply, clothing, CLOTHING_BODY, clothingid, model )
 				CAKE.HandleClothing( ply, helmet, CLOTHING_HEAD, helmetid, model )
 				CAKE.HandleClothing( ply, "none", CLOTHING_HANDS, "none", model )
 			else --Head and hands are the same, so we just make the head and the body.
 				CAKE.HandleClothing( ply, clothing , CLOTHING_BODYANDHANDS, clothingid, model )
-				CAKE.HandleClothing( ply, helmet, CLOTHING_HEAD, "none", model)
+				CAKE.HandleClothing( ply, helmet, CLOTHING_HEAD, helmetid, model)
 			end
 			item = helmet
 		else
@@ -265,6 +281,7 @@ function CAKE.HandleClothing( ply, item, ctype, itemid, modeloverride )
 	end
 	ply.Clothing[ ctype ]:Spawn()
 	ply.Clothing[ ctype ].item = item
+	ply.Clothing[ ctype ].itemid = itemid or "none"
 	
 		
 end
@@ -359,6 +376,7 @@ function CAKE.SendClothingToClient( ply )
 					umsg.Start( "addclothing", ply )
 						umsg.Short( v:EntIndex() )
 						umsg.String( v.item or "none" )
+						umsg.String( v.itemid or "none" )
 					umsg.End()
 				end
 			end
