@@ -57,6 +57,12 @@ local function ccBeginCreate( ply, cmd, args )
 	umsg.Start( "charactercreation", ply )
 	umsg.End()
 
+	if ply:IsCharLoaded() then
+		umsg.Start("Tiramisu.EnableBlackScreen", ply) --This is to disable the black screen after the player spawns.
+			umsg.Bool( true )
+		umsg.End()
+	end
+
 end
 concommand.Add( "rp_begincreate", ccBeginCreate )
 
@@ -97,6 +103,12 @@ local function ccEscapeCreate( ply, cmd, args )
 		ply:SetNWInt( "charactercreate", 0 )
 	end
 
+	if ply:IsCharLoaded() then
+		umsg.Start("Tiramisu.EnableBlackScreen", ply) --This is to disable the black screen after the player spawns.
+			umsg.Bool( false )
+		umsg.End()
+	end
+
 end
 concommand.Add( "rp_escapecreate", ccEscapeCreate )
 
@@ -106,10 +118,10 @@ local function ccTestClothing( ply, cmd, args )
 		CAKE.RemoveAllGear( ply )
 		if args[ 1 ] and args[ 1 ] != "none" then
 			if( args[1] == "Female" ) then
-				ply:SetModel( "models/Tiramisu/AnimationTrees/femaleanimtree.mdl" )
+				ply:SetModel( Anims.Female[ "models" ][1] )
 				ply:SetNWString( "gender", "Female" )
 			else
-				ply:SetModel( "models/Tiramisu/AnimationTrees/maleanimtree.mdl" )
+				ply:SetModel( Anims.Male[ "models" ][1] )
 				ply:SetNWString( "gender", "Male" )
 			end
 		end
@@ -166,10 +178,10 @@ function ccSelectChar( ply, cmd, args )
 		local special = char[ "specialmodel" ]
 		if special == "none" or special == "" then
 			if( char[ "gender" ] == "Female" ) then
-				ply:SetModel( "models/Tiramisu/AnimationTrees/femaleanimtree.mdl" )
+				ply:SetModel( "models/humans/group01/female_01.mdl" )
 				ply:SetNWString( "gender", "Female" )
 			else
-				ply:SetModel( "models/Tiramisu/AnimationTrees/maleanimtree.mdl" )
+				ply:SetModel( "models/humans/group01/male_01.mdl" )
 				ply:SetNWString( "gender", "Male" )
 			end
 			ply:SetMaterial("models/null")

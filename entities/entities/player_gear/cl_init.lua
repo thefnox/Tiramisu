@@ -100,19 +100,22 @@ ENT.HeadBones = { --All of the bones related to the head.
 	
 }
 
+local parent
 function ENT:Draw()
 
-	if !self.HeadBonesIndex then
-		self.HeadBonesIndex = {}
-		for _,bone in pairs(self.HeadBones) do
-			index = self.Entity:GetParent():LookupBone(bone)
-			if index then
-				table.insert(self.HeadBonesIndex, index)
+	 parent = self.Entity:GetDTEntity( 1 ) 
+
+	if ValidEntity( parent) then
+		if !self.HeadBonesIndex then
+			self.HeadBonesIndex = {}
+			for _,bone in pairs(self.HeadBones) do
+				index = parent:LookupBone(bone)
+				if index then
+					table.insert(self.HeadBonesIndex, index)
+				end
 			end
 		end
-	end
 
-	if ValidEntity( self.Entity:GetDTEntity( 1 ) ) then
 		local position, angles = self.Entity:GetDTEntity( 1 ):GetBonePosition(self.Entity:GetDTInt(1))
 		local newposition, newangles = LocalToWorld( self.Entity:GetDTVector(1), self.Entity:GetDTAngle(1), position, angles )
 		self.Entity:SetPos(newposition)
@@ -120,16 +123,17 @@ function ENT:Draw()
 		self.Entity:SetModelScale( self.Entity:GetDTVector(2) )
 	end
 
-	if !self.Entity:GetDTInt(1) or !self.Entity:GetDTEntity( 1 ) then
+	if !self.Entity:GetDTInt(1) or !parent then
 		--no shirt, no pants, no service
 		return
 	end
 
 	if !self.Entity:GetDTBool(1) then
+		--If it is not meant to be drawn, don't draw it.
 		return
 	end
 
-	if self.HeadBonesIndex and self.Entity:GetParent() == LocalPlayer() and !(CAKE.Thirdperson:GetBool() and CAKE.ThirdpersonDistance:GetInt() != 0 ) and !CAKE.FreeScroll and !CAKE.ForceDraw and CAKE.FirstpersonBody:GetBool() and table.HasValue(self.HeadBonesIndex, self.Entity:GetDTInt(1)) then
+	if self.HeadBonesIndex and parent == LocalPlayer() and !(CAKE.Thirdperson:GetBool() and CAKE.ThirdpersonDistance:GetInt() != 0 ) and !CAKE.FreeScroll and !CAKE.ForceDraw and CAKE.FirstpersonBody:GetBool() and table.HasValue(self.HeadBonesIndex, self.Entity:GetDTInt(1)) then
 		return
 	end
 

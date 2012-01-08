@@ -111,7 +111,7 @@ local function ccSitDown( ply, cmd, args )
 			umsg.Start( "ToggleFreescroll", ply )
 				umsg.Bool( true )
 			umsg.End()
-			CAKE.SendChat( ply, "Use !stand to get back on your feet." )
+			CAKE.SendChat( ply, "Use !stand, or right click yourself in thirdperson mode to get back on your feet." )
 		else
 			CAKE.SendChat( ply, "No room to sit here." )
 		end
@@ -123,7 +123,7 @@ local function ccSitDown( ply, cmd, args )
 			ply:SetNWBool( "sittingground", true )
 			ply:Freeze( true )
 			--ply.Clothing[1]:SetParent( ply )
-			CAKE.SendChat( ply, "Use !stand to get back on your feet." )
+			CAKE.SendChat( ply, "Use !stand, or right click yourself in thirdperson mode to get back on your feet." )
 		end
 	else
 		CAKE.SendChat( ply, "Wait at least 2 seconds between sitting!")

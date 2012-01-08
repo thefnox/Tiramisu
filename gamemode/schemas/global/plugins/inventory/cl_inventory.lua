@@ -1,6 +1,33 @@
 CLPLUGIN.Name = "Inventory Menu"
 CLPLUGIN.Author = "F-Nox/Big Bang"
 
+local BoneList = {
+	"pelvis",
+	"stomach",
+	"lower back",
+	"chest",
+	"upper back",
+	"neck",
+	"head",
+	"right clavicle",
+	"right upper arm",
+	"right forearm",
+	"right hand",
+	"left clavicle",
+	"left upper arm",
+	"left forearm",
+	"left hand",
+	"right thigh",
+	"right calf",
+	"right foot",
+	"right toe",
+	"left thigh",
+	"left calf",
+	"left foot",
+	"left toe"
+}
+
+
 InventoryTable = {}
 CAKE.InventorySlot = {}
 CAKE.SavedPositions = {}
@@ -465,8 +492,14 @@ function PANEL:OpenMenu()
 		for k,v in pairs(self:GetItem().RightClick or {}) do
 			ContextMenu:AddOption( k, function() self:UseItem(v) end)
 		end
-		if (self:GetItem().Wearable or string.match( self:GetItem().Class, "clothing_" ) or string.match( self:GetItem().Class, "helmet_" )) then
+		if self:GetItem().Wearable or string.match( self:GetItem().Class, "clothing_" ) or string.match( self:GetItem().Class, "helmet_" ) then
 			ContextMenu:AddOption("Wear", function() RunConsoleCommand( "rp_wearitem", self:GetItem().Class, self:GetItem().ID ) end)
+		end
+		if self:GetItem().Wearable and !string.match( self:GetItem().Class, "clothing_" ) and !string.match( self:GetItem().Class, "helmet_" ) then
+			local attachto = ContextMenu:AddSubMenu( "Attach to" )
+			for _, bone in pairs( BoneList ) do
+				attachto:AddOption(bone, function() RunConsoleCommand( "rp_wearitem", self:GetItem().Class, self:GetItem().ID, bone ) end)
+			end
 		end
 		ContextMenu:AddOption("Drop", function() self:DropItem() end)
 		if self.Amount > 1 then ContextMenu:AddOption("Drop All", function() self:DropAllItem() end) end

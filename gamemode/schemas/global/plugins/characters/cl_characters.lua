@@ -168,6 +168,7 @@ function CreateCharList( )
 end
 
 function CreateMenuButtons( canclose )
+	local closelabel
 	local spawnlabel = vgui.Create( "DButton", CharacterMenu )
 	spawnlabel:SetSize( 80, 26 )
 	spawnlabel:SetText( "" )
@@ -242,12 +243,15 @@ function CreateMenuButtons( canclose )
 		createcharacter.SlideOut = true
 		charpanel.SlideOut = true
 		PlayerModel.SlideOut = true
+		if closelabel then
+			closelabel.SlideOut = true
+		end
 		RunConsoleCommand( "rp_begincreate" )
 	end 
 
 	if canclose then
 		local x, y 
-		local closelabel = vgui.Create( "DButton", CharacterMenu )
+		closelabel = vgui.Create( "DButton", CharacterMenu )
 		closelabel:SetSize( 80, 26 )
 		closelabel:SetText( "" )
 		closelabel:SetPos( (ScrW() / 2 )- 60, ScrH() + 500  )
@@ -255,7 +259,7 @@ function CreateMenuButtons( canclose )
 		closelabel.PaintOver = function()
 			draw.SimpleText( "Close Menu", "Tiramisu18Font", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
 			x,y = closelabel:GetPos()
-			if !createcharacter.SlideOut then
+			if !closelabel.SlideOut then
 				closelabel:SetPos( (ScrW() / 2 )- 40, Lerp( RealFrameTime() * 10, y, ScrH() / 2 + 250 ))
 			else
 				closelabel:SetPos( (ScrW() / 2 )- 40, Lerp( RealFrameTime() * 10, y, ScrH() / 2 + 500 ))

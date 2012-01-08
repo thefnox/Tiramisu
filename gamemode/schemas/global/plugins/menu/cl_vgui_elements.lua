@@ -199,7 +199,7 @@ function PANEL:Paint()
 	
 	self.LastPaint = RealTime()
 
-	--self:EndDraw()
+	self:EndDraw()
 	
 end
 

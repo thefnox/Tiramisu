@@ -27,13 +27,6 @@ include( "client_resources.lua" ) -- Sends files to the client
 include( "sh_animations.lua" ) --Animaaaaations.
 include( "sh_anim_tables.lua" ) --Animation tables
 
-resource.AddFile( "models/tiramisu/animationtrees/alyxanimtree.mdl" )
-resource.AddFile( "models/tiramisu/animationtrees/combineanimtree.mdl" )
-resource.AddFile( "models/tiramisu/animationtrees/maleanimtree.mdl" )
-resource.AddFile( "models/tiramisu/animationtrees/playeranimtree.mdl" )
-resource.AddFile( "models/tiramisu/animationtrees/femaleanimtree.mdl" )
-resource.AddFile( "models/tiramisu/animationtrees/policeanimtree.mdl" )
-resource.AddFile( "models/tiramisu/animationtrees/barneyanimtree.mdl" )
 resource.AddFile( "models/tiramisu/gearhandler.mdl")
 resource.AddFile( "materials/tiramisu/gearhandler.vmt")
 resource.AddFile( "materials/tiramisu/gearhandler.vtf")

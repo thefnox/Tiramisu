@@ -27,6 +27,20 @@ Right, so, changelog.
 
 * Rewrote the chat code. Chat range is now calculated more realistically.
 
+* Added fade to black on death. Remade rp_acceptdeath, it uses a button now, no need to write anything in chat or console.
+
+* Added timer on rp_wakeup, therefore controlling the time you have to spend unconcious to wake up.
+
+* Finally fixed chat breaking after a certain amount of entries have been added to it.
+
+* Made chat channels use the current handler for talking. If you have the OOC channel selected you will talk in OOC, same with PMs
+
+* Added toggleable health regeneration.
+
+* Added right click option Make Into Clothing. Allows you to make clothing out of ragdolls, if they have the adequate skeleton.
+
+* Added right click options for permanent props and for tool trust.
+
 -- SCRIPT
 
 * Rewrote clothing code. The whole thing, including player_part. It should now be readable.
@@ -43,6 +57,6 @@ Right, so, changelog.
 
 * Bugfixes on the Options menu.
 
-* Moved ALL the configuration options to configuration.lua, including clientside options too, this is to easen up the task of editing tiramisu
+* Moved ALL the configuration options to configuration.lua, including clientside options too, this is to easen up the task of editing Tiramisu
 
 * Moved ALL the VGUI and HUD drawing hooks to a single cl_skin.lua file, using derma.Hook. You can now change the way each and every element of the schema looks just by modifying a single file.

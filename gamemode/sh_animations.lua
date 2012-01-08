@@ -1,8 +1,11 @@
 --NPC Animations V4
 Anims = {}
+Anims.SequenceCache = {}
 Anims.PersonalityTypes = {
 	"default",
-	"relaxed"
+	"relaxed",
+	"headstrong",
+	"frustrated"
 }
 
 local meta = FindMetaTable( "Player" )
@@ -189,11 +192,12 @@ if SERVER then
 					m = "models/tiramisu/animationtrees/alyxanimtree.mdl"
 					ply:SetNWString( "gender", "Female" )
 				else
-					m = "models/tiramisu/animationtrees/maleanimtree.mdl"
+					m = "models/humans/group01/male_01.mdl"
 					ply:SetNWString( "gender", "Male" )
 				end
 				ply:SetModel( m )
 				ply:SetMaterial("models/null")
+				ply:AddEffects( EF_NOSHADOW )
 				ply:SetPersonality( CAKE.GetCharField( ply, "personality" ))
 			else
 				ply:SetModel("models/kleiner.mdl");
@@ -220,6 +224,33 @@ if SERVER then
 	end)
 
 else
+	
+	local matrix
+	local function ScaleDemBones( ply, n, physbones )
+		if ply and n then
+			matrix = ply:GetBoneMatrix( n )
+			if matrix then
+				matrix:Scale(Vector( 0.001,0.001,0.001 ))
+				ply:SetBoneMatrix(n, matrix)
+			end
+		end
+	end
+
+	hook.Add( "OnEntityCreated", "Tiramisu.StripYouOfYourBones", function(ent)
+		if ent:IsPlayer() then
+			if !ent.oldbuildbones then
+				ent.oldbuildbones = ent.BuildBonePositions
+			end
+			if ent.oldbuildbones then
+				ent.BuildBonePositions = function( ent, numbones, numphysbones)
+					ent.oldbuildbones(ent, numbones, numphysbones)
+					ScaleDemBones( ent, numbones, numphysbones )
+				end
+			else
+				ent.BuildBonePositions = ScaleDemBones
+			end
+		end
+	end)
 
 	usermessage.Hook( "Tiramisu.SendPersonality", function(um)
 		local ply = um:ReadEntity()
@@ -307,19 +338,18 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 			model = exp2[2]
 			seq = exp[2]
 			if !model then
-				model = "models/Tiramisu/AnimationTrees/" .. string.lower( ply:GetGender() ) .. "animtree.mdl"
+				model = Anims[ply:GetGender()][ "models" ][1]
+			end
+			if !Anims.SequenceCache[model] then
+				Anims.SequenceCache[model] = {}
+			end
+			if !Anims.SequenceCache[model][seq] then
+				Anims.SequenceCache[model][seq] = ply:LookupSequence(string.gsub( seq, ";", "" ))
 			end
 			if( string.lower( ply:GetModel() ) != string.lower(model) and !ply:GetNWBool( "specialmodel", false ) ) then
 				ply:SetModel( model )
 			end
-			timer.Simple( 0, function()
-				if string.match( seq, "g_" ) or string.match( exp2[2], "gesture" ) then
-					ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( string.gsub( exp2[2], ";", "" ) ) )
-				else
-					ply:SetSequence( ply:LookupSequence( string.gsub( seq, ";", "" ) ) )
-				end
-			end)
-			return ply:LookupSequence( string.gsub( seq, ";", "" ) )
+			return 1, Anims.SequenceCache[model][seq]
 		elseif string.match( seq, "gesture" ) then --ENUMERATED SEQUENCE WITH A GESTURE
 			--"&gesture:modelstring;enumerationstring;gesturestring;weight(optional)"
 			exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
@@ -333,13 +363,13 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 				weight = 1
 			end
 			if !model then
-				model = "models/Gustavio/" .. string.lower( ply:GetGender() ) .. "animtree.mdl"
+				model = Anims[ply:GetGender()][ "models" ][1]
 			end
 			if( ply:GetModel() != model and !ply.SpecialModel ) then
 				ply:SetModel( model )
 			end
 			ply:SetGesture( gesture, weight )
-			return FindEnumeration( seq )
+			return FindEnumeration( seq ), -1
 
 		elseif string.match( seq, "number" ) then -- NUMBER BASED ENUMERATIONS, BASICALLY THE OPPOSITE OF STRING ONES
 			--"&number:modelstring;sequencenumber"
@@ -352,7 +382,7 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 			end
 			exp = string.Explode( ":", string.gsub( seq, "&", "" ) )
 			
-			return FindName(seq)
+			return FindName(seq), -1
 		end
 		
 		if string.match( seq, "lua" ) then --LUA BASED ANIMATIONS USING JETBOOMS LIBRARY
@@ -362,7 +392,7 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 			skeletonanim = exp[2] or "ACT_DIERAGDOLL"
 			HandleLuaAnimation( ply, sequence )
 			
-			return FindEnumeration( skeletonanim )
+			return FindEnumeration( skeletonanim ), -1
 		else
 			if ply.InLuaSequence then
 				if CLIENT then
@@ -381,12 +411,12 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 				ply:SetModel( model )
 			end
 			
-			return FindEnumeration( seq )
+			return FindEnumeration( seq ), -1
 		end
 	end
 
 	
-	return FindEnumeration( seq )
+	return FindEnumeration( seq ), -1
 	
 end
 
@@ -530,25 +560,30 @@ end
 function GM:HandlePlayerDucking( ply, velocity ) --Handles crouching
 
 	local holdtype = "default"
-	if( ValidEntity(  ply:GetActiveWeapon() ) ) then
+	local personality = ply:GetPersonality()
+	if( ValidEntity(ply:GetActiveWeapon()) ) then
 		holdtype = Anims.DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
+	end
+
+	if holdtype == "default" and personality != "default" then
+		holdtype = personality --We use the personality custom animation table, rather than the default.
 	end
 
 	if ply:Crouching() then
 		if ply:GetNWBool( "aiming", false ) then
 			len2d = velocity:Length2D() -- the velocity on the x and y axis.
 			if len2d > 0.5 then
-				ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "crouch" ][ "aimwalk" ] )
+				ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "crouch" ][ "aimwalk" ] )
 			else
-				ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype][ "crouch" ][ "aimidle" ] )
+				ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype][ "crouch" ][ "aimidle" ] )
 			end
 		else
 			len2d = velocity:Length2D()
 		
 			if len2d > 0.5 then
-				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "crouch" ][ "walk" ] )
+				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "crouch" ][ "walk" ] )
 			else
-				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "crouch" ][ "idle" ] )
+				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "crouch" ][ "idle" ] )
 			end
 		end
 		return true
@@ -560,7 +595,7 @@ end
 function GM:HandlePlayerSwimming( ply ) --Handles swimming.
 
 	if ply:WaterLevel() >= 2 then
-		ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "swim" ] )
+		ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "swim" ] )
 		return true
 	end
 	
@@ -576,9 +611,9 @@ function GM:HandlePlayerDriving( ply ) --Handles sequences while in vehicles.
 		vehicle = ply:GetVehicle()
 		class = vehicle:GetClass()
 		if ( class == "prop_vehicle_prisoner_pod" and vehicle:GetModel() == "models/vehicles/prisoner_pod_inner.mdl" ) then
-			ply.CalcIdeal = HandleSequence( ply, "ACT_IDLE" )
+			ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, "ACT_IDLE" )
 		else
-			ply.CalcIdeal = HandleSequence( ply, "&switch:models/tiramisu/animationtrees/playeranimtree.mdl;ACT_DRIVE_JEEP" )
+			ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, "&switch:models/tiramisu/animationtrees/playeranimtree.mdl;ACT_DRIVE_JEEP" )
 		end
 		return true
 	end
@@ -590,18 +625,18 @@ function GM:HandleExtraActivities( ply ) --Drop in here everything additional yo
 
 		if ply:GetNWBool( "sittingchair", false ) then
 			if !ply.IsSittingDamn then
-				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "sitentry" ]  )
+				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sitentry" ]  )
 				timer.Simple( 1.5, function()
 					ply.IsSittingDamn = true
 				end)
 				return true
 			else
-				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "sit" ]  )
+				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sit" ]  )
 				return true
 			end
 		else
 			if ply.IsSittingDamn then
-				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "sitexit" ]  )
+				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sitexit" ]  )
 				timer.Simple( 0.8, function()
 					ply.IsSittingDamn = false
 				end)
@@ -611,18 +646,18 @@ function GM:HandleExtraActivities( ply ) --Drop in here everything additional yo
 		
 		if ply:GetNWBool( "sittingground", false ) then
 			if !ply.IsSittingGround then
-				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "sitgroundentry" ]  )
+				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sitgroundentry" ]  )
 				timer.Simple( 1.7, function()
 					ply.IsSittingGround = true
 				end)
 				return true
 			else
-				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "sitground" ]  )
+				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sitground" ]  )
 				return true
 			end
 		else
 			if ply.IsSittingGround then
-				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "sitgroundexit" ]  )
+				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sitgroundexit" ]  )
 				timer.Simple( 1.2, function()
 					ply.IsSittingGround = false
 				end)
@@ -659,7 +694,7 @@ function GM:CalcMainActivity( ply, velocity )
 			
 		if ply:GetNWBool( "aiming", false ) then
 			if len2d > 320 then
-				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ personality ][ "sprint" ] )
+				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ personality ][ "sprint" ] )
 				if SERVER then
 					if ply:GetAiming() and !ply.WasAimingBeforeRunning then
 						ply.WasAimingBeforeRunning = true
@@ -667,7 +702,7 @@ function GM:CalcMainActivity( ply, velocity )
 					ply:SetAiming( false )
 				end				
 			elseif len2d > 135 and len2d <= 320 then
-				ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
+				ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
 				if SERVER then
 					if ply:GetAiming() and !ply.WasAimingBeforeRunning then
 						ply.WasAimingBeforeRunning = true
@@ -679,40 +714,40 @@ function GM:CalcMainActivity( ply, velocity )
 					ply:SetAiming( true )
 					ply.WasAimingBeforeRunning = false
 				end
-				ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "aim" ][ "walk" ] )
+				ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "aim" ][ "walk" ] )
 			else
 				if ply.WasAimingBeforeRunning then
 					ply:SetAiming( true )
 					ply.WasAimingBeforeRunning = false
 				end
-				ply.CalcIdeal  = HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "aim" ][ "idle" ] )
+				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "aim" ][ "idle" ] )
 			end
 		else
 			if len2d > 320 then
-				ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ personality ][ "sprint" ] )
+				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ personality ][ "sprint" ] )
 			elseif len2d > 135 and len2d <= 320 then
-				ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
+				ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
 			elseif len2d > 0.1 and len2d <= 135 then
 				if ply.WasAimingBeforeRunning then
 					ply:SetAiming( true )
 					ply.WasAimingBeforeRunning = false
 				end
-				ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "walk" ] )
+				ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "walk" ] )
 			else
 				if ply.WasAimingBeforeRunning then
 					ply:SetAiming( true )
 					ply.WasAimingBeforeRunning = false
 				end
-				ply.CalcIdeal =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "idle" ] )
+				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "idle" ] )
 			end
 		end
 	end
 
 	if CLIENT and CAKE.ForceDraw then
-		return ACT_IDLE, ply.CalcSeqOverride
+		return ply.CalcIdeal, ACT_IDLE
 	end
 
-	return ply.CalcIdeal, ply.CalcSeqOverride
+	return ply.CalcIdeal, ply.CalcSeqOverride or -1
 
 end		
 	
@@ -741,7 +776,7 @@ function GM:DoAnimationEvent( ply, event, data ) -- This is for gestures.
 				if( string.match( Anims[ ply:GetGender() ][ holdtype ][ "fire" ], "GESTURE" ) ) then
 					ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, FindEnumeration(  Anims[ ply:GetGender() ][ holdtype ][ "fire" ] ) ) -- Not a sequence, so I don't use HandleSequence here.
 				else
-					ply.CalcIdeal = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "fire" ] )
+					ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ holdtype ][ "fire" ] )
 				end
 			else
 				exp = string.Explode( ";", string.gsub( Anims[ ply:GetGender() ][ holdtype ][ "fire" ], "&", "" ) )

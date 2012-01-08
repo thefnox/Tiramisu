@@ -19,7 +19,7 @@ concommand.Add( "rp_wearitem", function( ply, cmd, args )
 	elseif CAKE.ItemData[ item ].Wearable or CAKE.GetUData( itemid, "wearable")  then
 
 		CAKE.RemoveGearItemID( ply, itemid ) 
-		CAKE.HandleGear( ply, item, CAKE.ItemData[ item ].Bone or CAKE.GetUData( itemid, "bone") or "head", itemid )
+		CAKE.HandleGear( ply, item, args[3] or CAKE.ItemData[ item ].Bone or CAKE.GetUData( itemid, "bone") or "head", itemid )
 		CAKE.SaveGear( ply )
 		CAKE.SendGearToClient( ply )
 
