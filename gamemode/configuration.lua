@@ -2,17 +2,17 @@
 
 CAKE.ConVars = {  }
 
-CAKE.ConVars[ "Tiramisu" ] = "2.0"
+CAKE.ConVars[ "Tiramisu" ] = "2"
 CAKE.ConVars[ "Schema" ] = "hl2rp" -- What folder is schema data being loaded from?
 
 --General config
 CAKE.ConVars[ "SpawnWithBlackScreen" ] = true --Set this to true if you want people to be welomed with a black screen.
-CAKE.ConVars[ "WalkSpeed" ] = 100 -- How fast do they walk
-CAKE.ConVars[ "RunSpeed" ] = 450 -- How fast do they run
+CAKE.ConVars[ "WalkSpeed" ] = 80 -- How fast do they walk
+CAKE.ConVars[ "RunSpeed" ] = 420 -- How fast do they run
 CAKE.ConVars[ "TalkRange" ] = 300 -- This is the range of talking.
 CAKE.ConVars[ "SuicideEnabled" ] = false -- Can players compulsively suicide by using kill
 CAKE.ConVars[ "UnconciousTimer" ] = 5 --Time that must be spent unconcious before being able to wake up. Set to 0 to disable (not recommended)
-CAKE.ConVars[ "DisplayClock" ] = true --Use the clock system?
+CAKE.ConVars[ "DisplayClock" ] = false --Use the clock system?
 CAKE.ConVars[ "DefaultTime" ] = "1 1 2012 1" --The initial time of the script's clock.
 CAKE.ConVars[ "Default_Money" ] = 800 -- How much money do the characters start out with.
 CAKE.ConVars[ "Default_Title" ] = "Citizen" -- What is their title when they create their character.
@@ -29,7 +29,7 @@ CAKE.ConVars[ "ReturnToSpawnOnDeath" ] = true --Set this to true if you want peo
 CAKE.ConVars[ "FadeToBlackOnDeath" ] = true --Set this to false if you want to disable the fade to black that occurs 5 seconds before death.
 CAKE.ConVars[ "Respawn_Timer" ] = 10 --Time in seconds that it takes for people to be allowed to respawn.
 CAKE.ConVars[ "Instant_Respawn" ] = false --Respawn instantly or allow people to lay dead for a while.
-CAKE.ConVars[ "DeathRagdoll_Linger" ] = 20 --Time in seconds that it takes for ragdolls to dissapear, set to 0 if you want corpses to stay forever
+CAKE.ConVars[ "DeathRagdoll_Linger" ] = 0 --Time in seconds that it takes for ragdolls to dissapear, set to 0 if you want corpses to stay forever
 
 CAKE.ConVars[ "Default_Physgun" ] = 0 -- Are players banned from the physics gun when they first start.
 CAKE.ConVars[ "Default_Gravgun" ] = 0 -- Are players banned from the gravity gun when they first start.

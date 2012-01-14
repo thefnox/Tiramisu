@@ -16,7 +16,29 @@ CLOTHING_HEADRATIO = 1
 CLOTHING_BODYRATIO = 2
 CLOTHING_HANDRATIO = 3
 
+--From sanbox
+local function ConvertRelativeToEyesAttachment( Entity, Pos )
+
+	// Convert relative to eye attachment
+	local eyeattachment = Entity:LookupAttachment( "eyes" )
+	if ( eyeattachment == 0 ) then return end
+	local attachment = Entity:GetAttachment( eyeattachment )
+	if ( !attachment ) then return end
+
+	local LocalPos, LocalAng = WorldToLocal( Pos, Angle(0,0,0), attachment.Pos, attachment.Ang )
+
+	return LocalPos
+
+end
+
 function ENT:Draw()
+
+	if self.Entity:GetParent() then
+		self.Entity.EyeTarget = ConvertRelativeToEyesAttachment( self.Entity, self.Entity:GetParent():EyePos() + self.Entity:GetParent():EyeAngles() * 1000 )
+		if self.Entity.EyeTarget then
+			self.Entity:SetEyeTarget(self.Entity.EyeTarget)
+		end
+	end
 
 	if self.Entity:GetParent() == LocalPlayer() and !hook.Call("ShouldDrawLocalPlayer", GAMEMODE) then
 		return
@@ -267,7 +289,7 @@ function ENT:BuildBonePositions( n, physbones )
 		end
 	end
 
-	if self.Entity:GetParent() == LocalPlayer() and !(CAKE.Thirdperson:GetBool() and CAKE.ThirdpersonDistance:GetInt() != 0 ) and !CAKE.FreeScroll and !CAKE.ForceDraw and CAKE.FirstpersonBody:GetBool() then
+	if self.Entity:GetParent() == LocalPlayer() and !self.Entity:GetParent():InVehicle() and !(CAKE.Thirdperson:GetBool() and CAKE.ThirdpersonDistance:GetInt() != 0 ) and !CAKE.FreeScroll and !CAKE.ForceDraw and CAKE.FirstpersonBody:GetBool() then
 		--First person, but with body visible
 		for i=0, n do
 			if table.HasValue(self.HeadBonesIndex, i) then --If they're part of the head

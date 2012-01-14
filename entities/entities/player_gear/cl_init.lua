@@ -103,7 +103,7 @@ ENT.HeadBones = { --All of the bones related to the head.
 local parent
 function ENT:Draw()
 
-	 parent = self.Entity:GetDTEntity( 1 ) 
+	parent = self.Entity:GetDTEntity( 1 ) 
 
 	if ValidEntity( parent) then
 		if !self.HeadBonesIndex then
@@ -133,10 +133,12 @@ function ENT:Draw()
 		return
 	end
 
-	if self.HeadBonesIndex and parent == LocalPlayer() and !(CAKE.Thirdperson:GetBool() and CAKE.ThirdpersonDistance:GetInt() != 0 ) and !CAKE.FreeScroll and !CAKE.ForceDraw and CAKE.FirstpersonBody:GetBool() and table.HasValue(self.HeadBonesIndex, self.Entity:GetDTInt(1)) then
+	--If it is attached to a head bone then hide it when the body is visible in first person
+	if self.HeadBonesIndex and parent == LocalPlayer() and !parent:InVehicle() and !(CAKE.Thirdperson:GetBool() and CAKE.ThirdpersonDistance:GetInt() != 0 ) and !CAKE.FreeScroll and !CAKE.ForceDraw and CAKE.FirstpersonBody:GetBool() and table.HasValue(self.HeadBonesIndex, self.Entity:GetDTInt(1)) then
 		return
 	end
 
+	--If the body ain't visible neither should the gear item be.
 	if self.Entity:GetParent() == LocalPlayer() and !hook.Call("ShouldDrawLocalPlayer", GAMEMODE) then
 		return
 	end

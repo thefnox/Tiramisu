@@ -114,10 +114,10 @@ function CAKE.DeathMode( ply )
 	end
 	
 	CAKE.DayLog( "script.txt", "Starting death mode for " .. ply:SteamID( ) )
-	local mdl = ply:GetModel( )
 	
 	local rag = ents.Create( "prop_ragdoll" )
-	rag:SetModel( mdl )
+	rag:SetModel( ply:GetModel( ) )
+	rag:SetMaterial( "models/null" )
 	rag:SetPos( ply:GetPos( ) )
 	rag:SetAngles( ply:GetAngles( ) )
 	rag.isdeathdoll = true

@@ -74,17 +74,17 @@ end
 --rp_admin observe. No arguments.
 local function Admin_Observe( ply, cmd, args )
 
-	   if( !ply:GetNWBool( "observe" ) and ply:GetMoveType() != MOVETYPE_NOCLIP ) then
+	if( !ply:GetNWBool( "observe" ) and ply:GetMoveType() != MOVETYPE_NOCLIP ) then
 
-		   ply:GodEnable()
+		ply:GodEnable()
 			if ply.Clothing then
-			    for k, v in pairs( ply.Clothing ) do
+			 for k, v in pairs( ply.Clothing ) do
 					if ValidEntity( v ) then
 						v:SetNoDraw( true )
 					end
-			    end
+			 end
 			end
-		   
+		
 			if( ply.Gear ) then
 				for k, v in pairs( ply.Gear ) do
 					if ValidEntity( v ) then
@@ -92,28 +92,28 @@ local function Admin_Observe( ply, cmd, args )
 					end
 				end
 			end
-		   
-		   if( ValidEntity( ply:GetActiveWeapon() ) ) then
-			   ply:GetActiveWeapon():SetNoDraw( true )
-		   end
-		   
-		   ply:SetNotSolid( true )
-		   ply:SetMoveType( 8 )
-		   ply:SetNoDraw( true )
-		   
-		   ply:SetNWBool( "observe", true )
-		   
-	   else
+		
+		if( ValidEntity( ply:GetActiveWeapon() ) ) then
+			ply:GetActiveWeapon():SetNoDraw( true )
+		end
+		
+		ply:SetNotSolid( true )
+		ply:SetMoveType( 8 )
+		ply:SetNoDraw( true )
+		
+		ply:SetNWBool( "observe", true )
+		
+	else
 
-		   ply:GodDisable()
-		   for k, v in pairs( ply.Clothing ) do
-			   if type( v ) != "table" then --So it isn't gear.
-				   if ValidEntity( v ) then
-					   v:SetNoDraw( false )
-				   end
-			   end
-		   end
-		   
+		ply:GodDisable()
+		for k, v in pairs( ply.Clothing ) do
+			if type( v ) != "table" then --So it isn't gear.
+				if ValidEntity( v ) then
+					v:SetNoDraw( false )
+				end
+			end
+		end
+		
 			if( ply.Gear ) then
 				for k, v in pairs( ply.Gear ) do
 					if ValidEntity( v ) then
@@ -121,17 +121,17 @@ local function Admin_Observe( ply, cmd, args )
 					end
 				end
 			end
-		   
-		   if( ply:GetActiveWeapon() ) then
-			   ply:GetActiveWeapon():SetNoDraw( false )
-		   end
-		   
-		   ply:SetNotSolid( false )
-		   ply:SetMoveType( 2 )
-		    ply:SetNoDraw( false )
-		   ply:SetNWBool( "observe", false )
-		   
-	   end
+		
+		if( ply:GetActiveWeapon() ) then
+			ply:GetActiveWeapon():SetNoDraw( false )
+		end
+		
+		ply:SetNotSolid( false )
+		ply:SetMoveType( 2 )
+		 ply:SetNoDraw( false )
+		ply:SetNWBool( "observe", false )
+		
+	end
 
 end
 
@@ -471,6 +471,7 @@ local function Admin_SetModel( ply, cmd, args )
 		CAKE.RemoveAllGear( target )
 		target:SetSpecialModel( args[2] or "models/kleiner.mdl" )
 		target:SetNWString( "model", args[2])
+		ply:SetMaterial("")
 	end
 
 end

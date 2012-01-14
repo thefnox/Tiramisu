@@ -18,15 +18,7 @@ end
 --If the value provided to it is not valid, then it returns the default.
 function CAKE.NilFix(val, default)
 
-	if(val == nil) then
-	
-		return default
-	
-	else
-	
-		return val
-		
-	end
+	return val or default
 	
 end
 

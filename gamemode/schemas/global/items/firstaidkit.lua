@@ -57,7 +57,7 @@ function ITEM:UseItem(ply)
 	end
 	
 	possible[1]:SetHealth(math.Clamp(possible[1]:Health() + 100, 0, possible[1]:MaxHealth()))
-	ply:ConCommand("say /me heals " .. possible[1]:Nick())
+	ply:Say("/me heals " .. possible[1]:Nick())
 	self:Remove()
 
 end

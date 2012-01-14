@@ -110,10 +110,12 @@ function GM:GUIMousePressed(mc)
 		tracedata.start = CAKE.CameraPos
 		tracedata.endpos = CAKE.CameraPos+(ang*2000)
 		if !CAKE.Thirdperson:GetBool() then
-			tracedata.filter = LocalPlayer()
+			--tracedata.filter = LocalPlayer()
 		end
 		local trace = util.TraceLine(tracedata)
 		
+		print( trace.Entity )
+
 		if trace.StartPos:Distance( LocalPlayer():EyePos() ) <= distance then
 			local target = trace.Entity
 			local submenus = {}

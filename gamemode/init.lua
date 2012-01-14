@@ -84,6 +84,7 @@ function GM:PlayerInitialSpawn( ply )
 	-- Set some default variables
 	ply.Ready = false
 	ply:SetNWBool( "chatopen", false )
+	ply:SetNWBool( "specialmodel", true ) 
 	ply:SetModel( "models/kleiner.mdl" )
 
 	-- Load their data, or create a new datafile for them.
@@ -146,6 +147,17 @@ end
 
 
 function GM:PlayerSetModel(ply)
+	if ply:IsCharLoaded() then
+		local m = CAKE.GetCharField( ply, "gender" )
+		ply:SetModel( Anims[m][ "models" ][1] )
+		ply:SetNWString( "gender", m )
+		ply:SetMaterial("models/null")
+		ply:AddEffects( EF_NOSHADOW )
+		ply:SetPersonality( CAKE.GetCharField( ply, "personality" ))
+	else
+		ply:SetNWBool( "specialmodel", true ) 
+		ply:SetModel("models/kleiner.mdl")
+	end
 end
 
 function GM:PlayerDisconnected( ply )

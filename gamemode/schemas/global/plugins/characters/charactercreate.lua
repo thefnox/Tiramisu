@@ -177,13 +177,10 @@ function ccSelectChar( ply, cmd, args )
 		local char = CAKE.PlayerData[ SteamID ][ "characters" ][ uid ]
 		local special = char[ "specialmodel" ]
 		if special == "none" or special == "" then
-			if( char[ "gender" ] == "Female" ) then
-				ply:SetModel( "models/humans/group01/female_01.mdl" )
-				ply:SetNWString( "gender", "Female" )
-			else
-				ply:SetModel( "models/humans/group01/male_01.mdl" )
-				ply:SetNWString( "gender", "Male" )
-			end
+			ply:SetNWBool( "specialmodel", false ) 
+			local m = char[ "gender" ]
+			ply:SetModel( Anims[m][ "models" ][1] )
+			ply:SetNWString( "gender", m )
 			ply:SetMaterial("models/null")
 
 			CAKE.TestClothing( ply, char[ "model" ], char[ "clothing" ], char[ "helmet" ], char[ "headratio" ],char[ "bodyratio" ], char[ "handratio" ], char[ "clothingid" ], char[ "helmetid" ])
@@ -197,6 +194,7 @@ function ccSelectChar( ply, cmd, args )
 			
 			CAKE.SendGearToClient( ply )
 		else
+			ply:SetNWBool( "specialmodel", true ) 
 			ply:SetModel( tostring( special ) )
 		end
 
@@ -222,8 +220,6 @@ function ccSpawnChar( ply, cmd, args )
 		ply:SetNWInt( "charactercreate", 0 )
 	
 		ply:SetTeam( 1 )
-		
-		ply:ConCommand( "fadein" )
 		ply:SetNWBool( "charloaded", true )
 
 		ply:Spawn( )

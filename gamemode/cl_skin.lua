@@ -372,7 +372,7 @@ function SKIN:PaintTargetInfo()
 	for _, ent in pairs( ents.FindInSphere( LocalPlayer():GetPos(), 500 ) ) do
 		if ValidEntity( ent ) and !ent:IsWorld() and LocalPlayer():CanTraceTo(ent) then
 			if ent:GetClass() == "item_prop" then
-				screenpos = ent:LocalToWorld(ent:OBBCenter())
+				screenpos = ent:LocalToWorld(ent:OBBCenter()) + Vector( 0,0,10)
 				if screenpos:Distance( LocalPlayer():GetPos() ) > 200 then
 					screenpos = screenpos:ToScreen()
 					draw.SimpleText( ent:GetNWString( "Name",""), "Tiramisu18Font", screenpos.x, screenpos.y, Color(150,150,150,150),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)

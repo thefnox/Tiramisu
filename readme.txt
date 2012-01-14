@@ -41,6 +41,18 @@ Right, so, changelog.
 
 * Added right click options for permanent props and for tool trust.
 
+* Made inventory display currently worn items in red.
+
+* Added "Attach To" option to gear items, to allow their placement in bones other than those intended. Items can only be attached in one bone at a time, but any amount of items can be placed in any bone.
+
+* Fixed the camera. It should now strictly rely on the raw mouse feed, not on the AimAngle which is relative to FPS. Performance should be the same irregardless of current framerate.
+
+* Added setpermamodel, to set a player's permanent model, admin only.
+
+* Added swimming and vehicle driving animations.
+
+* Changed some animations around, combine and metro police animations are no longer used.
+
 -- SCRIPT
 
 * Rewrote clothing code. The whole thing, including player_part. It should now be readable.
