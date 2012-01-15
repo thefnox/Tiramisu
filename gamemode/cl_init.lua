@@ -295,13 +295,6 @@ function CAKE.AddItems( schema )
 
 end
 
-
-function CAKE.RegisterCharCreate( passedfunc )
-
-	CAKE.CharCreate = passedfunc
-
-end
-
 function CAKE.RegisterMenuTab( name, func, closefunc ) --The third argument is the function used for closing your panel.
 	CAKE.MenuTabs[ name ] = {}
 	CAKE.MenuTabs[ name ][ "function" ] = func or function() end

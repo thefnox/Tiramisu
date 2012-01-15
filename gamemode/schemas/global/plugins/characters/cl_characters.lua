@@ -321,7 +321,7 @@ end )
 
 usermessage.Hook( "charactercreation", function()
 	
-	CAKE.CharCreate()
+	derma.SkinHook( "Layout", "CharacterCreation" )
 
 end)
 

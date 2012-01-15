@@ -1,10 +1,8 @@
 Anims.Male = {}
 Anims.Male[ "models" ] = {
 	"models/breen.mdl",
-	"models/combine_soldier.mdl",
-	"models/police.mdl",
 	"models/player/breen.mdl",
-	"models/barney.mdl"
+	"models/Barney.mdl"
 }
 Anims.Male[ "default" ] = { 
 	[ "idle" ] = "&sequence:models/breen.mdl;LineIdle03",
@@ -69,23 +67,23 @@ Anims.Male[ "relaxed" ] = {
 	}
 }
 Anims.Male[ "headstrong" ] = { 
-	[ "idle" ] = "&switch:models/barney.mdl;ACT_IDLE",
-	--[ "walk" ] = "&gesture:models/barney.mdl;ACT_WALK;G_what;1",
-	[ "walk" ] = "&switch:models/barney.mdl;ACT_WALK",
-	[ "run" ] = "&switch:models/barney.mdl;ACT_RUN",
-	[ "jump" ] = "&switch:models/barney.mdl;ACT_JUMP",
-	[ "land" ] = "&switch:models/barney.mdl;ACT_LAND",
-	[ "fly" ] = "&switch:models/barney.mdl;ACT_GLIDE",
-	[ "sit" ] = "&switch:models/barney.mdl;ACT_BUSY_SIT_CHAIR",
-	[ "sitentry" ] = "&switch:models/barney.mdl;ACT_BUSY_SIT_CHAIR_ENTRY",
-	[ "sitexit" ] = "&switch:models/barney.mdl;ACT_BUSY_SIT_CHAIR_EXIT",
-	[ "swim" ] = "&switch:models/barney.mdl;ACT_GLIDE",
-	[ "sitground" ] = "&sequence:models/barney.mdl;plazaidle4",
-	[ "sitgroundentry" ] = "&switch:models/barney.mdl;ACT_BUSY_SIT_GROUND_ENTRY",
-	[ "sitgroundexit" ] = "&switch:models/barney.mdl;ACT_BUSY_SIT_GROUND_EXIT",
-	[ "sprint" ] = "&sequence:models/barney.mdl;sprint_all",
+	[ "idle" ] = "&switch:models/Barney.mdl;ACT_IDLE",
+	--[ "walk" ] = "&gesture:models/Barney.mdl;ACT_WALK;G_what;1",
+	[ "walk" ] = "&switch:models/Barney.mdl;ACT_WALK",
+	[ "run" ] = "&switch:models/Barney.mdl;ACT_RUN",
+	[ "jump" ] = "&switch:models/Barney.mdl;ACT_JUMP",
+	[ "land" ] = "&switch:models/Barney.mdl;ACT_LAND",
+	[ "fly" ] = "&switch:models/Barney.mdl;ACT_GLIDE",
+	[ "sit" ] = "&switch:models/Barney.mdl;ACT_BUSY_SIT_CHAIR",
+	[ "sitentry" ] = "&switch:models/Barney.mdl;ACT_BUSY_SIT_CHAIR_ENTRY",
+	[ "sitexit" ] = "&switch:models/Barney.mdl;ACT_BUSY_SIT_CHAIR_EXIT",
+	[ "swim" ] = "&switch:models/Barney.mdl;ACT_GLIDE",
+	[ "sitground" ] = "&sequence:models/Barney.mdl;plazaidle4",
+	[ "sitgroundentry" ] = "&switch:models/Barney.mdl;ACT_BUSY_SIT_GROUND_ENTRY",
+	[ "sitgroundexit" ] = "&switch:models/Barney.mdl;ACT_BUSY_SIT_GROUND_EXIT",
+	[ "sprint" ] = "&sequence:models/Barney.mdl;sprint_all",
 	[ "flinch" ] = {
-		["explosion"] = "&switch:models/barney.mdl;ACT_GESTURE_FLINCH_BLAST"
+		["explosion"] = "&switch:models/Barney.mdl;ACT_GESTURE_FLINCH_BLAST"
 	},
 	[ "crouch" ] = {
 			[ "idle" ] = "&switch:models/breen.mdl;ACT_COVER_LOW",
@@ -167,56 +165,56 @@ Anims.Male[ "ar2" ] = {
 }
 
 Anims.Male[ "smg" ] = {
-	[ "idle" ] = "&switch:models/barney.mdl;ACT_IDLE_SMG1_RELAXED",
-	[ "walk" ] = "&switch:models/barney.mdl;ACT_WALK_RIFLE_STIMULATED",
-	[ "run" ] = "&switch:models/barney.mdl;ACT_RUN_RIFLE_STIMULATED",
+	[ "idle" ] = "&switch:models/Barney.mdl;ACT_IDLE_SMG1_RELAXED",
+	[ "walk" ] = "&switch:models/Barney.mdl;ACT_WALK_RIFLE_STIMULATED",
+	[ "run" ] = "&switch:models/Barney.mdl;ACT_RUN_RIFLE_STIMULATED",
 	[ "crouch" ] = {
-		[ "idle" ] = "&switch:models/barney.mdl;ACT_COVER_LOW",
-		[ "walk" ] = "&sequence:models/barney.mdl;Crouch_walk_holding_all",
-		[ "aimidle" ] = "&sequence:models/barney.mdl;crouch_aim_smg1",
-		[ "aimwalk" ] = "&sequence:models/barney.mdl;Crouch_walk_aiming_all"
+		[ "idle" ] = "&switch:models/Barney.mdl;ACT_COVER_LOW",
+		[ "walk" ] = "&sequence:models/Barney.mdl;Crouch_walk_holding_all",
+		[ "aimidle" ] = "&sequence:models/Barney.mdl;crouch_aim_smg1",
+		[ "aimwalk" ] = "&sequence:models/Barney.mdl;Crouch_walk_aiming_all"
 	},
 	[ "aim" ] = {
-		[ "idle" ] = "&sequence:models/barney.mdl;Idle_SMG1_Aim_Alert",
-		[ "walk" ] = "&switch:models/barney.mdl;ACT_WALK_AIM_RIFLE",
-		[ "run" ] = "&switch:models/barney.mdl;ACT_RUN_AIM_RIFLE"
+		[ "idle" ] = "&sequence:models/Barney.mdl;Idle_SMG1_Aim_Alert",
+		[ "walk" ] = "&switch:models/Barney.mdl;ACT_WALK_AIM_RIFLE",
+		[ "run" ] = "&switch:models/Barney.mdl;ACT_RUN_AIM_RIFLE"
 	},
 	[ "fire" ] = "ACT_GESTURE_RANGE_ATTACK_SMG1",
 	[ "reload" ] = "ACT_GESTURE_RELOAD_SMG1"
 }
 
 Anims.Male[ "shotgun" ] = {
-	[ "idle" ] = "&switch:models/barney.mdl;ACT_IDLE_SHOTGUN_RELAXED",
-	[ "walk" ] = "&switch:models/barney.mdl;ACT_WALK_RPG_RELAXED",
-	[ "run" ] = "&sequence:models/barney.mdl;run_RPG_Relaxed_all",
+	[ "idle" ] = "&switch:models/Barney.mdl;ACT_IDLE_SHOTGUN_RELAXED",
+	[ "walk" ] = "&switch:models/Barney.mdl;ACT_WALK_RPG_RELAXED",
+	[ "run" ] = "&sequence:models/Barney.mdl;run_RPG_Relaxed_all",
 	[ "crouch" ] = {
-		[ "idle" ] = "&sequence:models/barney.mdl;Crouch_Idle_RPG",
-		[ "walk" ] = "&sequence:models/barney.mdl;Crouch_walk_holding_RPG_all",
-		[ "aimidle" ] = "&sequence:models/barney.mdl;crouch_aim_smg1",
-		[ "aimwalk" ] = "&sequence:models/barney.mdl;Crouch_walk_aiming_all"
+		[ "idle" ] = "&sequence:models/Barney.mdl;Crouch_Idle_RPG",
+		[ "walk" ] = "&sequence:models/Barney.mdl;Crouch_walk_holding_RPG_all",
+		[ "aimidle" ] = "&sequence:models/Barney.mdl;crouch_aim_smg1",
+		[ "aimwalk" ] = "&sequence:models/Barney.mdl;Crouch_walk_aiming_all"
 	},
 	[ "aim" ] = {
-		[ "idle" ] = "&sequence:models/barney.mdl;Idle_RPG_Aim",
-		[ "walk" ] = "&sequence:models/barney.mdl;walkAlertAimALL1",
-		[ "run" ] = "&sequence:models/barney.mdl;run_aiming_ar2_all"
+		[ "idle" ] = "&sequence:models/Barney.mdl;Idle_RPG_Aim",
+		[ "walk" ] = "&sequence:models/Barney.mdl;walkAlertAimALL1",
+		[ "run" ] = "&sequence:models/Barney.mdl;run_aiming_ar2_all"
 	},
 	["fire"] = "ACT_GESTURE_RANGE_ATTACK_SHOTGUN"
 }
 
 Anims.Male[ "crossbow" ] = {
-	[ "idle" ] = "&switch:models/barney.mdl;ACT_IDLE_SHOTGUN_RELAXED",
-	[ "walk" ] = "&switch:models/barney.mdl;ACT_WALK_RPG_RELAXED",
-	[ "run" ] = "&sequence:models/barney.mdl;run_RPG_Relaxed_all",
+	[ "idle" ] = "&switch:models/Barney.mdl;ACT_IDLE_SHOTGUN_RELAXED",
+	[ "walk" ] = "&switch:models/Barney.mdl;ACT_WALK_RPG_RELAXED",
+	[ "run" ] = "&sequence:models/Barney.mdl;run_RPG_Relaxed_all",
 	[ "crouch" ] = {
-		[ "idle" ] = "&sequence:models/barney.mdl;Crouch_Idle_RPG",
-		[ "walk" ] = "&sequence:models/barney.mdl;Crouch_walk_holding_RPG_all",
-		[ "aimidle" ] = "&sequence:models/barney.mdl;crouch_aim_smg1",
-		[ "aimwalk" ] = "&sequence:models/barney.mdl;Crouch_walk_aiming_all"
+		[ "idle" ] = "&sequence:models/Barney.mdl;Crouch_Idle_RPG",
+		[ "walk" ] = "&sequence:models/Barney.mdl;Crouch_walk_holding_RPG_all",
+		[ "aimidle" ] = "&sequence:models/Barney.mdl;crouch_aim_smg1",
+		[ "aimwalk" ] = "&sequence:models/Barney.mdl;Crouch_walk_aiming_all"
 	},
 	[ "aim" ] = {
-		[ "idle" ] = "&sequence:models/barney.mdl;Idle_RPG_Aim",
-		[ "walk" ] = "&sequence:models/barney.mdl;walkAlertAim_AR2_ALL1",
-		[ "run" ] = "&sequence:models/barney.mdl;run_aiming_ar2_all"
+		[ "idle" ] = "&sequence:models/Barney.mdl;Idle_RPG_Aim",
+		[ "walk" ] = "&sequence:models/Barney.mdl;walkAlertAim_AR2_ALL1",
+		[ "run" ] = "&sequence:models/Barney.mdl;run_aiming_ar2_all"
 	},
 	["fire"] = "ACT_GESTURE_RANGE_ATTACK_AR2"
 }

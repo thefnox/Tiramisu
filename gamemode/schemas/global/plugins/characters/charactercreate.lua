@@ -117,13 +117,10 @@ local function ccTestClothing( ply, cmd, args )
 	if ply:GetNWInt( "charactercreate", 0 )> 0 then
 		CAKE.RemoveAllGear( ply )
 		if args[ 1 ] and args[ 1 ] != "none" then
-			if( args[1] == "Female" ) then
-				ply:SetModel( Anims.Female[ "models" ][1] )
-				ply:SetNWString( "gender", "Female" )
-			else
-				ply:SetModel( Anims.Male[ "models" ][1] )
-				ply:SetNWString( "gender", "Male" )
-			end
+			ply:SetNWBool( "specialmodel", false ) 
+			ply:SetModel( Anims[args[ 1 ]][ "models" ][1] )
+			ply:SetNWString( "gender", args[ 1 ] )
+			ply:SetMaterial("models/null")
 		end
 		if args[ 2 ] and args[ 2 ] != "none" then
 			CAKE.TestClothing( ply, args[ 2 ] )

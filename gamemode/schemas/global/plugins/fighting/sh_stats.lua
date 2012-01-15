@@ -70,10 +70,7 @@ else
 	end)
 
 	hook.Add( "SetupMove", "Tiramisu.DrainStaminaWhenRunning", function( ply, mv )
-		if ply:KeyDown(IN_SPEED) and ply:KeyDown(IN_FORWARD) then
-			if ply.IsRunning and ply:GetStamina() <= CAKE.Stats.Stamina.BaseRunCost then
-				ply.IsRunning = false
-			end
+		if ply:KeyDown(IN_SPEED) and ply:KeyDown(IN_FORWARD) and ply:GetStamina() >= CAKE.Stats.Stamina.BaseRunCost then
 			if !ply.IsRunning then
 				if ply:GetStamina() > 10 then
 					ply:StatDamage( "stamina",0, 0.25, CAKE.Stats.Stamina.BaseRunCost/-4, function()
@@ -98,7 +95,7 @@ else
 				end
 			end
 		else
-			if ply:GetWalkSpeed() < CAKE.ConVars[ "WalkSpeed" ] then
+			if ply:GetWalkSpeed() < CAKE.ConVars[ "WalkSpeed" ] + 10 then
 				ply.IsRunning = false
 			end
 			if ply.IsRunning and ply:KeyDown(IN_FORWARD) then

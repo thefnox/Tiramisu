@@ -130,17 +130,19 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 				CAKE.RealAng = CAKE.RealAng + Angle( cmd:GetMouseY() * (mPitch:GetFloat()), cmd:GetMouseX() * (-mYaw:GetFloat()), 0 )
 				CAKE.RealAng.p = Clamp( NormalizeAngle( CAKE.RealAng.p ), -89, 89 )
 				CAKE.RealAng.y = NormalizeAngle( CAKE.RealAng.y )
-				--CAKE.RealAng = cmd:GetViewAngles()
 				if cmd:GetButtons() & IN_FORWARD > 0 or cmd:GetButtons() & IN_BACK > 0 then
 					cmd:SetViewAngles(CAKE.RealAng)
 					CAKE.LastViewAng = CAKE.CurAng
-					CAKE.DiffReal = CAKE.CurAng - CAKE.RealAng
 					stillcamera = false
 				else
 					timer.UnPause("TiramisuLookAtTimer")
 					stillcamera = true
-					CAKE.DiffReal = CAKE.CurAng - CAKE.RealAng
 					cmd:SetViewAngles(CAKE.LastViewAng)
+				end
+				if math.abs(CAKE.RealAng.y - CAKE.LastViewAng.y) > 175 then
+					cmd:SetViewAngles( CAKE.RealAng )
+					CAKE.LastViewAng = CAKE.RealAng
+					CAKE.LastAng = CAKE.RealAng
 				end
 			elseif CAKE.Thirdperson:GetBool() and LocalPlayer():GetNWBool( "aiming", false ) then --OVER THE SHOULDER
 				if stillcamera then
@@ -278,7 +280,7 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 
 			CAKE.DiffAng = CAKE.RealAng - CAKE.LastAng
 			CAKE.DiffAng = Angle( Clamp(CAKE.DiffAng.p, -89, 89), NormalizeAngle(CAKE.DiffAng.y),0 )
-			CAKE.CurAng = CAKE.LastAng + CAKE.DiffAng - CAKE.DiffReal
+			CAKE.CurAng = CAKE.LastAng + CAKE.DiffAng
 			--angles = CAKE.CurAng
 			CAKE.LastAng = CAKE.CurAng 
 			CAKE.LastAng.y = NormalizeAngle( CAKE.LastAng.y )
@@ -367,11 +369,11 @@ hook.Add( "UpdateAnimation", "TiramisuAnimateRotate", function( ply, velocity, m
 	end
 end)
 
-
+/*
 hook.Add( "HUDPaint", "tits", function()
 	draw.SimpleTextOutlined( "CURRENT ANGLE: " .. tostring( CAKE.CurAng ), "ScoreboardText", 10, 10, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT, 1, Color( 0,0,0,255))
 	draw.SimpleTextOutlined( "LAST ANGLE: " .. tostring( CAKE.LastAng ), "ScoreboardText", 10, 30, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT, 1, Color( 0,0,0,255))
 	draw.SimpleTextOutlined( "ANGLE DIFFERENCE: " .. tostring( CAKE.DiffAng ), "ScoreboardText", 10, 50, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT, 1, Color( 0,0,0,255))
 	draw.SimpleTextOutlined( "RAW MOUSE ANGLE: " .. tostring( CAKE.RealAng ), "ScoreboardText", 10, 70, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT, 1, Color( 0,0,0,255))
 	draw.SimpleTextOutlined( "LAST VIEW ANGLE: " .. tostring( CAKE.LastViewAng ), "ScoreboardText", 10, 90, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT, 1, Color( 0,0,0,255))
-end)
+end)*/

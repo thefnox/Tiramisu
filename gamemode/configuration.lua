@@ -17,9 +17,30 @@ CAKE.ConVars[ "DefaultTime" ] = "1 1 2012 1" --The initial time of the script's 
 CAKE.ConVars[ "Default_Money" ] = 800 -- How much money do the characters start out with.
 CAKE.ConVars[ "Default_Title" ] = "Citizen" -- What is their title when they create their character.
 CAKE.ConVars[ "Default_Inventory" ] = {  } -- What inventory do characters start out with when they are first made. 
-CAKE.ConVars[ "Default_Weapons" ] = {  } -- What inventory do characters start out with when they are first made. 
 CAKE.ConVars[ "Default_Ammo" ] = {  } --The default ammo table your character will have on spawn.
 CAKE.ConVars[ "Default_Clothing" ] = { }--Clothing you can choose on startup
+CAKE.ConVars[ "Default_Models" ] = {
+	Male = {
+		"models/humans/group01/male_01.mdl",
+		"models/humans/group01/male_02.mdl",
+		"models/humans/group01/male_03.mdl",
+		"models/humans/group01/male_04.mdl",
+		"models/humans/group01/male_05.mdl",
+		"models/humans/group01/male_06.mdl",
+		"models/humans/group01/male_07.mdl",
+		"models/humans/group01/male_08.mdl",
+		"models/humans/group01/male_09.mdl"
+	},
+	Female = {
+
+		"models/Humans/Group01/Female_01.mdl",
+		"models/Humans/Group01/Female_02.mdl",
+		"models/Humans/Group01/Female_03.mdl",
+		"models/Humans/Group01/Female_04.mdl",
+		"models/Humans/Group01/Female_06.mdl",
+		"models/Humans/Group01/Female_07.mdl"
+	}
+}
 
 --DEATH
 CAKE.ConVars[ "Prop_Damage" ] = false --Set this to true if you want props to damage people.
