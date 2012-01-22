@@ -221,18 +221,21 @@ else
 		end
 	end
 
-	hook.Add( "OnEntityCreated", "Tiramisu.StripYouOfYourBones", function(ent)
-		if ent:IsPlayer() then
-			if !ent.oldbuildbones then
-				ent.oldbuildbones = ent.BuildBonePositions
-			end
-			if ent.oldbuildbones then
-				ent.BuildBonePositions = function( ent, numbones, numphysbones)
-					ent.oldbuildbones(ent, numbones, numphysbones)
-					ScaleDemBones( ent, numbones, numphysbones )
+	hook.Add( "Think", "Tiramisu.StripYouOfYourBones", function()
+		for _, ent in pairs( player.GetAll() ) do
+			if ValidEntity( ent ) and !ent.BonePositionsHooked then
+				if !ent.oldbuildbones then
+					ent.oldbuildbones = ent.BuildBonePositions
 				end
-			else
-				ent.BuildBonePositions = ScaleDemBones
+				if ent.oldbuildbones then
+					ent.BuildBonePositions = function( ent, numbones, numphysbones)
+						ent.oldbuildbones(ent, numbones, numphysbones)
+						ScaleDemBones( ent, numbones, numphysbones )
+					end
+				else
+					ent.BuildBonePositions = ScaleDemBones
+				end
+				ent.BonePositionsHooked = true
 			end
 		end
 	end)
@@ -488,10 +491,12 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 	elseif SERVER or ply != LocalPlayer() then
 		--This set of boneparameters are all set to 0 to avoid having the engine setting them to something else, thus resulting in  awkwardly twisted models
 		ply.CurrentLookAt = Angle( 0, 0, 0 )
-		ply:SetPoseParameter("aim_yaw", 0 )
+		--ply:SetPoseParameter("aim_yaw", 0 )
 		ply:SetPoseParameter("head_yaw", 0 )
 		ply:SetPoseParameter("body_yaw", 0 )
 		ply:SetPoseParameter("spine_yaw", 0 )
+	else
+		
 	end
 	ply:SetPoseParameter("head_roll", 0 )
 	
@@ -578,7 +583,11 @@ function GM:HandlePlayerSwimming( ply, velocity ) --Handles swimming.
 		return false 
 	end
 	
-	ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "swim" ] )
+	if !CAKE.ConVars[ "LinuxHotfix" ] then
+		ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "swim" ] )
+	else
+		ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "fly" ] )
+	end
 	
 	if SERVER then
 		ply:SetAiming(false)
@@ -693,13 +702,12 @@ function GM:CalcMainActivity( ply, velocity )
 	--This is the hook used to handle sequences, if you need to add additional activities you should check the hook above.
 	--By a general rule you don't have to touch this hook at all.
 	local holdtype = "default"
-	local personality = ply:GetPersonality()
 	if( ValidEntity(ply:GetActiveWeapon()) ) then
 		holdtype = Anims.DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
 	end
 
-	if holdtype == "default" and personality != "default" and !ply:GetNWBool( "specialmodel" ) then
-		holdtype = personality --We use the personality custom animation table, rather than the default.
+	if (holdtype == "default" and ply:GetPersonality() != "default" and !ply:GetNWBool( "specialmodel" )) or CAKE.ConVars[ "LinuxHotfix" ] then
+		holdtype = ply:GetPersonality() --We use the personality custom animation table, rather than the default.
 	end
 
 	ply.CalcIdeal = ACT_IDLE
@@ -713,7 +721,7 @@ function GM:CalcMainActivity( ply, velocity )
 		local len2d = velocity:Length2D()
 		if ply:GetNWBool( "aiming", false ) then
 			if len2d > 320 then
-				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ personality ][ "sprint" ] )
+				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sprint" ] )
 				if SERVER then
 					if ply:GetAiming() and !ply.WasAimingBeforeRunning then
 						ply.WasAimingBeforeRunning = true
@@ -747,7 +755,7 @@ function GM:CalcMainActivity( ply, velocity )
 			end
 		else
 			if len2d > 320 then
-				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ personality ][ "sprint" ] )
+				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sprint" ] )
 			elseif len2d > 135 and len2d <= 320 then
 				ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
 			elseif len2d > 0.1 and len2d <= 135 then

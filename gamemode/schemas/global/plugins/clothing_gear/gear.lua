@@ -174,7 +174,8 @@ local function ccSetGear( ply, cmd, args )
 			umsg.Short( entity:EntIndex() )
 			umsg.String( item )
 			umsg.String( bone )
-			umsg.String( entity.name or item )
+			umsg.String( itemid )
+			umsg.String( CAKE.GetUData( itemid, "name" ) or item )
 		umsg.End( )
 	end)
 
@@ -287,7 +288,7 @@ function meta:HideActiveWeapon()
 			if self.Gear then
 				for k, v in pairs( self.Gear ) do
 					if ValidEntity( v ) then
-						if v.item == class and v:GetDTEntity( 1 ) == self then
+						if (v.item == class or CAKE.GetUData( v.itemid, "weaponclass") == class) and v:GetDTEntity( 1 ) == self then
 							v:SetDTBool( 1, false )
 						else
 							v:SetDTBool( 1, true)
@@ -389,7 +390,7 @@ function CAKE.SendGearToClient( ply )
 end
 
 local function GearSpawnHook( ply )
-	timer.Create( ply:SteamID() .. "gunchecktimer", 0.1, 0, function()
+	timer.Create( ply:SteamID() .. "gunchecktimer", 1, 0, function()
 		ply:HideActiveWeapon()
 	end)
 	timer.Simple( 2, function() 

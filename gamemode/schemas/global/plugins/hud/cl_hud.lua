@@ -1,5 +1,19 @@
-CLPLUGIN.Name = "Core HUD"
-CLPLUGIN.Author = "F-Nox/Big Bang"
+CAKE.WeaponTable = {}
+CAKE.DefaultWepTranslation = {}
+CAKE.DefaultWepTranslation["#GMOD_Physgun"] = "Physics Gun"
+CAKE.DefaultWepTranslation["#HL2_GravityGun"] = "Gravity Gun"
+CAKE.DefaultWepSlot = {}
+CAKE.DefaultWepSlot["#GMOD_Physgun"] = 0
+CAKE.DefaultWepSlot["#HL2_GravityGun"] = 0
+CAKE.DefaultWepSlot["#HL2_Crossbow"] = 4
+CAKE.DefaultWepSlot["#HL2_RPG"] = 4
+CAKE.DefaultWepSlot["#HL2_Crowbar"] = 0
+CAKE.DefaultWepSlot["#HL2_Shotgun"] = 3
+CAKE.DefaultWepSlot["#HL2_SMG1"] = 2
+CAKE.DefaultWepSlot["#HL2_Pulse_Rifle"] = 3
+CAKE.DefaultWepSlot["#HL2_Pistol"] = 1
+CAKE.ActiveWepPos = -1
+CAKE.ActiveSlot = -1
 
 hook.Add( "HUDPaint", "TiramisuClock and TargetInfo", function()
 	derma.SkinHook( "Paint", "TiramisuClock" ) --The clock and title display
@@ -152,5 +166,120 @@ hook.Add( "PostDrawTranslucentRenderables", "Tiramisu3DPlayerTitles", function( 
 				end
 		   end
 		end
+	end
+end)
+
+function CAKE.BuildWeaponTable()
+	CAKE.WeaponTable = {}
+	local slot = 0
+	local name = ""
+	for _, wep in pairs( LocalPlayer():GetWeapons() ) do
+		if ValidEntity( wep ) then
+			slot = wep.Slot or 0
+			name = wep:GetPrintName()
+			if CAKE.DefaultWepSlot[name] then
+				slot = CAKE.DefaultWepSlot[name]
+			end
+			if !CAKE.WeaponTable[slot] then
+				CAKE.WeaponTable[slot] = {}
+			end
+			if CAKE.DefaultWepTranslation[name] then
+				name = CAKE.DefaultWepTranslation[name]
+			end
+
+			table.insert(CAKE.WeaponTable[slot], {name, wep:GetClass()})
+		end
+	end
+end
+
+local sort = false
+hook.Add( "PlayerBindPress", "Tiramisu.HandleWeaponSelection", function(ply, bind, pressed)
+
+	if string.match(bind, "attack") then
+		if CAKE.ActiveSlot != -1 and CAKE.WeaponTable[CAKE.ActiveSlot][CAKE.ActiveWepPos] then
+			RunConsoleCommand("rp_selectweapon", CAKE.WeaponTable[CAKE.ActiveSlot][CAKE.ActiveWepPos][2])
+			timer.Destroy("TiramisuResetDefaultWep")
+			CAKE.ActiveWepPos = -1
+			CAKE.ActiveSlot = -1
+			return true
+		end
+	end
+
+	sort = false
+	if string.match(bind, "slot1") and pressed then
+		CAKE.ActiveSlot = 0
+		sort = true
+	elseif string.match(bind, "slot2") and pressed then
+		CAKE.ActiveSlot = 1
+		sort = true
+	elseif string.match(bind, "slot3") and pressed then
+		CAKE.ActiveSlot = 2
+		sort = true
+	elseif string.match(bind, "slot4") and pressed then
+		CAKE.ActiveSlot = 3
+		sort = true
+	elseif string.match(bind, "slot5") and pressed then
+		CAKE.ActiveSlot = 4
+		sort = true
+	elseif string.match(bind, "slot6") and pressed then
+		CAKE.ActiveSlot = 5
+		sort = true
+	elseif string.match(bind, "slot7") and pressed then
+		CAKE.ActiveSlot = 6
+		sort = true
+	end
+
+	if sort then
+		if CAKE.ActiveSlot != -1 then
+			CAKE.BuildWeaponTable()
+			if CAKE.WeaponTable[CAKE.ActiveSlot] then
+				timer.Create( "TiramisuResetDefaultWep", 3, 1, function()
+					CAKE.ActiveWepPos = -1
+					CAKE.ActiveSlot = -1
+				end)
+				if CAKE.ActiveWepPos == -1 then
+					CAKE.ActiveWepPos = 1
+				end
+				CAKE.ActiveWepPos = CAKE.ActiveWepPos + 1
+				if !CAKE.WeaponTable[CAKE.ActiveSlot][CAKE.ActiveWepPos] then
+					CAKE.ActiveWepPos = 1
+				end 
+				return true
+			end
+		end
+	end
+end)
+
+local textalpha = 200
+local next, prev 
+local gradient = surface.GetTextureID("gui/gradient")
+local prevspot, nextspot = 0,0
+local curslot
+hook.Add( "HUDPaint", "Fuck SHIT UP!", function()
+	if CAKE.ActiveSlot != -1 and CAKE.WeaponTable[CAKE.ActiveSlot] then
+		textalpha = 200
+		next = CAKE.ActiveWepPos + 1
+		prev = CAKE.ActiveWepPos - 1
+		if !CAKE.WeaponTable[CAKE.ActiveSlot][next] then
+			next = 1
+		end
+		if !CAKE.WeaponTable[CAKE.ActiveSlot][prev] then
+			prev = #CAKE.WeaponTable[CAKE.ActiveSlot]
+		end
+		prevspot, nextspot = ScrW()/2, ScrW()/2 + 175
+		surface.SetDrawColor( Color( 0,0,0, 200 ) )
+		surface.SetTexture( gradient )
+		surface.DrawTexturedRectRotated(ScrW()/2-100,50,200,25,180)
+		surface.DrawTexturedRectRotated(ScrW()/2+100,50,200,25,0)
+		draw.DrawText( CAKE.WeaponTable[CAKE.ActiveSlot][CAKE.ActiveWepPos][1], "Tiramisu16Font", ScrW()/2, 40, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT )
+		draw.DrawText( CAKE.WeaponTable[CAKE.ActiveSlot][next][1], "Tiramisu16Font", ScrW()/2 + 175, 40, Color( 255, 255, 255, 120 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT )
+		draw.DrawText( CAKE.WeaponTable[CAKE.ActiveSlot][prev][1], "Tiramisu16Font", ScrW()/2 - 175, 40, Color( 255, 255, 255, 120 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT )
+	elseif textalpha != 0 then
+		curslot = false
+		textalpha = Lerp( 10 * RealFrameTime(), textalpha, 0 )
+		surface.SetDrawColor( Color( 0,0,0, textalpha ) )
+		surface.SetTexture( gradientcenter )
+		surface.DrawTexturedRectRotated(ScrW()/2-100,50,200,25,180)
+		surface.DrawTexturedRectRotated(ScrW()/2+100,50,200,25,0)		
 	end
 end)

@@ -317,8 +317,8 @@ local function PersonalMessage( ply, text )
 	local target = CAKE.FindPlayer( exp[1] )
 	table.remove( exp, 1)
 	if target then
-		CAKE.SendChat( target, "[FROM:" .. ply:Nick() .. "]" .. table.concat( exp, " " ), CAKE.ConVars[ "ChatFont" ], ply:Name(), "/pm " .. target:Name())
-		CAKE.SendChat( ply, "[TO:" .. target:Nick() .. "]" .. table.concat( exp, " " ), CAKE.ConVars[ "ChatFont" ], target:Name(),"/pm " .. ply:Name() )
+		CAKE.SendChat( target, "[FROM:" .. ply:Nick() .. "]" .. table.concat( exp, " " ), CAKE.ConVars[ "ChatFont" ], ply:Name(), "/pm " .. target:SteamID() )
+		CAKE.SendChat( ply, "[TO:" .. target:Nick() .. "]" .. table.concat( exp, " " ), CAKE.ConVars[ "ChatFont" ], target:Name(),"/pm " .. ply:SteamID() )
 	else
 		CAKE.SendChat( ply, "Target not found!" )
 	end

@@ -34,7 +34,6 @@ function PANEL:Init()
 
 	self.LastPaint = 0
 	self.DirectionalLight = {}
-	
 	self:SetCamPos( LocalPlayer():GetForward() * 80 + Vector( 0, 0, 40 ) )
 	local plyangle = LocalPlayer():GetAngles()
 	plyangle:RotateAroundAxis(plyangle:Up(), 180) 
@@ -111,9 +110,10 @@ function PANEL:SetTarget( entity )
 end 
 
 function PANEL:EndDraw()
-		
-		// Note: Not in menu dll
-		if ( !ClientsideModel ) then return end
+	// Note: Not in menu dll
+	if ( !ClientsideModel ) then return end		
+
+	if CAKE.Thirdperson:GetBool() then
 		
 		LocalPlayer():SetNoDraw( false )
 
@@ -138,6 +138,7 @@ function PANEL:EndDraw()
 		end
 		
 		--CAKE.ForceDraw = false
+	end
 end
  
 /*---------------------------------------------------------

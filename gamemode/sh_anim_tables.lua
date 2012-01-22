@@ -67,23 +67,23 @@ Anims.Male[ "relaxed" ] = {
 	}
 }
 Anims.Male[ "headstrong" ] = { 
-	[ "idle" ] = "&switch:models/Barney.mdl;ACT_IDLE",
-	--[ "walk" ] = "&gesture:models/Barney.mdl;ACT_WALK;G_what;1",
-	[ "walk" ] = "&switch:models/Barney.mdl;ACT_WALK",
-	[ "run" ] = "&switch:models/Barney.mdl;ACT_RUN",
-	[ "jump" ] = "&switch:models/Barney.mdl;ACT_JUMP",
-	[ "land" ] = "&switch:models/Barney.mdl;ACT_LAND",
-	[ "fly" ] = "&switch:models/Barney.mdl;ACT_GLIDE",
-	[ "sit" ] = "&switch:models/Barney.mdl;ACT_BUSY_SIT_CHAIR",
-	[ "sitentry" ] = "&switch:models/Barney.mdl;ACT_BUSY_SIT_CHAIR_ENTRY",
-	[ "sitexit" ] = "&switch:models/Barney.mdl;ACT_BUSY_SIT_CHAIR_EXIT",
-	[ "swim" ] = "&switch:models/Barney.mdl;ACT_GLIDE",
-	[ "sitground" ] = "&sequence:models/Barney.mdl;plazaidle4",
-	[ "sitgroundentry" ] = "&switch:models/Barney.mdl;ACT_BUSY_SIT_GROUND_ENTRY",
-	[ "sitgroundexit" ] = "&switch:models/Barney.mdl;ACT_BUSY_SIT_GROUND_EXIT",
-	[ "sprint" ] = "&sequence:models/Barney.mdl;sprint_all",
+	[ "idle" ] = "&sequence:models/breen.mdl;idle_subtle",
+	--[ "walk" ] = "&gesture:models/breen.mdl;ACT_WALK;G_what;1",
+	[ "walk" ] = "&switch:models/breen.mdl;ACT_WALK",
+	[ "run" ] = "&switch:models/breen.mdl;ACT_RUN",
+	[ "jump" ] = "&switch:models/breen.mdl;ACT_JUMP",
+	[ "land" ] = "&switch:models/breen.mdl;ACT_LAND",
+	[ "fly" ] = "&switch:models/breen.mdl;ACT_GLIDE",
+	[ "sit" ] = "&switch:models/breen.mdl;ACT_BUSY_SIT_CHAIR",
+	[ "sitentry" ] = "&switch:models/breen.mdl;ACT_BUSY_SIT_CHAIR_ENTRY",
+	[ "sitexit" ] = "&switch:models/breen.mdl;ACT_BUSY_SIT_CHAIR_EXIT",
+	[ "swim" ] = "&switch:models/breen.mdl;ACT_GLIDE",
+	[ "sitground" ] = "&sequence:models/breen.mdl;plazaidle4",
+	[ "sitgroundentry" ] = "&switch:models/breen.mdl;ACT_BUSY_SIT_GROUND_ENTRY",
+	[ "sitgroundexit" ] = "&switch:models/breen.mdl;ACT_BUSY_SIT_GROUND_EXIT",
+	[ "sprint" ] = "&sequence:models/breen.mdl;sprint_all",
 	[ "flinch" ] = {
-		["explosion"] = "&switch:models/Barney.mdl;ACT_GESTURE_FLINCH_BLAST"
+		["explosion"] = "&switch:models/breen.mdl;ACT_GESTURE_FLINCH_BLAST"
 	},
 	[ "crouch" ] = {
 			[ "idle" ] = "&switch:models/breen.mdl;ACT_COVER_LOW",
@@ -238,9 +238,9 @@ Anims.Male[ "rpg" ] = {
 }
 
 Anims.Male[ "melee" ] = {
-	[ "idle" ] = "&sequence:models/breen.mdl;LineIdle03",
-	[ "walk" ] = "&switch:models/breen.mdl;ACT_WALK",
-	[ "run" ] = "&switch:models/breen.mdl;ACT_RUN",
+	[ "idle" ] = Anims.Male[ "default" ]["idle"],
+	[ "walk" ] = Anims.Male[ "default" ]["walk"],
+	[ "run" ] = Anims.Male[ "default" ]["run"],
 	[ "crouch" ] = {
 		[ "idle" ] = "&sequence:models/breen.mdl;crouchidlehide",
 		[ "walk" ] = "&switch:models/breen.mdl;ACT_WALK_CROUCH",
@@ -256,9 +256,9 @@ Anims.Male[ "melee" ] = {
 }
 
 Anims.Male[ "melee2" ] = {
-	[ "idle" ] = "&sequence:models/breen.mdl;LineIdle03",
-	[ "walk" ] = "&switch:models/breen.mdl;ACT_WALK",
-	[ "run" ] = "&switch:models/breen.mdl;ACT_RUN",
+	[ "idle" ] = Anims.Male[ "default" ]["idle"],
+	[ "walk" ] = Anims.Male[ "default" ]["walk"],
+	[ "run" ] = Anims.Male[ "default" ]["run"],
 	[ "crouch" ] = {
 		[ "idle" ] = "&sequence:models/breen.mdl;crouchidlehide",
 		[ "walk" ] = "&switch:models/breen.mdl;ACT_WALK_CROUCH",
@@ -274,9 +274,9 @@ Anims.Male[ "melee2" ] = {
 }
 
 Anims.Male[ "knife" ] = {
-	[ "idle" ] = "&sequence:models/breen.mdl;LineIdle03",
-	[ "walk" ] = "&switch:models/breen.mdl;ACT_WALK",
-	[ "run" ] = "&switch:models/breen.mdl;ACT_RUN",
+	[ "idle" ] = Anims.Male[ "default" ]["idle"],
+	[ "walk" ] = Anims.Male[ "default" ]["walk"],
+	[ "run" ] = Anims.Male[ "default" ]["run"],
 	[ "crouch" ] = {
 		[ "idle" ] = "&sequence:models/breen.mdl;crouchidlehide",
 		[ "walk" ] = "&switch:models/breen.mdl;ACT_WALK_CROUCH",
@@ -292,9 +292,9 @@ Anims.Male[ "knife" ] = {
 }
 
 Anims.Male[ "fist" ] = {
-	[ "idle" ] = "&sequence:models/breen.mdl;LineIdle03",
-	[ "walk" ] = "&switch:models/breen.mdl;ACT_WALK",
-	[ "run" ] = "&switch:models/breen.mdl;ACT_RUN",
+	[ "idle" ] = Anims.Male[ "default" ]["idle"],
+	[ "walk" ] = Anims.Male[ "default" ]["walk"],
+	[ "run" ] = Anims.Male[ "default" ]["run"],
 	[ "crouch" ] = {
 		[ "idle" ] = "&sequence:models/breen.mdl;crouchidlehide",
 		[ "walk" ] = "&switch:models/breen.mdl;ACT_WALK_CROUCH",
@@ -310,9 +310,9 @@ Anims.Male[ "fist" ] = {
 }
 
 Anims.Male[ "grenade" ] = {
-	[ "idle" ] = "&sequence:models/breen.mdl;LineIdle03",
-	[ "walk" ] = "&switch:models/breen.mdl;ACT_WALK",
-	[ "run" ] = "&switch:models/breen.mdl;ACT_RUN",
+	[ "idle" ] = Anims.Male[ "default" ]["idle"],
+	[ "walk" ] = Anims.Male[ "default" ]["walk"],
+	[ "run" ] = Anims.Male[ "default" ]["run"],
 	[ "crouch" ] = {
 		[ "idle" ] = "&sequence:models/breen.mdl;crouchidlehide",
 		[ "walk" ] = "&switch:models/breen.mdl;ACT_WALK_CROUCH",
@@ -328,9 +328,9 @@ Anims.Male[ "grenade" ] = {
 }
 
 Anims.Male[ "slam" ] = {
-	[ "idle" ] = "&switch:models/breen.mdl;ACT_IDLE",
-	[ "walk" ] = "&switch:models/breen.mdl;ACT_WALK_SUITCASE",
-	[ "run" ] = "&switch:models/breen.mdl;ACT_RUN",
+	[ "idle" ] = Anims.Male[ "default" ]["idle"],
+	[ "walk" ] = Anims.Male[ "default" ]["walk"],
+	[ "run" ] = Anims.Male[ "default" ]["run"],
 	[ "crouch" ] = {
 	[ "idle" ] = "&switch:models/breen.mdl;ACT_COVER_LOW",
 	[ "walk" ] = "&switch:models/breen.mdl;ACT_WALK_CROUCH",
@@ -351,17 +351,16 @@ Anims.Male[ "slam" ] = {
  
 Anims.Female = {}
 Anims.Female[ "models" ] = {
-	"models/alyx.mdl",
 	"models/alyx.mdl"
 }
 Anims.Female[ "default" ] = {
-	[ "idle" ] = "&switch:models/alyx.mdl;ACT_IDLE",
+	[ "idle" ] = "&sequence:models/alyx.mdl;rawposture",
 	[ "walk" ] = "&switch:models/alyx.mdl;ACT_WALK",
 	[ "run" ] = "&switch:models/alyx.mdl;ACT_RUN",
 	[ "jump" ] = "&switch:models/alyx.mdl;ACT_JUMP",
 	[ "land" ] = "&switch:models/alyx.mdl;ACT_LAND",
 	[ "fly" ] = "&switch:models/alyx.mdl;ACT_GLIDE",
-	[ "sit" ] = "&switch:models/alyx.mdl;ACT_BUSY_SIT_CHAIR",
+	[ "sit" ] = "&switch:models/player/alyx.mdl;ACT_MP_SWIM",
 	[ "sitentry" ] = "&switch:models/alyx.mdl;ACT_BUSY_SIT_CHAIR_ENTRY",
 	[ "sitexit" ] = "&switch:models/alyx.mdl;ACT_BUSY_SIT_CHAIR_EXIT",
 	[ "swim" ] = "&switch:models/alyx.mdl;ACT_GLIDE",
@@ -393,11 +392,11 @@ Anims.Female[ "relaxed" ] = {
 	[ "jump" ] = "&switch:models/alyx.mdl;ACT_JUMP",
 	[ "land" ] = "&switch:models/alyx.mdl;ACT_LAND",
 	[ "fly" ] = "&switch:models/alyx.mdl;ACT_GLIDE",
-	[ "sit" ] = "&switch:models/alyx.mdl;ACT_BUSY_SIT_CHAIR",
+	[ "sit" ] = "&switch:models/player/alyx.mdl;ACT_MP_SWIM",
 	[ "sitentry" ] = "&switch:models/alyx.mdl;ACT_BUSY_SIT_CHAIR_ENTRY",
 	[ "sitexit" ] = "&switch:models/alyx.mdl;ACT_BUSY_SIT_CHAIR_EXIT",
 	[ "swim" ] = "&switch:models/alyx.mdl;ACT_GLIDE",
-	[ "sitground" ] = "&sequence:models/alyx.mdl;plazaidle4",
+	[ "sitground" ] = "&sequence:models/alyx.mdl;canals_mary_postidle",
 	[ "sitgroundentry" ] = "&switch:models/alyx.mdl;ACT_BUSY_SIT_GROUND_ENTRY",
 	[ "sitgroundexit" ] = "&switch:models/alyx.mdl;ACT_BUSY_SIT_GROUND_EXIT",
 	[ "sprint" ] = "&switch:models/alyx.mdl;ACT_RUN",
@@ -424,7 +423,7 @@ Anims.Female[ "headstrong" ] = {
 	[ "jump" ] = "&switch:models/alyx.mdl;ACT_JUMP",
 	[ "land" ] = "&switch:models/alyx.mdl;ACT_LAND",
 	[ "fly" ] = "&switch:models/alyx.mdl;ACT_GLIDE",
-	[ "sit" ] = "&switch:models/alyx.mdl;ACT_BUSY_SIT_CHAIR",
+	[ "sit" ] = "&switch:models/player/alyx.mdl;ACT_MP_SWIM",
 	[ "sitentry" ] = "&switch:models/alyx.mdl;ACT_BUSY_SIT_CHAIR_ENTRY",
 	[ "sitexit" ] = "&switch:models/alyx.mdl;ACT_BUSY_SIT_CHAIR_EXIT",
 	[ "swim" ] = "&switch:models/alyx.mdl;ACT_GLIDE",
@@ -456,11 +455,11 @@ Anims.Female[ "frustrated" ] = {
 	[ "jump" ] = "&switch:models/alyx.mdl;ACT_JUMP",
 	[ "land" ] = "&switch:models/alyx.mdl;ACT_LAND",
 	[ "fly" ] = "&switch:models/alyx.mdl;ACT_GLIDE",
-	[ "sit" ] = "&switch:models/alyx.mdl;ACT_BUSY_SIT_CHAIR",
+	[ "sit" ] = "&switch:models/player/alyx.mdl;ACT_MP_SWIM",
 	[ "sitentry" ] = "&switch:models/alyx.mdl;ACT_BUSY_SIT_CHAIR_ENTRY",
 	[ "sitexit" ] = "&switch:models/alyx.mdl;ACT_BUSY_SIT_CHAIR_EXIT",
 	[ "swim" ] = "&switch:models/alyx.mdl;ACT_GLIDE",
-	[ "sitground" ] = "&sequence:models/alyx.mdl;plazaidle4",
+	[ "sitground" ] = "&sequence:models/alyx.mdl;canals_mary_postidle",
 	[ "sitgroundentry" ] = "&switch:models/alyx.mdl;ACT_BUSY_SIT_GROUND_ENTRY",
 	[ "sitgroundexit" ] = "&switch:models/alyx.mdl;ACT_BUSY_SIT_GROUND_EXIT",
 	[ "sprint" ] = "&switch:models/alyx.mdl;ACT_RUN",
@@ -588,41 +587,94 @@ Anims.Female[ "rpg" ] = {
 }
 
 Anims.Female[ "melee" ] = {
-	[ "idle" ] = "&switch:models/alyx.mdl;ACT_IDLE",
+	[ "idle" ] = Anims.Female[ "default" ][ "idle" ],
 	[ "walk" ] = "&switch:models/alyx.mdl;ACT_WALK",
 	[ "run" ] = "&switch:models/alyx.mdl;ACT_RUN",
 	[ "crouch" ] = {
-	[ "idle" ] = "&switch:models/alyx.mdl;ACT_COVER_LOW",
-	[ "walk" ] = "&switch:models/alyx.mdl;ACT_WALK_CROUCH",
-	[ "aimidle" ] = "&switch:models/alyx.mdl;ACT_COVER_PISTOL_LOW",
-	[ "aimwalk" ] = "&switch:models/alyx.mdl;ACT_WALK_CROUCH"
+		[ "idle" ] = "&sequence:models/alyx.mdl;crouchidlehide",
+		[ "walk" ] = "&switch:models/alyx.mdl;ACT_WALK_CROUCH",
+		[ "aimidle" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_IDLE_CROUCH_MELEE",
+		[ "aimwalk" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_WALK_CROUCH_MELEE",
 	},
 	[ "aim" ] = {
-	[ "idle" ] = "&switch:models/alyx.mdl;ACT_IDLE_MANNEDGUN",
-	[ "walk" ] = "&switch:models/alyx.mdl;ACT_WALK_PACKAGE",
-	[ "run" ] = "&switch:models/alyx.mdl;ACT_RUN"
+		[ "idle" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_IDLE_MELEE",
+		[ "walk" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_WALK_MELEE",
+		[ "run" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_RUN_MELEE",
 	},
-["fire"] = "ACT_MELEE_ATTACK_SWING"
+		["fire"] = "ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE"
+}
+
+Anims.Female[ "melee2" ] = {
+	[ "idle" ] = Anims.Female[ "default" ][ "idle" ],
+	[ "walk" ] = "&switch:models/alyx.mdl;ACT_WALK",
+	[ "run" ] = "&switch:models/alyx.mdl;ACT_RUN",
+	[ "crouch" ] = {
+		[ "idle" ] = "&sequence:models/alyx.mdl;crouchidlehide",
+		[ "walk" ] = "&switch:models/alyx.mdl;ACT_WALK_CROUCH",
+		[ "aimidle" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_IDLE_CROUCH_MELEE2",
+		[ "aimwalk" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_WALK_CROUCH_MELEE2",
+	},
+	[ "aim" ] = {
+		[ "idle" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_IDLE_MELEE2",
+		[ "walk" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_WALK_MELEE2",
+		[ "run" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_RUN_MELEE2",
+	},
+	["fire"] = "ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE2"
+}
+
+Anims.Female[ "knife" ] = {
+	[ "idle" ] = Anims.Female[ "default" ][ "idle" ],
+	[ "walk" ] = "&switch:models/alyx.mdl;ACT_WALK",
+	[ "run" ] = "&switch:models/alyx.mdl;ACT_RUN",
+	[ "crouch" ] = {
+		[ "idle" ] = "&sequence:models/alyx.mdl;crouchidlehide",
+		[ "walk" ] = "&switch:models/alyx.mdl;ACT_WALK_CROUCH",
+		[ "aimidle" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_IDLE_CROUCH_KNIFE",
+		[ "aimwalk" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_WALK_CROUCH_KNIFE",
+	},
+	[ "aim" ] = {
+		[ "idle" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_IDLE_KNIFE",
+		[ "walk" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_WALK_KNIFE",
+		[ "run" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_RUN_KNIFE",
+	},
+	["fire"] = "ACT_HL2MP_GESTURE_RANGE_ATTACK_KNIFE"
+}
+
+Anims.Female[ "fist" ] = {
+	[ "idle" ] = Anims.Female[ "default" ][ "idle" ],
+	[ "walk" ] = "&switch:models/alyx.mdl;ACT_WALK",
+	[ "run" ] = "&switch:models/alyx.mdl;ACT_RUN",
+	[ "crouch" ] = {
+		[ "idle" ] = "&sequence:models/alyx.mdl;crouchidlehide",
+		[ "walk" ] = "&switch:models/alyx.mdl;ACT_WALK_CROUCH",
+		[ "aimidle" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_IDLE_CROUCH_FIST",
+		[ "aimwalk" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_WALK_CROUCH_FIST",
+	},
+	[ "aim" ] = {
+		[ "idle" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_IDLE_FIST",
+		[ "walk" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_WALK_FIST",
+		[ "run" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_RUN_FIST",
+	},
+	["fire"] = "ACT_HL2MP_GESTURE_RANGE_ATTACK_FIST"
 }
 
 Anims.Female[ "grenade" ] = {
-	[ "idle" ] = "&switch:models/alyx.mdl;ACT_IDLE",
+	[ "idle" ] = Anims.Female[ "default" ][ "idle" ],
 	[ "walk" ] = "&switch:models/alyx.mdl;ACT_WALK",
 	[ "run" ] = "&switch:models/alyx.mdl;ACT_RUN",
 	[ "crouch" ] = {
-	[ "idle" ] = "&switch:models/alyx.mdl;ACT_COVER_LOW",
-	[ "walk" ] = "&switch:models/alyx.mdl;ACT_WALK_CROUCH",
-	[ "aimidle" ] = "&switch:models/alyx.mdl;ACT_COVER_PISTOL_LOW",
-	[ "aimwalk" ] = "&switch:models/alyx.mdl;ACT_WALK_CROUCH"
+		[ "idle" ] = "&sequence:models/alyx.mdl;crouchidlehide",
+		[ "walk" ] = "&switch:models/alyx.mdl;ACT_WALK_CROUCH",
+		[ "aimidle" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_IDLE_CROUCH_GRENADE",
+		[ "aimwalk" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_WALK_CROUCH_GRENADE",
 	},
 	[ "aim" ] = {
-	[ "idle" ] = "&switch:models/alyx.mdl;ACT_IDLE_ANGRY_PISTOL",
-	[ "walk" ] = "&switch:models/alyx.mdl;ACT_WALK_PACKAGE",
-	[ "run" ] = "&switch:models/alyx.mdl;ACT_RUN"
+		[ "idle" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_IDLE_GRENADE",
+		[ "walk" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_WALK_GRENADE",
+		[ "run" ] = "&switch:models/player/breen.mdl;ACT_HL2MP_RUN_GRENADE",
 	},
-["fire"] = "ACT_MELEE_ATTACK_SWING"
+	["fire"] = "ACT_HL2MP_GESTURE_RANGE_ATTACK_GRENADE"
 }
-
 
 Anims.Female[ "slam" ] = {
 	[ "idle" ] = "&switch:models/alyx.mdl;ACT_IDLE",

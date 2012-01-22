@@ -43,3 +43,17 @@ concommand.Add( "rp_takeoffitem", function( ply, cmd, args )
 	end
 
 end)
+
+concommand.Add( "rp_takeoffallgear", function( ply, cmd, args )
+	CAKE.SetCharField( ply, "gear", {} )
+	CAKE.RestoreGear( ply )
+end)
+
+concommand.Add( "rp_takeoffallclothing", function( ply, cmd, args )
+	CAKE.SetCharField( ply, "clothing", "none" )
+	CAKE.SetCharField( ply, "clothingid", "none" )
+	CAKE.SetCharField( ply, "helmet", "none" )
+	CAKE.SetCharField( ply, "helmetid", "none" )
+	CAKE.RestoreClothing( ply )
+	CAKE.SendClothingToClient( ply )
+end)

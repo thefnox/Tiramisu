@@ -34,7 +34,7 @@ local BoneList = {
 	"Left toe"
 }
 
-local function FetchWoreItems()
+local function FetchWornItems()
 	CAKE.WoreItems = {}
 
 	for _, bone in pairs(CAKE.Gear) do
@@ -55,10 +55,10 @@ local function FetchWoreItems()
 
 end
 
-local function HandleGearEditing( entity, bone, item, name )
+local function HandleGearEditing( entity, bone, item, name, itemid )
 
 	if entity and ValidEntity( entity ) then
-		StartGearEditor( entity, item, bone, entity:GetDTVector( 1 ), entity:GetDTAngle( 1 ), entity:GetDTVector( 2 ), entity:GetSkin(), name )
+		StartGearEditor( entity, item, bone, entity:GetDTVector( 1 ), entity:GetDTAngle( 1 ), entity:GetDTVector( 2 ), entity:GetSkin(), name, itemid )
 	else
 		if InventoryTable and #InventoryTable > 0 then
 			if frame then
@@ -102,8 +102,6 @@ end
 
 function EditGear()
 
-	RunConsoleCommand( "rp_thirdperson", 1 )
-
 	PlayerMenu = vgui.Create( "DFrame" )
 	PlayerMenu:SetSize( ScrW(), ScrH() )
 	PlayerMenu:Center()
@@ -134,6 +132,7 @@ function EditGear()
 
 	local ClothingList = vgui.Create( "DPanelList" )
 	ClothingList:SetSize( 300, 432  )
+	ClothingList:SetSpacing( 3 )
 	ClothingList:SetPadding( 3 )
 	ClothingList:EnableVerticalScrollbar( true )
 	PropertySheet:AddSheet( "Clothing", ClothingList, "gui/silkicons/user", false, false, "Edit your clothes" )
@@ -187,6 +186,7 @@ function EditGear()
 	local hlist = vgui.Create( "DPanelList" )
 	hlist:SetAutoSize( true )
 	hlist:SetSpacing( 5 )
+	hlist:SetPadding( 3 )
 	hlist:EnableHorizontal( true )
 	hlist:EnableVerticalScrollbar( true )
 	HelmetCategory:SetContents( hlist )
@@ -322,7 +322,7 @@ function EditGear()
 						for __, tbl in pairs( CAKE.Gear[ string.lower( bone ) ] ) do
 							node2 = node:AddNode( tbl.name or tbl.item )
 							node2.DoClick = function()
-								HandleGearEditing( tbl.entity, tbl.item, string.lower( bone ), tbl.name )
+								HandleGearEditing( tbl.entity, tbl.item, string.lower( bone ), tbl.name, tbl.itemid )
 							end
 						end
 					end
@@ -353,7 +353,7 @@ function EditGear()
 
 end
 
-function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name )
+function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, itemid )
 
 	if PlayerMenu then
 		EditorFrame = vgui.Create( "DFrame", PlayerMenu ) -- Creates the frame itself
@@ -373,25 +373,24 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name )
 		local EditList = vgui.Create( "DPanelList" )
 		EditList:SetPos( 25,25 )
 		EditList:SetSize( 275, 375 )
+		EditList:SetPadding( 3 )
 		EditList:SetSpacing( 10 ) -- Spacing between items
 		EditList:EnableHorizontal( false ) -- Only vertical items
 		EditList:EnableVerticalScrollbar( false ) -- Allow scrollbar if you exceed the Y axis
 		
 		local itemlabel = vgui.Create( "DLabel" )
-		itemlabel:SetText( "Item:" )
+		itemlabel:SetText( "Name:" )
 		EditList:AddItem( itemlabel )
 		
-		itemlist= vgui.Create( "DMultiChoice" )
-		itemlist:SetText( name or "-None-" )
-		itemlist:SetPos(2,32)
-		itemlist:SetSize( 295, 20 )
-		function itemlist:OnSelect(index,value,data)
-			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", "none", "none", "none", value )
+		local itemname = vgui.Create( "DTextEntry" )
+		itemname:SetValue( name or "-None-" )
+		itemname:SetTextColor( Color(255, 255, 255, 255) )
+		itemname:SetDrawBackground( false )
+		itemname.OnEnter = function()
+			LocalPlayer():ConCommand( "rp_renameitem \"" .. itemid .. "\" \"" .. itemname:GetValue() .. "\"" )
 		end
-		for k, v in pairs( InventoryTable ) do
-			itemlist:AddChoice( v.Name )
-		end
-		EditList:AddItem( itemlist )
+
+		EditList:AddItem( itemname )
 		
 		local skinlabel = vgui.Create( "DLabel" )
 		skinlabel:SetText( "Skin:" )
@@ -423,6 +422,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name )
 
 		local PosList = vgui.Create( "DPanelList" )
 		PosList:SetPos( 25,25 )
+		PosList:SetPadding( 3 )
 		PosList:SetSize( 175, 375 )
 		PosList:SetSpacing( 10 ) -- Spacing between items
 		PosList:EnableHorizontal( false ) -- Only vertical items
@@ -477,9 +477,10 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name )
 		
 		PropertySheet:AddSheet( "Position", PosList, "gui/silkicons/anchor", false, false, "Edit gear's position")
 
-			local AngList = vgui.Create( "DPanelList" )
+		local AngList = vgui.Create( "DPanelList" )
 		AngList:SetPos( 25,25 )
 		AngList:SetSize( 175, 375 )
+		AngList:SetPadding( 3 )
 		AngList:SetSpacing( 10 ) -- Spacing between items
 		AngList:EnableHorizontal( false ) -- Only vertical items
 		AngList:EnableVerticalScrollbar( false ) -- Allow scrollbar if you exceed the Y axis
@@ -537,6 +538,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name )
 		PropertySheet:AddSheet( "Angles", AngList, "gui/silkicons/application_view_detail", false, false, "Edit gear's angles")
 
 		local ScaleList = vgui.Create( "DPanelList" )
+		ScaleList:SetPadding( 3 )
 		ScaleList:SetPos( 25,25 )
 		ScaleList:SetSize( 175, 375 )
 		ScaleList:SetSpacing( 10 ) -- Spacing between items
@@ -592,25 +594,31 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name )
 		PropertySheet:AddSheet( "Scale", ScaleList, "gui/silkicons/magnifier", false, false, "Edit gear's scale")
 
 		EditorFrame.Close = function()
-			CAKE.Query( "Save Changes for " .. name, "Save",
-				"Yes", function()
-						local offstr = "\"" .. tostring( xslider:GetValue() ) .. "," .. tostring( yslider:GetValue() ) .. "," .. tostring( zslider:GetValue()) .. "\""
-						local angstr = "\"" .. tostring( pitchslider:GetValue() ) .. "," .. tostring( yawslider:GetValue() ) .. "," .. tostring( rollslider:GetValue() ) .. "\""
-						local scalestr =  "\"" .. tostring( xscale:GetValue() ) .. "," .. tostring( yscale:GetValue() ) .. "," .. tostring( zscale:GetValue()) .. "\""
-						RunConsoleCommand( "rp_editgear", entity:EntIndex(), offsetstr, angstr, scalestr, "\"none\"", "\"" .. tostring( skinnumber:GetValue()) .. "\"" )
-						EditorFrame:SetVisible( false )
-						EditorFrame:Remove()
-					end,
-				"No", function()
-						RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", "none", "none", "none" )
-						entity:SetDTVector( 1, offset )
-						entity:SetDTAngle( 1, angle )
-						entity:SetDTVector( 2, scale )
-						entity:SetSkin( skin )
-						RunConsoleCommand( "rp_editgear", entity:EntIndex(), offset.x .. "," .. offset.y .. "," .. offset.z , angle.p .. "," .. angle.y .. "," .. angle.r, scale.x .. "," .. scale.y .. "," .. scale.z, "none", skin )
-						EditorFrame:SetVisible( false )
-						EditorFrame:Remove()
-					end)
+			CAKE.Query( "Save Changes for " .. itemname:GetValue(), "Save",
+			"Yes", function()
+					local offstr = "\"" .. tostring( xslider:GetValue() ) .. "," .. tostring( yslider:GetValue() ) .. "," .. tostring( zslider:GetValue()) .. "\""
+					local angstr = "\"" .. tostring( pitchslider:GetValue() ) .. "," .. tostring( yawslider:GetValue() ) .. "," .. tostring( rollslider:GetValue() ) .. "\""
+					local scalestr =  "\"" .. tostring( xscale:GetValue() ) .. "," .. tostring( yscale:GetValue() ) .. "," .. tostring( zscale:GetValue()) .. "\""
+					RunConsoleCommand( "rp_editgear", entity:EntIndex(), offsetstr, angstr, scalestr, "\"none\"", "\"" .. tostring( skinnumber:GetValue()) .. "\"" )
+					if itemid then
+						LocalPlayer():ConCommand( "rp_renameitem \"" .. itemid .. "\" \"" .. itemname:GetValue() .. "\"" )
+					end
+					EditorFrame:SetVisible( false )
+					EditorFrame:Remove()
+				end,
+			"No", function()
+					RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", "none", "none", "none" )
+					entity:SetDTVector( 1, offset )
+					entity:SetDTAngle( 1, angle )
+					entity:SetDTVector( 2, scale )
+					entity:SetSkin( skin )
+					RunConsoleCommand( "rp_editgear", entity:EntIndex(), offset.x .. "," .. offset.y .. "," .. offset.z , angle.p .. "," .. angle.y .. "," .. angle.r, scale.x .. "," .. scale.y .. "," .. scale.z, "none", skin )
+					if itemid then
+						LocalPlayer():ConCommand( "rp_renameitem \"" .. itemid .. "\" \"" .. name .. "\"" )
+					end
+					EditorFrame:SetVisible( false )
+					EditorFrame:Remove()
+				end)
 		end
 
 	end
@@ -654,6 +662,7 @@ usermessage.Hook( "cleargear", function( um )
 	if RefreshGearTree then
 		RefreshGearTree()
 	end
+	FetchWornItems()
 end)
 
 usermessage.Hook( "clearclothing", function( um )
@@ -683,7 +692,7 @@ usermessage.Hook( "addgear", function( um )
 	if RefreshGearTree then
 		RefreshGearTree()
 	end
-	FetchWoreItems()
+	FetchWornItems()
 
 end)
 
@@ -697,7 +706,7 @@ usermessage.Hook( "addclothing", function( um )
 	entity.itemid = itemid
 
 	table.insert( CAKE.ClothingTbl, entity )
-	FetchWoreItems()
+	FetchWornItems()
 
 end)
 
@@ -705,7 +714,7 @@ usermessage.Hook( "editgear", function( um )
 	
 	local ent = ents.GetByIndex( um:ReadShort() )
 
-	StartGearEditor( ent, um:ReadString(), um:ReadString(), ent:GetDTVector( 1 ), ent:GetDTAngle( 1 ), ent:GetDTVector( 2 ), ent:GetSkin(), um:ReadString() )
+	StartGearEditor( ent, um:ReadString(), um:ReadString(), ent:GetDTVector( 1 ), ent:GetDTAngle( 1 ), ent:GetDTVector( 2 ), ent:GetSkin(), um:ReadString(), um:ReadString() )
 	if RefreshGearTree then
 		RefreshGearTree()
 	end

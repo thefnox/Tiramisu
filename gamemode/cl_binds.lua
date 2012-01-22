@@ -110,39 +110,84 @@ function GM:GUIMousePressed(mc)
 		tracedata.start = CAKE.CameraPos
 		tracedata.endpos = CAKE.CameraPos+(ang*2000)
 		if !CAKE.Thirdperson:GetBool() then
-			--tracedata.filter = LocalPlayer()
+			tracedata.filter = LocalPlayer()
 		end
 		local trace = util.TraceLine(tracedata)
 		
-		print( trace.Entity )
-
-		if trace.StartPos:Distance( LocalPlayer():EyePos() ) <= distance then
-			local target = trace.Entity
-			local submenus = {}
-			local ContextMenu = DermaMenu()
-			if ValidEntity( target ) or target:IsWorld() then
-				if ValidEntity( target ) and target:GetClass() == "item_prop" then
-					item = CAKE.ItemData[target:GetNWString("Class")]
-					for k,v in pairs(item.RightClick or {}) do
-						ContextMenu:AddOption(k, function() CAKE.SelectedEnt = false LocalPlayer():ConCommand("rp_useitem " ..target:EntIndex().. " " .. v) end)
+		if SinglePlayer() then
+			if trace.StartPos:Distance( LocalPlayer():EyePos() ) <= distance then
+				local target = trace.Entity
+				local submenus = {}
+				local ContextMenu = DermaMenu()
+				if ValidEntity( target ) or target:IsWorld() then
+					if ValidEntity( target ) and target:GetClass() == "item_prop" then
+						item = CAKE.ItemData[target:GetNWString("Class")]
+						for k,v in pairs(item.RightClick or {}) do
+							ContextMenu:AddOption(k, function()  LocalPlayer():ConCommand("rp_useitem " ..target:EntIndex().. " " .. v) end)
+						end
 					end
-				end
 
-				for k,v in pairs (RclickTable) do
-					if v.Condition and v.Condition(target) then 
-						if v.SubMenu then
-							if !submenus[ v.SubMenu ] then
-								submenus[ v.SubMenu ] = ContextMenu:AddSubMenu( v.SubMenu )
+					for k,v in pairs (RclickTable) do
+						if v.Condition and v.Condition(target) then 
+							if v.SubMenu then
+								if !submenus[ v.SubMenu ] then
+									submenus[ v.SubMenu ] = ContextMenu:AddSubMenu( v.SubMenu )
+								end
+								submenus[ v.SubMenu ]:AddOption(v.Name, function()  v.Click(target, LocalPlayer()) end)
+							else
+								ContextMenu:AddOption(v.Name, function()  v.Click(target, LocalPlayer()) end)
 							end
-							submenus[ v.SubMenu ]:AddOption(v.Name, function() CAKE.SelectedEnt = false v.Click(target, LocalPlayer()) end)
-						else
-							ContextMenu:AddOption(v.Name, function() CAKE.SelectedEnt = false v.Click(target, LocalPlayer()) end)
+						end
+					end
+					
+					ContextMenu:Open()
+				end
+			end
+		else
+			--This is a quick override I have to do in order to allow selecting yourself in multiplayer, considering traces don't collide with the player.
+			local ContextMenu = DermaMenu()
+			if trace.StartPos:Distance( LocalPlayer():EyePos() ) <= distance then
+				local submenus = {}
+				local target = trace.Entity
+				if ValidEntity( target ) or target:IsWorld() then
+					if ValidEntity( target ) and target:GetClass() == "item_prop" then
+						item = CAKE.ItemData[target:GetNWString("Class")]
+						for k,v in pairs(item.RightClick or {}) do
+							ContextMenu:AddOption(k, function()  LocalPlayer():ConCommand("rp_useitem " ..target:EntIndex().. " " .. v) end)
+						end
+					end
+
+					for k,v in pairs (RclickTable) do
+						if v.Condition and v.Condition(target) then 
+							if v.SubMenu then
+								if !submenus[ v.SubMenu ] then
+									submenus[ v.SubMenu ] = ContextMenu:AddSubMenu( v.SubMenu )
+								end
+								submenus[ v.SubMenu ]:AddOption(v.Name, function() v.Click(target, LocalPlayer()) end)
+							else
+								ContextMenu:AddOption(v.Name, function() v.Click(target, LocalPlayer()) end)
+							end
 						end
 					end
 				end
-				
-				ContextMenu:Open()
 			end
+			ContextMenu:AddSpacer()
+			ContextMenu:AddOption("Myself:", function()end)
+			local submenus = {}
+			for k,v in pairs (RclickTable) do
+				if v.Condition and v.Condition(LocalPlayer()) then 
+					if v.SubMenu then
+						if !submenus[ v.SubMenu ] then
+							submenus[ v.SubMenu ] = ContextMenu:AddSubMenu( v.SubMenu )
+						end
+						submenus[ v.SubMenu ]:AddOption(v.Name, function() v.Click(LocalPlayer(), LocalPlayer()) end)
+					else
+						ContextMenu:AddOption(v.Name, function() v.Click(LocalPlayer(), LocalPlayer()) end)
+					end
+				end
+			end
+
+			ContextMenu:Open()
 		end
 	end
 end
@@ -179,7 +224,7 @@ end
 --Disables default HUD elements
 function GM:HUDShouldDraw( name )
 
-	if name == "CHudCloseCaption" or name == "CHudWeaponSelection" or name == "CHudMenu" or name == "CHudGMod" or name == "CHudDamageIndicator" then
+	if name == "CHudCloseCaption" or name == "CHudMenu" or name == "CHudGMod" or name == "CHudDamageIndicator" then
 		return true
 	end
 

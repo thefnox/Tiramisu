@@ -12,7 +12,8 @@ CAKE.Undroppable = {
 local meta = FindMetaTable( "Player" )
 
 function CAKE.CreateWeaponItem( ply, weapon )
-	if ValidEntity( weapon ) and weapon:IsWeapon() and !table.HasValue( CAKE.Undroppable, weapon:GetClass()) and !ply:HasWeapon(weapon:GetClass()) then
+
+	if ValidEntity( weapon ) and weapon:IsWeapon() and !table.HasValue( CAKE.Undroppable, weapon:GetClass()) then
 		local id = CAKE.CreateItemID()
 		CAKE.SetUData( id, "model", weapon.WorldModel )
 		CAKE.SetUData( id, "name", weapon:GetClass() )
@@ -24,6 +25,7 @@ function CAKE.CreateWeaponItem( ply, weapon )
 		return id
 	end
 	return false
+
 end
 
 --Saves the entire ammo list.
@@ -77,14 +79,22 @@ hook.Add( "WeaponEquip", "Tiramisu.GetWeaponAsItem", function(wep)
 				ply:GiveItem( class )
 			end
 		else
-			CAKE.CreateWeaponItem( ply, wep )
+			local haveit = false
+			for k, v in pairs( CAKE.GetCharField(ply, "inventory" ) ) do
+				if CAKE.GetUData( v[2], "weaponclass" ) == wep:GetClass() then
+					haveit = true
+					break
+				end
+			end
+			if !haveit then
+				CAKE.CreateWeaponItem( ply, wep )
+			end
 		end
 		ply:SaveAmmo()
 	end)
 end)
 
 hook.Add( "PlayerLoadout", "TiramisuWeaponsLoadout", function( ply )
-
 	if ply:IsCharLoaded() then
 		if(ply:GetNWInt("charactercreate", 0 ) != 1) then
 			for k, v in pairs( CAKE.GetCharField( ply, "inventory" ) ) do
@@ -96,7 +106,6 @@ hook.Add( "PlayerLoadout", "TiramisuWeaponsLoadout", function( ply )
 			ply:RestoreAmmo()
 		end
 	end
-
 end )
 
 function PLUGIN.Init()

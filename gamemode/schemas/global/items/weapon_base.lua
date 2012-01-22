@@ -6,7 +6,9 @@ ITEM.Purchaseable = false
 ITEM.Price = 0
 ITEM.ItemGroup = 1
 ITEM.Stack = false
+ITEM.Wearable = true
 ITEM.Unusable = true
+ITEM.WeaponType = "small1"
 
 function ITEM:Drop(ply)
 

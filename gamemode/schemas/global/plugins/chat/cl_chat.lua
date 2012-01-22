@@ -145,7 +145,7 @@ end
 --Adds a line to a particular channel. If no channel is specified it simply becomes global.
 function PANEL:AddLine( text, channel, handler )
 
-	local label = MarkupLabel( text, self.Width - 30 )
+	local label = MarkupLabel( text, self.Width - 50 )
 	local number = #self.Lines + 1
 	label.numberid = number 
 	self.Lines[ number ] = {}

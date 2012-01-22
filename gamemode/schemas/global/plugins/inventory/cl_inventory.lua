@@ -505,6 +505,13 @@ function PANEL:OpenMenu()
 				attachto:AddOption(bone, function() RunConsoleCommand( "rp_wearitem", self:GetItem().Class, self:GetItem().ID, bone ) end)
 			end
 		end
+		ContextMenu:AddOption("Rename", function() 
+		CAKE.StringRequest( "Rename an Item", "Rename '" .. self:GetItem().Name .. "' to what?", self:GetItem().Name,
+			function( text )
+				LocalPlayer():ConCommand( "rp_renameitem \"" .. self:GetItem().ID .. "\" \"" .. text .. "\"" )
+			end,
+			function() end, "Accept", "Cancel")
+		end)
 		ContextMenu:AddOption("Drop", function() self:DropItem() end)
 		if self.Amount > 1 then ContextMenu:AddOption("Drop All", function() self:DropAllItem() end) end
 	end

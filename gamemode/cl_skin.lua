@@ -2,6 +2,9 @@
 local surface = surface
 local draw = draw
 local Color = Color
+local gradient = surface.GetTextureID("gui/gradient")
+local matBlurScreen = Material( "pp/blurscreen" ) 
+local gradientUp = surface.GetTextureID("gui/gradient_up")
 
 function derma.SkinHook( strType, strName, panel )
 	local Skin
@@ -95,8 +98,6 @@ SKIN.fontButton					= "TiramisuDefaultFont"
 /*---------------------------------------------------------
 	Frame
 ---------------------------------------------------------*/
-local matBlurScreen = Material( "pp/blurscreen" ) 
-local gradientUp = surface.GetTextureID("gui/gradient_up")
 function SKIN:PaintFrame( panel )
 
 	x, y = panel:ScreenToLocal( 0, 0 ) 
@@ -153,7 +154,6 @@ end
 
 local fade = 0
 local x, y
-local gradient = surface.GetTextureID("gui/gradient")
 function SKIN:PaintQuickMenu(panel)
 	if panel then
 		if !panel.FadeOut then
@@ -250,7 +250,6 @@ function SKIN:LayoutCharacterCreation()
 	local CharName = "Set Your Name"
 	local SelectedClothing = "none"
 	local SelectedModel = "models/humans/group01/male_01.mdl"
-	RunConsoleCommand( "rp_thirdperson", 1 )
 
 	if CharacterMenu then
 		local panel = vgui.Create( "DPanelList", CharacterMenu)
@@ -543,10 +542,10 @@ end
 local screenpos
 function SKIN:PaintTargetInfo()
 	for _, ent in pairs( ents.FindInSphere( LocalPlayer():GetPos(), 500 ) ) do
-		if ValidEntity( ent ) and !ent:IsWorld() and LocalPlayer():CanTraceTo(ent) then
+		if ValidEntity( ent ) and !ent:IsWorld() then
 			if ent:GetClass() == "item_prop" then
-				screenpos = ent:LocalToWorld(ent:OBBCenter()) + Vector( 0,0,10)
-				if screenpos:Distance( LocalPlayer():GetPos() ) > 200 then
+				screenpos = ent:GetPos() + Vector( 0,0,10)
+				if screenpos:Distance( LocalPlayer():GetPos() ) > 200 and LocalPlayer():CanTraceTo(ent) then
 					screenpos = screenpos:ToScreen()
 					draw.SimpleText( ent:GetNWString( "Name",""), "Tiramisu18Font", screenpos.x, screenpos.y, Color(150,150,150,150),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 				else

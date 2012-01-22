@@ -9,8 +9,11 @@ CAKE.LastAng = Angle(0, 0, 0)
 CAKE.CurAng = Angle(0, 0, 0)
 CAKE.FreeScrollAng = Angle( 0, 0, 0 )
 CAKE.OTSAng = false
+CAKE.UseHeadRotation = false
+CAKE.SwitchFromFirstPerson = false
+CAKE.FlipAround = false
 
-local NormalizeAngle, Clamp, rad, cos, sin = math.NormalizeAngle, math.Clamp, math.rad, math.cos, math.sin
+local NormalizeAngle, Clamp, rad, cos, sin, abs, AngleDifference = math.NormalizeAngle, math.Clamp, math.rad, math.cos, math.sin, math.abs, math.AngleDifference
 
 local wep
 local function IronsightsOn()
@@ -35,10 +38,9 @@ usermessage.Hook( "Tiramisu.ReceiveRagdoll", function( um )
 
 end)
 
-local stillcamera = false
 --Sends the current player look at position.
 timer.Create( "TiramisuLookAtTimer", 0.2, 0, function()
-	if stillcamera then
+	if CAKE.UseHeadRotation then
 		local angle = CAKE.RealAng - CAKE.LastViewAng
 		RunConsoleCommand("t_sla", angle.p, NormalizeAngle( angle.y ))
 	else
@@ -84,11 +86,7 @@ hook.Add( "PlayerBindPress", "TiramisuPlayerBindPressCamera", function( ply, bin
 
 end)
 
-
-local firstpersonswitch = false
-
 local vecMove = Vector()
-
 local mPitch = GetConVar( "m_pitch" )
 local mYaw = GetConVar( "m_yaw" )
 local middleDown = false
@@ -114,15 +112,15 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 			CAKE.FreeScrollAng = Angle( 0, 0, 0 )
 			CAKE.FreeScroll = false
 			if CAKE.Thirdperson:GetBool() and !LocalPlayer():GetNWBool( "aiming", false ) then --NON AIMING THIRDPERSON
-				if firstpersonswitch and CAKE.LastViewAng then
+				if CAKE.SwitchFromFirstPerson and CAKE.LastViewAng then
 					CAKE.RealAng = CAKE.LastViewAng
 					CAKE.CurAng = CAKE.RealAng
 					CAKE.LastAng = CAKE.LastViewAng
 					CAKE.OldAngles = CAKE.LastAng
 					CAKE.CurAng = CAKE.LastAng
 					--CAKE.RealAng = CAKE.CurAng
-					firstpersonswitch = false
-					stillcamera = false
+					CAKE.SwitchFromFirstPerson = false
+					CAKE.UseHeadRotation = false
 				elseif !CAKE.RealAng then
 					CAKE.RealAng = cmd:GetViewAngles()
 				end
@@ -133,19 +131,20 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 				if cmd:GetButtons() & IN_FORWARD > 0 or cmd:GetButtons() & IN_BACK > 0 then
 					cmd:SetViewAngles(CAKE.RealAng)
 					CAKE.LastViewAng = CAKE.CurAng
-					stillcamera = false
+					CAKE.UseHeadRotation = false
 				else
 					timer.UnPause("TiramisuLookAtTimer")
-					stillcamera = true
+					CAKE.UseHeadRotation = true
 					cmd:SetViewAngles(CAKE.LastViewAng)
 				end
-				if math.abs(CAKE.RealAng.y - CAKE.LastViewAng.y) > 175 then
+				if abs(AngleDifference(CAKE.RealAng.y, CAKE.LastViewAng.y)) > 170 then
 					cmd:SetViewAngles( CAKE.RealAng )
 					CAKE.LastViewAng = CAKE.RealAng
 					CAKE.LastAng = CAKE.RealAng
+					LocalPlayer():AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_TURN_RIGHT180 )
 				end
 			elseif CAKE.Thirdperson:GetBool() and LocalPlayer():GetNWBool( "aiming", false ) then --OVER THE SHOULDER
-				if stillcamera then
+				if CAKE.UseHeadRotation then
 					cmd:SetViewAngles(CAKE.RealAng)
 				end
 				if !CAKE.OTSAng then
@@ -197,23 +196,23 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 				cmd:SetViewAngles( CAKE.DiffReal )
 
 				CAKE.LastViewAng = cmd:GetViewAngles()
-				stillcamera = false
-				firstpersonswitch = true
+				CAKE.UseHeadRotation = false
+				CAKE.SwitchFromFirstPerson = true
 				CAKE.DiffReal = Angle( 0, 0, 0 )
 			else
-				if stillcamera then
+				if CAKE.UseHeadRotation then
 					cmd:SetViewAngles(CAKE.RealAng)
 				end
 				CAKE.OTSAng = false
-				stillcamera = false
-				firstpersonswitch = true
+				CAKE.UseHeadRotation = false
+				CAKE.SwitchFromFirstPerson = true
 				CAKE.DiffReal = Angle( 0, 0, 0 )
 				CAKE.LastViewAng = cmd:GetViewAngles()
 			end
 		end
 	else
-		firstpersonswitch = false
-		stillcamera = false
+		CAKE.SwitchFromFirstPerson = false
+		CAKE.UseHeadRotation = false
 	end
 end )
 
@@ -317,11 +316,11 @@ end)
 
 hook.Add( "UpdateAnimation", "TiramisuAnimateRotate", function( ply, velocity, maxseqgroundspeed )
 	if ply == LocalPlayer() and !CAKE.ForceDraw then
-		ply:SetPoseParameter("aim_yaw", 0 )
+		--ply:SetPoseParameter("aim_yaw", 0 )
 		ply:SetPoseParameter("head_yaw", 0 )
 		ply:SetPoseParameter("body_yaw", 0 )
 		ply:SetPoseParameter("spine_yaw", 0 )
-		if stillcamera then
+		if CAKE.UseHeadRotation then
 			lookattarget = CAKE.RealAng - CAKE.LastViewAng
 			lookattarget = Angle( lookattarget.p, NormalizeAngle( lookattarget.y ), 0 )
 			if !ply.CurrentLookAt then
@@ -329,7 +328,7 @@ hook.Add( "UpdateAnimation", "TiramisuAnimateRotate", function( ply, velocity, m
 			end
 			ang = LerpAngle( 0.1, ply.CurrentLookAt, lookattarget)
 			ply.CurrentLookAt = ang
-			ply:SetPoseParameter("head_pitch", ang.p + 20)
+			ply:SetPoseParameter("head_pitch", ang.p + 10)
 			if ang.y > 0 then
 				if ang.y < 60 then
 					ply:SetPoseParameter("head_yaw", ang.y)
@@ -359,13 +358,9 @@ hook.Add( "UpdateAnimation", "TiramisuAnimateRotate", function( ply, velocity, m
 					ply:SetPoseParameter("spine_yaw", (ang.y + 90))
 				end
 			end
+		else
+			ply.CurrentLookAt = Angle( 0, 0, 0 )
 		end
-	else
-		ply.CurrentLookAt = Angle( 0, 0, 0 )
-		ply:SetPoseParameter("aim_yaw", 0 )
-		ply:SetPoseParameter("head_yaw", 0 )
-		ply:SetPoseParameter("body_yaw", 0 )
-		ply:SetPoseParameter("spine_yaw", 0 )
 	end
 end)
 

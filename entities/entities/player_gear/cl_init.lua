@@ -1,5 +1,6 @@
 include('shared.lua')
 
+ENT.HeadBonesIndex = {}
 ENT.HeadBones = { --All of the bones related to the head.
 	"ValveBiped.Bip01_Head1",
 	"ValveBiped.Bip01_Neck1",
@@ -103,15 +104,15 @@ ENT.HeadBones = { --All of the bones related to the head.
 local parent
 function ENT:Draw()
 
-	parent = self.Entity:GetDTEntity( 1 ) 
+	parent = self.Entity:GetDTEntity( 1 )
 
 	if ValidEntity( parent) then
-		if !self.HeadBonesIndex then
-			self.HeadBonesIndex = {}
+		if !self.HeadBonesIndex[ parent:GetModel() ] then
+			self.HeadBonesIndex[ parent:GetModel() ] = {}
 			for _,bone in pairs(self.HeadBones) do
 				index = parent:LookupBone(bone)
 				if index then
-					table.insert(self.HeadBonesIndex, index)
+					table.insert(self.HeadBonesIndex[ parent:GetModel() ], index)
 				end
 			end
 		end
@@ -139,10 +140,10 @@ function ENT:Draw()
 	end
 
 	--If the body ain't visible neither should the gear item be.
-	if self.Entity:GetParent() == LocalPlayer() and !hook.Call("ShouldDrawLocalPlayer", GAMEMODE) then
+	if (parent == LocalPlayer() or self.Entity:GetParent() == LocalPlayer()) and !hook.Call("ShouldDrawLocalPlayer", GAMEMODE) then
 		return
 	end
-	
+
 	self.Entity:DrawModel()
 	self.Entity:DrawShadow( false )
 	

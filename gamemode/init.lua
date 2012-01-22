@@ -29,6 +29,7 @@ include( "sh_anim_tables.lua" ) --Animation tables
 
 resource.AddFile( "resource/fonts/YanoneKaffeesatz-Bold.ttf")
 resource.AddFile( "resource/fonts/YanoneKaffeesatz-Regular.ttf")
+resource.AddFile( "materials/models/null.vmt" )
 
 GM.Name = "Tiramisu " .. CAKE.ConVars[ "Tiramisu" ]
 CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ) -- Load the schema and plugins, this is NOT initializing.

@@ -16,10 +16,11 @@ function RCLICK.Click(target,ply)
 
 		for _, ent in pairs( CAKE.ClothingTbl ) do
 			if ent.item != "none" then
-				main:AddOption( ent.item , function() RunConsoleCommand( "rp_takeoffitem", ent.item ) end)
+				main:AddOption( ent.item , function() RunConsoleCommand( "rp_takeoffitem", ent.item, ent.itemid ) end)
 			end
 		end
 		dmenu:Open()
+		main:AddOption("Take Off Everything", function() RunConsoleCommand( "rp_takeoffallclothing") end)
 	end)
 
 end

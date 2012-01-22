@@ -5,9 +5,7 @@ local x,y
 local charpanel
 
 function OpenCharacterMenu( hideclosebutton )
-
-	RunConsoleCommand( "rp_thirdperson", 1 )
-
+	
 	if !CharacterMenu then
 		CharacterMenu = vgui.Create( "DFrame" )
 		CharacterMenu:SetSize( ScrW(), ScrH() )

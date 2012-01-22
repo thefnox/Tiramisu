@@ -6,7 +6,7 @@ function meta:CanTraceTo( ent ) -- Can the player and the entity "see" eachother
 
 	local trace = {  }
 	trace.start = self:EyePos( )
-	trace.endpos = ent:LocalToWorld(ent:OBBCenter())
+	trace.endpos = ent:GetPos()
 	trace.filter = self
 	
 	local tr = util.TraceLine( trace )
