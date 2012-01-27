@@ -455,7 +455,11 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 		if !ply.CurrentLookAt then
 			ply.CurrentLookAt = ply:GetNWAngle( "tiramisulookat")
 		end
-		ang = LerpAngle( 0.1, ply.CurrentLookAt, ply:GetNWAngle( "tiramisulookat"))
+		
+		if SERVER then timefunc = FrameTime() end
+		if CLIENT then timefunc = RealFrameTime() end
+		
+		ang = LerpAngle( 5 * timefunc, ply.CurrentLookAt, ply:GetNWAngle( "tiramisulookat"))
 		ply.CurrentLookAt = ang
 		ply:SetPoseParameter("head_pitch", ang.p + 20)
 		if ang.y > 0 then
