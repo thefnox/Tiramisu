@@ -158,7 +158,6 @@ local function ccFinishCreate( ply, cmd, args )
 		ply:SetTeam( 1 )
 		
 		CAKE.ResendCharData( ply )
-
 		
 	end
 	
@@ -212,7 +211,6 @@ function ccSpawnChar( ply, cmd, args )
 	if( CAKE.PlayerData[ SteamID ][ "characters" ][ uid ] != nil ) then
 	
 		ply:SetNWString( "uid", uid )
-		CAKE.ResendCharData( ply )
 		
 		ply:SetNWInt( "charactercreate", 0 )
 	
@@ -220,6 +218,7 @@ function ccSpawnChar( ply, cmd, args )
 		ply:SetNWBool( "charloaded", true )
 
 		ply:Spawn( )
+		CAKE.ResendCharData( ply )
 		
 	else
 		
@@ -258,7 +257,7 @@ function ccReady( ply, cmd, args )
 		high = high + 1
 		ply:SetNWString( "uid", tostring(high) )
 		
-		timer.Simple( 0.1, function()
+		timer.Simple( 1, function()
 			for k, v in pairs( PlyCharTable ) do -- Send them all their characters for selection
 		
 				umsg.Start( "ReceiveChar", ply )
@@ -281,6 +280,23 @@ function ccReady( ply, cmd, args )
 	
 end
 concommand.Add( "rp_ready", ccReady )
+
+concommand.Add( "rp_receivechars", function( ply, cmd, args )
+	umsg.Start("ClearReceivedChars", ply)
+	umsg.End()
+	for k, v in pairs( CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ]["characters"] ) do -- Send them all their characters for selection
+
+		umsg.Start( "ReceiveChar", ply )
+			umsg.Long( tonumber(k) )
+			umsg.String( v[ "name" ] )
+			umsg.String( v[ "model" ] )
+			umsg.String( v[ "title" ] )
+		umsg.End( )
+		
+	end
+	umsg.Start("DisplayCharacterList", ply)
+	umsg.End()
+end)
 
 function ccConfirmRemoval( ply, cmd, args )
 	

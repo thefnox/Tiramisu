@@ -2,7 +2,7 @@ datastream.Hook( "TiramisuAddToChat", function( handler, id, encoded, decoded )
 	decoded.text = decoded.text:gsub("<%s*%w*%s*=%s*%w*%s*>", "")
 	decoded.text = decoded.text:gsub("</font>", "")
 	if !decoded.font then
-		decoded.font = CAKE.ConVars[ "ChatFont" ]
+		decoded.font = "TiramisuChatFont"
 	end
 	if decoded.channel == "IC" then
 		CAKE.Chatbox:AddLine(  "<color=135,209,255,255><font=" .. decoded.font .. ">" .. decoded.text .. "</font></color>", decoded.channel, decoded.handler or "" )
@@ -24,7 +24,7 @@ datastream.Hook( "TiramisuAddToOOC", function( handler, id, encoded, decoded )
 
 	text = text:gsub("<%s*%w*%s*=%s*%w*%s*>", "")
 	text = text:gsub("</font>", "")
-	CAKE.Chatbox:AddLine(  "<font=" .. CAKE.ConVars[ "ChatFont" ] .. "><color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>:" .. text .. "</color></font>", "OOC" )
+	CAKE.Chatbox:AddLine(  "<font=" .. "TiramisuOOCFont" .. "><color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>:" .. text .. "</color></font>", "OOC" )
 
 	text = "[OOC]" .. playername .. ": " .. text
 
@@ -145,7 +145,7 @@ end
 --Adds a line to a particular channel. If no channel is specified it simply becomes global.
 function PANEL:AddLine( text, channel, handler )
 
-	local label = MarkupLabel( text, self.Width - 50 )
+	local label = MarkupLabel( text, self.Width - 40 )
 	local number = #self.Lines + 1
 	label.numberid = number 
 	self.Lines[ number ] = {}

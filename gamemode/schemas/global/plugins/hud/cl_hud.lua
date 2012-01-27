@@ -196,7 +196,7 @@ local sort = false
 hook.Add( "PlayerBindPress", "Tiramisu.HandleWeaponSelection", function(ply, bind, pressed)
 
 	if string.match(bind, "attack") then
-		if CAKE.ActiveSlot != -1 and CAKE.WeaponTable[CAKE.ActiveSlot][CAKE.ActiveWepPos] then
+		if CAKE.ActiveSlot != -1 and CAKE.WeaponTable[CAKE.ActiveSlot] and CAKE.WeaponTable[CAKE.ActiveSlot][CAKE.ActiveWepPos] then
 			RunConsoleCommand("rp_selectweapon", CAKE.WeaponTable[CAKE.ActiveSlot][CAKE.ActiveWepPos][2])
 			timer.Destroy("TiramisuResetDefaultWep")
 			CAKE.ActiveWepPos = -1

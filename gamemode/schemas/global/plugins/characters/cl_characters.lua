@@ -60,106 +60,110 @@ function OpenCharacterMenu( hideclosebutton )
 		end
 	end
 
-	CreateCharList( )
+	RunConsoleCommand( "rp_receivechars" )
 	CreateMenuButtons( !hideclosebutton )
 
 end
 
 function CreateCharList( )
 
-		if CharacterMenu then
-			if charpanel then
-				charpanel:Remove()
-				charpanel = nil
-			end
+	if CharacterMenu then
+		if charpanel then
+			charpanel:Remove()
+			charpanel = nil
+		end
 
-			charpanel = vgui.Create( "DPanelList", CharacterMenu )
-			charpanel:SetSize( 210, 500 )
-			charpanel:SetPos( -500, ScrH() / 2 - 500 )
-			charpanel:SetAutoSize( false )
-			charpanel:EnableVerticalScrollbar( true )
-			charpanel.Paint = function()
-			end
-			charpanel.Think = function()
-				x,y = charpanel:GetPos()
-				if !charpanel.SlideOut then
-					charpanel:SetPos( Lerp( RealFrameTime() * 10, x, ScrW() / 2 - 330 ),ScrH() / 2 - 270 )
-				else
-					charpanel:SetPos( Lerp( RealFrameTime() * 10, x, -500 ),ScrH() / 2 - 270 )
-					if x < 0 then
-						charpanel:Remove()
-						charpanel = nil		
-					end
+		charpanel = vgui.Create( "DPanelList", CharacterMenu )
+		charpanel:SetSize( 210, 500 )
+		charpanel:SetPos( -500, ScrH() / 2 - 500 )
+		charpanel:SetAutoSize( false )
+		charpanel:EnableVerticalScrollbar( true )
+		charpanel.Paint = function()
+		end
+		charpanel.Think = function()
+			x,y = charpanel:GetPos()
+			if !charpanel.SlideOut then
+				charpanel:SetPos( Lerp( RealFrameTime() * 10, x, ScrW() / 2 - 330 ),ScrH() / 2 - 270 )
+			else
+				charpanel:SetPos( Lerp( RealFrameTime() * 10, x, -500 ),ScrH() / 2 - 270 )
+				if x < 0 then
+					charpanel:Remove()
+					charpanel = nil		
 				end
 			end
+		end
 
 
-			for k, v in pairs(ExistingChars) do
+		for k, v in pairs(ExistingChars) do
 
-				local plist = vgui.Create("DPanelList")
-				plist:SetAutoSize( false )
-				plist:SetSize( 185, 85 )
+			local plist = vgui.Create("DPanelList")
+			plist:SetAutoSize( false )
+			plist:SetSize( 185, 85 )
 
-				local ccategory = vgui.Create("DCollapsibleCategory")
-				ccategory:SetExpanded( 1 )
-				ccategory:SetLabel( v['name'] )
+			local ccategory = vgui.Create("DCollapsibleCategory")
+			ccategory:SetExpanded( 1 )
+			ccategory:SetLabel( v['name'] )
 
-				local spawnicon = vgui.Create( "SpawnIcon")
-				spawnicon:SetModel( v['model'] )
-				spawnicon:SetSize( 64, 64 )
-				plist:AddItem(spawnicon)
+			local spawnicon = vgui.Create( "SpawnIcon")
+			spawnicon:SetModel( v['model'] )
+			spawnicon:SetSize( 64, 64 )
+			spawnicon.OnMousePressed = function()
+				LocalPlayer():ConCommand("rp_selectchar " .. tostring( k ))
+				CAKE.SelectedChar = k
+			end
+			plist:AddItem(spawnicon)
 
-				local plist2 = vgui.Create( "DPanelList" )
-				plist2:EnableHorizontal( true )
-				plist2:SetAutoSize( true )
+			local plist2 = vgui.Create( "DPanelList" )
+			plist2:EnableHorizontal( true )
+			plist2:SetAutoSize( true )
 
-				local title = vgui.Create("MarkupLabel")
-				title:SetText(v['title'])
-				title:SetMaxSize( 110, 58 )
-				plist2:AddItem(title)
+			local title = vgui.Create("MarkupLabel")
+			title:SetText(v['title'])
+			title:SetMaxSize( 110, 58 )
+			plist2:AddItem(title)
 
-				local plist3 = vgui.Create( "DPanelList" )
-				plist3:SetSpacing( 5 )
-				plist3:SetPadding( 3 )
-				plist3:EnableHorizontal( true )
-				plist3:SetAutoSize( true )
+			local plist3 = vgui.Create( "DPanelList" )
+			plist3:SetSpacing( 5 )
+			plist3:SetPadding( 3 )
+			plist3:EnableHorizontal( true )
+			plist3:SetAutoSize( true )
 
-				local selectchar = vgui.Create( "DButton" )
-				selectchar:SetSize( 90, 20 )
-				selectchar:SetText( "Select" )
-				selectchar.DoClick = function()
-					LocalPlayer():ConCommand("rp_selectchar " .. tostring( k ))
-					CAKE.SelectedChar = k
-				end
-				plist3:AddItem( selectchar )
+			local selectchar = vgui.Create( "DButton" )
+			selectchar:SetSize( 90, 20 )
+			selectchar:SetText( "Select" )
+			selectchar.DoClick = function()
+				LocalPlayer():ConCommand("rp_selectchar " .. tostring( k ))
+				CAKE.SelectedChar = k
+			end
+			plist3:AddItem( selectchar )
 
-				local deletechar = vgui.Create( "DButton" )
-				deletechar:SetSize( 90, 20 )
-				deletechar:SetText( "Delete")
-				deletechar.DoClick = function()
-					LocalPlayer():ConCommand("rp_confirmremoval " .. tostring( k ))
-				end
-				plist3:AddItem( deletechar )
+			local deletechar = vgui.Create( "DButton" )
+			deletechar:SetSize( 90, 20 )
+			deletechar:SetText( "Delete")
+			deletechar.DoClick = function()
+				LocalPlayer():ConCommand("rp_confirmremoval " .. tostring( k ))
+			end
+			plist3:AddItem( deletechar )
 
-				local divider = vgui.Create("DHorizontalDivider")
-				divider:SetLeft(spawnicon)
-				divider:SetRight(plist2)
-				divider:SetLeftWidth(64)
-				divider:SetHeight(64)
+			local divider = vgui.Create("DHorizontalDivider")
+			divider:SetLeft(spawnicon)
+			divider:SetRight(plist2)
+			divider:SetLeftWidth(64)
+			divider:SetHeight(64)
 
-				local vdivider = vgui.Create("DVerticalDivider")
-				vdivider:SetTop(divider)
-				vdivider:SetBottom(plist3)
-				vdivider:SetTopHeight(68)
+			local vdivider = vgui.Create("DVerticalDivider")
+			vdivider:SetTop(divider)
+			vdivider:SetBottom(plist3)
+			vdivider:SetTopHeight(68)
 
-				plist:AddItem(spawnicon)
-				plist:AddItem(plist3)
-				plist:AddItem(plist2)
-				plist:AddItem(divider)
-				plist:AddItem(vdivider)
+			plist:AddItem(spawnicon)
+			plist:AddItem(plist3)
+			plist:AddItem(plist2)
+			plist:AddItem(divider)
+			plist:AddItem(vdivider)
 
-				ccategory:SetContents(plist)
-				charpanel:AddItem(ccategory)
+			ccategory:SetContents(plist)
+			charpanel:AddItem(ccategory)
 
 		end
 	end
@@ -323,14 +327,14 @@ usermessage.Hook( "charactercreation", function()
 
 end)
 
+usermessage.Hook( "ClearReceivedChars", function()
+	ExistingChars = {}
+end)
 
-local function ReceiveChar( data )
-
+usermessage.Hook( "ReceiveChar", function( data )
 	local n = data:ReadLong( )
 	ExistingChars[ n ] = {  }
 	ExistingChars[ n ][ 'name' ] = data:ReadString( )
 	ExistingChars[ n ][ 'model' ] = data:ReadString( )
 	ExistingChars[ n ][ 'title' ] = data:ReadString( )
-	
-end
-usermessage.Hook( "ReceiveChar", ReceiveChar )
+end)

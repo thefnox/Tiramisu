@@ -185,8 +185,8 @@ local PANEL = {}
 ---------------------------------------------------------*/
 function PANEL:Init()
 
-    self:SetMouseInputEnabled( false )
-    self:SetKeyboardInputEnabled( false )
+	self:SetMouseInputEnabled( false )
+	self:SetKeyboardInputEnabled( false )
 
 end
 
@@ -214,45 +214,45 @@ end
 --Does the actual 3D drawing.
 function PANEL:Paint()
 
-    if ( !IsValid( self.Entity ) ) then return end
-    
-    local x, y = self:LocalToScreen( 0, 0 )
-    
-    cam.Start3D( self.ViewCoords.origin, self.ViewCoords.angles, self.ViewCoords.fov, x, y, self:GetSize() )
-	    cam.IgnoreZ( true )
-	    
-	    render.SuppressEngineLighting( true )
-	    render.SetLightingOrigin( self.Entity:GetPos() )
-        render.ResetModelLighting( 1,1,1 )
-        render.SetColorModulation( 1,1,1 )
-        render.SetBlend( 1 )
+	if ( !IsValid( self.Entity ) ) then return end
+	
+	local x, y = self:LocalToScreen( 0, 0 )
+	
+	cam.Start3D( self.ViewCoords.origin, self.ViewCoords.angles, self.ViewCoords.fov, x, y, self:GetSize() )
+		cam.IgnoreZ( true )
+		
+		render.SuppressEngineLighting( true )
+		render.SetLightingOrigin( self.Entity:GetPos() )
+		render.ResetModelLighting( 1,1,1 )
+		render.SetColorModulation( 1,1,1 )
+		render.SetBlend( 1 )
 
-	    self.Entity:DrawModel()
-	    
-	    render.SuppressEngineLighting( false )
-	    cam.IgnoreZ( false )
-    cam.End3D()
-    
+		self.Entity:DrawModel()
+		
+		render.SuppressEngineLighting( false )
+		cam.IgnoreZ( false )
+	cam.End3D()
+	
 end
 
 --Sets the icon's model.
 function PANEL:SetModel( mdl )
 
-    // Note - there's no real need to delete the old
-    // entity, it will get garbage collected, but this is nicer.
-    if ( IsValid( self.Entity ) ) then
-        self.Entity:Remove()
-        self.Entity = nil        
-    end
-    
-    // Note: Not in menu dll
-    if ( !ClientsideModel ) then return end
-    
-    self.Entity = ClientsideModel( mdl, RENDER_GROUP_OPAQUE_ENTITY )
-    if ( !IsValid(self.Entity) ) then return end
+	// Note - there's no real need to delete the old
+	// entity, it will get garbage collected, but this is nicer.
+	if ( IsValid( self.Entity ) ) then
+		self.Entity:Remove()
+		self.Entity = nil		
+	end
+	
+	// Note: Not in menu dll
+	if ( !ClientsideModel ) then return end
+	
+	self.Entity = ClientsideModel( mdl, RENDER_GROUP_OPAQUE_ENTITY )
+	if ( !IsValid(self.Entity) ) then return end
 
-    self.Entity:SetNoDraw( true )
-    self.ViewCoords = PositionSpawnIcon( self.Entity, self.Entity:GetPos() )
+	self.Entity:SetNoDraw( true )
+	self.ViewCoords = PositionSpawnIcon( self.Entity, self.Entity:GetPos() )
 
 end
 
@@ -266,24 +266,24 @@ vgui.Register( "InventorySlot_Icon", PANEL, "Panel" )
 
 PANEL = {}
 
-AccessorFunc( PANEL, "m_bPaintBackground",              "PaintBackground" )
-AccessorFunc( PANEL, "m_bDisabled",                     "Disabled" )
-AccessorFunc( PANEL, "m_bgColor",               "BackgroundColor" )
+AccessorFunc( PANEL, "m_bPaintBackground",			  "PaintBackground" )
+AccessorFunc( PANEL, "m_bDisabled",					 "Disabled" )
+AccessorFunc( PANEL, "m_bgColor",			   "BackgroundColor" )
 Derma_Hook( PANEL, "Paint", "Paint", "Panel" )
 
 /*---------------------------------------------------------
    Name: Paint
 ---------------------------------------------------------*/
 function PANEL:Init()
-    self:SetPaintBackground( true )
-        
-    // This turns off the engine drawing
-    self:SetPaintBackgroundEnabled( false )
-    self:SetPaintBorderEnabled( false )
-    self.Icon = vgui.Create( "InventorySlot_Icon", self )
-    self:SetIconSize( 64 )
-    self:SetToolTip( "Empty Slot")
-    self.DragDisabled = false
+	self:SetPaintBackground( true )
+		
+	// This turns off the engine drawing
+	self:SetPaintBackgroundEnabled( false )
+	self:SetPaintBorderEnabled( false )
+	self.Icon = vgui.Create( "InventorySlot_Icon", self )
+	self:SetIconSize( 64 )
+	self:SetToolTip( "Empty Slot")
+	self.DragDisabled = false
 
 end
 
@@ -414,13 +414,13 @@ end
 ---------------------------------------------------------*/
 function PANEL:OnMousePressed( mcode )
 
-    if ( mcode == MOUSE_LEFT ) and self.Item then
-        self:StartDrag()
-    end
-    
-    if ( mcode == MOUSE_RIGHT ) and self.Item then
-        self:OpenMenu()
-    end
+	if ( mcode == MOUSE_LEFT ) and self.Item then
+		self:StartDrag()
+	end
+	
+	if ( mcode == MOUSE_RIGHT ) and self.Item then
+		self:OpenMenu()
+	end
 
 end
 
@@ -443,8 +443,10 @@ function PANEL:StartDrag()
 		LocalPlayer().DragOrigin = self
 		LocalPlayer().DragAmount = self:GetAmount()
 		LocalPlayer().DragItem = self:GetItem()
+		local x, y
 		LocalPlayer().DragIcon.Think = function()
-			LocalPlayer().DragIcon:SetPos( gui.MousePos() )
+			x, y = gui.MousePos()
+			LocalPlayer().DragIcon:SetPos( x - LocalPlayer().DragIcon:GetWide() / 2, y - LocalPlayer().DragIcon:GetTall() / 2 )
 		end
 		LocalPlayer().DragIcon.PaintOver = function()
 			surface.SetTextColor(Color(255,255,255,255))
@@ -476,6 +478,9 @@ function PANEL:EndDrag()
 			--Nothing resulted out of the drag, reverse to normal.
 			LocalPlayer().DragOrigin:SetItem( LocalPlayer().DragItem, LocalPlayer().DragAmount )
 		end
+		if !LocalPlayer().MouseInFrame then
+			LocalPlayer().DragOrigin:DropItem()
+		end
 	end
 	SavePositions()
 end
@@ -496,7 +501,7 @@ function PANEL:OpenMenu()
 		if self:GetItem().Wearable or string.match( self:GetItem().Class, "clothing_" ) or string.match( self:GetItem().Class, "helmet_" ) then
 			ContextMenu:AddOption("Wear", function() RunConsoleCommand( "rp_wearitem", self:GetItem().Class, self:GetItem().ID ) end)
 		end
-		if CAKE.WoreItems and table.HasValue( CAKE.WoreItems, self:GetItem().ID ) then
+		if CAKE.WornItems and table.HasValue( CAKE.WornItems, self:GetItem().ID ) then
 			ContextMenu:AddOption("Take Off", function() RunConsoleCommand( "rp_takeoffitem", self:GetItem().Class, self:GetItem().ID ) end)
 		end
 		if self:GetItem().Wearable and !string.match( self:GetItem().Class, "clothing_" ) and !string.match( self:GetItem().Class, "helmet_" ) then
@@ -546,7 +551,7 @@ function PANEL:Paint()
 	x, y = self:ScreenToLocal( 0, 0 )
 	surface.SetDrawColor(50,50,50,255)
 	surface.DrawOutlinedRect( 0, 0, self:GetWide(), self:GetTall() )
-	if CAKE.WoreItems and self:GetItem() and table.HasValue( CAKE.WoreItems, self:GetItem().ID ) then
+	if CAKE.WornItems and self:GetItem() and table.HasValue( CAKE.WornItems, self:GetItem().ID ) then
 		surface.SetDrawColor(255,0,0,255)
 		surface.DrawOutlinedRect( 1, 1, self:GetWide()-1, self:GetTall()-1 )
 		surface.DrawOutlinedRect( 2, 2, self:GetWide()-2, self:GetTall()-2 )
@@ -579,26 +584,26 @@ vgui.Register( "InventorySlot", PANEL, "Panel" )
 local function OpenInventory()
 	CAKE.InventoryFrame.Display = !CAKE.InventoryFrame.Display
 	CAKE.InventoryFrame:MakePopup()
-    CAKE.InventoryFrame:SetVisible( true )
-    CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
-    CAKE.InventoryFrame:SetMouseInputEnabled( true )
+	CAKE.InventoryFrame:SetVisible( true )
+	CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
+	CAKE.InventoryFrame:SetMouseInputEnabled( true )
 	CAKE.InventoryFrame.CloseButton:SetVisible(true)
 	if !CAKE.InventoryFrame.Display then
 		CAKE.InventoryFrame.Display = false
-     	CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
-    	CAKE.InventoryFrame:SetMouseInputEnabled( false )
-     	CAKE.InventoryFrame.CloseButton:SetVisible(false)
-     	CAKE.InventoryFrame:RequestFocus()
+	 	CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
+		CAKE.InventoryFrame:SetMouseInputEnabled( false )
+	 	CAKE.InventoryFrame.CloseButton:SetVisible(false)
+	 	CAKE.InventoryFrame:RequestFocus()
 	end
 end
 
 --Same as above.
 local function CloseInventory()
 	CAKE.InventoryFrame.Display = false
-    CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
-    CAKE.InventoryFrame:SetMouseInputEnabled( false )
-    CAKE.InventoryFrame.CloseButton:SetVisible(false)
-    CAKE.InventoryFrame:RequestFocus()
+	CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
+	CAKE.InventoryFrame:SetMouseInputEnabled( false )
+	CAKE.InventoryFrame.CloseButton:SetVisible(false)
+	CAKE.InventoryFrame:RequestFocus()
 end
 
 datastream.Hook("addinventory", function(handler, id, encoded, decoded )
@@ -644,6 +649,12 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 	CAKE.InventoryFrame.Display = false
 	CAKE.InventoryFrame:SetDeleteOnClose( false )
 	CAKE.InventoryFrame:SetMouseInputEnabled( true )
+	CAKE.InventoryFrame.OnCursorEntered = function()
+		LocalPlayer().MouseInFrame = true
+	end
+	CAKE.InventoryFrame.OnCursorExited = function()
+		LocalPlayer().MouseInFrame = false
+	end
 	local x, y
 	local color = CAKE.BaseColor or Color( 100, 100, 115, 150 )
 	local alpha = 0
@@ -657,7 +668,7 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 			alpha = Lerp( 0.1, alpha, 1 )
 
 			surface.SetDrawColor( color.r, color.g, color.b, alpha * 80 )
-    		surface.DrawRect( 0, 23 , CAKE.InventoryFrame:GetWide(), CAKE.InventoryFrame:GetTall() )
+			surface.DrawRect( 0, 23 , CAKE.InventoryFrame:GetWide(), CAKE.InventoryFrame:GetTall() )
 
 		else
 			alpha = 0
@@ -679,19 +690,22 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 	CAKE.InventoryFrame:ShowCloseButton( false )
 
 	CAKE.InventoryFrame.CloseButton = vgui.Create( "DSysButton", CAKE.InventoryFrame )
-    CAKE.InventoryFrame.CloseButton:SetType( "close" )
-    CAKE.InventoryFrame.CloseButton:SetSize(18,18)
-    CAKE.InventoryFrame.CloseButton:SetPos( CAKE.InventoryFrame:GetWide() - 22, 4 )
-    CAKE.InventoryFrame.CloseButton:SetVisible(false)
-    CAKE.InventoryFrame.CloseButton.DoClick = function()
-     	CAKE.InventoryFrame.Display = false
-     	CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
-    	CAKE.InventoryFrame:SetMouseInputEnabled( false )
-     	CAKE.InventoryFrame.CloseButton:SetVisible(false)
-     	CAKE.InventoryFrame:RequestFocus()
+	CAKE.InventoryFrame.CloseButton:SetType( "none" )
+	CAKE.InventoryFrame.CloseButton:SetSize(18,18)
+	CAKE.InventoryFrame.CloseButton:SetPos( CAKE.InventoryFrame:GetWide() - 22, 4 )
+	CAKE.InventoryFrame.CloseButton:SetVisible(false)
+	CAKE.InventoryFrame.CloseButton.PaintOver = function()
+		draw.SimpleTextOutlined( "r", "Marlett", 0,0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT, 2, Color( 0, 0, 0, 255 ))
+	end
+	CAKE.InventoryFrame.CloseButton.DoClick = function()
+	 	CAKE.InventoryFrame.Display = false
+	 	CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
+		CAKE.InventoryFrame:SetMouseInputEnabled( false )
+	 	CAKE.InventoryFrame.CloseButton:SetVisible(false)
+	 	CAKE.InventoryFrame:RequestFocus()
  	end
-    CAKE.InventoryFrame.CloseButton:SetDrawBorder( false )
-    CAKE.InventoryFrame.CloseButton:SetDrawBackground( false )
+	CAKE.InventoryFrame.CloseButton:SetDrawBorder( false )
+	CAKE.InventoryFrame.CloseButton:SetDrawBackground( false )
 
 	local grid = vgui.Create( "DGrid", CAKE.InventoryFrame )
 	grid:SetSize( CAKE.InventoryFrame:GetWide(), 55 )
@@ -702,20 +716,20 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 
 	local icon
 	for i = 1, 10 do
-	    icon = vgui.Create( "InventorySlot" )
-	    icon:SetIconSize( 48 )
-	    CAKE.InventorySlot[ i ] = icon
-	    CAKE.InventorySlot[ i ].PaintOver = function()
-	        surface.SetTextColor(Color(255,255,255,255))
-	        surface.SetFont("Tiramisu12Font")
-	        surface.SetTextPos( 3, 3)
-	        surface.DrawText( "ALT+" .. i - 1 )
-	        if CAKE.InventorySlot[ i ]:GetAmount() > 1 then
-	            surface.SetTextPos( CAKE.InventorySlot[ i ]:GetWide() - 16, CAKE.InventorySlot[ i ]:GetTall() - 14)
-	            surface.DrawText( CAKE.InventorySlot[ i ]:GetAmount() )
-	        end
-	    end
-	    grid:AddItem( CAKE.InventorySlot[ i ] )
+		icon = vgui.Create( "InventorySlot" )
+		icon:SetIconSize( 48 )
+		CAKE.InventorySlot[ i ] = icon
+		CAKE.InventorySlot[ i ].PaintOver = function()
+			surface.SetTextColor(Color(255,255,255,255))
+			surface.SetFont("Tiramisu12Font")
+			surface.SetTextPos( 3, 3)
+			surface.DrawText( "ALT+" .. i - 1 )
+			if CAKE.InventorySlot[ i ]:GetAmount() > 1 then
+				surface.SetTextPos( CAKE.InventorySlot[ i ]:GetWide() - 16, CAKE.InventorySlot[ i ]:GetTall() - 14)
+				surface.DrawText( CAKE.InventorySlot[ i ]:GetAmount() )
+			end
+		end
+		grid:AddItem( CAKE.InventorySlot[ i ] )
 	end
 
 	local grid2 = vgui.Create( "DGrid", CAKE.InventoryFrame )
@@ -726,10 +740,10 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 	grid2:SetRowHeight( 56 )
 
 	for i = 11, 40 do
-	    icon = vgui.Create( "InventorySlot" )
-	    icon:SetIconSize( 48 )
-	    CAKE.InventorySlot[ i ] = icon
-	    grid2:AddItem( CAKE.InventorySlot[ i ] )
+		icon = vgui.Create( "InventorySlot" )
+		icon:SetIconSize( 48 )
+		CAKE.InventorySlot[ i ] = icon
+		grid2:AddItem( CAKE.InventorySlot[ i ] )
 	end
 
 	local keydown = {}

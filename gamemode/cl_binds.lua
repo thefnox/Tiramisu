@@ -3,6 +3,7 @@ usermessage.Hook( "togglethirdperson", function(um)
 		RunConsoleCommand( "rp_thirdperson", "0" )
 	else
 		RunConsoleCommand( "rp_thirdperson", "1" )
+		RunConsoleCommand( "rp_thirdpersondistance", "50" )
 	end
 end)
 
@@ -114,7 +115,7 @@ function GM:GUIMousePressed(mc)
 		end
 		local trace = util.TraceLine(tracedata)
 		
-		if SinglePlayer() then
+		if SinglePlayer() and CAKE.Thirdperson:GetBool() then
 			if trace.StartPos:Distance( LocalPlayer():EyePos() ) <= distance then
 				local target = trace.Entity
 				local submenus = {}

@@ -49,7 +49,14 @@ end )
 hook.Add( "PlayerSetModel", "TiramisuSpawnClothing", function( ply )
 
 	--This is a kinda ridiculous override I use for gear that uses bonemerge. It's the only way to allow gear with bones to be rendered manually.
-	if !ply.BonemergeGearEntity or ply.BonemergeGearEntity:GetParent() != ply then
+
+	if ply:IsCharLoaded() then
+		timer.Simple( 0.4, function() 
+			CAKE.RestoreClothing( ply )
+		end)
+	end
+
+	if !ValidEntity(ply.BonemergeGearEntity) or ply.BonemergeGearEntity:GetParent() != ply then
 		ply.BonemergeGearEntity = ents.Create( "player_gearhandler" )
 		ply.BonemergeGearEntity:SetPos( ply:GetPos() + ply:GetUp() * 80 )
 		ply.BonemergeGearEntity:SetAngles( ply:GetAngles() )
@@ -65,12 +72,6 @@ hook.Add( "PlayerSetModel", "TiramisuSpawnClothing", function( ply )
 				ply.BonemergeGearEntity:Extinguish()
 			end
 		end
-	end
-
-	if ply:IsCharLoaded() then
-		timer.Simple( 0.4, function() 
-			CAKE.RestoreClothing( ply )
-		end)
 	end
 
 

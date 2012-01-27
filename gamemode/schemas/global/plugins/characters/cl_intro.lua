@@ -18,7 +18,7 @@ function CAKE.InitIntro()
 				CharacterMenu.Alpha = 0
 				CharacterMenu.FadeOut = false
 				--Not the best place to put this, but it works.
-				CreateCharList( )
+				RunConsoleCommand( "rp_receivechars" )
 				PlayerModel = vgui.Create( "PlayerPanel", CharacterMenu )
 				PlayerModel:SetSize( 500, 500 )
 				PlayerModel:SetPos( ScrW() / 2 - 100, ScrH() / 2 - 300 )

@@ -82,9 +82,11 @@ CAKE.Stats.Health.Base = 100 --The base amount of health a player begins with.
 --VGUI
 CAKE.ConVars[ "MenuFont" ] = "Yanone Kaffeesatz Regular" -- The default font for the whole schema
 CAKE.ConVars[ "MenuFont2" ] = "Yanone Kaffeesatz Bold" -- In case you want a different font for the bigger labels, change this to whatever you want.
-CAKE.ConVars[ "ChatFont" ] = "ChatFont" -- Main font used in chatting
-CAKE.ConVars[ "WhisperFont" ] = "DefaultSmallDropShadow" --Font used in whispering.
-CAKE.ConVars[ "YellFont" ] = "Trebuchet18" --Font used when yelling.
+CAKE.ConVars[ "ChatFont" ] = "Sansation Bold" -- Main font used in chatting
+CAKE.ConVars[ "EmoteFont" ] = "Sansation Italic" -- Change this to use a different font for "/me's" and such
+CAKE.ConVars[ "OOCFont" ] = CAKE.ConVars[ "ChatFont" ] --Change this to change the OOC font.
+CAKE.ConVars[ "WhisperFont" ] = CAKE.ConVars[ "ChatFont" ] --Font used in whispering.
+CAKE.ConVars[ "YellFont" ] = CAKE.ConVars[ "ChatFont" ] --Font used when yelling.
 CAKE.BaseColor = Color( 50, 50, 50, 150 ) --The schema's default color. Can be set in game
 
 --Intro

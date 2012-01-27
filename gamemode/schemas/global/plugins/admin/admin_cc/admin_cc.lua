@@ -52,7 +52,7 @@ local function Admin_Ban( ply, cmd, args )
 	
 	local pl = CAKE.FindPlayer( plyname )
 	
-	if( pl != nil and pl:IsValid( ) and pl:IsPlayer( ) ) then
+	if( pl and pl:IsValid( ) and pl:IsPlayer( ) ) then
 	
 		local UniqueID = pl:UserID( )
 		
@@ -93,9 +93,8 @@ local function Admin_Observe( ply, cmd, args )
 				end
 			end
 		
-		if( ValidEntity( ply:GetActiveWeapon() ) ) then
-			ply:GetActiveWeapon():SetNoDraw( true )
-		end
+		ply:DrawWorldModel(false)
+		ply:DrawViewModel(false)
 		
 		ply:SetNotSolid( true )
 		ply:SetMoveType( 8 )
@@ -122,9 +121,8 @@ local function Admin_Observe( ply, cmd, args )
 				end
 			end
 		
-		if( ply:GetActiveWeapon() ) then
-			ply:GetActiveWeapon():SetNoDraw( false )
-		end
+		ply:DrawWorldModel(true)
+		ply:DrawViewModel(true)
 		
 		ply:SetNotSolid( false )
 		ply:SetMoveType( 2 )
@@ -172,7 +170,7 @@ local function Admin_SuperBan( ply, cmd, args )
 	
 	local pl = CAKE.FindPlayer( plyname )
 	
-	if( pl != nil and pl:IsValid( ) and pl:IsPlayer( ) ) then
+	if( pl and pl:IsValid( ) and pl:IsPlayer( ) ) then
 	
 		local UniqueID = pl:UserID( )
 		
@@ -358,7 +356,7 @@ local function Admin_Bring( ply, cmd, args )
 	
 	local target = CAKE.FindPlayer( args[1] )
 	
-	if( target != nil and target:IsValid() and target:IsPlayer() ) then
+	if( target and target:IsValid() and target:IsPlayer() ) then
 	
 		target:SetPos( ply:CalcDrop() + Vector( 0, 0, 6 ) )			
 		CAKE.SendChat( ply, "Bringing " .. target:Nick() .. "." )
@@ -377,7 +375,7 @@ local function Admin_GoTo( ply, cmd, args )
 	
 	local target = CAKE.FindPlayer( args[1] )
 	
-	if( target != nil and target:IsValid() and target:IsPlayer() ) then
+	if( target and target:IsValid() and target:IsPlayer() ) then
 	
 		ply:SetPos( target:CalcDrop() + Vector( 0, 0, 6 ) )
 		CAKE.SendChat( ply, "Teleporting to " .. target:Nick() .. ".")
@@ -396,13 +394,13 @@ local function Admin_Slay( ply, cmd, args )
 
 	local target = CAKE.FindPlayer( args[1] )
 	
-	if( target != nil and target:IsValid( ) and target:IsPlayer( ) ) then -- Target found, is player
+	if( target and target:IsValid( ) and target:IsPlayer( ) ) then -- Target found, is player
 	
 		target:Kill()
 		CAKE.SendChat( ply:Nick() .. "has slayed you. =)")
 		CAKE.SendChat( ply, "You have slayed " .. target:Nick() .. ".")
 		
-	elseif( pl == nil) then -- Target was not found
+	elseif( !pl ) then -- Target was not found
 	
 		CAKE.SendChat( ply , "Cannot find target!")
 		

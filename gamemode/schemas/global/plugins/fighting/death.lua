@@ -180,13 +180,15 @@ function CAKE.DeathMode( ply )
 	ply.nextsecond = CurTime( ) + 1
 	
 	timer.Simple( CAKE.ConVars[ "Respawn_Timer" ], function()
-		if CAKE.ConVars[ "Instant_Respawn" ] then
-			ply:SetNWInt( "deathmode", 0 )
-			ply:SetViewEntity( ply )
-		else
-			umsg.Start( "Tiramisu.DisplayRespawnButton", ply )
-				umsg.Bool( true )
-			umsg.End()
+		if ValidEntity( ply ) then
+			if CAKE.ConVars[ "Instant_Respawn" ] then
+				ply:SetNWInt( "deathmode", 0 )
+				ply:SetViewEntity( ply )
+			else
+				umsg.Start( "Tiramisu.DisplayRespawnButton", ply )
+					umsg.Bool( true )
+				umsg.End()
+			end
 		end
 	end)
 	

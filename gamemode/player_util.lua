@@ -5,7 +5,7 @@ function CAKE.SendChat( ply, msg, font, channel, handler )
 		--ply:PrintMessage( 3, msg )
 		datastream.StreamToClients( ply, "TiramisuAddToChat", {
 			["text"] = msg,
-			["font"] = font or false,
+			["font"] = font,
 			["channel"] = channel or false,
 			["handler"] = handler or ""
 		})
@@ -75,10 +75,10 @@ function CAKE.UnconciousMode( ply )
 			ply.LastUnconcious = CurTime() + 10
 			ply:GodEnable()
 			ply:SetAiming( false )
-
-			if ValidEntity(ply:GetActiveWeapon()) then
-				ply:GetActiveWeapon():SetNoDraw( true )
-			end
+			ply:DrawWorldModel(false)
+			ply:DrawViewModel(false)
+			ply:SetNoDraw( true )
+			ply:SetNotSolid( true )
 			
 			if ValidEntity( ply.unconciousrag ) then
 				ply.unconciousrag:Remove()
@@ -166,9 +166,10 @@ function CAKE.UnconciousMode( ply )
 			ply:UnLock()
 			CAKE.RestoreClothing( ply )
 			ply:GodDisable()
-			if ply:GetActiveWeapon():IsValid() then
-				ply:GetActiveWeapon():SetNoDraw( false )
-			end
+			ply:SetNoDraw( false )
+			ply:SetNotSolid( false )
+			ply:DrawWorldModel(true)
+			ply:DrawViewModel(true)
 			umsg.Start( "Tiramisu.ReceiveRagdoll", ply )
 				umsg.Short( nil )
 			umsg.End()
@@ -195,10 +196,10 @@ function CAKE.UnconciousMode( ply )
 		ply:SetNWBool( "unconciousmode", false )
 		ply:GodDisable()
 		ply:UnLock()
-		ply:SetViewEntity( ply )
-		if ply:GetActiveWeapon():IsValid() then
-			ply:GetActiveWeapon():SetNoDraw( false )
-		end
+		ply:SetNoDraw( false )
+		ply:SetNotSolid( false )
+		ply:DrawWorldModel(true)
+		ply:DrawViewModel(true)
 		umsg.Start( "Tiramisu.ReceiveRagdoll", ply )
 			umsg.Short( nil )
 		umsg.End()

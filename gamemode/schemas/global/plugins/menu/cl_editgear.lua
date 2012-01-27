@@ -2,7 +2,7 @@ CLPLUGIN.Name = "Edit Gear"
 CLPLUGIN.Author = "FNox"
 
 CAKE.Gear = {}
-CAKE.WoreItems = {}
+CAKE.WornItems = {}
 CAKE.Clothing = "none"
 CAKE.Helmet = "none"
 CAKE.ClothingID = "none"
@@ -35,12 +35,12 @@ local BoneList = {
 }
 
 local function FetchWornItems()
-	CAKE.WoreItems = {}
+	CAKE.WornItems = {}
 
 	for _, bone in pairs(CAKE.Gear) do
 		for k, v in pairs( bone ) do
 			if v.itemid and v.itemid != "none" then
-				table.insert( CAKE.WoreItems, v.itemid )
+				table.insert( CAKE.WornItems, v.itemid )
 			end
 		end
 	end
@@ -48,7 +48,7 @@ local function FetchWornItems()
 	for _, ent in pairs(CAKE.ClothingTbl) do
 		if ent then
 			if ent.itemid and ent.itemid != "none" then
-				table.insert( CAKE.WoreItems, ent.itemid )
+				table.insert( CAKE.WornItems, ent.itemid )
 			end
 		end
 	end

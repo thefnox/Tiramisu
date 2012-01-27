@@ -27,29 +27,16 @@ function CAKE.FindPlayer(name)
 
 	local ply = nil
 	local count = 0
-	
-	for k, v in pairs(player.GetAll()) do
-	
-		if(string.find(string.lower(v:Nick()), string.lower(name)) != nil) then
-			
-			ply = v
-				
-		end
-			
-		if(string.find(string.lower(v:Name()), string.lower(name)) != nil) then
-			
-			ply = v
-				
-		end
 
-		if(string.find(string.lower(v:SteamID()), string.lower(name)) != nil ) then
-		
-			ply = v
-			
+	name = name:lower()
+	
+	for _, ply in pairs(player.GetAll()) do
+		if string.lower(ply:Nick()):match(name) or string.lower(ply:Name()):match(name) or string.lower(ply:SteamID()):match(name) or CAKE.FormatText(ply:SteamID()) == name then
+			return ply
 		end	
 	end
 	
-	return ply
+	return false
 	
 end
 
