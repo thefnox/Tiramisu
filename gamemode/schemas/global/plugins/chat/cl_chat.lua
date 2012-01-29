@@ -1,17 +1,22 @@
 datastream.Hook( "TiramisuAddToChat", function( handler, id, encoded, decoded )
-	decoded.text = decoded.text:gsub("<%s*%w*%s*=%s*%w*%s*>", "")
-	decoded.text = decoded.text:gsub("</font>", "")
+
+	local text = decoded.text
+
+	text = text:gsub("<%s*%w*%s*=%s*%w*%s*>", "")
+	text = text:gsub("</font>", "")
+	text = text:gsub("<%s*%w*%s*=%s*%w*%s*,%s*%w*%s*,%s*%w*%s*,%s*%w*%s*>", "")
+	text = text:gsub("</color>", "")
 	if !decoded.font then
 		decoded.font = "TiramisuChatFont"
 	end
 	if decoded.channel == "IC" then
-		CAKE.Chatbox:AddLine(  "<color=135,209,255,255><font=" .. decoded.font .. ">" .. decoded.text .. "</font></color>", decoded.channel, decoded.handler or "" )
+		CAKE.Chatbox:AddLine(  "<color=135,209,255,255><font=" .. decoded.font .. ">" .. text .. "</font></color>", decoded.channel, decoded.handler or "" )
 	else
-		CAKE.Chatbox:AddLine(  "<font=" .. decoded.font .. ">" .. decoded.text .. "</font>", decoded.channel, decoded.handler or "" )
+		CAKE.Chatbox:AddLine( "<font=" .. decoded.font .. ">" .. text .. "</font>", decoded.channel, decoded.handler or "" )
 	end
 
-	for i = 0, decoded.text:len() / 255 do
-		MsgN(string.sub( decoded.text, i * 255 + 1, i * 255 + 255 ) )
+	for i = 0, text:len() / 255 do
+		MsgN(string.sub( text, i * 255 + 1, i * 255 + 255 ) )
 	end
 end)
 
@@ -24,6 +29,8 @@ datastream.Hook( "TiramisuAddToOOC", function( handler, id, encoded, decoded )
 
 	text = text:gsub("<%s*%w*%s*=%s*%w*%s*>", "")
 	text = text:gsub("</font>", "")
+	text = text:gsub("<%s*%w*%s*=%s*%w*%s*,%s*%w*%s*,%s*%w*%s*,%s*%w*%s*>", "")
+	text = text:gsub("</color>", "")
 	CAKE.Chatbox:AddLine(  "<font=" .. "TiramisuOOCFont" .. "><color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>:" .. text .. "</color></font>", "OOC" )
 
 	text = "[OOC]" .. playername .. ": " .. text
@@ -145,7 +152,7 @@ end
 --Adds a line to a particular channel. If no channel is specified it simply becomes global.
 function PANEL:AddLine( text, channel, handler )
 
-	local label = MarkupLabel( text, self.Width - 40 )
+	local label = MarkupLabelOutline( text, self.Width - 40, 1, Color( 0,0,0, 100) )
 	local number = #self.Lines + 1
 	label.numberid = number 
 	self.Lines[ number ] = {}

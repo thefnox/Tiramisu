@@ -432,8 +432,8 @@ function PLUGIN.Init( ) -- We run this in init, because this is called after the
 	CAKE.SimpleChatCommand( "/anon", CAKE.ConVars[ "MeRange" ], "???: $3", "TiramisuEmoteFont" ) -- It chat
 	CAKE.SimpleChatCommand( "/y", CAKE.ConVars[ "YellRange" ], "$1 [YELL]: $3", "TiramisuYellFont" ) -- Yell chat
 	CAKE.SimpleChatCommand( "/w", CAKE.ConVars[ "WhisperRange" ], "$1 [WHISPER]: $3</font>", "TiramisuWhisperFont" ) -- Whisper chat
-	CAKE.SimpleChatCommand( ".//", CAKE.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3", "OOC", "TiramisuOOCFont" ) -- Local OOC Chat
-	CAKE.SimpleChatCommand( "[[", CAKE.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3", "OOC", "TiramisuOOCFont"  ) -- Local OOC Chat
+	CAKE.SimpleChatCommand( ".//", CAKE.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3", "TiramisuOOCFont", "OOC" ) -- Local OOC Chat
+	CAKE.SimpleChatCommand( "[[", CAKE.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3", "TiramisuOOCFont", "OOC"  ) -- Local OOC Chat
 
 	CAKE.ChatCommand( "/ad", Advertise )
 	--CAKE.ChatCommand( "/y", Yell)

@@ -11,7 +11,7 @@ function OpenCharacterMenu( hideclosebutton )
 		CharacterMenu:SetSize( ScrW(), ScrH() )
 		CharacterMenu:Center()
 		CharacterMenu:SetDraggable( false )
-		CharacterMenu:ShowCloseButton( false )
+		CharacterMenu:ShowCloseButton( true )
 		CharacterMenu:SetTitle( "" )
 		CharacterMenu.Paint = function()
 

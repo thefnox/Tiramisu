@@ -15,21 +15,6 @@ function CAKE.FormatCharString( ply )
 	
 end
 
--- This formats a player's SteamID for things such as data file names
--- For example, STEAM_0:1:5947214 would turn into 015947214
-function CAKE.FormatText( SteamID )
-
-	local SteamID = SteamID or "STEAM_0:0:0"
-
-	s = string.gsub( SteamID,"STEAM","" )
-	s = string.gsub( s,":","" )
-	s = string.gsub( s,"_","" )
-	s = string.gsub( s," ","" )
-	
-	return s
-	
-end
-
 -- When fieldtype is 1, it adds it to the player table.
 -- When it is 2, it adds it to the character table.function CAKE.AddDataField( fieldtype, fieldname, default )
 function CAKE.AddDataField( fieldtype, fieldname, default )

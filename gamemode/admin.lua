@@ -163,28 +163,8 @@ function ccAdmin( ply, cmd, args )
 				if !ply:IsSuperAdmin() then CAKE.SendChat( ply, "You are of insufficient rank!" ) end
 				
 			end
-			
-			if ply:IsSuperAdmin() then
-			
-				if CMDName == "setrank" then
-				
-					func( ply, cmd, args)
-			
-				end
-			
-			end
 		
 		else 
-		
-			if ply:IsSuperAdmin() then
-			
-				if CMDName == "setrank" then
-				
-					func( ply, cmd, args)
-			
-				end
-			
-			end
 		
 			if CAKE.PlayerRank(ply) == 0 then
 				CAKE.SendChat( ply, "You are not an admin!")
@@ -198,14 +178,15 @@ end
 concommand.Add("rp_admin", ccAdmin) 
 
 --Creates a new administrative rank. int refers to it's hirearchical level.
-function CAKE.AddAdminRank(name, int)
+function CAKE.AddAdminRank(name, int, short)
 	
 	rank = {}
 	rank.rank = int
 	rank.name = name
+	rank.short = short
 	
 	CAKE.AdminRanks[name] = rank
 	
 end
 
-CAKE.AddAdminRank("Player", 0)
+CAKE.AddAdminRank("Player", 0, "none")

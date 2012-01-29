@@ -418,7 +418,7 @@ end
 
 --rp_admin setrank name "rank". Sets a player to a particular admin rank.
 local function Admin_SetRank( ply, cmd, args)
-
+	print( args[1], args[2] )
 	if #args != 2 then
 		if ValidEntity( ply ) and ply:IsPlayer() then
 			CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin setrank \"name\" \"rank\" )")
@@ -432,6 +432,13 @@ local function Admin_SetRank( ply, cmd, args)
 			CAKE.SendChat(ply, "Target not found!")
 		end
 		return
+	end
+
+	for k, v in pairs(CAKE.AdminRanks) do
+		if v.short == args[2] then
+			args[2] = k
+			break
+		end
 	end
 	
 	if !CAKE.AdminRanks[args[2]] then CAKE.SendChat(ply, "Invalid rank!") else
@@ -500,6 +507,7 @@ local function Admin_TurnIntoItem( ply, cmd, args )
 	local name = args[2]
 	local pickable = util.tobool( args[3] )
 	local wearable = util.tobool( args[4] )
+	local uniquename = util.tobool( args[5] )
 	local bone = args[5] or "pelvis"
 	if pickable then
 		local id = CAKE.CreateItemID()
@@ -578,10 +586,11 @@ function PLUGIN.Init( )
 
 	CAKE.ConVars[ "MaxBan" ] = 300 -- What is the maximum ban limit for regular admins?
 	
-	CAKE.AddAdminRank( "Event Coordinator", 2)
-	CAKE.AddAdminRank( "Moderator", 3)
-	CAKE.AddAdminRank( "Administrator", 4)
-	CAKE.AddAdminRank( "Super Administrator", 5)
+	--Default admin ranks. You can type on console either the full name of the rank or it's shortened version
+	CAKE.AddAdminRank( "Event Coordinator", 2, "ec")
+	CAKE.AddAdminRank( "Moderator", 3, "m")
+	CAKE.AddAdminRank( "Administrator", 4, "a")
+	CAKE.AddAdminRank( "Super Administrator", 5, "sa")
 	
 	CAKE.AdminCommand( "help", Admin_Help, "List of all admin commands", true, true, 1 )
 	CAKE.AdminCommand( "listitems", Admin_ListItems, "List of all items", true, true, 1 )

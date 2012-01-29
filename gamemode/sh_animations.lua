@@ -451,7 +451,7 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 		ply:SetPoseParameter("move_yaw", 0 )
 	end
 
-	if ply:GetNWAngle( "tiramisulookat", Angle( 0, 0, 0 )) != Angle( 0, 0, 0 ) and ( SERVER or ply != LocalPlayer()) then
+	if !ply:GetNWBool("specialmodel") and ply:GetNWAngle( "tiramisulookat", Angle( 0, 0, 0 )) != Angle( 0, 0, 0 ) and ( SERVER or ply != LocalPlayer()) then
 		if !ply.CurrentLookAt then
 			ply.CurrentLookAt = ply:GetNWAngle( "tiramisulookat")
 		end
@@ -492,15 +492,13 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 			end
 		end
 		--print("HEAD YAW:", ply:GetPoseParameter("head_yaw"))
-	elseif SERVER or ply != LocalPlayer() then
+	elseif (SERVER or ply != LocalPlayer()) and !ply:GetNWBool("specialmodel") then
 		--This set of boneparameters are all set to 0 to avoid having the engine setting them to something else, thus resulting in  awkwardly twisted models
 		ply.CurrentLookAt = Angle( 0, 0, 0 )
 		--ply:SetPoseParameter("aim_yaw", 0 )
 		ply:SetPoseParameter("head_yaw", 0 )
 		ply:SetPoseParameter("body_yaw", 0 )
 		ply:SetPoseParameter("spine_yaw", 0 )
-	else
-		
 	end
 	ply:SetPoseParameter("head_roll", 0 )
 	

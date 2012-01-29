@@ -47,11 +47,11 @@ surface.CreateFont(CAKE.ConVars[ "MenuFont" ], 18, 500, true, false, "Tiramisu16
 surface.CreateFont(CAKE.ConVars[ "MenuFont" ], 14, 500, true, false, "Tiramisu14Font", false, true) -- A moderate size font used for the main title's subtitle
 surface.CreateFont(CAKE.ConVars[ "MenuFont" ], 14, 300, true, false, "TiramisuDefaultFont") -- Replacement for "Default"
 surface.CreateFont(CAKE.ConVars[ "MenuFont" ], 12, 400, true, false, "Tiramisu12Font", true ) -- Smallest, used in tabs and the quick menu
-surface.CreateFont(CAKE.ConVars[ "WhisperFont" ], 12, 500, true, false, "TiramisuWhisperFont", false, true ) -- Used only for whispering
-surface.CreateFont(CAKE.ConVars[ "YellFont" ], 24, 700, true, false, "TiramisuYellFont", false, true ) -- Used only for yelling
-surface.CreateFont(CAKE.ConVars[ "ChatFont" ], 16, 500, true, false, "TiramisuChatFont", false, true )
-surface.CreateFont(CAKE.ConVars[ "EmoteFont" ], 16,500, true, false, "TiramisuEmoteFont", false, true )
-surface.CreateFont(CAKE.ConVars[ "OOCFont" ], 16, 500, true, false, "TiramisuOOCFont", false, true )
+surface.CreateFont(CAKE.ConVars[ "WhisperFont" ], 12, 500, true, false, "TiramisuWhisperFont") -- Used only for whispering
+surface.CreateFont(CAKE.ConVars[ "YellFont" ], 24, 700, true, false, "TiramisuYellFont") -- Used only for yelling
+surface.CreateFont(CAKE.ConVars[ "ChatFont" ], 16, 500, true, false, "TiramisuChatFont")
+surface.CreateFont(CAKE.ConVars[ "EmoteFont" ], 16,500, true, false, "TiramisuEmoteFont")
+surface.CreateFont(CAKE.ConVars[ "OOCFont" ], 16, 500, true, false, "TiramisuOOCFont")
 
 -- Client Includes
 include( "sh_animations.lua" )

@@ -203,78 +203,23 @@ local function ccRemoveGear( ply, cmd, args )
 end
 concommand.Add( "rp_removegear", ccRemoveGear )
 
-local function ccEditGear( ply, cmd, args )
-
-	local ent = ents.GetByIndex( tonumber( args[ 1 ] ) )
+datastream.Hook( "Tiramisu.GetEditGear", function(ply, handler, id, encoded, decoded)
+	local ent = decoded.entity
 	if ValidEntity( ent ) and ent:GetDTEntity( 1 ) == ply then
-		local offset
-		local angle
-		local scale
-		local visible
-		local skin
-		local item
-		local name
-		
-		if args[2] and args[2] != "none" then
-			local exp = string.Explode( ",", args[2] )
-			offset = Vector( tonumber( exp[1] ), tonumber( exp[2] ), tonumber( exp[3] ) )
-		else
-			offset = ent:GetDTVector( 1 )
-		end
-		
-		if args[3] and args[3] != "none" then
-			local exp = string.Explode( ",", args[3] )
-			angle = Angle( tonumber( exp[1] ), tonumber( exp[2] ), tonumber( exp[3] ))
-		else
-			angle = ent:GetDTAngle( 1 )
-		end
-		
-		if args[4] and args[4] != "none" then
-			local exp = string.Explode( ",", args[4] )
-			scale = Vector( tonumber( exp[1] ), tonumber( exp[2] ), tonumber( exp[3] ) )
-		else
-			scale = ent:GetDTVector( 2 )
-		end
-		
-		if args[5] and args[5] != "none" then
-			visible = util.tobool( args[5] )
-		else
-			visible = ent:GetDTBool( 1 )
-		end
-		
-		if args[6] and args[6] != "none" then
-			skin = math.Clamp( tonumber( args[6] ), 0, ent:SkinCount() )
-		else
-			skin = ent:GetSkin()
-		end
-
-		if args[7] and args[7] != "none" then
-			item = args[7]
-		else
-			item = ent.item
-		end
-
-		if ent.itemid then
-			CAKE.SetUData(ent.itemid, "offset", offset)
-			CAKE.SetUData(ent.itemid, "scale", scale)
-			CAKE.SetUData(ent.itemid, "angle", angle)
-			CAKE.SetUData(ent.itemid, "visible", visible)
-			CAKE.SetUData(ent.itemid, "skin", skin)
-		end
-
-		ent:SetDTVector( 1, offset )
-		ent:SetDTVector( 2, scale )
-		ent:SetDTAngle( 1, angle )
-		ent:SetDTBool( 1, visible )
-		ent:SetSkin( skin )
-		ent.item = item
-		
+		CAKE.SetUData(ent.itemid, "offset", decoded.offset)
+		CAKE.SetUData(ent.itemid, "scale", decoded.scale)
+		CAKE.SetUData(ent.itemid, "angle", decoded.angle)
+		CAKE.SetUData(ent.itemid, "skin", decoded.skin)
+		CAKE.SetUData(ent.itemid, "name", decoded.name)
+		ent:SetDTVector( 1, decoded.offset )
+		ent:SetDTVector( 2, decoded.scale )
+		ent:SetDTAngle( 1, decoded.angle )
+		ent:SetSkin( decoded.skin )
 		CAKE.SaveGear( ply )
+		ply:RefreshInventory( )
 		CAKE.SendGearToClient( ply )
 	end
-
-end
-concommand.Add( "rp_editgear", ccEditGear )
+end)
 
 local meta = FindMetaTable( "Player" )
 

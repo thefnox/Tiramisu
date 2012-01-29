@@ -1,6 +1,3 @@
-CLPLUGIN.Name = "Edit Gear"
-CLPLUGIN.Author = "FNox"
-
 CAKE.Gear = {}
 CAKE.WornItems = {}
 CAKE.Clothing = "none"
@@ -408,16 +405,6 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 		skinnumber:SetValue( skin )
 		EditList:AddItem( skinnumber )
 		
-		local removebutton = vgui.Create( "DButton" )
-		removebutton:SetSize( 100, 30 )
-		removebutton:SetText( "Remove Gear" )
-		removebutton.DoClick = function( button )
-			RunConsoleCommand( "rp_removegear", entity:EntIndex() )
-			EditorFrame:Remove()
-			EditorFrame = nil
-		end
-		EditList:AddItem( removebutton )
-		
 		PropertySheet:AddSheet( "General", EditList, "gui/silkicons/group", false, false, "Edit general settings")
 
 		local PosList = vgui.Create( "DPanelList" )
@@ -461,17 +448,13 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 		end
 		PosList:AddItem( zslider )
 
-		local setbutton = vgui.Create( "DButton" )
-		setbutton:SetText( "Save Offset Coordinates" )
-		setbutton.DoClick = function( button )
-			RunConsoleCommand( "rp_editgear", entity:EntIndex(), tostring( xslider:GetValue() ) .. "," .. tostring( yslider:GetValue() ) .. "," .. tostring( zslider:GetValue() ) )
-		end
-		PosList:AddItem( setbutton )
-		
 		local resetbutton = vgui.Create( "DButton" )
 		resetbutton:SetText( "Reset Offset Coordinates" )
 		resetbutton.DoClick = function( button )
-			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "0,0,0" )
+			xslider:SetValue( offset.x )
+			yslider:SetValue( offset.y )
+			zslider:SetValue( offset.z )
+			entity:SetDTVector( 1, offset )
 		end
 		PosList:AddItem( resetbutton )
 		
@@ -521,17 +504,13 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 		end
 		AngList:AddItem( rollslider )
 
-		local setbutton = vgui.Create( "DButton" )
-		setbutton:SetText( "Save Angles" )
-		setbutton.DoClick = function( button )
-			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", tostring( pitchslider:GetValue() ) .. "," .. tostring( yawslider:GetValue() ) .. "," .. tostring( rollslider:GetValue() ) )
-		end
-		AngList:AddItem( setbutton )
-		
 		local resetbutton = vgui.Create( "DButton" )
 		resetbutton:SetText( "Reset Angles" )
 		resetbutton.DoClick = function( button )
-			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "0,0,0" )
+			pitchslider:SetValue( angle.p )
+			yawslider:SetValue( angle.y )
+			rollslider:SetValue( angle.r )
+			entity:SetDTAngle( 1, angle )
 		end
 		AngList:AddItem( resetbutton )
 
@@ -578,17 +557,13 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 		end
 		ScaleList:AddItem( zscale )
 
-		local setbutton = vgui.Create( "DButton" )
-		setbutton:SetText( "Save Scale" )
-		setbutton.DoClick = function( button )
-			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", tostring( xscale:GetValue() ) .. "," .. tostring( yscale:GetValue() ) .. "," .. tostring( zscale:GetValue() ) )
-		end
-		ScaleList:AddItem( setbutton )
-		
 		local resetbutton = vgui.Create( "DButton" )
 		resetbutton:SetText( "Reset Coordinates" )
 		resetbutton.DoClick = function( button )
-			RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", "1,1,1" )
+			entity:SetDTVector( 2, scale )
+			xscale:SetValue( scale.x )
+			yscale:SetValue( scale.y )
+			zscale:SetValue( scale.z )
 		end
 		ScaleList:AddItem( resetbutton )
 		PropertySheet:AddSheet( "Scale", ScaleList, "gui/silkicons/magnifier", false, false, "Edit gear's scale")
@@ -596,26 +571,22 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 		EditorFrame.Close = function()
 			CAKE.Query( "Save Changes for " .. itemname:GetValue(), "Save",
 			"Yes", function()
-					local offstr = "\"" .. tostring( xslider:GetValue() ) .. "," .. tostring( yslider:GetValue() ) .. "," .. tostring( zslider:GetValue()) .. "\""
-					local angstr = "\"" .. tostring( pitchslider:GetValue() ) .. "," .. tostring( yawslider:GetValue() ) .. "," .. tostring( rollslider:GetValue() ) .. "\""
-					local scalestr =  "\"" .. tostring( xscale:GetValue() ) .. "," .. tostring( yscale:GetValue() ) .. "," .. tostring( zscale:GetValue()) .. "\""
-					RunConsoleCommand( "rp_editgear", entity:EntIndex(), offsetstr, angstr, scalestr, "\"none\"", "\"" .. tostring( skinnumber:GetValue()) .. "\"" )
-					if itemid then
-						LocalPlayer():ConCommand( "rp_renameitem \"" .. itemid .. "\" \"" .. itemname:GetValue() .. "\"" )
-					end
+					datastream.StreamToServer( "Tiramisu.GetEditGear", {
+						["entity"] = entity,
+						["offset"] = Vector(xslider:GetValue(), yslider:GetValue(), zslider:GetValue()),
+						["scale"] = Vector(xscale:GetValue(), yscale:GetValue(), zscale:GetValue()),
+						["angle"] = Angle(pitchslider:GetValue(), yawslider:GetValue(), rollslider:GetValue()),
+						["skin"] = skinnumber:GetValue(),
+						["name"] = itemname:GetValue()
+					})
 					EditorFrame:SetVisible( false )
 					EditorFrame:Remove()
 				end,
 			"No", function()
-					RunConsoleCommand( "rp_editgear", entity:EntIndex(), "none", "none", "none", "none", "none" )
 					entity:SetDTVector( 1, offset )
 					entity:SetDTAngle( 1, angle )
 					entity:SetDTVector( 2, scale )
 					entity:SetSkin( skin )
-					RunConsoleCommand( "rp_editgear", entity:EntIndex(), offset.x .. "," .. offset.y .. "," .. offset.z , angle.p .. "," .. angle.y .. "," .. angle.r, scale.x .. "," .. scale.y .. "," .. scale.z, "none", skin )
-					if itemid then
-						LocalPlayer():ConCommand( "rp_renameitem \"" .. itemid .. "\" \"" .. name .. "\"" )
-					end
 					EditorFrame:SetVisible( false )
 					EditorFrame:Remove()
 				end)
@@ -720,7 +691,3 @@ usermessage.Hook( "editgear", function( um )
 	end
 
 end)
-
-function CLPLUGIN.Init()
-
-end

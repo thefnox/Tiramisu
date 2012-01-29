@@ -30,7 +30,7 @@ Name: Init
 ---------------------------------------------------------*/
 function PANEL:Init()
 
-    CAKE.ForceDraw = true
+	CAKE.ForceDraw = true
 
 	self.LastPaint = 0
 	self.DirectionalLight = {}
@@ -264,17 +264,31 @@ function PANEL:Init()
 	self.Alpha = 255
 	self.Align = TEXT_ALIGN_LEFT
 	self.VerticalAlign = TEXT_ALIGN_LEFT
+	self:NoClipping( true )
 		
 end
 
 function PANEL:Paint( )
 
 	if self.Str then
+		if self.StrOutline then
+			if self.BWidth and self.Align == TEXT_ALIGN_CENTER then
+				self.StrOutline:Draw((self.BWidth/2)-(self.Str:GetWidth()/2), 0, TEXT_ALIGN_LEFT, self.VerticalAlign, self.Alpha)
+			else
+				local steps = (self.StrOutline.OutlineSize*2) / 3
+				if ( steps < 1 )  then steps = 1 end
+				
+				for _x=-self.StrOutline.OutlineSize, self.StrOutline.OutlineSize, steps do
+					for _y=-self.StrOutline.OutlineSize, self.StrOutline.OutlineSize, steps do
+						self.StrOutline:Draw(2+(_x), 0+(_y), self.Align, self.VerticalAlign, self.Alpha)
+					end
+				end
+			end
+		end
 		if self.BWidth and self.Align == TEXT_ALIGN_CENTER then
-			print(self.BWidth/2)
 			self.Str:Draw((self.BWidth/2)-(self.Str:GetWidth()/2), 0, TEXT_ALIGN_LEFT, self.VerticalAlign, self.Alpha)
 		else
-		 		self.Str:Draw(2, 0, self.Align, self.VerticalAlign, self.Alpha)
+		 	self.Str:Draw(2, 0, self.Align, self.VerticalAlign, self.Alpha )
 		end
 	end
 
@@ -310,6 +324,17 @@ function PANEL:SetText( s )
 
 end
 
+function PANEL:SetOutline( size, color )
+	local text = self.Text
+	text = text:gsub("<color=%s*%w*%s*,%s*%w*%s*,%s*%w*%s*,%s*%w*%s*>", "")
+	text = text:gsub("<color=%s*%w*%s*,%s*%w*%s*,%s*%w*%s*>", "")
+	text = text:gsub("<color=%s*%w*%s*>", "")
+	text = text:gsub("</color>", "")
+	print( text )
+	self.StrOutline = markup.Parse("<color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">" .. text .. "</color>", self.MaxWidth or self:GetSize() )
+	self.StrOutline.OutlineSize = size
+end
+
 function PANEL:SetAlign( align )
 
 	self.Align = align or TEXT_ALIGN_LEFT
@@ -342,11 +367,31 @@ vgui.Register( "MarkupLabel", PANEL, "Panel" )
 ---------------------------------------------------------*/
 function MarkupLabel( strText, width, parent )
 	
-		local lbl = vgui.Create( "MarkupLabel", parent )
-		lbl:SetWidth( width )
-		lbl:SetText( strText )
-		
-		return lbl
+	local lbl = vgui.Create( "MarkupLabel" )
+	if parent then
+		lbl:SetParent( parent )
+	end
+	lbl:SetWidth( width )
+	lbl:SetText( strText )
+	if thickness then
+		lbl:SetOutline(  thickness, color )
+	end
+	return lbl
+ 
+end
+
+function MarkupLabelOutline( strText, width, thickness, color, parent )
+	
+	local lbl = vgui.Create( "MarkupLabel" )
+	if parent then
+		lbl:SetParent( parent )
+	end
+	lbl:SetWidth( width )
+	lbl:SetText( strText )
+	if thickness then
+		lbl:SetOutline(  thickness, color )
+	end
+	return lbl
  
 end
 

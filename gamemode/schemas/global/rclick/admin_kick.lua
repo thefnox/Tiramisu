@@ -10,7 +10,9 @@ end
 function RCLICK.Click(target,ply)
 
 	CAKE.StringRequest( "Kick A Player", "Give a reason to kick " .. target:Nick(), "Bye.", function( text )
-		ply:ConCommand("rp_admin kick \"" .. target:Nick() .. "\" \"" .. text .. "\"" )
+		if CAKE.FindPlayer(text) then
+			ply:ConCommand("rp_admin kick \"" .. CAKE.FormatText(CAKE.FindPlayer(text):SteamID()) .. "\" \"" .. text .. "\"" )
+		end
 	end,
 	function() end, "Accept", "Cancel")
 

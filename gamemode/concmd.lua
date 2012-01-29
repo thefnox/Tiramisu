@@ -92,9 +92,11 @@ concommand.Add( "rp_selectweapon", function( ply, cmd, args )
 end)
 
 concommand.Add( "rp_renameitem", function( ply, cmd, args )
-	if ply:HasItemID( args[1] ) then
+	if ply:HasItemID( args[1] ) and !CAKE.GetUData( args[2], "uniquename" ) then
 		CAKE.SetUData( args[1], "name", args[2])
 		ply:RefreshInventory( )
+	elseif CAKE.GetUData( args[2], "uniquename" ) then
+		CAKE.SendError( ply, "You cannot rename that item!" )
 	end
 end)
 
