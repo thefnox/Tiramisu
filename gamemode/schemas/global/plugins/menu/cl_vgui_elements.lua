@@ -330,7 +330,6 @@ function PANEL:SetOutline( size, color )
 	text = text:gsub("<color=%s*%w*%s*,%s*%w*%s*,%s*%w*%s*>", "")
 	text = text:gsub("<color=%s*%w*%s*>", "")
 	text = text:gsub("</color>", "")
-	print( text )
 	self.StrOutline = markup.Parse("<color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">" .. text .. "</color>", self.MaxWidth or self:GetSize() )
 	self.StrOutline.OutlineSize = size
 end

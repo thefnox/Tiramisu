@@ -54,7 +54,7 @@ concommand.Add( "rp_setgender", ccSetGender )
 local function ccBeginCreate( ply, cmd, args )
 
 	ply:SetNWInt( "charactercreate", 1 )
-	umsg.Start( "charactercreation", ply )
+	umsg.Start( "StartCharacterCreation", ply )
 	umsg.End()
 
 	if ply:IsCharLoaded() then
@@ -258,20 +258,9 @@ function ccReady( ply, cmd, args )
 		ply:SetNWString( "uid", tostring(high) )
 		
 		timer.Simple( 1, function()
-			for k, v in pairs( PlyCharTable ) do -- Send them all their characters for selection
-		
-				umsg.Start( "ReceiveChar", ply )
-					umsg.Long( tonumber(k) )
-					umsg.String( v[ "name" ] )
-					umsg.String( v[ "model" ] )
-					umsg.String( v[ "title" ] )
-				umsg.End( )
-				
-			end
-
 			ply:SetNWInt( "charactercreate", 1 )
 			
-			umsg.Start( "characterselection", ply )
+			umsg.Start( "Tiramisu.InitialSpawn", ply )
 				umsg.Bool( ply.FirstTimeJoining ) --This activates the intro if this is your first spawn ever. 
 			umsg.End( )
 		end)

@@ -10,7 +10,7 @@ end
 function RCLICK.Click(target,ply)
 
 	CAKE.StringRequest( "Change a player's model", "Select what model to set " .. target:Nick() .. " as (Will remove clothing)", target:GetModel(), function( text )
-		ply:ConCommand("rp_admin setmodel \"" .. target:Nick() .. "\" \"" .. text .. "\"" )
+		ply:ConCommand("rp_admin setmodel " .. CAKE.FormatText(target:SteamID()) .. " " .. text )
 	end,
 	function() end, "Accept", "Cancel")
 

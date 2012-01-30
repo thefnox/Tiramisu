@@ -149,6 +149,64 @@ end
 --------------------
 
 /*---------------------------------------------------------
+	Intro
+---------------------------------------------------------*/
+
+function SKIN:InitIntro()
+	CAKE.IntroStage1 = true
+	CAKE.IntroStage2 = false
+	CAKE.IntroStage3 = false
+	CAKE.IntroStage4 = false
+	CAKE.IntroStage1Alpha = 0
+	CAKE.IntroStage2Alpha = 0
+	CAKE.IntroStage3Alpha = 0
+	timer.Simple(1, function()
+		CAKE.IntroSkippable = true
+	end)
+	timer.Simple(3, function()
+		CAKE.IntroStage2 = true
+	end)
+	timer.Simple(5, function()
+		CAKE.IntroStage3 = true
+	end)
+	timer.Simple(9, function()
+		CAKE.IntroStage1 = false
+		CAKE.IntroStage2 = false
+		CAKE.IntroStage3 = false
+		CAKE.IntroStage4 = true
+	end)
+	timer.Simple(12, function()
+		CAKE.EndIntro()
+	end)
+end
+
+function SKIN:PaintIntro()
+	if CAKE.IntroStage1 then
+		CAKE.IntroStage1Alpha = Lerp(1.5 * RealFrameTime(), CAKE.IntroStage1Alpha, 255 )
+	end
+	if CAKE.IntroStage2 then
+		CAKE.IntroStage2Alpha = Lerp(1.5 * RealFrameTime(), CAKE.IntroStage2Alpha, 255 )
+	end
+	if CAKE.IntroStage3 then
+		CAKE.IntroStage3Alpha = Lerp(1.5 * RealFrameTime(), CAKE.IntroStage3Alpha, 255 )
+	end
+	if CAKE.IntroStage4 then
+		CAKE.IntroStage1Alpha = Lerp(2 * RealFrameTime(), CAKE.IntroStage1Alpha, 0 )
+		CAKE.IntroStage2Alpha = Lerp(2 * RealFrameTime(), CAKE.IntroStage2Alpha, 0 )
+		CAKE.IntroStage3Alpha = Lerp(2 * RealFrameTime(), CAKE.IntroStage3Alpha, 0 )
+	end
+
+	draw.SimpleTextOutlined( "Tiramisu", "Tiramisu64Font", ScrW()/2-20, ScrH() /2 - 50, Color(255,255,255,CAKE.IntroStage1Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,math.max(CAKE.IntroStage1Alpha, 130)))
+	draw.SimpleTextOutlined( "                       2", "Tiramisu64Font", ScrW()/2, ScrH() /2 - 50, Color(255,0,0,CAKE.IntroStage2Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,math.max(CAKE.IntroStage2Alpha, 130)))
+	draw.SimpleTextOutlined( "A new era in roleplay", "Tiramisu24Font", ScrW()/2, ScrH() / 2 + 10, Color(255,255,255,CAKE.IntroStage3Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,math.max(CAKE.IntroStage3Alpha, 130)))
+end
+
+function SKIN:ThinkIntro()
+
+end
+
+
+/*---------------------------------------------------------
 	Quick Menu
 ---------------------------------------------------------*/
 
@@ -516,7 +574,6 @@ struc.xalign = TEXT_ALIGN_RIGHT -- Horizontal Alignment
 struc.yalign = TEXT_ALIGN_RIGHT -- Vertical Alignment
 
 function SKIN:PaintTiramisuClock()
-	local markuplbl = markup.Parse( "<color=230,230,230,255><font=TiramisuTimeFont>" .. LocalPlayer():GetNWString( "title", "Connecting..." ) .. "</font></color>", 300 )
 	if !CAKE.MinimalHUD:GetBool() or CAKE.MenuOpen then 
 		if GetGlobalString( "time" ) != "Loading.." and GetGlobalString( "time" ) != "" then
 			struc.text = CAKE.FindDayName() .. ", " .. GetGlobalString( "time" )
@@ -532,7 +589,9 @@ function SKIN:PaintTiramisuClock()
 		struc.text = LocalPlayer():Nick()
 		struc.pos = { ScrW() - 10, 30 }
 		draw.Text( struc )
-		markuplbl:Draw( ScrW() - 10, 50, TEXT_ALIGN_RIGHT )
+		struc.text = LocalPlayer():GetNWString( "title", "Connecting..." )
+		struc.pos = { ScrW() - 10, 50 }
+		draw.Text( struc )
 	end
 end
 

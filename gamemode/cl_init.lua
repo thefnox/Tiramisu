@@ -38,7 +38,9 @@ CAKE.StayCrouched = CreateClientConVar( "rp_crouchtoggle", 1, true, true ) -- En
 CAKE.TitleDrawDistance = CreateClientConVar( "rp_titledrawdistance", 600, true, true ) --Maximum distance a player can be to have his or her title drawn
 CAKE.MinimalHUD = CreateClientConVar( "rp_minimalhud", 1, true, true ) --Disables HUD elements for a more clear view.
 CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true ) --Set this to 0 to have headbob disabled by default.
+CAKE.AlwaysIntro = CreateClientConVar( "rp_alwaysintro", 0, true, true ) -- Set this to 1 to have the intro always display
 
+surface.CreateFont(CAKE.ConVars[ "MenuFont2" ], 64, 500, true, false, "Tiramisu64Font", false, true) -- Biggest font used only once on the intro.
 surface.CreateFont(CAKE.ConVars[ "MenuFont2" ], 48, 500, true, false, "Tiramisu48Font", false, true) -- Biggest font used.
 surface.CreateFont(CAKE.ConVars[ "MenuFont2" ], 32, 500, true, false, "Tiramisu32Font", false, true) -- Second biggest font used. Used in 3D titles and main character title.
 surface.CreateFont(CAKE.ConVars[ "MenuFont2" ], 24, 500, true, false, "Tiramisu24Font", false, true) -- Third biggest font used. Used in 3D titles and main character title.

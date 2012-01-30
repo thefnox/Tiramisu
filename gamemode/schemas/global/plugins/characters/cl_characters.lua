@@ -305,23 +305,19 @@ usermessage.Hook( "DisplayCharacterList", function( um )
 	CreateCharList( )
 end)
 
-usermessage.Hook( "characterselection",  function( um )
+usermessage.Hook( "Tiramisu.InitialSpawn",  function( um )
 
 	local useintro = um:ReadBool()
 
-	if !useintro then
+	if !useintro and !CAKE.AlwaysIntro:GetBool() then
 		OpenCharacterMenu( true )
 	else
-		if CAKE.InitIntro then
-			CAKE.InitIntro()
-		else
-			OpenCharacterMenu( true )
-		end
+		CAKE.StartIntro()
 	end
 	
 end )
 
-usermessage.Hook( "charactercreation", function()
+usermessage.Hook( "StartCharacterCreation", function()
 	
 	derma.SkinHook( "Layout", "CharacterCreation" )
 
