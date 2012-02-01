@@ -486,6 +486,7 @@ local function Admin_CreatePropItem( ply, cmd, args )
 	id = CAKE.CreateItemID()
 	CAKE.SetUData(id, "name", args[1])
 	CAKE.SetUData(id, "model", args[2])
+	CAKE.SetUData(id, "creator", ply:Nick() .. ":" .. ply:Name() .. " (" .. ply:SteamID() .. ")")
 	CAKE.CreateItem( "propitem", ply:CalcDrop( ), Angle( 0,0,0 ), id )
 end
 
@@ -493,6 +494,7 @@ local function Admin_CreateClothing( ply, cmd, args )
 	if !(args[1] and args[2]) then CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin createclothing \"name\" \"type(body or head)\" \"model\" )") return end
 	id = CAKE.CreateItemID()
 	CAKE.SetUData(id, "name", args[1])
+	CAKE.SetUData(id, "creator", ply:Nick() .. ":" .. ply:Name() .. " (" .. ply:SteamID() .. ")")
 	CAKE.SetUData(id, "model", args[3])
 	if args[2] == "body" then
 		CAKE.CreateItem( "clothing_base", ply:CalcDrop( ), Angle( 0,0,0 ), id )
@@ -517,6 +519,7 @@ local function Admin_TurnIntoItem( ply, cmd, args )
 			CAKE.SetUData(id, "wearable", true )
 			CAKE.SetUData(id, "bone", bone)
 		end
+		CAKE.SetUData(id, "creator", ply:Nick() .. ":" .. ply:Name() .. " (" .. ply:SteamID() .. ")")
 		CAKE.CreateItem( "propitem", entity:GetPos(), entity:GetAngles(), id )
 		entity:Remove()
 	else
@@ -531,6 +534,7 @@ local function Admin_TurnIntoClothing( ply, cmd, args )
 	local name = args[2]
 	local id = CAKE.CreateItemID()
 	CAKE.SetUData(id, "name", name )
+	CAKE.SetUData(id, "creator", ply:Nick() .. ":" .. ply:Name() .. " (" .. ply:SteamID() .. ")")
 	CAKE.SetUData(id, "model", entity:GetModel())
 	if type == "body" then
 		print(util.tobool(args[4]))

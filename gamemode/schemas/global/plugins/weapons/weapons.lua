@@ -20,7 +20,7 @@ function CAKE.CreateWeaponItem( ply, weapon )
 		CAKE.SetUData( id, "description", "Custom Weapon" )
 		CAKE.SetUData( id, "weaponclass", weapon:GetClass() )
 		CAKE.SetUData( id, "holdtype", weapon:GetHoldType() )
-		CAKE.SetUData( id, "owner", ply:Nick() )
+		CAKE.SetUData( id, "creator", ply:Nick() .. ":" .. ply:Name() .. " (" .. ply:SteamID() .. ")" )
 		ply:GiveItem( "weapon_base", id )
 		return id
 	end

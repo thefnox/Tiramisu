@@ -6,7 +6,7 @@ local gradient = surface.GetTextureID("gui/gradient")
 local matBlurScreen = Material( "pp/blurscreen" ) 
 local gradientUp = surface.GetTextureID("gui/gradient_up")
 
-function derma.SkinHook( strType, strName, panel )
+function derma.SkinHook( strType, strName, panel, ... )
 	local Skin
 	if panel then
 		Skin = panel:GetSkin()
@@ -15,7 +15,7 @@ function derma.SkinHook( strType, strName, panel )
 	end
 	local func = Skin[ strType .. strName ]
 	if !func then return end
-	return func(Skin, panel)
+	return func(Skin, panel, ...)
 end
 
 local SKIN = {}
@@ -160,22 +160,22 @@ function SKIN:InitIntro()
 	CAKE.IntroStage1Alpha = 0
 	CAKE.IntroStage2Alpha = 0
 	CAKE.IntroStage3Alpha = 0
-	timer.Simple(1, function()
+	timer.Create( "IntroStage1", 1, 1, function()
 		CAKE.IntroSkippable = true
 	end)
-	timer.Simple(3, function()
+	timer.Create( "IntroStage2", 3, 1, function()
 		CAKE.IntroStage2 = true
 	end)
-	timer.Simple(5, function()
+	timer.Create( "IntroStage3", 5, 1, function()
 		CAKE.IntroStage3 = true
 	end)
-	timer.Simple(9, function()
+	timer.Create( "IntroStage4", 9, 1, function()
 		CAKE.IntroStage1 = false
 		CAKE.IntroStage2 = false
 		CAKE.IntroStage3 = false
 		CAKE.IntroStage4 = true
 	end)
-	timer.Simple(12, function()
+	timer.Create( "IntroStage5", 12, 1, function()
 		CAKE.EndIntro()
 	end)
 end
@@ -202,9 +202,17 @@ function SKIN:PaintIntro()
 end
 
 function SKIN:ThinkIntro()
-
 end
 
+function SKIN:DestroyIntro()
+	--You may be pondering why this one hook exists.
+	--It's what allows you to make intro's skippable, this is where you destroy all remnants of the intro.
+	timer.Destroy( "IntroStage1" )
+	timer.Destroy( "IntroStage2" )
+	timer.Destroy( "IntroStage3" )
+	timer.Destroy( "IntroStage4" )
+	timer.Destroy( "IntroStage5" )
+end
 
 /*---------------------------------------------------------
 	Quick Menu

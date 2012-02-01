@@ -73,9 +73,9 @@ function PANEL:Init()
 		self.PropertySheet:SetShowIcons( false )
 		self.PropertySheet.Paint = function()
 		end
-		self:AddChannel( "All", "All Messages" )
-		self:AddChannel( "IC", "In Character" )
-		self:AddChannel( "OOC", "Out Of Character", "// " )
+		self:AddChannel( "All", "All Messages", "", true )
+		self:AddChannel( "IC", "In Character", "", true  )
+		self:AddChannel( "OOC", "Out Of Character", "// ", true )
 
 		self.TextEntry = vgui.Create( "DTextEntry", self )
 		self.TextEntry:SetSize( self.Width - 13, 25 )
@@ -116,7 +116,7 @@ function PANEL:Init()
 end
 
 --Adds a tab to the chatbox. Can be done while the chatbox is open.
-function PANEL:AddChannel( name, description, handler )
+function PANEL:AddChannel( name, description, handler, cantclose )
 
 	if !self.Channels[ name ] then
 		local panel = vgui.Create( "DPanelList" )
@@ -130,10 +130,43 @@ function PANEL:AddChannel( name, description, handler )
 		self.Channels[ name ] = panel
 		local tab = self.PropertySheet:AddSheet( name, panel, "", false, false, description or name )
 		tab.Tab.handler = handler or ""
+		if cantclose then
+			tab.Tab.CantBeClosed = true
+		else
+			tab.Tab.Image:Remove()
+			tab.Tab.Image = vgui.Create( "DSysButton", tab.Tab )
+			tab.Tab.Image:SizeToContents()
+			tab.Tab.Image:SetType( "close" )
+			tab.Tab.Image:SetDrawBorder( false )
+			tab.Tab.Image:SetDrawBackground( false )
+			tab.Tab.Image.SetImageColor = function() end
+			tab.Tab.Image.DoClick = function()
+				if self.PropertySheet.tabScroller and self.PropertySheet.tabScroller.Panels then
+					for k, panel in pairs( self.PropertySheet.tabScroller.Panels ) do
+						if panel == tab.Tab then
+							table.remove(self.PropertySheet.tabScroller.Panels, k)
+							self.PropertySheet.tabScroller.Panels[k] = nil
+						end
+					end
+				end
+				for k, tabs in pairs( self.PropertySheet.Items ) do
+					if tabs.Tab == tab.Tab then
+						table.remove(self.PropertySheet.Items, k)
+						self.PropertySheet.Items[k] = nil
+					end
+				end
+				self.Channels[ name ]:Remove()
+				self.Channels[ name ] = nil
+				tab.Tab:Remove()
+				self.PropertySheet.m_pActiveTab = table.Random(self.PropertySheet.Items).Tab
+				self.PropertySheet:InvalidateLayout( true, true ) 
+				self:InvalidateLayout( true, true ) 
+			end
+		end
 		self.PropertySheet:InvalidateLayout( true, true ) 
 		for _,item in pairs( self.PropertySheet.Items ) do
 			item.Tab.Paint = function()
-				if ( item.Tab:GetPropertySheet():GetActiveTab() == item.Tab ) then
+				if item.Tab:GetPropertySheet():GetActiveTab() == item.Tab then
 					draw.RoundedBox( 2, 0, 0, item.Tab:GetWide() - 8, item.Tab:GetTall(), Color( 40, 40, 40, self.Alpha ) )
 					item.Tab:SetTextColor( Color( 170, 170, 170, self.Alpha ) )
 				else
@@ -141,7 +174,7 @@ function PANEL:AddChannel( name, description, handler )
 					item.Tab:SetTextColor( Color( 170, 170, 170, self.Alpha ) )
 				end
 			end
-			if ( item.Tab.Image ) then
+			if item.Tab.CantBeClosed then
 				item.Tab.Image:SetVisible( false )
 			end
 		end
@@ -152,7 +185,7 @@ end
 --Adds a line to a particular channel. If no channel is specified it simply becomes global.
 function PANEL:AddLine( text, channel, handler )
 
-	local label = MarkupLabelOutline( text, self.Width - 40, 1, Color( 0,0,0, 100) )
+	local label = MarkupLabelOutline( text, self.Width - 30, 1, Color( 0,0,0, 100) )
 	local number = #self.Lines + 1
 	label.numberid = number 
 	self.Lines[ number ] = {}
@@ -174,7 +207,7 @@ function PANEL:AddLine( text, channel, handler )
 
 	if channel then
 		self:AddChannel( channel, channel, handler )
-		label = MarkupLabel( text, self.Width - 30 )
+		label = MarkupLabelOutline( text, self.Width - 30, 1, Color( 0,0,0, 100) )
 		label.numberid = number 
 		self.Channels[ channel ]:AddItem( label )
 
@@ -217,6 +250,9 @@ function PANEL:Close()
 	self:SetKeyboardInputEnabled(false)
 	self:SetMouseInputEnabled(false)
 	gui.EnableScreenClicker( false )
+	if self.PropertySheet.tabScroller then
+		self.PropertySheet.tabScroller:SetVisible( false )
+	end
 
 	LocalPlayer( ):ConCommand( "rp_closedchat" )
 
@@ -235,6 +271,9 @@ function PANEL:OpenChat()
 		self.TextEntry:RequestFocus()
 		gui.EnableScreenClicker( true )
 		LocalPlayer( ):ConCommand( "rp_openedchat" )
+		if self.PropertySheet.tabScroller then
+			self.PropertySheet.tabScroller:SetVisible( true )
+		end
 	end
 end
  

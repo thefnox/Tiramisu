@@ -92,7 +92,7 @@ CAKE.BaseColor = Color( 50, 50, 50, 150 ) --The schema's default color. Can be s
 --Intro
 CAKE.ConVars[ "UseIntro" ] = true --Set this to false if you want the player to go directly into the character menu when they join
 CAKE.ConVars[ "IntroText" ] = "Welcome to Tiramisu 2" -- Character menu and intro text. NOTE, the HL2RP scheme changes this
-CAKE.ConVars[ "IntroSubtitle" ] = "" -- Character menu and intro subtitle. If you want this gone just set it to ""
+CAKE.ConVars[ "IntroSubtitle" ] = "A new era in roleplay" -- Character menu and intro subtitle. If you want this gone just set it to ""
 
 --General
 CAKE.ConVars[ "Webpage" ] = "http://www.facepunch.com/" --Set this to whatever you want to, it'll be accessible on the "Forums" tab

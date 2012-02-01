@@ -106,23 +106,20 @@ function surface.DrawNPoly( x, y, radius, sides, rotation )
 end
 
 -- Initialize the gamemode
-function GM:Initialize( )
+function GM:Initialize()
 
 	CAKE.Running = true
 
-	self.BaseClass:Initialize( )
+	self.BaseClass:Initialize()
 
 end
 
-function GM:Think( )
+function GM:InitPostEntity()
 
-	if( vgui and !readysent ) then -- VGUI is initalized, tell the server we're ready for character creation.
-	
-		LocalPlayer( ):ConCommand( "rp_ready\n" )
-		CAKE.EnableBlackScreen( CAKE.ConVars[ "SpawnWithBlackScreen" ], CAKE.ConVars[ "SpawnWithBlackScreen" ] )
-		readysent = true
-		
-	end
+	self.BaseClass:InitPostEntity()
+
+	RunConsoleCommand( "rp_ready" )
+	CAKE.EnableBlackScreen( CAKE.ConVars[ "SpawnWithBlackScreen" ], CAKE.ConVars[ "SpawnWithBlackScreen" ] )
 	
 end
 

@@ -55,6 +55,11 @@ local function OpenOptions()
 	FirstpersonBody:SetConVar( "rp_firstpersonbody") 
 	Options:AddItem( FirstpersonBody )
 
+	local AlwaysIntro = vgui.Create( "DCheckBoxLabel" )
+	AlwaysIntro:SetText( "Always display the intro" )
+	AlwaysIntro:SetConVar( "rp_alwaysintro") 
+	Options:AddItem( AlwaysIntro )
+
 	local ThirdpersonDistance = vgui.Create( "DNumSlider" )
 	ThirdpersonDistance:SetText( "Thirdperson Distance" )
 	ThirdpersonDistance:SetDecimals( 0 )

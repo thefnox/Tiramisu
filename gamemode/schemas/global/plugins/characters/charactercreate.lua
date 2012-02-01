@@ -57,12 +57,6 @@ local function ccBeginCreate( ply, cmd, args )
 	umsg.Start( "StartCharacterCreation", ply )
 	umsg.End()
 
-	if ply:IsCharLoaded() then
-		umsg.Start("Tiramisu.EnableBlackScreen", ply) --This is to disable the black screen after the player spawns.
-			umsg.Bool( true )
-		umsg.End()
-	end
-
 end
 concommand.Add( "rp_begincreate", ccBeginCreate )
 
@@ -101,12 +95,6 @@ local function ccEscapeCreate( ply, cmd, args )
 
 	if ply:GetNWInt( "charactercreate", 0 ) > 0 then
 		ply:SetNWInt( "charactercreate", 0 )
-	end
-
-	if ply:IsCharLoaded() then
-		umsg.Start("Tiramisu.EnableBlackScreen", ply) --This is to disable the black screen after the player spawns.
-			umsg.Bool( false )
-		umsg.End()
 	end
 
 end
