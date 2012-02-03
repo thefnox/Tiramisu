@@ -101,24 +101,29 @@ function CAKE.LoadPlayerDataFile( ply )
 		
 		-- If any values were loaded and they aren't in the DataFields table, delete them from the character.
 		for _, char in pairs( CharTable ) do
-		
-			for k, v in pairs( char["inventory"] ) do
-				if type(v) == "string" then
-					char["inventory"][k] = {v, CAKE.CreateItemID()}
-				else
-					break
-				end
-			end
 
 			for k, v in pairs( char ) do
 
 				if( CAKE.CharacterDataFields[ k ] == nil ) then
 				
 					CAKE.DayLog( "script.txt", "Invalid character data field '" .. tostring( _ ) .. "' in character " .. ply:SteamID( ) .. "-" .. _ .. ", removing." )
-					CAKE.PlayerData[ SteamID ][ "characters" ][ _ ][ k ] = nil
+					CAKE.PlayerData[ SteamID ][ "characters" ][ char ][ k ] = nil
 					
 				end
 				
+			end
+
+			if char["inventory"] then
+				for k, v in pairs( char["inventory"] ) do
+					if type(v) == "string" then
+						char["inventory"][k] = {v, CAKE.CreateItemID()}
+					else
+						break
+					end
+				end
+			else
+				char["inventory"] = {}
+				CAKE.DayLog( "script.txt", "Character " .. ply:SteamID( ) .. "-" .. _ .. " does not have a valid inventory" )
 			end
 			
 		end

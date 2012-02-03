@@ -308,6 +308,11 @@ end
 	Character Creation
 ---------------------------------------------------------*/
 function SKIN:LayoutCharacterCreation()
+	derma.SkinHook( "CharacterCreation", "Step1" )
+end
+
+
+function SKIN:CharacterCreationStep1()
 	local x, y
 	local Age = "30"
 	local Gender = "Male"
@@ -318,11 +323,52 @@ function SKIN:LayoutCharacterCreation()
 	local SelectedModel = "models/humans/group01/male_01.mdl"
 
 	if CharacterMenu then
+
+		local titlelabel = vgui.Create( "DLabel", CharacterMenu )
+		titlelabel:SetText( "Create a Character" )
+		titlelabel:SetFont( "Tiramisu64Font" )
+		titlelabel:SizeToContents()
+		titlelabel:SetPos( ScrW() + 100, 20 )
+		titlelabel.PaintOver = function()
+			if titlelabel then
+				x,y = titlelabel:GetPos()
+				if !titlelabel.SlideOut then
+					titlelabel:SetPos( ScrW() - Lerp( 3 * RealFrameTime(), -(x - ScrW()), titlelabel:GetWide() + 20), y )
+				else
+					titlelabel:SetPos( ScrW() + Lerp( 3 * RealFrameTime(), x - ScrW(), 200), y )
+					if x > ScrW() + 110 then
+						titlelabel:Remove()
+						titlelabel = nil
+					end
+				end
+			end
+		end
+
+		local subtitlelabel = vgui.Create( "DLabel", CharacterMenu )
+		subtitlelabel:SetText( "Live a new life" )
+		subtitlelabel:SetFont( "Tiramisu32Font" )
+		subtitlelabel:SizeToContents()
+		subtitlelabel:SetPos( ScrW() + 100, 30 + titlelabel:GetTall() )
+		subtitlelabel.PaintOver = function()
+			if subtitlelabel then
+				x,y = subtitlelabel:GetPos()
+				if !subtitlelabel.SlideOut then
+					subtitlelabel:SetPos( ScrW() - Lerp( 3 * RealFrameTime(), -(x - ScrW()), subtitlelabel:GetWide() + 20), y )
+				else
+					subtitlelabel:SetPos( ScrW() + Lerp( 3 * RealFrameTime(), x - ScrW(), 200), y )
+					if x > ScrW() + 110 then
+						subtitlelabel:Remove()
+						subtitlelabel = nil
+					end
+				end
+			end
+		end
+
 		local panel = vgui.Create( "DPanelList", CharacterMenu)
-		panel:SetSize( 230, 500 )
-		panel:SetPos( ScrW() / 2  , ScrH() / 2 - 250 )
-		panel:SetPadding( 0 )
-		panel:SetSpacing( 5 )
+		panel:SetSize( ScrW() - ScrH() - 50, ScrH() - 270 )
+		panel:SetPos( ScrH(), 170 )
+		panel:SetPadding( 5 )
+		panel:SetSpacing( 10 )
 		panel.Paint = function()
 			x,y = panel:GetPos()
 			if panel.SlideOut then
@@ -339,12 +385,8 @@ function SKIN:LayoutCharacterCreation()
 		local label
 
 		label = vgui.Create( "DLabel" )
-		label:SetText( "Create your character" )
-		label:SetFont( "Tiramisu18Font" )
-		panel:AddItem( label )
-
-		label = vgui.Create( "DLabel" )
-		label:SetText( "Name:" )
+		label:SetText( "Name :" )
+		label:SetFont( "Tiramisu24Font" )
 		panel:AddItem( label )
 
 		local nametext = vgui.Create( "DTextEntry" )
@@ -353,7 +395,8 @@ function SKIN:LayoutCharacterCreation()
 		panel:AddItem( nametext )
 
 		label = vgui.Create( "DLabel" )
-		label:SetText( "Title:" )
+		label:SetText( "Title :" )
+		label:SetFont( "Tiramisu24Font" )
 		panel:AddItem( label )
 
 		local titletext = vgui.Create( "DTextEntry" )
@@ -388,17 +431,20 @@ function SKIN:LayoutCharacterCreation()
 		genderlist:ChooseOptionID( 1 )
 
 		label = vgui.Create( "DLabel" )
-		label:SetText( "Gender:" )
+		label:SetText( "Gender :" )
+		label:SetFont( "Tiramisu24Font" )
 		panel:AddItem( label )
 		panel:AddItem( genderlist )
 
 		label = vgui.Create( "DLabel" )
-		label:SetText( "Model:" )
+		label:SetText( "Model :" )
+		label:SetFont( "Tiramisu24Font" )
 		panel:AddItem( label )
 		panel:AddItem( modellist )
 
 		label = vgui.Create( "DLabel" )
-		label:SetText( "Age:" )
+		label:SetText( "Age :" )
+		label:SetFont( "Tiramisu24Font" )
 		panel:AddItem( label )
 
 		local numberwang = vgui.Create( "DNumberWang" )
@@ -414,44 +460,52 @@ function SKIN:LayoutCharacterCreation()
 		gobacklabel = vgui.Create( "DButton", CharacterMenu )
 		gobacklabel:SetSize( 80, 26 )
 		gobacklabel:SetText( "" )
-		gobacklabel:SetPos( (ScrW() / 2 )- 160, ScrH() + 500  )
+		gobacklabel:SetPos( ScrW() + 240, ScrH() - 85 )
 		gobacklabel.Paint = function() end
 		gobacklabel.PaintOver = function()
-			draw.SimpleText( "Go Back", "Tiramisu18Font", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
-			x,y = gobacklabel:GetPos()
-			if !gobacklabel.SlideOut then
-				gobacklabel:SetPos( (ScrW() / 2 )- 160, Lerp( 10 * RealFrameTime(), y, ScrH() / 2 + 230 ))
-			else
-				gobacklabel:SetPos( (ScrW() / 2 )- 160, Lerp( 10 * RealFrameTime(), y, ScrH() + 500  ))
-				if y > ScrH() then
-					gobacklabel:Remove()
-					gobacklabel = nil
+			if gobacklabel then
+				draw.SimpleText( "Go Back", "Tiramisu24Font", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
+				x,y = gobacklabel:GetPos()
+				if !gobacklabel.SlideOut then
+					gobacklabel:SetPos( ScrW() - Lerp( 3 * RealFrameTime(), -(x - ScrW()), 240), y )
+				else
+					gobacklabel:SetPos( ScrW() + Lerp( 3 * RealFrameTime(), x - ScrW(), 240), y )
+					if x > ScrW() + 110 then
+						gobacklabel:Remove()
+						gobacklabel = nil
+					end
 				end
 			end
 		end
 		gobacklabel.DoClick = function()
 			RunConsoleCommand( "rp_escapecreate" )
+			RunConsoleCommand("rp_selectchar", tostring( CAKE.SelectedChar ))
 			panel.SlideOut = true
 			gobacklabel.SlideOut = true
 			createlabel.SlideOut = true
+			subtitlelabel.SlideOut = true
+			titlelabel.SlideOut = true
+
 			OpenCharacterMenu()
 		end
 
 		createlabel = vgui.Create( "DButton", CharacterMenu )
 		createlabel:SetSize( 200, 26 )
 		createlabel:SetText( "" )
-		createlabel:SetPos( ScrW() / 2 + 20, ScrH() + 500  )
+		createlabel:SetPos(ScrW() + 160, ScrH() - 85 )
 		createlabel.Paint = function() end
 		createlabel.PaintOver = function()
-			draw.SimpleText( "Finish Creation", "Tiramisu18Font", 70, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
-			x,y = createlabel:GetPos()
-			if !createlabel.SlideOut then
-				createlabel:SetPos( ScrW() / 2 + 20, Lerp( 10 * RealFrameTime(), y, ScrH() / 2 + 230 ))
-			else
-				createlabel:SetPos( ScrW() / 2 + 20, Lerp( 10 * RealFrameTime(), y, ScrH() + 500  ))
-				if y > ScrH() then
-					createlabel:Remove()
-					createlabel = nil
+			if createlabel then
+				draw.SimpleText( "Finish Creation", "Tiramisu24Font", 70, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
+				x,y = createlabel:GetPos()
+				if !createlabel.SlideOut then
+					createlabel:SetPos( ScrW() - Lerp( 3 * RealFrameTime(), -(x - ScrW()), 160), y )
+				else
+					createlabel:SetPos( ScrW() - Lerp( 3 * RealFrameTime(), x - ScrW(), 160), y )
+					if x > ScrW() + 110 then
+						createlabel:Remove()
+						createlabel = nil
+					end
 				end
 			end
 		end
@@ -468,8 +522,11 @@ function SKIN:LayoutCharacterCreation()
 			RunConsoleCommand("rp_setcid")
 			RunConsoleCommand( "rp_finishcreate" )
 			panel.SlideOut = true
-			createlabel.SlideOut = true
 			gobacklabel.SlideOut = true
+			createlabel.SlideOut = true
+			subtitlelabel.SlideOut = true
+			titlelabel.SlideOut = true
+
 			OpenCharacterMenu()
 		end
 
@@ -577,7 +634,7 @@ end
 local struc = {}
 struc.pos = { ScrW() - 10, 10 } -- Pos x, y
 struc.color = Color(230,230,230,255 ) -- Red
-struc.font = "Tiramisu18Font" -- Font
+struc.font = "Tiramisu24Font" -- Font
 struc.xalign = TEXT_ALIGN_RIGHT -- Horizontal Alignment
 struc.yalign = TEXT_ALIGN_RIGHT -- Vertical Alignment
 

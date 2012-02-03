@@ -96,6 +96,7 @@ local function ccEscapeCreate( ply, cmd, args )
 	if ply:GetNWInt( "charactercreate", 0 ) > 0 then
 		ply:SetNWInt( "charactercreate", 0 )
 	end
+	CAKE.SelectRandomCharacter( ply )
 
 end
 concommand.Add( "rp_escapecreate", ccEscapeCreate )
@@ -145,6 +146,20 @@ local function ccFinishCreate( ply, cmd, args )
 		
 		ply:SetTeam( 1 )
 		
+		umsg.Start("ClearReceivedChars", ply)
+		umsg.End()
+		for k, v in pairs( CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ]["characters"] ) do -- Send them all their characters for selection
+
+			umsg.Start( "ReceiveChar", ply )
+				umsg.Long( tonumber(k) )
+				umsg.String( v[ "name" ] )
+				umsg.String( v[ "model" ] )
+				umsg.String( v[ "title" ] )
+			umsg.End( )
+			
+		end
+		umsg.Start("DisplayCharacterList", ply)
+		umsg.End()
 		CAKE.ResendCharData( ply )
 		
 	end
@@ -152,11 +167,16 @@ local function ccFinishCreate( ply, cmd, args )
 end
 concommand.Add( "rp_finishcreate", ccFinishCreate )
 
-function ccSelectChar( ply, cmd, args )
+function CAKE.SelectRandomCharacter( ply )
+	local tbl = {}
+	for k, _ in pairs(CAKE.PlayerData[ CAKE.FormatText(ply:SteamID()) ][ "characters" ]) do
+		table.insert( tbl, k )
+	end
+	CAKE.SelectChar( ply, table.Random(tbl) )
+end
 
-	local uid = args[ 1 ]
+function CAKE.SelectChar( ply, uid )
 	local SteamID = CAKE.FormatText(ply:SteamID())
-	
 	if( CAKE.PlayerData[ SteamID ][ "characters" ][ uid ] != nil ) then
 		local char = CAKE.PlayerData[ SteamID ][ "characters" ][ uid ]
 		local special = char[ "specialmodel" ]
@@ -180,13 +200,19 @@ function ccSelectChar( ply, cmd, args )
 		else
 			ply:SetNWBool( "specialmodel", true ) 
 			ply:SetModel( tostring( special ) )
-		end
-
-	else
-		
-		return
-		
+		end 	
+		umsg.Start("SelectThisCharacter")
+			umsg.Long( uid )
+		umsg.End()
 	end
+
+end
+
+function ccSelectChar( ply, cmd, args )
+
+	local uid = args[ 1 ]
+	
+	CAKE.SelectChar( ply, uid )
 
 end
 concommand.Add( "rp_selectchar", ccSelectChar )
@@ -273,6 +299,9 @@ concommand.Add( "rp_receivechars", function( ply, cmd, args )
 	end
 	umsg.Start("DisplayCharacterList", ply)
 	umsg.End()
+	if !util.tobool(args[1]) then
+		CAKE.SelectRandomCharacter( ply )
+	end
 end)
 
 function ccConfirmRemoval( ply, cmd, args )

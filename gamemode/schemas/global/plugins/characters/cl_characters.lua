@@ -1,4 +1,5 @@
 CAKE.SelectedChar = false
+CAKE.CurrentChar = false
 ExistingChars = {  }
 
 local x,y 
@@ -8,6 +9,15 @@ function OpenCharacterMenu( hideclosebutton )
 	
 	CAKE.EnableBlackScreen( true )
 
+	local subtitlelabel
+	local titlelabel
+
+	if hideclosebutton then
+		CAKE.CurrentChar = false
+	else
+		CAKE.CurrentChar = CAKE.SelectedChar
+	end
+
 	if !CharacterMenu then
 		CharacterMenu = vgui.Create( "DFrame" )
 		CharacterMenu:SetSize( ScrW(), ScrH() )
@@ -16,62 +26,87 @@ function OpenCharacterMenu( hideclosebutton )
 		CharacterMenu:ShowCloseButton( true )
 		CharacterMenu:SetTitle( "" )
 		CharacterMenu.Paint = function()
-
 			CAKE.DrawBlurScreen()
-
+		end
+		CharacterMenu.PaintOver = function()
+			if CharacterMenu.Children then
+				for k, panel in pairs( CharacterMenu.Children ) do
+					if !panel or !panel.GetPos then
+						table.remove( CharacterMenu.Children, k )
+					else
+						x, y = panel:GetPos()
+						if CharacterMenu.SlideOut then
+							panel:SetPos( Lerp( 3 * RealFrameTime(), x, -100 - panel:GetWide()), panel.OriginalPosY )
+						else
+							panel:SetPos( Lerp( 3 * RealFrameTime(), x, panel.OriginalPosX ), panel.OriginalPosY )
+						end
+					end
+				end
+			end
+		end
+		CharacterMenu.AddChild = function( panel )
+			if !CharacterMenu.Children then
+				CharacterMenu.Children = {}
+			end
+			if panel then
+				panel.OriginalPosX, panel.OriginalPosY = panel:GetPos()
+				table.insert( CharacterMenu.Children, panel )
+			end
 		end
 		CharacterMenu:MakePopup()
 
-		local titlelabel = vgui.Create( "DLabel", CharacterMenu )
+		titlelabel = vgui.Create( "DLabel", CharacterMenu )
 		titlelabel:SetText( CAKE.ConVars[ "IntroText" ] )
 		titlelabel:SetFont( "Tiramisu64Font" )
 		titlelabel:SizeToContents()
 		titlelabel:SetPos( 20, 20 )
+		CharacterMenu.AddChild(titlelabel)
 
-		local subtitlelabel = vgui.Create( "DLabel", CharacterMenu )
+		subtitlelabel = vgui.Create( "DLabel", CharacterMenu )
 		subtitlelabel:SetText( CAKE.ConVars[ "IntroSubtitle" ] )
 		subtitlelabel:SetFont( "Tiramisu32Font" )
 		subtitlelabel:SizeToContents()
 		subtitlelabel:SetPos( 20, 30 + titlelabel:GetTall() )
+		CharacterMenu.AddChild(subtitlelabel)
 
 		PlayerModel = vgui.Create( "PlayerPanel", CharacterMenu )
 		PlayerModel:SetSize( ScrH(), ScrH())
-		PlayerModel:SetPos( ScrW() - ScrH() , 0 )
+		PlayerModel:SetPos( ScrW() - ScrH(), 0 )
 		PlayerModel.PaintOver = function()
 			if PlayerModel.SlideOut then
 				x, y = PlayerModel:GetPos()
-				PlayerModel:SetPos( Lerp( RealFrameTime() * 3, x, ScrH() ), 0 )
+				PlayerModel:SetPos( Lerp( RealFrameTime() * 3, x, 0 ), 0 )
 			else
 				x, y = PlayerModel:GetPos()
 				PlayerModel:SetPos( Lerp( RealFrameTime() * 3, x,  ScrW() - ScrH() ), 0)
 			end
 		end
+		RunConsoleCommand( "rp_receivechars", tostring(!hideclosebutton) )
+		CreateMenuButtons( !hideclosebutton )
 	else
+		CharacterMenu.SlideOut = false
 		if PlayerModel then
 			PlayerModel.SlideOut = false
 		end
 	end
 
-	RunConsoleCommand( "rp_receivechars" )
-	CreateMenuButtons( !hideclosebutton )
-
 end
 
-function CreateCharList( )
+function CreateCharList()
 
 	if CharacterMenu then
-		if charpanel then
-			charpanel:Remove()
-			charpanel = nil
-		end
-
-		charpanel = vgui.Create( "DPanelList", CharacterMenu )
-		charpanel:SetSize( ScrW() - ScrH() - 100, ScrH() - 270 )
-		charpanel:SetPos( 100, 170 )
-		charpanel:SetSpacing( 5 )
-		charpanel:SetAutoSize( false )
-		charpanel:EnableVerticalScrollbar( true )
-		charpanel.Paint = function()
+		if !charpanel then
+			charpanel = vgui.Create( "DPanelList", CharacterMenu )
+			charpanel:SetSize( ScrW() - ScrH() - 100, ScrH() - 270 )
+			charpanel:SetPos( 100, 170 )
+			charpanel:SetSpacing( 5 )
+			charpanel:SetAutoSize( false )
+			charpanel:EnableVerticalScrollbar( true )
+			CharacterMenu.AddChild( charpanel )
+			charpanel.Paint = function()
+			end
+		else
+			charpanel:Clear()
 		end
 
 		for k, v in pairs(ExistingChars) do
@@ -80,7 +115,6 @@ function CreateCharList( )
 			charbutton:SetTall( 50 )
 			charbutton.DoClick = function()
 				RunConsoleCommand("rp_selectchar", tostring( k ))
-				CAKE.SelectedChar = k
 			end
 			charbutton:SetText("")
 			charbutton.Paint = function()
@@ -136,6 +170,7 @@ function CreateMenuButtons( canclose )
 			CAKE.Message( "You need to select a character first!", "Warning", "OK", Color( 140, 100, 100) )
 		end
 	end
+	CharacterMenu.AddChild( spawnlabel )
 
 	local disconnectlabel = vgui.Create( "DButton", CharacterMenu )
 	disconnectlabel:SetSize( 80, 26 )
@@ -151,6 +186,7 @@ function CreateMenuButtons( canclose )
 	disconnectlabel.DoClick = function()
 		RunConsoleCommand( "disconnect" )
 	end
+	CharacterMenu.AddChild( disconnectlabel )
 
 	local createcharacter = vgui.Create( "DButton", CharacterMenu )
 	createcharacter:SetText( "" )
@@ -166,11 +202,10 @@ function CreateMenuButtons( canclose )
 	end
 	createcharacter.DoClick = function()
 		PlayerModel.SlideOut = true
-		if closelabel then
-			closelabel.SlideOut = true
-		end
+		CharacterMenu.SlideOut = true
 		RunConsoleCommand( "rp_begincreate" )
-	end 
+	end
+	CharacterMenu.AddChild( createcharacter )
 
 	local x, y 
 	introlabel = vgui.Create( "DButton", CharacterMenu )
@@ -193,6 +228,7 @@ function CreateMenuButtons( canclose )
 			CharacterMenu = nil
 		end
 	end
+	CharacterMenu.AddChild( introlabel )
 
 	if canclose then
 		local x, y 
@@ -208,14 +244,20 @@ function CreateMenuButtons( canclose )
 			draw.SimpleText( " Close Menu ", "Tiramisu24Font", 0, 0, Color(255,255,255), TEXT_ALIGN_LEFT )
 		end
 		closelabel.DoClick = function()
+			RunConsoleCommand("rp_selectchar", tostring( CAKE.CurrentChar ))
 			CloseCharacterMenu()
 		end
+		CharacterMenu.AddChild( closelabel )
 	end
 
 end
 
 function CloseCharacterMenu()
 	CAKE.EnableBlackScreen( false )
+	if charpanel then
+		charpanel:Remove()
+		charpanel = nil
+	end
 	if CharacterMenu then
 		PlayerModel:Close()
 		CharacterMenu:Remove()
@@ -266,6 +308,10 @@ end)
 
 usermessage.Hook( "ClearReceivedChars", function()
 	ExistingChars = {}
+end)
+
+usermessage.Hook( "SelectThisCharacter", function( data )
+	CAKE.SelectedChar = data:ReadLong( )
 end)
 
 usermessage.Hook( "ReceiveChar", function( data )
