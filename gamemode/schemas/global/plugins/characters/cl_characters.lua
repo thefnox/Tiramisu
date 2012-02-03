@@ -147,9 +147,11 @@ function CreateCharList()
 
 		end
 	end
+
 end
 
 function CreateMenuButtons( canclose )
+
 	local closelabel
 	local spawnlabel = vgui.Create( "DButton", CharacterMenu )
 	spawnlabel:SetSize( 80, 26 )
@@ -254,6 +256,10 @@ end
 
 function CloseCharacterMenu()
 	CAKE.EnableBlackScreen( false )
+	if CharTitleLabel then
+		CharTitleLabel:Remove()
+		CharTitleLabel = nil
+	end
 	if charpanel then
 		charpanel:Remove()
 		charpanel = nil
@@ -312,6 +318,20 @@ end)
 
 usermessage.Hook( "SelectThisCharacter", function( data )
 	CAKE.SelectedChar = data:ReadLong( )
+	if CharacterMenu then
+		if !CharTitleLabel then
+			CharTitleLabel = Label( ExistingChars[CAKE.SelectedChar]["name"] or "Loading...", CharacterMenu)
+			CharTitleLabel:SetFont( "Tiramisu24Font")
+			CharTitleLabel:SizeToContents()
+			CharTitleLabel:SetPos( ScrW() - ScrH() / 2 - CharTitleLabel:GetWide() / 2, ScrH() - 130 )
+			CharacterMenu.AddChild( CharTitleLabel )
+		else
+			CharTitleLabel:SetText( ExistingChars[CAKE.SelectedChar]["name"] or "Loading..." )
+			CharTitleLabel:SizeToContents()
+			CharTitleLabel:SetPos( ScrW() - ScrH() / 2 - CharTitleLabel:GetWide() / 2, ScrH() - 130 )
+			CharTitleLabel.OriginalPosX, CharTitleLabel.OriginalPosY = CharTitleLabel:GetPos()
+		end
+	end
 end)
 
 usermessage.Hook( "ReceiveChar", function( data )
