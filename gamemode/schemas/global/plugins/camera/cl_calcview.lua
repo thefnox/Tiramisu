@@ -12,6 +12,7 @@ CAKE.OTSAng = false
 CAKE.UseHeadRotation = false
 CAKE.SwitchFromFirstPerson = false
 CAKE.FlipAround = false
+CAKE.UseFlash = true
 
 local NormalizeAngle, Clamp, rad, cos, sin, abs, AngleDifference = math.NormalizeAngle, math.Clamp, math.rad, math.cos, math.sin, math.abs, math.AngleDifference
 
@@ -19,7 +20,7 @@ local wep
 local function IronsightsOn()
 	if ValidEntity( LocalPlayer():GetActiveWeapon() ) then
 		wep = LocalPlayer():GetActiveWeapon()
-		if wep:GetNWBool( "Ironsights", false ) then
+		if wep:GetNWBool( "Ironsights", false ) and not LocalPlayer():KeyDown(IN_SPEED) then
 			return true
 		end
 	end
@@ -83,7 +84,7 @@ hook.Add( "PlayerBindPress", "TiramisuPlayerBindPressCamera", function( ply, bin
 		end
 		return true
 	end
-
+	
 end)
 
 local vecMove = Vector()
@@ -105,6 +106,7 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 		end
 
 		if CAKE.FreeScroll then
+			CAKE.WasOTS = false
 			cmd:SetViewAngles(CAKE.RealAng or cmd:GetViewAngles())
 			CAKE.FreeScrollAng = CAKE.FreeScrollAng + Angle( cmd:GetMouseY() * (mPitch:GetFloat()), cmd:GetMouseX() * (-mYaw:GetFloat()), 0 )
 			CAKE.FreeScrollAng.p = Clamp( NormalizeAngle( CAKE.FreeScrollAng.p ), -89, 89 )
@@ -112,6 +114,7 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 			CAKE.FreeScrollAng = Angle( 0, 0, 0 )
 			CAKE.FreeScroll = false
 			if CAKE.Thirdperson:GetBool() and !LocalPlayer():GetNWBool( "aiming", false ) then --NON AIMING THIRDPERSON
+				CAKE.WasOTS = false
 				if CAKE.SwitchFromFirstPerson and CAKE.LastViewAng then
 					CAKE.RealAng = CAKE.LastViewAng
 					CAKE.CurAng = CAKE.RealAng
@@ -144,6 +147,13 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 					LocalPlayer():AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_TURN_RIGHT180 )
 				end
 			elseif CAKE.Thirdperson:GetBool() and LocalPlayer():GetNWBool( "aiming", false ) then --OVER THE SHOULDER
+			
+				if not CAKE.WasOTS then
+					CAKE.OTSAng = cmd:GetViewAngles()
+				end
+				
+				CAKE.WasOTS = true
+				
 				if CAKE.UseHeadRotation then
 					cmd:SetViewAngles(CAKE.RealAng)
 				end
@@ -200,6 +210,7 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 				CAKE.SwitchFromFirstPerson = true
 				CAKE.DiffReal = Angle( 0, 0, 0 )
 			else
+				CAKE.WasOTS = false
 				if CAKE.UseHeadRotation then
 					cmd:SetViewAngles(CAKE.RealAng)
 				end
