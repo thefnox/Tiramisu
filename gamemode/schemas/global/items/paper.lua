@@ -1,6 +1,6 @@
 ITEM.Name = "Paper"
 ITEM.Class = "paper"
-ITEM.Description = ""
+ITEM.Description = "You can write notes on this. "
 ITEM.Model = "models/props_junk/garbage_newspaper001a.mdl"
 ITEM.Purchaseable = true
 ITEM.Price = 50

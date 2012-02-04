@@ -781,11 +781,7 @@ function GM:CalcMainActivity( ply, velocity )
 	end
 
 	if CLIENT and CAKE.ForceDraw then
-		if !ply:GetNWBool( "specialmodel", false ) then
-			return HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "idle" ] )
-		else
-			return ACT_IDLE, -1
-		end
+		return ACT_IDLE, -1
 	end
 
 	return ply.CalcIdeal, ply.CalcSeqOverride or -1

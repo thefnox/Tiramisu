@@ -2,13 +2,12 @@ function write( ply, handler, id, encoded, decoded )
 
 	local paper = ply:HasItem("paper")
 	if ply:HasItem("paper") and CAKE.GetUData(paper, "uses") > 0 then
-		print( paper )
 		local uses = CAKE.GetUData(paper, "uses") - 1
 		if uses < 1 then
 			ply:TakeItemID(paper)
 		else 
 			CAKE.SetUData(paper, "uses", uses)
-			CAKE.SetUData(paper, "name", "Paper " ..uses)
+			CAKE.SetUData(paper, "name", "Paper (" .. uses .. " uses left)")
 			ply:RefreshInventory()
 		end
 		local note = CAKE.CreateItem("note", ply:CalcDrop(), Angle(0, 0, 0))

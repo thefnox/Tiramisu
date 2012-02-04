@@ -1,5 +1,25 @@
 CAKE.Business = {}
 
+local function Admin_AddBusinessLevels( ply, cmd, args )
+	local target = CAKE.FindPlayer(args[1])
+	if target then
+		table.remove( args, 1 )
+		local buygroups = {}
+		for _, v in pairs( args ) do
+			table.insert( buygroups, tonumber( v ))
+		end
+		CAKE.SetCharField( target, "business", buygroups )
+		if #buygroups < 1 then
+			buygroups[1] = "none"
+		end
+		CAKE.SendConsole( ply, target:Nick() .. " buy groups set to: " .. table.concat( buygroups, ", ") .. ".")
+		CAKE.SendConsole( target, "You buy groups have been set to to: " .. table.concat( buygroups, ", ") .. ".")
+	else
+		CAKE.SendConsole( ply, "Target not found!")
+	end
+
+end
+
 --Copies all buyable items on the CAKE.Business table.
 function CAKE.BuildItemGroups()
 	local tbl = {}
@@ -20,17 +40,15 @@ end
 --Buys an item.
 function CAKE.BuyItem( ply, class )
 
-	local group = CAKE.GetCharField(ply, "group")
-	local rank = CAKE.GetCharField(ply, "grouprank")
+	local buygroups = CAKE.GetCharField(ply, "business")
 	
 	if !CAKE.ItemData[class] or !CAKE.ItemData[class].Purchaseable then return "Item not purchaseable!" end
-	if !table.HasValue(CAKE.GetRankField(group, rank, "buygroups"), CAKE.ItemData[class].ItemGroup) then
-		return "You're not allowed to buy that!" 
-	end
+	if !table.HasValue(buygroups, CAKE.ItemData[class].ItemGroup) then return "You're not allowed to buy that!" end
 	if !(CAKE.GetCharField(ply, "money") > CAKE.ItemData[class].Price) then return "Not enough money!" end
+
 	CAKE.ChangeMoney( ply, - CAKE.ItemData[class].Price)
 	ply:GiveItem(class)
-	ply:RefreshInventory()
+
 	return true
 end
 
@@ -51,11 +69,11 @@ local meta = FindMetaTable( "Player" )
 --Sends a player's business data through Datastream.
 function meta:RefreshBusiness()
 
-	local group = CAKE.GetCharField(self, "group")
-	local rank = CAKE.GetCharField(self, "grouprank")
-	if type( CAKE.GetRankField(group, rank, "buygroups") ) == "table" and #CAKE.GetRankField(group, rank, "buygroups") > 0 then
+	local buygroups = CAKE.GetCharField(self, "business") or {}
+
+	if table.Count(buygroups) > 0 then
 		local tbl = {}
-		for k,v in pairs(CAKE.GetRankField(group, rank, "buygroups") or {}) do
+		for k,v in pairs(buygroups) do
 			if CAKE.Business[v] then
 				tbl[v] = CAKE.Business[v]
 			end
@@ -67,14 +85,15 @@ function meta:RefreshBusiness()
 
 end
 
-hook.Add( "PlayerSpawn", "TiramisuRefreshBusiness", function( ply )
-	timer.Simple( 2, function()
-		if ply:IsCharLoaded() then
-			ply:RefreshBusiness( )
-		end
-	end)
-end)
-
 hook.Add( "InitPostEntity", "TiramisuBuildItemGroups", function() 
 	CAKE.BuildItemGroups()
 end)
+
+concommand.Add( "rp_openbusinessmenu", function(ply, cmd, args)
+	ply:RefreshBusiness()
+end)
+
+function PLUGIN.Init()
+	CAKE.AddDataField( 2, "business", {} ) 
+	CAKE.AdminCommand( "addbusiness", Admin_AddBusinessLevels, "Give someone access to a certain buygroup", true, true, 2 )
+end

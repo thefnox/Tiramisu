@@ -52,8 +52,9 @@ CAKE.ConVars[ "ReturnToSpawnOnDeath" ] = true --Set this to true if you want peo
 CAKE.ConVars[ "FadeToBlackOnDeath" ] = true --Set this to false if you want to disable the fade to black that occurs 5 seconds before death.
 CAKE.ConVars[ "Respawn_Timer" ] = 10 --Time in seconds that it takes for people to be allowed to respawn.
 CAKE.ConVars[ "Instant_Respawn" ] = false --Respawn instantly or allow people to lay dead for a while.
-CAKE.ConVars[ "DeathRagdoll_Linger" ] = 0 --Time in seconds that it takes for ragdolls to dissapear, set to 0 if you want corpses to stay forever
+CAKE.ConVars[ "DeathRagdoll_Linger" ] = 30 --Time in seconds that it takes for ragdolls to dissapear, set to 0 if you want corpses to stay forever
 
+--Tooltrust
 CAKE.ConVars[ "Default_Physgun" ] = 0 -- Are players banned from the physics gun when they first start.
 CAKE.ConVars[ "Default_Gravgun" ] = 0 -- Are players banned from the gravity gun when they first start.
 CAKE.ConVars[ "Default_PropTrust" ] = 0 --Are players allowed to spawn props when they first start.
