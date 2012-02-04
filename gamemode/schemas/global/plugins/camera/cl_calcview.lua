@@ -76,7 +76,7 @@ hook.Add( "PlayerBindPress", "TiramisuPlayerBindPressCamera", function( ply, bin
 	end
 
 	if string.find(bind, "invprev") or string.find(bind, "invnext") then
-		if CAKE.ThirdpersonDistance:GetInt() == 0 then
+		if CAKE.ThirdpersonDistance:GetInt() <= 5 then
 			RunConsoleCommand("rp_thirdperson","0")
 		else
 			RunConsoleCommand("rp_thirdperson","1")
