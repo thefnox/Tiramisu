@@ -515,7 +515,7 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 			end
 		end
 		--print("HEAD YAW:", ply:GetPoseParameter("head_yaw"))
-	elseif (SERVER or ply != LocalPlayer()) then
+	elseif (SERVER or ply != LocalPlayer()) and !ply:GetNWBool( "specialmodel", false ) then
 		--This set of boneparameters are all set to 0 to avoid having the engine setting them to something else, thus resulting in  awkwardly twisted models
 		ply.CurrentLookAt = Angle( 0, 0, 0 )
 		--ply:SetPoseParameter("aim_yaw", 0 )
@@ -791,7 +791,11 @@ function GM:CalcMainActivity( ply, velocity )
 			end
 		else
 			if len2d > 320 then
-				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sprint" ] )
+				if !ply:GetNWBool( "specialmodel" ) then
+					ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sprint" ] )
+				else
+					ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
+				end
 			elseif len2d > 135 and len2d <= 320 then
 				ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
 			elseif len2d > 0.1 and len2d <= 135 then

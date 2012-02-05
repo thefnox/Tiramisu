@@ -26,13 +26,7 @@ function CAKE.BuildItemGroups()
 	for k,v in pairs(CAKE.ItemData) do
 		if !CAKE.Business[v.ItemGroup] then CAKE.Business[v.ItemGroup] = {} end
 		if v.Purchaseable then
-			tbl = {}
-			tbl.Class = v.Class
-			tbl.Model = v.Model
-			tbl.Name = v.Name
-			tbl.Description = v.Description .. "\nPrice: " .. v.Price
-			tbl.Price = v.Price
-			table.insert(CAKE.Business[v.ItemGroup], tbl)
+			table.insert(CAKE.Business[v.ItemGroup], v.Class)
 		end
 	end
 end

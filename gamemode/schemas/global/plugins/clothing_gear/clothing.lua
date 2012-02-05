@@ -324,15 +324,7 @@ function CAKE.RestoreClothing( ply )
 				helmet = "none"
 			end
 		end
-		local special = CAKE.GetCharField( ply, "specialmodel" )
-		if special == "none" or special == "" then
-			ply:SetNWBool( "specialmodel", false )
-			CAKE.SetClothing( ply, clothes, helmet, clothingid, helmetid )
-		else
-			ply:SetNWBool( "specialmodel", true )
-			ply:SetNWString( "model", tostring( special ) )
-			ply:SetModel( tostring( special ) )
-		end
+		CAKE.SetClothing( ply, clothes, helmet, clothingid, helmetid )
 	end
 end
 

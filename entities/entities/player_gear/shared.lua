@@ -18,4 +18,5 @@ function ENT:SetupDataTables()
 	self:DTVar("Vector", 2, "scale")
 	self:DTVar("Bool", 1, "visible")
 	self:DTVar("Bool", 2, "bonemerge")
+	self:DTVar("Bool", 3, "attachedtohead")
 end

@@ -148,13 +148,18 @@ end
 
 
 function GM:PlayerSetModel(ply)
-	if ply:IsCharLoaded() then
+	if ply:IsCharLoaded() and !(CAKE.GetCharField( "specialmodel") == "none" or CAKE.GetCharField( "specialmodel") == "") then
 		local m = CAKE.GetCharField( ply, "gender" )
+		ply:SetNWBool( "specialmodel", false )
 		ply:SetModel( Anims[m][ "models" ][1] )
 		ply:SetNWString( "gender", m )
 		ply:SetMaterial("models/null")
 		ply:AddEffects( EF_NOSHADOW )
 		ply:SetPersonality( CAKE.GetCharField( ply, "personality" ))
+	elseif ply:IsCharLoaded() and (CAKE.GetCharField( "specialmodel") == "none" or CAKE.GetCharField( "specialmodel") == "") then
+		ply:SetNWBool( "specialmodel", true )
+		ply:SetModel( CAKE.GetCharField( "specialmodel") )
+		ply:SetNWString( "gender", "Male" )
 	else
 		ply:SetNWBool( "specialmodel", true ) 
 		ply:SetModel("models/kleiner.mdl")

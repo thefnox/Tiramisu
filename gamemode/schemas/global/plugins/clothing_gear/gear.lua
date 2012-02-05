@@ -60,6 +60,7 @@ function CAKE.HandleGear( ply, item, bone, itemid, offset, angle, scale, skin )
 		local scale = scale or CAKE.GetUData(itemid, "scale") or CAKE.ItemData[ item ].Scale or Vector( 1, 1, 1 )
 		local skin = skin or CAKE.GetUData(itemid, "skin") or CAKE.ItemData[ item ].Skin or 0
 		local bonemerge = true
+		local attachedtohead = bone == "head"
 
 		if itemid then
 			CAKE.SetUData( itemid, "bone", bone )
@@ -89,6 +90,7 @@ function CAKE.HandleGear( ply, item, bone, itemid, offset, angle, scale, skin )
 		ply.Gear[ id ]:SetDTVector( 2, scale )
 		ply.Gear[ id ]:SetDTBool( 1, true )
 		ply.Gear[ id ]:SetDTBool( 2, true )
+		ply.Gear[ id ]:SetDTBool( 3, attachedtohead )
 		if ValidEntity( ply.Gear[ id ]:GetPhysicsObject( ) ) then
 			ply.Gear[ id ]:GetPhysicsObject( ):EnableCollisions( false )
 		end

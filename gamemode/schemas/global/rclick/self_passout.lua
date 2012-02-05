@@ -1,4 +1,4 @@
-RCLICK.Name = "Pass out"
+RCLICK.Name = "Pass Out"
 
 function RCLICK.Condition(target)
 
