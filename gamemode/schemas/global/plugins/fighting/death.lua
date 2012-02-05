@@ -115,55 +115,7 @@ function CAKE.DeathMode( ply )
 	
 	CAKE.DayLog( "script.txt", "Starting death mode for " .. ply:SteamID( ) )
 	
-	local rag = ents.Create( "prop_ragdoll" )
-	rag:SetModel( ply:GetModel( ) )
-	rag:SetMaterial( "models/null" )
-	rag:SetPos( ply:GetPos( ) )
-	rag:SetAngles( ply:GetAngles( ) )
-	rag.isdeathdoll = true
-	rag.ply = ply
-	rag:Spawn( )
-
-	local ragphys = rag:GetPhysicsObject()
-	if ragphys:IsValid() then
-		ragphys:AddVelocity( speed*ragphys:GetMass() )
-	end
-
-	
-	if( ply.Clothing ) then
-		for k, v in pairs( ply.Clothing ) do
-			if( ValidEntity( v ) ) then
-				v:SetParent( rag )
-				v:Initialize()
-			end
-		end
-	end
-	
-	rag.BonemergeGearEntity = ents.Create( "player_gearhandler" )
-	rag.BonemergeGearEntity:SetPos( rag:GetPos() + Vector( 0, 0, 80 ) )
-	rag.BonemergeGearEntity:SetAngles( rag:GetAngles() )
-	rag.BonemergeGearEntity:SetModel("models/gibs/agibs.mdl")
-	rag.BonemergeGearEntity:SetMaterial("models/null")
-	rag.BonemergeGearEntity:SetParent( rag )
-	rag.BonemergeGearEntity:SetNoDraw( true )
-	rag.BonemergeGearEntity:SetSolid( SOLID_NONE )
-	rag.BonemergeGearEntity:Spawn()
-			
-	if( ply.Gear ) then
-		for k, v in pairs( ply.Gear ) do
-			if( ValidEntity( v ) ) then
-				v:SetParent( rag.BonemergeGearEntity )
-				v:SetDTEntity( 1, rag )
-				v:Initialize()
-			end
-		end
-	end
-	
-	rag.clothing = ply.Clothing
-	ply.Clothing = nil
-	ply.Gear = nil
-	
-	--ply:SetViewEntity( rag )
+	local rag = CAKE.CreatePlayerRagdoll( ply )
 
 	ply.deathrag = rag
 	

@@ -267,18 +267,6 @@ function Admin_Tooltrust(ply, cmd, args)
 		CAKE.SendChat( target, "You have been granted tooltrust by " .. ply:Name() )
 		CAKE.SendChat( ply, target:Name() .. " [" .. target:SteamID() .. "] | " .. target:Nick() .. " has been granted tooltrust" )
 
-		target:StripWeapon("gmod_tool")
-		if !util.tobool(CAKE.ConVars[ "Default_Physgun" ]) then
-			target:StripWeapon("weapon_physgun")
-		end
-		if !util.tobool(CAKE.ConVars[ "Default_Gravgun" ]) then
-			target:StripWeapon("weapon_physgun")
-		end
-	else
-		CAKE.SetPlayerField(target, "tooltrust", 0)
-		CAKE.SendChat( target, "Your tooltrust has been removed by " .. ply:Name() )
-		CAKE.SendChat( ply, target:Name() .. " [" .. target:SteamID() .. "] | " .. target:Nick() .. " has been removed from tooltrust" )
-
 		if !util.tobool(CAKE.ConVars[ "Default_Physgun" ]) then
 			target:Give("weapon_physgun")
 		end
@@ -286,6 +274,18 @@ function Admin_Tooltrust(ply, cmd, args)
 			target:Give("weapon_physgun")
 		end
 		target:Give("gmod_tool")
+	else
+		CAKE.SetPlayerField(target, "tooltrust", 0)
+		CAKE.SendChat( target, "Your tooltrust has been removed by " .. ply:Name() )
+		CAKE.SendChat( ply, target:Name() .. " [" .. target:SteamID() .. "] | " .. target:Nick() .. " has been removed from tooltrust" )
+		
+		target:StripWeapon("gmod_tool")
+		if !util.tobool(CAKE.ConVars[ "Default_Physgun" ]) then
+			target:StripWeapon("weapon_physgun")
+		end
+		if !util.tobool(CAKE.ConVars[ "Default_Gravgun" ]) then
+			target:StripWeapon("weapon_physgun")
+		end
 	end
 
 end

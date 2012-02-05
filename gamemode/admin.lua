@@ -39,6 +39,12 @@ function CAKE.AdminCommand( ccName, func, description, CanRunFromConsole, CanRun
 	
 end
 
+function CAKE.RemoveAdminCommand( ccName )
+	if CAKE.AdminCommands[ ccName ] then
+		CAKE.AdminCommands[ ccName ] = nil
+	end
+end
+
 --Fetches a player's rank. Automatically compensates for administrators set outside of Tiramisu.
 function CAKE.PlayerRank(ply)
 
@@ -48,10 +54,10 @@ function CAKE.PlayerRank(ply)
 		return 4
 	end
 		
-	if CAKE.GetPlayerField( ply, "adrank" ) == "Player" then
-		return 0
-	else
+	if CAKE.AdminRanks[CAKE.GetPlayerField( ply, "adrank" )] then
 		return CAKE.AdminRanks[CAKE.GetPlayerField( ply, "adrank" )].rank
+	else
+		return 0
 	end
 end
 

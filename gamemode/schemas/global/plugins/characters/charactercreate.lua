@@ -153,8 +153,6 @@ local function ccFinishCreate( ply, cmd, args )
 			umsg.Start( "ReceiveChar", ply )
 				umsg.Long( tonumber(k) )
 				umsg.String( v[ "name" ] )
-				umsg.String( v[ "model" ] )
-				umsg.String( v[ "title" ] )
 			umsg.End( )
 			
 		end

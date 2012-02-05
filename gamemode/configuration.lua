@@ -88,6 +88,7 @@ CAKE.ConVars[ "EmoteFont" ] = "Sansation Italic" -- Change this to use a differe
 CAKE.ConVars[ "OOCFont" ] = CAKE.ConVars[ "ChatFont" ] --Change this to change the OOC font.
 CAKE.ConVars[ "WhisperFont" ] = CAKE.ConVars[ "ChatFont" ] --Font used in whispering.
 CAKE.ConVars[ "YellFont" ] = CAKE.ConVars[ "ChatFont" ] --Font used when yelling.
+CAKE.ConVars[ "NoteFont" ] = CAKE.ConVars[ "ChatFont" ]
 CAKE.BaseColor = Color( 50, 50, 50, 150 ) --The schema's default color. Can be set in game
 
 --Intro

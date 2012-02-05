@@ -54,6 +54,7 @@ surface.CreateFont(CAKE.ConVars[ "YellFont" ], 24, 700, true, false, "TiramisuYe
 surface.CreateFont(CAKE.ConVars[ "ChatFont" ], 16, 500, true, false, "TiramisuChatFont")
 surface.CreateFont(CAKE.ConVars[ "EmoteFont" ], 16,500, true, false, "TiramisuEmoteFont")
 surface.CreateFont(CAKE.ConVars[ "OOCFont" ], 16, 500, true, false, "TiramisuOOCFont")
+surface.CreateFont(CAKE.ConVars[ "NoteFont" ], 18, 500, true, false, "TiramisuNoteFont" )
 
 -- Client Includes
 include( "sh_animations.lua" )

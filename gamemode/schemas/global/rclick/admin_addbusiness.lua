@@ -1,4 +1,4 @@
-RCLICK.Name = "Add Business Levels"
+RCLICK.Name = "Set Business"
 RCLICK.SubMenu = "Admin"
 
 function RCLICK.Condition(target)

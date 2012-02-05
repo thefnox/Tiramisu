@@ -292,45 +292,47 @@ function CAKE.RestoreClothing( ply )
 
 	CAKE.RemoveClothing( ply )
 
-	local clothes = CAKE.GetCharField( ply, "clothing" )
-	local clothingid = CAKE.GetCharField(ply,"clothingid")
-	if clothingid then
-		if !ply:HasItemID( clothingid ) then
-			CAKE.SetCharField( ply, "clothing", "none" )
-			CAKE.SetCharField( ply, "clothingid", "none" )
-			clothes = "none"
+	if !ply:GetNWBool( "specialmodel" ) then
+		local clothes = CAKE.GetCharField( ply, "clothing" )
+		local clothingid = CAKE.GetCharField(ply,"clothingid")
+		if clothingid then
+			if !ply:HasItemID( clothingid ) then
+				CAKE.SetCharField( ply, "clothing", "none" )
+				CAKE.SetCharField( ply, "clothingid", "none" )
+				clothes = "none"
+			end
+		else
+			if !ply.HasItem("clothing") then
+				CAKE.SetCharField( ply, "clothing", "none" )
+				CAKE.SetCharField( ply, "clothingid", "none" )
+				clothes = "none"
+			end
 		end
-	else
-		if !ply.HasItem("clothing") then
-			CAKE.SetCharField( ply, "clothing", "none" )
-			CAKE.SetCharField( ply, "clothingid", "none" )
-			clothes = "none"
-		end
-	end
 
-	local helmet = CAKE.GetCharField( ply, "helmet" )
-	local helmetid = CAKE.GetCharField(ply,"helmetid")
-	if helmetid then 
-		if !ply:HasItemID( helmetid ) then
-			CAKE.SetCharField( ply, "helmet", "none" )
-			CAKE.SetCharField( ply, "helmetid", "none" )
-			helmet = "none"
+		local helmet = CAKE.GetCharField( ply, "helmet" )
+		local helmetid = CAKE.GetCharField(ply,"helmetid")
+		if helmetid then 
+			if !ply:HasItemID( helmetid ) then
+				CAKE.SetCharField( ply, "helmet", "none" )
+				CAKE.SetCharField( ply, "helmetid", "none" )
+				helmet = "none"
+			end
+		else
+			if !ply:HasItem( helmet ) then
+				CAKE.SetCharField( ply, "helmet", "none" )
+				CAKE.SetCharField( ply, "helmetid", "none" )
+				helmet = "none"
+			end
 		end
-	else
-		if !ply:HasItem( helmet ) then
-			CAKE.SetCharField( ply, "helmet", "none" )
-			CAKE.SetCharField( ply, "helmetid", "none" )
-			helmet = "none"
+		local special = CAKE.GetCharField( ply, "specialmodel" )
+		if special == "none" or special == "" then
+			ply:SetNWBool( "specialmodel", false )
+			CAKE.SetClothing( ply, clothes, helmet, clothingid, helmetid )
+		else
+			ply:SetNWBool( "specialmodel", true )
+			ply:SetNWString( "model", tostring( special ) )
+			ply:SetModel( tostring( special ) )
 		end
-	end
-	local special = CAKE.GetCharField( ply, "specialmodel" )
-	if special == "none" or special == "" then
-		ply:SetNWBool( "specialmodel", false )
-		CAKE.SetClothing( ply, clothes, helmet, clothingid, helmetid )
-	else
-		ply:SetNWBool( "specialmodel", true )
-		ply:SetNWString( "model", tostring( special ) )
-		ply:SetModel( tostring( special ) )
 	end
 end
 

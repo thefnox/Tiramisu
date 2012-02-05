@@ -1,60 +1,84 @@
-CLPLUGIN.Name = "Scoreboard Menu"
-CLPLUGIN.Author = "F-Nox/Big Bang"
-
-
 local function OpenScoreboard()
 
 	PlayerMenu = vgui.Create( "DFrame" )
-	PlayerMenu:SetSize( 640, 480 )
+	PlayerMenu:SetSize( 540, 400 )
 	PlayerMenu:SetTitle( "Scoreboard" )
 	PlayerMenu:SetVisible( true )
 	PlayerMenu:SetDraggable( true )
 	PlayerMenu:ShowCloseButton( true )
 	PlayerMenu:SetDeleteOnClose( true )
 	PlayerMenu:Center()
+
+	local title = Label( GetHostName(), PlayerMenu)
+	title:SetFont( "Tiramisu48Font")
+	title:SetPos( 10, 23 )
+	title:SizeToContents()
+
+	local subtitle = Label( "Your ping: " .. LocalPlayer():Ping(), PlayerMenu)
+	subtitle:SetPos( 10, 66 )
+	subtitle:SetFont( "Tiramisu24Font")
+	subtitle:SizeToContents()
+	subtitle.PaintOver = function()
+		subtitle:SetText("Your ping: " .. LocalPlayer():Ping())
+	end
 	
 	Scoreboard = vgui.Create( "DPanelList", PlayerMenu )
-	Scoreboard:SetSize( 630, 448 )
-	Scoreboard:SetPos( 5, 28 )
-	Scoreboard:SetPadding(0)
-	Scoreboard:SetSpacing(0)
-
+	Scoreboard:Dock(FILL)
+	Scoreboard:DockMargin( 0, 70, 0, 0 )
+	Scoreboard:SetPadding(5)
+	Scoreboard:SetSpacing(2)
+	Scoreboard:EnableVerticalScrollbar( true )
 	-- Let's draw the SCOREBOARD.
 	
-	for k, v in pairs(player.GetAll()) do
-		local DataList = vgui.Create("DPanelList")
-		DataList:SetAutoSize( true )
-		
-		local CollapsableCategory = vgui.Create("DCollapsibleCategory")
-		CollapsableCategory:SetExpanded( 0 )
-		CollapsableCategory:SetLabel( v:Nick() )
-		Scoreboard:AddItem(CollapsableCategory)
-		
-		local spawnicon = vgui.Create( "SpawnIcon")
-		spawnicon:SetModel(v:GetNWString( "model", "models/kleiner.mdl") )
-		spawnicon:SetSize( 64, 64 )
-		DataList:AddItem(spawnicon)
-		
-		local DataList2 = vgui.Create( "DPanelList" )
-		DataList2:SetAutoSize( true )
-		
-		local label = vgui.Create("DLabel")
-		label:SetText("OOC Name: " .. v:Name())
-		DataList2:AddItem(label)
+	local players = {}
+	local i = 0 
+	for _, ply in pairs(player.GetAll()) do
+		i = i + 1
+		players[i] = vgui.Create("DPanel")
+		players[i]:SetTall(72)
+		players[i].Paint = function()
+			surface.SetDrawColor(Color( 50, 50, 50, 230 ))
+			surface.DrawRect( 0, 0, players[i]:GetWide(), players[i]:GetTall() )
+			surface.SetDrawColor(Color( 0, 0, 0, 230 ))
+			surface.DrawOutlinedRect( 0, 0, players[i]:GetWide(), players[i]:GetTall() )
+		end
 
-		DataList2:AddItem(MarkupLabel( "Title:" .. v:GetNWString("title"), 620, DataList2 ))
-		
-		local Divider = vgui.Create("DHorizontalDivider")
-		Divider:SetLeft(spawnicon)
-		Divider:SetRight(DataList2)
-		Divider:SetLeftWidth(64)
-		Divider:SetHeight(64)
-		
-		DataList:AddItem(spawnicon)
-		DataList:AddItem(DataList2)
-		DataList:AddItem(Divider)
-		
-		CollapsableCategory:SetContents(DataList)
+		local avatar = vgui.Create( "AvatarImage" )
+		avatar:SetParent( players[i] )
+		avatar:SetPlayer(ply, 64)
+		avatar:Dock(LEFT)
+		avatar:DockMargin( 2, 2, 2, 2 )
+		avatar:SetTall(64)
+
+		local TitlePanel = vgui.Create("DPanelList", players[i])
+		TitlePanel:Dock( FILL )
+		TitlePanel:DockMargin( 2, 2, 2, 2 )
+		TitlePanel:SetTall(70)
+		TitlePanel.Paint = function() end
+
+		local namelabel = Label(ply:Nick() .. " (" .. ply:Name() .. ")")
+		namelabel:SetFont("Tiramisu18Font")
+		namelabel.PaintOver = function()
+			namelabel:SetText(ply:Nick() .. " (" .. ply:Name() .. ")")
+		end
+		TitlePanel:AddItem(namelabel)
+
+		local titlelabel = Label(ply:GetNWString( "title", "Loading..." ))
+		titlelabel:SetFont("Tiramisu18Font")
+		titlelabel.PaintOver = function()
+			titlelabel:SetText(ply:GetNWString( "title", "Loading..." ))
+		end
+		TitlePanel:AddItem(titlelabel)
+
+		local pinglabel = Label("Ping:" .. ply:Ping())
+		pinglabel:SetFont("Tiramisu18Font")
+		pinglabel.PaintOver = function()
+			pinglabel:SetText("Ping:" .. ply:Ping())
+		end
+		TitlePanel:AddItem(pinglabel)
+
+
+		Scoreboard:AddItem(players[i])
 	end
 	
 
@@ -68,7 +92,8 @@ local function CloseScoreboard()
 end
 CAKE.RegisterMenuTab( "Scoreboard", OpenScoreboard, CloseScoreboard )
 
-
-function CLPLUGIN.Init()
+usermessage.Hook( "showscoreboard", function( um )
 	
-end
+	OpenScoreboard()
+	
+end)

@@ -275,7 +275,7 @@ end
 --Restores all gear on spawn.
 function CAKE.RestoreGear( ply )
 	
-	if ply:IsCharLoaded() then
+	if ply:IsCharLoaded() and !ply:GetNWBool( "specialmodel" ) then
 		local tbl = CAKE.GetCharField( ply, "gear" )
 		CAKE.RemoveAllGear( ply )
 		for k, v in pairs( tbl ) do

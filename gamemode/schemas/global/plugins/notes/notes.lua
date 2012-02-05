@@ -1,7 +1,7 @@
-function write( ply, handler, id, encoded, decoded )
+datastream.Hook( "Tiramisu.WriteNote", function( ply, handler, id, encoded, decoded )
 
 	local paper = ply:HasItem("paper")
-	if ply:HasItem("paper") and CAKE.GetUData(paper, "uses") > 0 then
+	if ply:HasItem("paper") and CAKE.GetUData(paper, "uses") and CAKE.GetUData(paper, "uses") > 0 then
 		local uses = CAKE.GetUData(paper, "uses") - 1
 		if uses < 1 then
 			ply:TakeItemID(paper)
@@ -19,5 +19,4 @@ function write( ply, handler, id, encoded, decoded )
 		CAKE.SendError( ply, "You don't have any paper!" )
 	end
 
-end
-datastream.Hook( "NoteStream", write )
+end )

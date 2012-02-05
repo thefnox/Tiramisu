@@ -1,5 +1,8 @@
-function ccWrite(ply, cmd, args)
-	
+concommand.Add( "rp_write", function(ply, cmd, args)
+	CAKE.WriteNote()
+end )
+
+function CAKE.WriteNote()
 	WriteMenu = vgui.Create( "DFrame" )
 	WriteMenu:SetSize( 640, 480 )
 	WriteMenu:SetTitle( "Write" )
@@ -23,36 +26,39 @@ function ccWrite(ply, cmd, args)
 	WriteButton:SetPos( 270,  445 )
 	WriteButton:SetText( "Write" )
 	WriteButton.DoClick = function( button )
-		datastream.StreamToServer( "NoteStream", { ["title"] = TitleBox:GetValue(), ["text"] = NoteBox:GetValue() }, function() end)
+		datastream.StreamToServer( "Tiramisu.WriteNote", { ["title"] = TitleBox:GetValue(), ["text"] = NoteBox:GetValue() }, function() end)
 		WriteMenu:Close()
 	end
 
 	WriteMenu:MakePopup()
-
 end
-concommand.Add( "rp_write", ccWrite )
 
-function noteRead( handler, id, encoded, decoded )
-
+function CAKE.OpenNote( title, text )
 	ReadMenu = vgui.Create( "DFrame" )
 	ReadMenu:SetSize( 640, 480 )
-	ReadMenu:SetTitle( decoded["title"] )
+	ReadMenu:SetTitle( "Note" )
 	ReadMenu:SetVisible( true )
 	ReadMenu:SetDraggable( true )
 	ReadMenu:ShowCloseButton( true )
 	ReadMenu:SetDeleteOnClose( true )
 	ReadMenu:Center()
 
+	local titlelabel = Label( title , ReadMenu)
+	titlelabel:SetFont( "Tiramisu32Font")
+	titlelabel:Dock(TOP)
+	titlelabel:SizeToContents()
+
 	local LineList = vgui.Create( "DPanelList", ReadMenu )
-	LineList:SetPos( 5, 30 )
-	LineList:SetSize( 630, 445 )
+	LineList:Dock( FILL )
+	LineList:DockMargin(2, 2, 2, 2)
+	LineList.Paint = function() end
 	LineList:SetPadding(20)
 	LineList:SetSpacing(5)
 	LineList:EnableHorizontal(false)
 	LineList:EnableVerticalScrollbar(true)
 	LineList:SetAutoSize(false)
 	
-	local linetable = string.Explode( "\n", decoded["text"] )
+	local linetable = string.Explode( "\n", text )
 	
 	for k,v in pairs(linetable) do
 		local align = TEXT_ALIGN_LEFT
@@ -63,11 +69,13 @@ function noteRead( handler, id, encoded, decoded )
 
 		if align != TEXT_ALIGN_LEFT then v = v:sub(4) end
 
-		NoteLabel = MarkupLabelBook( v, 590, 590 )
+		NoteLabel = MarkupLabelBook( "<font=TiramisuNoteFont>" .. v .. "</font>", 590, 590 )
 		NoteLabel:SetAlign(align)
 		LineList:AddItem(NoteLabel)
 	end
 
 	ReadMenu:MakePopup()
 end
-datastream.Hook( "ReadStream", noteRead )
+datastream.Hook( "Tiramisu.ReadNote", function( handler, id, encoded, decoded )
+	CAKE.OpenNote( decoded.title, decoded.text )
+end )

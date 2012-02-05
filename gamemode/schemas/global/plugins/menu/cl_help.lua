@@ -129,9 +129,3 @@ function CloseHelp()
 	end
 end
 CAKE.RegisterMenuTab( "Help", OpenHelp, CloseHelp )
-
-usermessage.Hook( "showhelpmenu", function( um )
-	
-	OpenHelp()
-	
-end)

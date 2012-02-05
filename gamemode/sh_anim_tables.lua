@@ -4,6 +4,33 @@ Anims.Male[ "models" ] = {
 	"models/player/breen.mdl",
 	"models/Barney.mdl"
 }
+Anims.Male.Emotes = {
+	["wave"] = {
+		["anim"] = "Wave",
+		["name"] = "Wave",
+		["length"] = 4
+	},
+	["bringit"] = {
+		["anim"] = "Wave_close",
+		["name"] = "Bring It",
+		["length"] = 2.4
+	},
+	["disgust"] = {
+		["anim"] = "photo_react_blind",
+		["name"] = "Show Disgust",
+		["length"] = 3.4
+	},
+	["startle"] = {
+		["anim"] = "photo_react_startle",
+		["name"] = "Startle",
+		["length"] = 2
+	},
+	["throw"] = {
+		["anim"] = "throw1",
+		["name"] = "Throw",
+		["length"] = 2
+	},
+}
 Anims.Male[ "default" ] = { 
 	[ "idle" ] = "&sequence:models/breen.mdl;LineIdle03",
 	--[ "walk" ] = "&gesture:models/breen.mdl;ACT_WALK;G_what;1",
@@ -352,6 +379,33 @@ Anims.Male[ "slam" ] = {
 Anims.Female = {}
 Anims.Female[ "models" ] = {
 	"models/alyx.mdl"
+}
+Anims.Female.Emotes = {
+	["wave"] = {
+		["anim"] = "Wave",
+		["name"] = "Wave",
+		["length"] = 4
+	},
+	["bringit"] = {
+		["anim"] = "Wave_close",
+		["name"] = "Bring It",
+		["length"] = 2.4
+	},
+	["disgust"] = {
+		["anim"] = "photo_react_blind",
+		["name"] = "Show Disgust",
+		["length"] = 3.4
+	},
+	["startle"] = {
+		["anim"] = "photo_react_startle",
+		["name"] = "Startle",
+		["length"] = 2
+	},
+	["throw"] = {
+		["anim"] = "throw1",
+		["name"] = "Throw",
+		["length"] = 2
+	},
 }
 Anims.Female[ "default" ] = {
 	[ "idle" ] = "&sequence:models/alyx.mdl;rawposture",

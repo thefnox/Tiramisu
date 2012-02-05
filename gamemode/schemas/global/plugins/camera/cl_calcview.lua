@@ -326,7 +326,7 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 end)
 
 hook.Add( "UpdateAnimation", "TiramisuAnimateRotate", function( ply, velocity, maxseqgroundspeed )
-	if ply == LocalPlayer() and !CAKE.ForceDraw and !ply:GetNWBool("specialmodel") then
+	if ply == LocalPlayer() and !CAKE.ForceDraw then
 		--ply:SetPoseParameter("aim_yaw", 0 )
 		ply:SetPoseParameter("head_yaw", 0 )
 		ply:SetPoseParameter("body_yaw", 0 )

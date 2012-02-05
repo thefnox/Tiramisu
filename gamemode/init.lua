@@ -183,7 +183,7 @@ end
 -- This is the help menu
 function GM:ShowHelp( ply )
 	
-	umsg.Start( "showhelpmenu", ply )
+	umsg.Start( "showscoreboard", ply )
 	umsg.End()
 
 end

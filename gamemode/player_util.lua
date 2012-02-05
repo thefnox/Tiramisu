@@ -46,10 +46,63 @@ function CAKE.SendError( ply, msg )
 	end
 end
 
---Toggles unconcious status.
-function CAKE.UnconciousMode( ply )
+function CAKE.CreatePlayerRagdoll( ply )
 
 	local speed = ply:GetVelocity()
+
+	local rag = ents.Create( "prop_ragdoll" )
+	rag:SetModel( ply:GetModel() )
+	if !ply:GetNWBool("specialmodel") then
+		rag:SetMaterial( "models/null" )
+	end
+	rag:SetPos( ply:GetPos( ) )
+	rag:SetAngles( ply:GetAngles( ) )
+	rag.ply = ply
+	rag:Spawn( )
+
+	local ragphys = rag:GetPhysicsObject()
+	if ragphys:IsValid() then
+		ragphys:AddVelocity( speed*ragphys:GetMass() )
+		--rag:GetPhysicsObject():SetVelocity( ply:GetVelocity() )
+	end
+
+	if ply.Clothing then
+		for k, v in pairs( ply.Clothing ) do
+			if( ValidEntity( v ) ) then
+				v:SetParent( rag )
+				v:Initialize()
+			end
+		end
+	end
+
+	rag.BonemergeGearEntity = ents.Create( "player_gearhandler" )
+	rag.BonemergeGearEntity:SetPos( rag:GetPos() + Vector( 0, 0, 80 ) )
+	rag.BonemergeGearEntity:SetAngles( rag:GetAngles() )
+	rag.BonemergeGearEntity:SetModel("models/gibs/agibs.mdl")
+	rag.BonemergeGearEntity:SetMaterial("models/null")
+	rag.BonemergeGearEntity:SetParent( rag )
+	rag.BonemergeGearEntity:SetNoDraw( true )
+	rag.BonemergeGearEntity:SetSolid( SOLID_NONE )
+	rag.BonemergeGearEntity:Spawn()
+	
+	if ply.Gear then
+		for k, v in pairs( ply.Gear ) do
+			if( ValidEntity( v ) ) then
+				v:SetParent( rag.BonemergeGearEntity )
+				v:SetDTEntity( 1, rag )
+				v:Initialize()
+			end
+		end
+	end
+	
+	ply.Clothing = nil
+	ply.Gear = nil
+
+	return rag
+end
+
+--Toggles unconcious status.
+function CAKE.UnconciousMode( ply )
 
 	if ply:Alive() then
 		if !ply:GetNWBool( "unconciousmode", false ) then
@@ -87,55 +140,9 @@ function CAKE.UnconciousMode( ply )
 			
 			CAKE.DayLog( "script.txt", "Starting unconcious mode for " .. ply:SteamID( ) )
 			
-			local rag = ents.Create( "prop_ragdoll" )
-			rag:SetModel( ply:GetModel( ) )
-			rag:SetMaterial( "models/null" )
-			rag:SetPos( ply:GetPos( ) )
-			rag:SetAngles( ply:GetAngles( ) )
-			rag.ply = ply
-			rag:Spawn( )
-
-			local ragphys = rag:GetPhysicsObject()
-			if ragphys:IsValid() then
-				ragphys:AddVelocity( speed*ragphys:GetMass() )
-				--rag:GetPhysicsObject():SetVelocity( ply:GetVelocity() )
-			end
-
-			if( ply.Clothing ) then
-				for k, v in pairs( ply.Clothing ) do
-					if( ValidEntity( v ) ) then
-						v:SetParent( rag )
-						v:Initialize()
-					end
-				end
-			end
-
-			rag.BonemergeGearEntity = ents.Create( "player_gearhandler" )
-			rag.BonemergeGearEntity:SetPos( rag:GetPos() + Vector( 0, 0, 80 ) )
-			rag.BonemergeGearEntity:SetAngles( rag:GetAngles() )
-			rag.BonemergeGearEntity:SetModel("models/gibs/agibs.mdl")
-			rag.BonemergeGearEntity:SetMaterial("models/null")
-			rag.BonemergeGearEntity:SetParent( rag )
-			rag.BonemergeGearEntity:SetNoDraw( true )
-			rag.BonemergeGearEntity:SetSolid( SOLID_NONE )
-			rag.BonemergeGearEntity:Spawn()
-			
-			if( ply.Gear ) then
-				for k, v in pairs( ply.Gear ) do
-					if( ValidEntity( v ) ) then
-						v:SetParent( rag.BonemergeGearEntity )
-						v:SetDTEntity( 1, rag )
-						v:Initialize()
-					end
-				end
-			end
-			
-
-			rag.clothing = ply.Clothing
-			rag.gear = ply.Gear
-			ply.Clothing = nil
-			ply.Gear = nil
-			
+			local rag = CAKE.CreatePlayerRagdoll( ply )
+			ply.unconciousrag = rag
+			ply.unconcioustime = 0
 
 			ply:SetNWBool( "unconciousmode", true ) 
 			
@@ -148,8 +155,6 @@ function CAKE.UnconciousMode( ply )
 				umsg.End()
 			end)
 			
-			ply.unconciousrag = rag
-			ply.unconcioustime = 0
 			timer.Simple( CAKE.ConVars[ "UnconciousTimer" ], function()
 				ply.CanWakeUp = true
 				umsg.Start( "Tiramisu.DisplayWakeUpButton", ply )
@@ -216,6 +221,7 @@ function CAKE.UnconciousMode( ply )
 			timer.Destroy( ply:SteamID() .. "unconcioustimer"  )
 		end
 		ply.CanWakeUp = false
+		ply:SetVelocity( Vector(0,0,0))
 	end
 end
 

@@ -1,6 +1,3 @@
-CLPLUGIN.Name = "Options Menu"
-CLPLUGIN.Author = "F-Nox/Big Bang"
-
 hook.Add( "InitPostEntity", "TiramisuLoadSchemeColor", function()
 	if file.Exists( CAKE.Name .. "/personaldata/schemecolor.txt" ) then
 		local tbl = glon.decode( file.Read( CAKE.Name .. "/personaldata/schemecolor.txt" ))
@@ -12,18 +9,27 @@ end)
 local function OpenOptions()
 
 	PlayerMenu = vgui.Create( "DFrame" )
-	PlayerMenu:SetSize( 640, 480 )
+	PlayerMenu:SetSize( 650, 540 )
 	PlayerMenu:SetTitle( "Options" )
 	PlayerMenu:SetVisible( true )
 	PlayerMenu:SetDraggable( true )
 	PlayerMenu:ShowCloseButton( true )
 	PlayerMenu:SetDeleteOnClose( true )
 	PlayerMenu:Center()
+
+	local title = Label( "Options", PlayerMenu)
+	title:SetFont( "Tiramisu48Font")
+	title:SetPos( 10, 23 )
+	title:SizeToContents()
+	local subtitle = Label( "Configuration and settings", PlayerMenu)
+	subtitle:SetPos( 10, 66 )
+	subtitle:SetFont( "Tiramisu24Font")
+	subtitle:SizeToContents()
 	
 	local Options = vgui.Create( "DPanelList", PlayerMenu )
 	Options:Dock( LEFT )
 	Options:SetWidth( 310 )
-	Options:DockMargin( 0, 0, 5, 0 )
+	Options:DockMargin( 0, 70, 5, 0 )
 	Options:SetPadding(20)
 	Options:SetSpacing(5)
 	Options:EnableHorizontal(false)
@@ -86,6 +92,7 @@ local function OpenOptions()
 	
 	local Custom = vgui.Create( "DPanelList", PlayerMenu )
 	Custom:Dock( FILL )
+	Custom:DockMargin( 0, 70, 0, 0 )
 	Custom:SetPadding(20)
 	Custom:SetSpacing(5)
 	Custom:EnableHorizontal(false)
@@ -94,7 +101,7 @@ local function OpenOptions()
 
 	local schemecolormixer = vgui.Create( "DColorMixer")
 	schemecolormixer:SetColor( CAKE.BaseColor )
-	schemecolormixer:SetSize( 200, 150 )
+	schemecolormixer:SetSize( 200, 140 )
 	
 	local SchemeColor = vgui.Create( "DLabel" )
 	SchemeColor:SetText( "Scheme Color" )
@@ -117,7 +124,7 @@ local function OpenOptions()
 
 	local colormixer = vgui.Create( "DColorMixer")
 	colormixer:SetColor( Color( 0, 0, 255, 255 ) )
-	colormixer:SetSize( 200, 150 )
+	colormixer:SetSize( 200, 140 )
 	
 	local OOCColor = vgui.Create( "DLabel" )
 	OOCColor:SetText( "OOC Color" )
@@ -145,7 +152,3 @@ local function CloseOptions()
 	end
 end
 CAKE.RegisterMenuTab( "Options", OpenOptions, CloseOptions )
-
-function CLPLUGIN.Init()
-	
-end

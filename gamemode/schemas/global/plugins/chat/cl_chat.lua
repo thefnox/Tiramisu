@@ -231,7 +231,8 @@ function PANEL:AddLine( text, channel, handler )
 	if channel then
 		self:AddChannel( channel, channel, handler )
 		label = MarkupLabelOutline( text, self.Width - 30, 1, Color( 0,0,0, 100) )
-		label.numberid = number 
+		label.numberid = number
+		label.Paint = function() end
 		self.Channels[ channel ]:AddItem( label )
 
 		tbl = self.Channels[ channel ]:GetItems()

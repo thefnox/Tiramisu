@@ -18,7 +18,7 @@ function CAKE.EndIntro()
 	derma.SkinHook( "Destroy", "Intro" )
 	CAKE.OnIntro = false
 	CAKE.IntroSkippable = false
-	OpenCharacterMenu( !CAKE.IntroReplay )
+	derma.SkinHook( "Layout", "CharacterSelection", !CAKE.IntroReplay )
 	CAKE.IntroReplay = false
 end
 

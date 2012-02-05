@@ -135,6 +135,21 @@ if SERVER then
 			"hands"
 	}
 
+	function meta:PlayEmote( emote )
+		if Anims[ self:GetGender() ].Emotes and Anims[ self:GetGender() ].Emotes[emote] then
+			if self:GetModel() != Anims[ self:GetGender() ]["models"][1] then
+				self:SetModel( Anims[ self:GetGender() ]["models"][1] )
+			end
+			local id, duration = self:LookupSequence( Anims[ self:GetGender() ].Emotes[emote].anim )
+			self:Lock()
+			self:SetNWInt("emote", id)
+			timer.Simple(duration, function()
+				self:SetNWInt("emote", 0)
+				self:UnLock()
+			end)
+		end
+	end
+
 	function meta:SetSpecialModel( model )
 		self:SetNWBool( "specialmodel", true )
    		self:SetModel( model )
@@ -206,6 +221,10 @@ if SERVER then
 
 	concommand.Add( "t_setpersonality", function( ply, cmd, args )
 		ply:SetPersonality( args[1] )
+	end)
+
+	concommand.Add( "rp_emote", function( ply, cmd, args )
+		ply:PlayEmote( args[1] )
 	end)
 
 else
@@ -420,6 +439,10 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 	if ( (!ply:IsOnGround() and len >= 1000) or ply:WaterLevel() >= 2 ) then 
 		rate = 0.1
 	end
+
+	if ply:GetNWInt( "emote", 0) != 0 then
+		rate = 1
+	end
 	
 	ply:SetPlaybackRate( rate )
 
@@ -451,7 +474,7 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 		ply:SetPoseParameter("move_yaw", 0 )
 	end
 
-	if !ply:GetNWBool("specialmodel") and ply:GetNWAngle( "tiramisulookat", Angle( 0, 0, 0 )) != Angle( 0, 0, 0 ) and ( SERVER or ply != LocalPlayer()) then
+	if ply:GetNWAngle( "tiramisulookat", Angle( 0, 0, 0 )) != Angle( 0, 0, 0 ) and ( SERVER or ply != LocalPlayer()) then
 		if !ply.CurrentLookAt then
 			ply.CurrentLookAt = ply:GetNWAngle( "tiramisulookat")
 		end
@@ -492,7 +515,7 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 			end
 		end
 		--print("HEAD YAW:", ply:GetPoseParameter("head_yaw"))
-	elseif (SERVER or ply != LocalPlayer()) and !ply:GetNWBool("specialmodel") then
+	elseif (SERVER or ply != LocalPlayer()) then
 		--This set of boneparameters are all set to 0 to avoid having the engine setting them to something else, thus resulting in  awkwardly twisted models
 		ply.CurrentLookAt = Angle( 0, 0, 0 )
 		--ply:SetPoseParameter("aim_yaw", 0 )
@@ -654,47 +677,56 @@ function GM:HandleExtraActivities( ply ) --Drop in here everything additional yo
 
 	--Use this hook for all the other sequenced activities you may wanna add, like uh, flying I guess.
 
-		if ply:GetNWBool( "sittingchair", false ) then
-			if !ply.IsSittingDamn then
-				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sitentry" ] )
-				timer.Simple( 1.5, function()
-					ply.IsSittingDamn = true
-				end)
-				return true
-			else
-				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sit" ]  )
-				return true
-			end
-		else
-			if ply.IsSittingDamn then
-				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sitexit" ]  )
-				timer.Simple( 0.8, function()
-					ply.IsSittingDamn = false
-				end)
-				return true
-			end
+	if ply:GetNWInt( "emote", 0) != 0 then
+		if !ply.InEmote then
+			ply:SetCycle(0)
+			ply.InEmote = true
 		end
-		
-		if ply:GetNWBool( "sittingground", false ) then
-			if !ply.IsSittingGround then
-				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sitgroundentry" ]  )
-				timer.Simple( 1.7, function()
-					ply.IsSittingGround = true
-				end)
-				return true
-			else
-				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sitground" ]  )
-				return true
-			end
+		ply.CalcSeqOverride = ply:GetNWInt( "emote", 0)
+		return true
+	end
+
+	if ply:GetNWBool( "sittingchair", false ) then
+		if !ply.IsSittingDamn then
+			ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sitentry" ] )
+			timer.Simple( 1.5, function()
+				ply.IsSittingDamn = true
+			end)
+			return true
 		else
-			if ply.IsSittingGround then
-				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sitgroundexit" ]  )
-				timer.Simple( 1.2, function()
-					ply.IsSittingGround = false
-				end)
-				return true
-			end
+			ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sit" ]  )
+			return true
 		end
+	else
+		if ply.IsSittingDamn then
+			ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sitexit" ]  )
+			timer.Simple( 0.8, function()
+				ply.IsSittingDamn = false
+			end)
+			return true
+		end
+	end
+	
+	if ply:GetNWBool( "sittingground", false ) then
+		if !ply.IsSittingGround then
+			ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sitgroundentry" ]  )
+			timer.Simple( 1.7, function()
+				ply.IsSittingGround = true
+			end)
+			return true
+		else
+			ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sitground" ]  )
+			return true
+		end
+	else
+		if ply.IsSittingGround then
+			ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sitgroundexit" ]  )
+			timer.Simple( 1.2, function()
+				ply.IsSittingGround = false
+			end)
+			return true
+		end
+	end
 	
 	return false
 
@@ -703,6 +735,7 @@ end
 function GM:CalcMainActivity( ply, velocity )
 	--This is the hook used to handle sequences, if you need to add additional activities you should check the hook above.
 	--By a general rule you don't have to touch this hook at all.
+
 	local holdtype = "default"
 	if( ValidEntity(ply:GetActiveWeapon()) ) then
 		holdtype = Anims.DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
@@ -720,6 +753,7 @@ function GM:CalcMainActivity( ply, velocity )
 		self:HandlePlayerDucking( ply, velocity, holdtype ) or
 		self:HandlePlayerSwimming( ply, velocity ) or self:HandlePlayerVaulting( ply, velocity ) then --We do nothing, I guess, lol.
 	else
+		ply.InEmote = false
 		local len2d = velocity:Length2D()
 		if ply:GetNWBool( "aiming", false ) then
 			if len2d > 320 then
