@@ -118,6 +118,8 @@ end
 --Adds a tab to the chatbox. Can be done while the chatbox is open.
 function PANEL:AddChannel( name, description, handler, cantclose )
 
+	local steps
+	local x, y
 	if !self.Channels[ name ] then
 		local panel = vgui.Create( "DPanelList" )
 		panel:EnableVerticalScrollbar(true)
@@ -126,6 +128,26 @@ function PANEL:AddChannel( name, description, handler, cantclose )
 			if panel.VBar and panel.VBar.Enabled then
 				panel.VBar:SetVisible( self.Open )
 			end
+			render.SetScissorRect( 4, 0, 0, panel:GetWide(), panel:GetTall(), true )
+			for _, pnl in pairs( panel:GetItems() ) do
+				x, y = pnl:GetPos()
+				if panel.VBar then
+					y = y - panel.VBar:GetScroll()
+				end
+				if pnl.StrOutline then
+					steps = (pnl.StrOutline.OutlineSize*2) / 3
+					if ( steps < 1 )  then steps = 1 end
+					for _x=-pnl.StrOutline.OutlineSize, pnl.StrOutline.OutlineSize, steps do
+						for _y=-pnl.StrOutline.OutlineSize, pnl.StrOutline.OutlineSize, steps do
+							pnl.StrOutline:Draw(x+(_x)+2, y+(_y), pnl.Align, pnl.VerticalAlign, pnl.Alpha)
+						end
+					end
+				end
+				if pnl.Str then
+					pnl.Str:Draw(x+2, y, pnl.Align, pnl.VerticalAlign, pnl.Alpha )
+				end
+			end
+			render.SetScissorRect( 4, 0, 0, panel:GetWide(), panel:GetTall(), false )
 		end
 		self.Channels[ name ] = panel
 		local tab = self.PropertySheet:AddSheet( name, panel, "", false, false, description or name )
@@ -187,6 +209,7 @@ function PANEL:AddLine( text, channel, handler )
 
 	local label = MarkupLabelOutline( text, self.Width - 30, 1, Color( 0,0,0, 100) )
 	local number = #self.Lines + 1
+	label.Paint = function() end
 	label.numberid = number 
 	self.Lines[ number ] = {}
 	self.Lines[ number ][ "panel" ] = label
