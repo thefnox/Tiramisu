@@ -667,7 +667,7 @@ function SKIN:CharacterCreationStep1()
 		panel:AddItem( titletext )
 
 		local modellist = vgui.Create( "DMultiChoice" )
-		for k, v in pairs( CAKE.ConVars[ "Default_Models" ][ Gender ] ) do
+		for k, v in pairs( CAKE.ConVars[ "DefaultModels" ][ Gender ] ) do
 			modellist:AddChoice( v )
 		end
 		modellist.OnSelect = function( panel,index,value )
@@ -681,13 +681,13 @@ function SKIN:CharacterCreationStep1()
 		genderlist:AddChoice( "Female" )
 		genderlist.OnSelect = function( panel,index,value )
 			Gender = value
-			RunConsoleCommand( "rp_testclothing", value, CAKE.ConVars[ "Default_Models" ][ value ][1] )
+			RunConsoleCommand( "rp_testclothing", value, CAKE.ConVars[ "DefaultModels" ][ value ][1] )
 			modellist:Clear()
-			for k, v in pairs( CAKE.ConVars[ "Default_Models" ][ Gender ] ) do
+			for k, v in pairs( CAKE.ConVars[ "DefaultModels" ][ Gender ] ) do
 				modellist:AddChoice( v )
 			end
 			SelectedClothing = "none"
-			SelectedModel = CAKE.ConVars[ "Default_Models" ][ value ][1]
+			SelectedModel = CAKE.ConVars[ "DefaultModels" ][ value ][1]
 			modellist:ChooseOptionID( 1 )
 		end
 		genderlist:ChooseOptionID( 1 )
@@ -805,67 +805,67 @@ end
 /*---------------------------------------------------------
 	Stamina Bar
 ---------------------------------------------------------*/
-local perc, alpha
-alpha = 230
+local staminaperc, staminaalpha
+staminaalpha = 230
 function SKIN:PaintStaminaBar()
 	if CAKE.MinimalHUD:GetBool() then
-		if LocalPlayer().TiramisuStaminaRegen and alpha != 230 then
-			alpha = Lerp( 10 * RealFrameTime(), alpha, 230 )
+		if LocalPlayer().TiramisuStaminaRegen and staminaalpha != 230 then
+			staminaalpha = Lerp( 10 * RealFrameTime(), staminaalpha, 230 )
 		elseif !LocalPlayer().TiramisuStaminaRegen then
-			alpha = Lerp( 10 * RealFrameTime(), alpha, 0 )
+			staminaalpha = Lerp( 10 * RealFrameTime(), staminaalpha, 0 )
 		end
 	else
-		alpha = 230
+		staminaalpha = 230
 	end
-	perc = LocalPlayer():GetStamina() / 100
-	if alpha != 0 then
-		--perc = math.Clamp( perc - 0.001, 0, 1 )
-		draw.RoundedBoxEx( 4, ScrW()/2 - 150, 0, 300, 31, Color( 50, 50, 50, alpha ), false, false, false, true )
-		surface.SetDrawColor( Color( 10, 10, 10, alpha ) )
+	staminaperc = LocalPlayer():GetStamina() / 100
+	if staminaalpha != 0 then
+		--staminaperc = math.Clamp( staminaperc - 0.001, 0, 1 )
+		draw.RoundedBoxEx( 4, ScrW()/2 - 150, 0, 300, 31, Color( 50, 50, 50, staminaalpha ), false, false, false, true )
+		surface.SetDrawColor( Color( 10, 10, 10, staminaalpha ) )
 		surface.DrawRect( ScrW()/2 - 147, 2, 293, 26 )
-		draw.SimpleText(tostring(math.ceil(perc * 100)) .. "%", "Tiramisu12Font", ScrW()/2 - 144 + 287, 9, Color(255,255,255,alpha), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT)
-		if perc != 0 then
-			draw.RoundedBoxEx( 2, ScrW()/2 - 144, 5, 287 * perc, 20, Color( 200, 200, 50, alpha ), false, false, false, true )
-			draw.RoundedBoxEx( 2, ScrW()/2 - 140, 8, 280 * perc, 4, Color( 255, 255, 255, math.Clamp( alpha - 180, 0, 50) ), false, false, false, true )
+		draw.SimpleText(tostring(math.ceil(staminaperc * 100)) .. "%", "Tiramisu12Font", ScrW()/2 - 144 + 287, 9, Color(255,255,255,staminaalpha), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT)
+		if staminaperc != 0 then
+			draw.RoundedBoxEx( 2, ScrW()/2 - 144, 5, 287 * staminaperc, 20, Color( 200, 200, 50, staminaalpha ), false, false, false, true )
+			draw.RoundedBoxEx( 2, ScrW()/2 - 140, 8, 280 * staminaperc, 4, Color( 255, 255, 255, math.Clamp( staminaalpha - 180, 0, 50) ), false, false, false, true )
 		end
-		draw.SimpleText("STAMINA", "Tiramisu12Font", ScrW()/2 - 144 + math.Clamp( 287 * perc, 41, 287), 9, Color(255,255,255,alpha), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT)
+		draw.SimpleText("STAMINA", "Tiramisu12Font", ScrW()/2 - 144 + math.Clamp( 287 * staminaperc, 41, 287), 9, Color(255,255,255,staminaalpha), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT)
 	end
 end
 
 /*---------------------------------------------------------
 	Health Bar
 ---------------------------------------------------------*/
-local perc, alpha
-alpha = 230
+local healthperc, healthalpha
+healthalpha = 230
 local rot = 0
 function SKIN:PaintHealthBar()
 	if LocalPlayer():Alive() then
 		rot = math.NormalizeAngle( rot + RealFrameTime() )
 		if CAKE.MinimalHUD:GetBool() then
-			if (CAKE.MenuOpen or LocalPlayer().IsDamaged) and alpha != 230 then
-				alpha = Lerp( 10 * RealFrameTime(), alpha, 230 )
+			if (CAKE.MenuOpen or LocalPlayer().IsDamaged) and healthalpha != 230 then
+				healthalpha = Lerp( 10 * RealFrameTime(), healthalpha, 230 )
 			elseif !(CAKE.MenuOpen or LocalPlayer().IsDamaged) then
-				alpha = Lerp( 10 * RealFrameTime(), alpha, 0 )
+				healthalpha = Lerp( 10 * RealFrameTime(), healthalpha, 0 )
 			end
 		else
-			alpha = 230
+			healthalpha = 230
 		end
-		perc = LocalPlayer():Health() / LocalPlayer():GetMaxHealth()
-		if alpha != 0 then
+		healthperc = LocalPlayer():Health() / LocalPlayer():GetMaxHealth()
+		if healthalpha != 0 then
 			if LocalPlayer():Armor() > 0 then
-				surface.SetDrawColor( Color( 50, 50, 50, alpha ) )
+				surface.SetDrawColor( Color( 50, 50, 50, healthalpha ) )
 				surface.DrawNPoly( ScrW()-35, ScrH()/2 + 155, 15, 8, rot )
-				draw.SimpleText(tostring(LocalPlayer():Armor()) .. "%", "Tiramisu12Font", ScrW()-35, ScrH()/2 + 155, Color(200,200,255,alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+				draw.SimpleText(tostring(LocalPlayer():Armor()) .. "%", "Tiramisu12Font", ScrW()-35, ScrH()/2 + 155, Color(200,200,255,healthalpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 			end
-			draw.RoundedBoxEx( 4, ScrW()- 31, ScrH()/2 - 150, 31, 300, Color( 50, 50, 50, alpha ), false, false, false, true )
-			surface.SetDrawColor( Color( 10, 10, 10, alpha ) )
+			draw.RoundedBoxEx( 4, ScrW()- 31, ScrH()/2 - 150, 31, 300, Color( 50, 50, 50, healthalpha ), false, false, false, true )
+			surface.SetDrawColor( Color( 10, 10, 10, healthalpha ) )
 			surface.DrawRect( ScrW() - 28, ScrH()/2 - 147, 26,293 )
-			draw.SimpleText(tostring(math.ceil(perc * 100)) .. "%", "Tiramisu12Font", ScrW() - 17, ScrH()/2 - 144, Color(255,255,255,alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT)
-			if perc != 0 then
-				draw.RoundedBoxEx( 2, ScrW() - 26, ScrH()/2 - 144 + 287 - 287 * perc, 20, 287 * perc, Color( 200, 20, 20, alpha ), false, false, false, true )
-				draw.RoundedBoxEx( 2, ScrW()-22, ScrH()/2 - 140+ 287 - 287 * perc, 4, 280 * perc, Color( 255, 255, 255, math.Clamp( alpha - 180, 0, 50) ), false, false, false, true )
+			draw.SimpleText(tostring(math.ceil(healthperc * 100)) .. "%", "Tiramisu12Font", ScrW() - 17, ScrH()/2 - 144, Color(255,255,255,healthalpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT)
+			if healthperc != 0 then
+				draw.RoundedBoxEx( 2, ScrW() - 26, ScrH()/2 - 144 + 287 - 287 * healthperc, 20, 287 * healthperc, Color( 200, 20, 20, healthalpha ), false, false, false, true )
+				draw.RoundedBoxEx( 2, ScrW()-22, ScrH()/2 - 140+ 287 - 287 * healthperc, 4, 280 * healthperc, Color( 255, 255, 255, math.Clamp( healthalpha - 180, 0, 50) ), false, false, false, true )
 			end
-			draw.DrawText("H\nE\nA\nL\nT\nH", "Tiramisu12Font", ScrW()-18, ScrH()/2 - 144 + math.Clamp( 287 - 287 * perc, 0, 200), Color(255,255,255,alpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT)
+			draw.DrawText("H\nE\nA\nL\nT\nH", "Tiramisu12Font", ScrW()-18, ScrH()/2 - 144 + math.Clamp( 287 - 287 * healthperc, 0, 200), Color(255,255,255,healthalpha), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT)
 		end
 	end
 end
@@ -893,34 +893,137 @@ end
 /*---------------------------------------------------------
 	TiramisuClock, draws current gamemode time and player title.
 ---------------------------------------------------------*/
-local struc = {}
-struc.pos = { ScrW() - 10, 10 } -- Pos x, y
-struc.color = Color(230,230,230,255 ) -- Red
-struc.font = "Tiramisu24Font" -- Font
-struc.xalign = TEXT_ALIGN_RIGHT -- Horizontal Alignment
-struc.yalign = TEXT_ALIGN_RIGHT -- Vertical Alignment
-
 function SKIN:PaintTiramisuClock()
 	if !CAKE.MinimalHUD:GetBool() or CAKE.MenuOpen then 
 		if GetGlobalString( "time" ) != "Loading.." and GetGlobalString( "time" ) != "" then
-			struc.text = CAKE.FindDayName() .. ", " .. GetGlobalString( "time" )
-			struc.pos = { ScrW() - 10, 10 } -- Pos x, y
-			draw.Text( struc )
+			draw.SimpleTextOutlined( CAKE.FindDayName() .. ", " .. GetGlobalString( "time" ), "TiramisuNamesFont", ScrW() - 10, 10, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
 		else
-			struc.text = GetGlobalString( "time" )
-			struc.pos = { ScrW() - 10, 10 } -- Pos x, y
-			draw.Text( struc )
+			draw.SimpleTextOutlined( GetGlobalString( "time" ), "TiramisuNamesFont", ScrW() - 10, 10, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
 		end
 	end
 	if CAKE.MenuOpen then
-		struc.text = LocalPlayer():Nick()
-		struc.pos = { ScrW() - 10, 30 }
-		draw.Text( struc )
-		struc.text = LocalPlayer():GetNWString( "title", "Connecting..." )
-		struc.pos = { ScrW() - 10, 50 }
-		draw.Text( struc )
+		draw.SimpleTextOutlined( LocalPlayer():Nick(), "TiramisuNamesFont", ScrW() - 10, 30, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
+		draw.SimpleTextOutlined( LocalPlayer():GetNWString( "title", "Connecting..." ), "TiramisuNamesFont", ScrW() - 10, 50, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
+		draw.SimpleTextOutlined( LocalPlayer():GetNWInt( "money", 0 ) .. " " .. CAKE.ConVars[ "CurrencySlang" ] .. "s", "TiramisuNamesFont", ScrW() - 10, 70, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
 	end
 end
+
+/*---------------------------------------------------------
+	PlayerTitles, draws current gamemode time and player title.
+---------------------------------------------------------*/
+local foundents, ply, tracehull
+function SKIN:ThinkPlayerTitles()
+	foundents = ents.FindInSphere( LocalPlayer():GetPos(), CAKE.TitleDrawDistance:GetInt() )
+	for _, ply in pairs(CAKE.NearbyPlayers) do
+		if ValidEntity( ply ) and ply:IsPlayer() then
+			if !table.HasValue( foundents, ply ) then
+				ply.FirstSeen = false
+			else
+				if !ply.FirstSeen then
+					ply.FirstSeen = CurTime()
+				end
+			end
+		end
+	end
+	CAKE.NearbyPlayers = foundents
+	if CAKE.Thirdperson:GetBool() and LocalPlayer().CurrentLookAt then
+		tracehull = util.TraceHull({
+			start = LocalPlayer():EyePos(),
+			endpos = LocalPlayer():EyePos() + (LocalPlayer().CurrentLookAt + LocalPlayer():GetAngles()):Forward() * CAKE.TitleDrawDistance:GetInt(),
+			filter = LocalPlayer(),
+			mins = LocalPlayer():OBBMins(),
+			maxs = LocalPlayer():OBBMaxs()
+		})
+		if tracehull.Entity and ValidEntity(tracehull.Entity) and tracehull.Entity:IsPlayer() then
+			tracehull.Entity.Alpha = 255
+			tracehull.Entity.FirstSeen = CurTime()
+		end
+	else
+		ply = LocalPlayer():GetEyeTrace().Entity
+		if ValidEntity(ply) and ply:IsPlayer() then
+			ply.Alpha = 255
+			ply.FirstSeen = CurTime()
+		end
+	end
+end
+
+function SKIN:PaintPlayerTitles()
+	for _, ply in pairs( CAKE.NearbyPlayers ) do
+		if ValidEntity( ply ) and ply:IsPlayer() and ply != LocalPlayer() then
+			local pos = (ply:EyePos() + Vector(0, 0, 10)):ToScreen()
+			if ply.FirstSeen and ply.Alpha and CAKE.TitlesFadeTime:GetInt() > 0 and CurTime() - ply.FirstSeen > CAKE.TitlesFadeTime:GetInt() then
+				ply.Alpha = -Lerp( RealFrameTime()*5, -ply.Alpha, 0 )
+			else
+				ply.Alpha = 255
+			end
+			if pos.visible then
+				if ply:GetNWBool( "chatopen" ) then
+					draw.SimpleTextOutlined( "Typing...", "TiramisuTitlesFont", pos.x, pos.y - 90, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
+				end
+				if CAKE.FadeNames:GetBool() then
+					draw.SimpleTextOutlined( ply:Nick(), "TiramisuNamesFont", pos.x, pos.y - 70, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,math.Clamp(ply.Alpha, 0, 100)))
+				else
+					draw.SimpleTextOutlined( ply:Nick(), "TiramisuNamesFont", pos.x, pos.y - 70, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
+				end
+				if CAKE.FadeTitles:GetBool() then
+					draw.SimpleTextOutlined( ply:GetNWString( "title", "Connecting..." ), "TiramisuTitlesFont", pos.x, pos.y - 45, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,math.Clamp(ply.Alpha, 0, 100)))
+				else
+					draw.SimpleTextOutlined( ply:GetNWString( "title", "Connecting..." ), "TiramisuTitlesFont", pos.x, pos.y - 45, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
+				end
+			end
+		end
+	end
+end
+
+/*---------------------------------------------------------
+	DoorTitles, titles placed over doors.
+---------------------------------------------------------*/
+local door, doordata
+function SKIN:PaintDoorTitles()
+	door = LocalPlayer():GetEyeTrace().Entity
+	if LocalPlayer().CurDoor and LocalPlayer().CurDoor != door then
+		LocalPlayer().PrevDoor = LocalPlayer().CurDoor
+		if ValidEntity( LocalPlayer().PrevDoor ) then
+			LocalPlayer().PrevDoor.DoorAlpha = math.Clamp( LocalPlayer():EyePos():Distance( LocalPlayer().PrevDoor:GetPos() ) * - 1 + 300, 0, 255 )
+		end
+	end
+	LocalPlayer().CurDoor = door
+	if ValidEntity( door ) and CAKE.IsDoor( door ) and CAKE.GetDoorTitle( door ) != "" then
+		doordata = CAKE.CalculateDoorTextPosition( door )
+		if !doordata.HitWorld then
+			viewpos = LocalPlayer():GetShootPos()
+			alpha = math.Clamp( LocalPlayer():EyePos():Distance( door:GetPos() ) * - 1 + 300, 0, 255 )
+			cam.Start3D2D(doordata.position, doordata.angles, 0.12 )
+				draw.SimpleTextOutlined( CAKE.GetDoorTitle( door ), "Tiramisu48Font", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
+			cam.End3D2D()
+							
+			cam.Start3D2D(doordata.positionBack, doordata.anglesBack, 0.12)
+				draw.SimpleTextOutlined( CAKE.GetDoorTitle( door ), "Tiramisu48Font", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
+			cam.End3D2D()
+		end
+	end
+	if ValidEntity( LocalPlayer().PrevDoor ) and CAKE.IsDoor( LocalPlayer().PrevDoor ) and CAKE.GetDoorTitle( LocalPlayer().PrevDoor ) != "" then
+		if LocalPlayer().PrevDoor.DoorAlpha == 0 then
+			LocalPlayer().PrevDoor.DoorAlpha = false
+			LocalPlayer().PrevDoor = false
+		else
+			LocalPlayer().PrevDoor.DoorAlpha = -Lerp( RealFrameTime() * 5, -LocalPlayer().PrevDoor.DoorAlpha, 0 )
+		end
+		doordata = CAKE.CalculateDoorTextPosition( LocalPlayer().PrevDoor )
+		if !doordata.HitWorld then
+			viewpos = LocalPlayer():GetShootPos()
+			alpha = LocalPlayer().PrevDoor.DoorAlpha
+			cam.Start3D2D(doordata.position, doordata.angles, 0.12 )
+				draw.SimpleTextOutlined( CAKE.GetDoorTitle( LocalPlayer().PrevDoor ), "Tiramisu48Font", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
+			cam.End3D2D()
+							
+			cam.Start3D2D(doordata.positionBack, doordata.anglesBack, 0.12)
+				draw.SimpleTextOutlined( CAKE.GetDoorTitle( LocalPlayer().PrevDoor ), "Tiramisu48Font", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
+			cam.End3D2D()
+		end
+	end
+end
+
 
 /*---------------------------------------------------------
 	TargetInfo, messages over items and props
@@ -990,6 +1093,42 @@ function SKIN:PaintBlurScreen()
 		surface.DrawLine( ( i * 5 ),0, 0, ( i * 5 ) )
 	end
 
+end
+
+local textalpha = 200
+local next, prev
+local prevspot, nextspot = 0,0
+local curslot
+/*---------------------------------------------------------
+	TiramisuWeaponSelection, used for selecting weapons
+---------------------------------------------------------*/
+function SKIN:PaintTiramisuWeaponSelection()
+	if CAKE.ActiveSlot != -1 and CAKE.WeaponTable[CAKE.ActiveSlot] then
+		textalpha = 200
+		next = CAKE.ActiveWepPos + 1
+		prev = CAKE.ActiveWepPos - 1
+		if !CAKE.WeaponTable[CAKE.ActiveSlot][next] then
+			next = 1
+		end
+		if !CAKE.WeaponTable[CAKE.ActiveSlot][prev] then
+			prev = #CAKE.WeaponTable[CAKE.ActiveSlot]
+		end
+		prevspot, nextspot = ScrW()/2, ScrW()/2 + 175
+		surface.SetDrawColor( Color( 0,0,0, 200 ) )
+		surface.SetTexture( gradient )
+		surface.DrawTexturedRectRotated(ScrW()/2-100,50,200,25,180)
+		surface.DrawTexturedRectRotated(ScrW()/2+100,50,200,25,0)
+		draw.DrawText( CAKE.WeaponTable[CAKE.ActiveSlot][CAKE.ActiveWepPos][1], "Tiramisu16Font", ScrW()/2, 40, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT )
+		draw.DrawText( CAKE.WeaponTable[CAKE.ActiveSlot][next][1], "Tiramisu16Font", ScrW()/2 + 175, 40, Color( 255, 255, 255, 120 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT )
+		draw.DrawText( CAKE.WeaponTable[CAKE.ActiveSlot][prev][1], "Tiramisu16Font", ScrW()/2 - 175, 40, Color( 255, 255, 255, 120 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT )
+	elseif textalpha != 0 then
+		curslot = false
+		textalpha = Lerp( 10 * RealFrameTime(), textalpha, 0 )
+		surface.SetDrawColor( Color( 0,0,0, textalpha ) )
+		surface.SetTexture( gradientcenter )
+		surface.DrawTexturedRectRotated(ScrW()/2-100,50,200,25,180)
+		surface.DrawTexturedRectRotated(ScrW()/2+100,50,200,25,0)		
+	end
 end
 
 /*---------------------------------------------------------

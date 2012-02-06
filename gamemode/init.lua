@@ -67,20 +67,10 @@ function GM:PlayerInitialSpawn( ply )
 	
 	for k, v in ipairs( CAKE.Schemafile ) do
 		umsg.Start( "Tiramisu.AddSchema", ply )
-			
-			print(v)
 			umsg.String( v )
-			
 		umsg.End( )
 	end
-
-	for k, v in pairs( CAKE.CurrencyData ) do
-		umsg.Start( "Tiramisu.AddCurrency", ply )
-			umsg.String( v.Name )
-			umsg.String( v.Slang )
-			umsg.String( v.Abr )
-		umsg.End()
-	end
+	print( ply:Name(), "has spawned.")
 
 	-- Set some default variables
 	ply.Ready = false

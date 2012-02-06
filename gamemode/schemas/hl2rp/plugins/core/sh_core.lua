@@ -26,15 +26,8 @@ if SERVER then
 	CAKE.AddCType("models/weapons/w_suitcase_passenger.mdl", 5)
 
 	--With this we disable character creation clothing.
-	CAKE.ConVars[ "Default_Clothing" ][ "Male" ] = {}
-	CAKE.ConVars[ "Default_Clothing" ][ "Female" ] = {}
-
-	--Currency data.
-	CURRENCY = {}
-	CURRENCY.Name        = "Credits"
-	CURRENCY.Slang       = "credit"
-	CURRENCY.Abr         = "Credits"
-	CAKE.RegisterCurrency( CURRENCY )
+	CAKE.ConVars[ "DefaultClothing" ][ "Male" ] = {}
+	CAKE.ConVars[ "DefaultClothing" ][ "Female" ] = {}
 
 	CAKE.AddDataField( 2, "cid", "000000" ) 
 

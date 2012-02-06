@@ -42,7 +42,7 @@ function GM:PlayerSpawnProp(ply, mdl)
 	
 	if CAKE.PlayerRank(ply) <= 2 then
 		
-		if !util.tobool( CAKE.GetPlayerField(ply, "tooltrust") ) then -- require tt to spawn stuff.
+		if !util.tobool( CAKE.GetPlayerField(ply, "tooltrust") ) and !CAKE.ConVars[ "DefaultPropTrust" ] then -- require tt to spawn stuff.
 			CAKE.SendChat(ply, "You are not allowed to spawn anything!")
 			return false
 		end
@@ -227,10 +227,10 @@ hook.Add( "PlayerLoadout", "TiramisuTooltrustLoadout", function( ply )
 
 	if(!util.tobool(CAKE.GetPlayerField(ply, "tooltrust"))) then
 
-		if util.tobool(CAKE.ConVars[ "Default_Gravgun" ]) then
+		if CAKE.ConVars[ "DefaultGravgun" ] then
 			ply:Give("weapon_physcannon")
 		end
-		if util.tobool(CAKE.ConVars[ "Default_Physgun" ]) then
+		if CAKE.ConVars[ "DefaultPhysgun" ] then
 			ply:Give("weapon_physgun")
 		end
 
@@ -267,10 +267,10 @@ function Admin_Tooltrust(ply, cmd, args)
 		CAKE.SendChat( target, "You have been granted tooltrust by " .. ply:Name() )
 		CAKE.SendChat( ply, target:Name() .. " [" .. target:SteamID() .. "] | " .. target:Nick() .. " has been granted tooltrust" )
 
-		if !util.tobool(CAKE.ConVars[ "Default_Physgun" ]) then
+		if !CAKE.ConVars[ "DefaultPhysgun" ] then
 			target:Give("weapon_physgun")
 		end
-		if !util.tobool(CAKE.ConVars[ "Default_Gravgun" ]) then
+		if !CAKE.ConVars[ "DefaultGravgun" ] then
 			target:Give("weapon_physgun")
 		end
 		target:Give("gmod_tool")
@@ -280,10 +280,10 @@ function Admin_Tooltrust(ply, cmd, args)
 		CAKE.SendChat( ply, target:Name() .. " [" .. target:SteamID() .. "] | " .. target:Nick() .. " has been removed from tooltrust" )
 		
 		target:StripWeapon("gmod_tool")
-		if !util.tobool(CAKE.ConVars[ "Default_Physgun" ]) then
+		if !CAKE.ConVars[ "DefaultPhysgun" ] then
 			target:StripWeapon("weapon_physgun")
 		end
-		if !util.tobool(CAKE.ConVars[ "Default_Gravgun" ]) then
+		if !CAKE.ConVars[ "DefaultGravgun" ] then
 			target:StripWeapon("weapon_physgun")
 		end
 	end
@@ -306,7 +306,7 @@ end)
 
 function PLUGIN.Init()
 
-	CAKE.AddDataField( 1, "tooltrust", CAKE.ConVars[ "Default_Tooltrust" ] ) -- Is the player allowed to have the toolgun
+	CAKE.AddDataField( 1, "tooltrust", CAKE.ConVars[ "DefaultToolTrust" ] ) -- Is the player allowed to have the toolgun
 	
 	CAKE.AdminCommand( "tooltrust", Admin_Tooltrust, "Change someones tooltrust", true, true, 3 )
 	

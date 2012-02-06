@@ -23,7 +23,7 @@ function ENT:Draw()
 		return
 	end
 
-	if (parent == LocalPlayer() or self.Entity:GetParent() == LocalPlayer()) then
+	if (parent == LocalPlayer() or self.Entity:GetParent() == LocalPlayer()) and !CAKE.ForceDraw then
 		--If the body ain't visible neither should the gear item be.
 		if !hook.Call("ShouldDrawLocalPlayer", GAMEMODE) then
 			return

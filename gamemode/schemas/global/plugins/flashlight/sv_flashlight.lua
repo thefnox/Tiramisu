@@ -7,12 +7,14 @@ function CAKE.TurnOnFlashlight(ply, cmd, arg)
 	end
 	
 	ply.flashlight = ents.Create( "env_projectedtexture" )	
-		ply.flashlight:SetKeyValue( "enableshadows", 1 )
-		ply.flashlight:SetKeyValue( "farz", 2048 )
+		ply.flashlight:SetKeyValue( "enableshadows", 0 )
+		ply.flashlight:SetKeyValue( "farz", 700 )
 		ply.flashlight:SetKeyValue( "nearz", 8 )
 		ply.flashlight:SetKeyValue( "lightfov", 50 )
 		ply.flashlight:SetKeyValue( "lightcolor", "255 255 255" )
 		ply.flashlight:SetPos(Vector(0, 0, 0))
+		ply.flashlight:Input( "SpotlightTexture", NULL, NULL,"effects/flashlight001")
+		ply.flashlight:Spawn()
 		
 	 
 	timer.Simple(0.1, function()

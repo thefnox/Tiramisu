@@ -15,12 +15,34 @@ CAKE.DefaultWepSlot["#HL2_Pistol"] = 1
 CAKE.ActiveWepPos = -1
 CAKE.ActiveSlot = -1
 
-hook.Add( "HUDPaint", "TiramisuClock and TargetInfo", function()
-	derma.SkinHook( "Paint", "TiramisuClock" ) --The clock and title display
-	derma.SkinHook( "Paint", "TargetInfo" ) 
-end)
+function CAKE.BuildWeaponTable()
+	CAKE.WeaponTable = {}
+	local slot = 0
+	local name = ""
+	for _, wep in pairs( LocalPlayer():GetWeapons() ) do
+		if ValidEntity( wep ) then
+			slot = wep.Slot or 0
+			name = wep:GetPrintName()
+			if CAKE.DefaultWepSlot[name] then
+				slot = CAKE.DefaultWepSlot[name]
+			end
+			if !CAKE.WeaponTable[slot] then
+				CAKE.WeaponTable[slot] = {}
+			end
+			if CAKE.DefaultWepTranslation[name] then
+				name = CAKE.DefaultWepTranslation[name]
+			end
 
-hook.Add( "HUDPaint", "TiramisuDrawCrosshair", function()
+			table.insert(CAKE.WeaponTable[slot], {name, wep:GetClass()})
+		end
+	end
+end
+
+hook.Add( "HUDPaint", "TiramisuDrawHUD", function()
+	derma.SkinHook( "Paint", "TiramisuClock" ) --The clock and title display
+	derma.SkinHook( "Paint", "TargetInfo" )
+	derma.SkinHook( "Paint", "TiramisuWeaponSelection" )
+	derma.SkinHook( "Paint", "PlayerTitles")
 	if hook.Call("ShouldDrawLocalPlayer", GAMEMODE) and !CAKE.FreeScroll and LocalPlayer():Alive() and LocalPlayer():GetAiming() then
 		derma.SkinHook( "Paint", "TiramisuCrosshair" )
 	end
@@ -38,13 +60,9 @@ local ent
 local perc
 local ammotext 
 local textsizex, textsizey
-local label
-local menuopened
-local trace
-local tracedata = {}
 
 --Simple check to see if the player was damaged.
-hook.Add( "Think", "TiramisuDamageDetect",function() 
+hook.Add( "Think", "TiramisuHUDThink",function() 
 
 	if !LocalPlayer().TiramisuHUDDamage then
 		LocalPlayer().TiramisuHUDDamage = LocalPlayer():Health()
@@ -57,6 +75,8 @@ hook.Add( "Think", "TiramisuDamageDetect",function()
 			LocalPlayer().IsDamaged = false
 		end)
 	end
+
+	derma.SkinHook("Think", "PlayerTitles")
 	
 end)
 
@@ -84,113 +104,10 @@ hook.Add( "HUDPaint", "TiramisuHUDDraw", function()
 	end
 end)
 
---Locator for the 3D Titles
-
-timer.Create( "LocalTiramisuTitleTimer", 0.2, 0, function()
-	
-	closeents = ents.FindInSphere( LocalPlayer():GetPos(), CAKE.TitleDrawDistance:GetInt() )
-
-end)
-
 --3D Door Titles
-local doordata
-local alpha
-local viewpos
 hook.Add( "PostDrawOpaqueRenderables", "Tiramisu3DDoorTitles", function()
-	if closeents then
-		for _, door in pairs( closeents ) do
-			if ValidEntity( door ) and CAKE.IsDoor( door ) and CAKE.GetDoorTitle( door ) != "" then
-				doordata = CAKE.CalculateDoorTextPosition( door )
-				if !doordata.HitWorld then
-					viewpos = LocalPlayer():GetShootPos()
-					alpha = math.Clamp( viewpos:Distance( door:GetPos() ) * - 1 + 300, 0, 255 )
-					cam.Start3D2D(doordata.position, doordata.angles, 0.12 )
-						draw.SimpleTextOutlined( CAKE.GetDoorTitle( door ), "Tiramisu32Font", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
-					cam.End3D2D()
-									
-					cam.Start3D2D(doordata.positionBack, doordata.anglesBack, 0.12)
-						draw.SimpleTextOutlined( CAKE.GetDoorTitle( door ), "Tiramisu32Font", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
-					cam.End3D2D()
-				end
-			end
-		end
-	end
-
+	derma.SkinHook( "Paint", "DoorTitles" )
 end)
-
---3D Titles drawing.
-
-local position
-local angle
-local closeents
-local tracedata = {}
-local mlabel
-local trace
-local ent
-
-hook.Add( "PostDrawTranslucentRenderables", "Tiramisu3DPlayerTitles", function( )
-	if closeents then
-		for k, v in pairs( closeents ) do
-			if ValidEntity( v ) then
-				if v:IsPlayer() and LocalPlayer() != v and v:Alive() and !v:GetNWBool( "observe" ) and !v:GetNWBool( "unconciousmode", false ) then
-					mlabel = markup.Parse( "<c><font=TiramisuTitlesFont>\n" .. v:GetNWString( "title", "Connecting..." ) .. "</font></c>", 570 )
-					position = v:GetPos()
-					if v:GetBonePosition( v:LookupBone("ValveBiped.Bip01_Head1") ) then
-						position = v:GetBonePosition( v:LookupBone("ValveBiped.Bip01_Head1") )
-					else
-						position = position + Vector( 0, 0, 80 )
-					end
-					angle = v:GetAngles()
-					angle = Angle( 0, angle.y, 0 )
-					angle:RotateAroundAxis( angle:Up(), 90 )
-					angle:RotateAroundAxis( angle:Forward(), 90 )
-					
-					position = position - angle:Right() * 28
-					cam.Start3D2D( position, angle, 0.12 )
-						if v:GetNWBool( "chatopen", false ) then
-							draw.DrawText( "Typing...", "Tiramisu32Font", 0, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
-						end
-						draw.DrawText( v:Nick(), "Tiramisu32Font", 0, 40, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
-						mlabel:Draw( 0, 70, TEXT_ALIGN_CENTER )
-					cam.End3D2D()
-
-					angle:RotateAroundAxis( angle:Forward(), 180 )
-					angle:RotateAroundAxis( angle:Up(), 180 )
-					cam.Start3D2D( position, angle, 0.12 )
-						if v:GetNWBool( "chatopen", false ) then
-							draw.DrawText( "Typing...", "Tiramisu32Font", 0, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
-						end
-						draw.DrawText( v:Nick(), "Tiramisu32Font", 0, 40, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER )
-						mlabel:Draw( 0, 70, TEXT_ALIGN_CENTER )
-					cam.End3D2D()
-				end
-		   end
-		end
-	end
-end)
-
-function CAKE.BuildWeaponTable()
-	CAKE.WeaponTable = {}
-	local slot = 0
-	local name = ""
-	for _, wep in pairs( LocalPlayer():GetWeapons() ) do
-		if ValidEntity( wep ) then
-			slot = wep.Slot or 0
-			name = wep:GetPrintName()
-			if CAKE.DefaultWepSlot[name] then
-				slot = CAKE.DefaultWepSlot[name]
-			end
-			if !CAKE.WeaponTable[slot] then
-				CAKE.WeaponTable[slot] = {}
-			end
-			if CAKE.DefaultWepTranslation[name] then
-				name = CAKE.DefaultWepTranslation[name]
-			end
-
-			table.insert(CAKE.WeaponTable[slot], {name, wep:GetClass()})
-		end
-	end
-end
 
 local sort = false
 hook.Add( "PlayerBindPress", "Tiramisu.HandleWeaponSelection", function(ply, bind, pressed)
@@ -247,39 +164,5 @@ hook.Add( "PlayerBindPress", "Tiramisu.HandleWeaponSelection", function(ply, bin
 				return true
 			end
 		end
-	end
-end)
-
-local textalpha = 200
-local next, prev 
-local gradient = surface.GetTextureID("gui/gradient")
-local prevspot, nextspot = 0,0
-local curslot
-hook.Add( "HUDPaint", "Fuck SHIT UP!", function()
-	if CAKE.ActiveSlot != -1 and CAKE.WeaponTable[CAKE.ActiveSlot] then
-		textalpha = 200
-		next = CAKE.ActiveWepPos + 1
-		prev = CAKE.ActiveWepPos - 1
-		if !CAKE.WeaponTable[CAKE.ActiveSlot][next] then
-			next = 1
-		end
-		if !CAKE.WeaponTable[CAKE.ActiveSlot][prev] then
-			prev = #CAKE.WeaponTable[CAKE.ActiveSlot]
-		end
-		prevspot, nextspot = ScrW()/2, ScrW()/2 + 175
-		surface.SetDrawColor( Color( 0,0,0, 200 ) )
-		surface.SetTexture( gradient )
-		surface.DrawTexturedRectRotated(ScrW()/2-100,50,200,25,180)
-		surface.DrawTexturedRectRotated(ScrW()/2+100,50,200,25,0)
-		draw.DrawText( CAKE.WeaponTable[CAKE.ActiveSlot][CAKE.ActiveWepPos][1], "Tiramisu16Font", ScrW()/2, 40, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT )
-		draw.DrawText( CAKE.WeaponTable[CAKE.ActiveSlot][next][1], "Tiramisu16Font", ScrW()/2 + 175, 40, Color( 255, 255, 255, 120 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT )
-		draw.DrawText( CAKE.WeaponTable[CAKE.ActiveSlot][prev][1], "Tiramisu16Font", ScrW()/2 - 175, 40, Color( 255, 255, 255, 120 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT )
-	elseif textalpha != 0 then
-		curslot = false
-		textalpha = Lerp( 10 * RealFrameTime(), textalpha, 0 )
-		surface.SetDrawColor( Color( 0,0,0, textalpha ) )
-		surface.SetTexture( gradientcenter )
-		surface.DrawTexturedRectRotated(ScrW()/2-100,50,200,25,180)
-		surface.DrawTexturedRectRotated(ScrW()/2+100,50,200,25,0)		
 	end
 end)

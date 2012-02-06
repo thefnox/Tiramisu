@@ -25,9 +25,9 @@ concommand.Add( "rp_setage", ccSetAge )
 
 local function ccSetClothing( ply, cmd, args )
 	if( ply:GetNWInt( "charactercreate" ) == 1 ) then
-		if CAKE.ConVars[ "Default_Clothing" ][ ply:GetNWString( "gender", "Male" ) ] then
+		if CAKE.ConVars[ "DefaultClothing" ][ ply:GetNWString( "gender", "Male" ) ] then
 
-			if table.HasValue( CAKE.ConVars[ "Default_Clothing" ][ ply:GetNWString( "gender", "Male" ) ], args[1] ) then
+			if table.HasValue( CAKE.ConVars[ "DefaultClothing" ][ ply:GetNWString( "gender", "Male" ) ], args[1] ) then
 				ply:GiveItem( args[1] )
 				CAKE.SetCharField(ply, "clothing", args[1] )
 			end

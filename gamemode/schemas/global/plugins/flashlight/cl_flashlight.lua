@@ -1,6 +1,5 @@
 function CAKE.FlashLightBindPress(ply, bind, pressed)
 	if string.find(bind, "impulse 100") then
-		print(bind)
 		RunConsoleCommand("rp_flashlight")
 		return true
 	end
@@ -10,7 +9,6 @@ hook.Add("PlayerBindPress", "FlashBind", CAKE.FlashLightBindPress)
 function CAKE.FlashLightOn(um)
 	local ply = um:ReadEntity()
 	ply.flashlight = um:ReadEntity()
-	print(ply.flashlight)
 end
 usermessage.Hook( "flashlighton", CAKE.FlashLightOn )
 

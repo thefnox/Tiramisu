@@ -16,12 +16,10 @@ CAKE.ConVars[ "SuicideEnabled" ] = false -- Can players compulsively suicide by 
 CAKE.ConVars[ "UnconciousTimer" ] = 5 --Time that must be spent unconcious before being able to wake up. Set to 0 to disable (not recommended)
 CAKE.ConVars[ "DisplayClock" ] = false --Use the clock system?
 CAKE.ConVars[ "DefaultTime" ] = "1 1 2012 1" --The initial time of the script's clock.
-CAKE.ConVars[ "Default_Money" ] = 800 -- How much money do the characters start out with.
-CAKE.ConVars[ "Default_Title" ] = "Citizen" -- What is their title when they create their character.
-CAKE.ConVars[ "Default_Inventory" ] = {  } -- What inventory do characters start out with when they are first made. 
-CAKE.ConVars[ "Default_Ammo" ] = {  } --The default ammo table your character will have on spawn.
-CAKE.ConVars[ "Default_Clothing" ] = { }--Clothing you can choose on startup
-CAKE.ConVars[ "Default_Models" ] = {
+CAKE.ConVars[ "DefaultInventory" ] = {  } -- What inventory do characters start out with when they are first made. 
+CAKE.ConVars[ "DefaultAmmo" ] = {  } --The default ammo table your character will have on spawn.
+CAKE.ConVars[ "DefaultClothing" ] = { }--Clothing you can choose on startup
+CAKE.ConVars[ "DefaultModels" ] = {
 	Male = {
 		"models/humans/group01/male_01.mdl",
 		"models/humans/group01/male_02.mdl",
@@ -55,17 +53,30 @@ CAKE.ConVars[ "Instant_Respawn" ] = false --Respawn instantly or allow people to
 CAKE.ConVars[ "DeathRagdoll_Linger" ] = 30 --Time in seconds that it takes for ragdolls to dissapear, set to 0 if you want corpses to stay forever
 
 --Tooltrust
-CAKE.ConVars[ "Default_Physgun" ] = 0 -- Are players banned from the physics gun when they first start.
-CAKE.ConVars[ "Default_Gravgun" ] = 0 -- Are players banned from the gravity gun when they first start.
-CAKE.ConVars[ "Default_PropTrust" ] = 0 --Are players allowed to spawn props when they first start.
+CAKE.ConVars[ "DefaultPhysgun" ] = false -- Are players banned from the physics gun when they first start.
+CAKE.ConVars[ "DefaultGravgun" ] = false -- Are players banned from the gravity gun when they first start.
+CAKE.ConVars[ "DefaultPropTrust" ] = false --Are players allowed to spawn props when they first start.
 CAKE.ConVars[ "PropLimit" ] = 20
 CAKE.ConVars[ "RagdollLimit" ] = 1
 CAKE.ConVars[ "VehicleLimit" ] = 0
 CAKE.ConVars[ "EffectLimit" ] = 1
-CAKE.ConVars[ "Default_Tooltrust" ] = 0 -- Do players start with tooltrust on?
+CAKE.ConVars[ "DefaultToolTrust" ] = 0 -- Do players start with tooltrust on? Set to 1 for true
+
+--Money
+CAKE.ConVars[ "CurrencyName" ] = "Credit" --The formal name for your currency
+CAKE.ConVars[ "CurrencySlang" ] = "credit" --A slang way of mentioning it (I.E: 'bucks', 'simoleons')
+CAKE.ConVars[ "CurrencyAbr" ] = "$" --An abbreviated form of mentioning your currency, could be a symbol.
+CAKE.ConVars[ "DefaultMoney" ] = 800 -- How much money do the characters start out with.
+
+--Titles
+CAKE.ConVars[ "DefaultTitle" ] = "Citizen" -- The default title when characters are created.
+CAKE.ConVars[ "TitleFadeTime"] = 10 --If titles are to fade when someone has been around a player for too long, how long will that take?
+CAKE.ConVars[ "TitleDrawDistance"] = CAKE.ConVars[ "TalkRange" ] --How far away from the local player should titles draw?
+CAKE.ConVars[ "FadeTitles"] = 1 --Should titles fade away after some time?
+CAKE.ConVars[ "FadeNames"] = 0 --Should names fade away after some time?
+
 
 --Stats for the fighting system, plus stamina
-
 CAKE.Stats = {}
 
 CAKE.Stats.Stamina = {}
@@ -89,6 +100,8 @@ CAKE.ConVars[ "OOCFont" ] = CAKE.ConVars[ "ChatFont" ] --Change this to change t
 CAKE.ConVars[ "WhisperFont" ] = CAKE.ConVars[ "ChatFont" ] --Font used in whispering.
 CAKE.ConVars[ "YellFont" ] = CAKE.ConVars[ "ChatFont" ] --Font used when yelling.
 CAKE.ConVars[ "NoteFont" ] = CAKE.ConVars[ "ChatFont" ]
+CAKE.ConVars[ "NamesFont"] = CAKE.ConVars[ "ChatFont" ]
+CAKE.ConVars[ "TitlesFont"] = CAKE.ConVars[ "ChatFont" ]
 CAKE.BaseColor = Color( 50, 50, 50, 150 ) --The schema's default color. Can be set in game
 
 --Intro
@@ -99,4 +112,4 @@ CAKE.ConVars[ "IntroSubtitle" ] = "A new era in roleplay" -- Character menu and 
 --General
 CAKE.ConVars[ "Webpage" ] = "http://www.facepunch.com/" --Set this to whatever you want to, it'll be accessible on the "Forums" tab
 
-CAKE.ConVars[ "MenuText" ] = "Tiramisu"
+CAKE.ConVars[ "MenuTitle" ] = "Tiramisu" --Title for the main menu

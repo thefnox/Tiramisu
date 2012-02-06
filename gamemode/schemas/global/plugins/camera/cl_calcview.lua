@@ -227,7 +227,7 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 	end
 end )
 
-local head
+local head, headang
 hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 
 	if IronsightsOn() or ply:InVehicle() then
@@ -316,8 +316,16 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 	CAKE.CameraPos = pos
 	if CAKE.FirstpersonBody:GetBool() then
 		head = ply:LookupBone( "ValveBiped.Bip01_Head1" )
-		if head then
-			pos = ply:GetBonePosition( head ) + angles:Forward() * 1 + angles:Up() * 4
+		headang = Angle(0, angles.y, 0)
+		if head and !ply:GetNWBool( "observe" ) then
+			pos = ply:GetBonePosition( head )
+			if pos == Vector( 0, 0, 0 ) then
+				pos = ply:EyePos() + CAKE.FirstpersonForward:GetFloat() * headang:Forward() + CAKE.FirstpersonUp:GetFloat() * headang:Up()
+			else
+				pos = ply:GetBonePosition( head ) + CAKE.FirstpersonForward:GetFloat() * headang:Forward() + CAKE.FirstpersonUp:GetFloat() * headang:Up()
+			end
+		else
+			pos = ply:EyePos() + CAKE.FirstpersonForward:GetFloat() * headang:Forward() + CAKE.FirstpersonUp:GetFloat() * headang:Up()
 		end
 	elseif CAKE.Headbob:GetBool() then
 

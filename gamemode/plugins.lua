@@ -1,11 +1,4 @@
 CAKE.Plugins = {  }
-CAKE.CurrencyData = {  }
-
-function CAKE.RegisterCurrency( currency )
-	
-	CAKE.CurrencyData[ currency.Name ] = currency
-	
-end
 
 function CAKE.LoadRClick( schema, filename )
 

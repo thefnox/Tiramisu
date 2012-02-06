@@ -110,6 +110,6 @@ end )
 
 function PLUGIN.Init()
 
-	CAKE.AddDataField( 2, "ammo", CAKE.ConVars[ "Default_Ammo" ] )
+	CAKE.AddDataField( 2, "ammo", CAKE.ConVars[ "DefaultAmmo" ] )
 	
 end

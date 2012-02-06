@@ -27,6 +27,7 @@ CAKE.FreeScroll = false
 CAKE.ForceFreeScroll = false
 CAKE.Notifications = {}
 CAKE.ActiveNotifications = {}
+CAKE.NearbyPlayers = {}
 
 --Schema configuration options
 
@@ -34,8 +35,13 @@ CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 1, true, true ) -- Set 
 CAKE.ThirdpersonDistance = CreateClientConVar( "rp_thirdpersondistance", 50, true, true ) --Maximum thirdperson distance
 CAKE.CameraSmoothFactor = CreateClientConVar( "rp_camerasmooth", 12, true, true ) --Camera smoothing factor, affects speed.
 CAKE.FirstpersonBody = CreateClientConVar( "rp_firstpersonbody", 1, true, true ) --The return of first person legs!
+CAKE.FirstpersonForward = CreateClientConVar( "rp_firstpersonforward", 6, true, true ) --How much forward should the firstperson camera be
+CAKE.FirstpersonUp = CreateClientConVar( "rp_firstpersonup", 1, true, true ) --How much higher should the firstperson camera be
 CAKE.StayCrouched = CreateClientConVar( "rp_crouchtoggle", 1, true, true ) -- Enables crouch toggle.
-CAKE.TitleDrawDistance = CreateClientConVar( "rp_titledrawdistance", 600, true, true ) --Maximum distance a player can be to have his or her title drawn
+CAKE.TitleDrawDistance = CreateClientConVar( "rp_titledrawdistance", CAKE.ConVars[ "TitleDrawDistance"], true, true ) --Maximum distance a player can be to have his or her title drawn
+CAKE.FadeNames = CreateClientConVar( "rp_fadenames", CAKE.ConVars[ "FadeNames"], true, true ) --Will character names fade over time?
+CAKE.FadeTitles = CreateClientConVar( "rp_fadetitles", CAKE.ConVars[ "FadeTitles"], true, true ) --Will character titles fade over time?
+CAKE.TitlesFadeTime = CreateClientConVar( "rp_titlefadetime", CAKE.ConVars[ "TitleFadeTime"], true, true ) --Amount of time in seconds it takes for titles to fade.
 CAKE.MinimalHUD = CreateClientConVar( "rp_minimalhud", 1, true, true ) --Disables HUD elements for a more clear view.
 CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true ) --Set this to 0 to have headbob disabled by default.
 CAKE.AlwaysIntro = CreateClientConVar( "rp_alwaysintro", 0, true, true ) -- Set this to 1 to have the intro always display
@@ -55,6 +61,8 @@ surface.CreateFont(CAKE.ConVars[ "ChatFont" ], 16, 500, true, false, "TiramisuCh
 surface.CreateFont(CAKE.ConVars[ "EmoteFont" ], 16,500, true, false, "TiramisuEmoteFont")
 surface.CreateFont(CAKE.ConVars[ "OOCFont" ], 16, 500, true, false, "TiramisuOOCFont")
 surface.CreateFont(CAKE.ConVars[ "NoteFont" ], 18, 500, true, false, "TiramisuNoteFont" )
+surface.CreateFont(CAKE.ConVars[ "NamesFont"], 20, 400, true, false, "TiramisuNamesFont" ) --Font used for names
+surface.CreateFont(CAKE.ConVars[ "TitlesFont"], 14, 400, true, false, "TiramisuTitlesFont" ) --Font used for titles
 
 -- Client Includes
 include( "sh_animations.lua" )
@@ -155,16 +163,6 @@ usermessage.Hook( "runconcommand", function( um ) --Simple fix to garry's fuckup
 	
 	RunConsoleCommand( cmd, args )
 	
-end)
-
-CurrencyTable = {}
-
-usermessage.Hook( "Tiramisu.AddCurrency", function( um )
-	local currencydata = {}
-	currencydata.name = um:ReadString()
-	currencydata.slang = um:ReadString()
-	currencydata.abr   = um:ReadString()
-	CurrencyTable = currencydata
 end)
 
 Schemas = {}

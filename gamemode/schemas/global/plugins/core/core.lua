@@ -16,10 +16,10 @@ CAKE.AddDataField( 1, "adrank", "Player" )
 CAKE.AddDataField( 2, "name", "Set Your Name" ) 
 CAKE.AddDataField( 2, "model", "models/humans/group01/male_07.mdl" ) -- Your base model
 CAKE.AddDataField( 2, "personality", "default" ) --Don't be making a cult over it.
-CAKE.AddDataField( 2, "title", CAKE.ConVars[ "Default_Title" ] ) -- What is their default title.
-CAKE.AddDataField( 2, "money", CAKE.ConVars[ "Default_Money" ] ) -- How much money do players start out with.
-CAKE.AddDataField( 2, "flags", CAKE.ConVars[ "Default_Flags" ] ) -- What flags do they start with.
-CAKE.AddDataField( 2, "inventory", CAKE.ConVars[ "Default_Inventory" ] ) -- What inventory do they start with
+CAKE.AddDataField( 2, "title", CAKE.ConVars[ "DefaultTitle" ] ) -- What is their default title.
+CAKE.AddDataField( 2, "money", CAKE.ConVars[ "DefaultMoney" ] ) -- How much money do players start out with.
+CAKE.AddDataField( 2, "flags", CAKE.ConVars[ "DefaultFlags" ] ) -- What flags do they start with.
+CAKE.AddDataField( 2, "inventory", CAKE.ConVars[ "DefaultInventory" ] ) -- What inventory do they start with
 CAKE.AddDataField( 2, "gender", "Male" ) -- MAN POWER
 CAKE.AddDataField( 2, "age", 30 ) --Can't think of any puns.
 CAKE.AddDataField( 2, "group", "none" )
