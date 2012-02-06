@@ -62,8 +62,17 @@ function CAKE.CreatePlayerRagdoll( ply )
 
 	local ragphys = rag:GetPhysicsObject()
 	if ragphys:IsValid() then
-		ragphys:AddVelocity( speed*ragphys:GetMass() )
-		--rag:GetPhysicsObject():SetVelocity( ply:GetVelocity() )
+		ragphys:AddVelocity(speed*ragphys:GetMass())
+		for i = 1, rag:GetPhysicsObjectCount() do
+			bonephys = rag:GetPhysicsObjectNum(i)
+			boneindex = rag:TranslatePhysBoneToBone(i)
+			bonepos, boneang = ply:GetBonePosition(boneindex)
+			bonevel = bone
+			if(bonephys and bonephys:IsValid())then
+				bonephys:SetPos(bonepos)
+				bonephys:SetAngle(boneang)
+			end
+		end;
 	end
 
 	if ply.Clothing then

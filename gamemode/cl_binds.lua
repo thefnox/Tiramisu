@@ -173,7 +173,7 @@ function GM:GUIMousePressed(mc)
 				end
 			end
 			ContextMenu:AddSpacer()
-			ContextMenu:AddOption("Myself:", function()end)
+			ContextMenu:AddOption("Self:", function()end)
 			local submenus = {}
 			for k,v in pairs (RclickTable) do
 				if v.Condition and v.Condition(LocalPlayer()) then 

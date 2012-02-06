@@ -7,11 +7,14 @@ ITEM.Purchaseable = true
 ITEM.Unusable = true
 ITEM.Price = 500
 ITEM.ItemGroup = 2
+ITEM.Unusable = true
+
 ITEM.Flags = {
 	"explosivearmor0.5",
 	"kineticarmor0.6",
 	"bulletarmor0.8"
 }
+
 function ITEM:Drop(ply)
 
 end

@@ -6,9 +6,12 @@ ITEM.Unusable = true
 ITEM.Purchaseable = true
 ITEM.Price = 100
 ITEM.ItemGroup = 1
+ITEM.Unusable = true
+
 ITEM.Flags = {
 	"nogloves"
 }
+
 function ITEM:Drop(ply)
 
 end

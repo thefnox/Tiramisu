@@ -1,4 +1,5 @@
 RCLICK.Name = "Set Mood"
+RCLICK.SubMenu = "Actions"
 
 function RCLICK.Condition(target)
 

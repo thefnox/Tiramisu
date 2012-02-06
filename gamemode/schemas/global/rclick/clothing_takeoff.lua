@@ -1,5 +1,5 @@
-RCLICK.Name = "Take off"
-RCLICK.SubMenu = "Clothing"
+RCLICK.Name = "Take Off Clothes"
+RCLICK.SubMenu = "Clothes"
 
 function RCLICK.Condition(target)
 

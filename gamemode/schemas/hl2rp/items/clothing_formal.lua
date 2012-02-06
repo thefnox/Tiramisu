@@ -6,9 +6,12 @@ ITEM.FemaleModel = "models/mossman.mdl"--This is the female model equivalent of 
 ITEM.Purchaseable = true
 ITEM.Price = 500
 ITEM.ItemGroup = 1
+ITEM.Unusable = true
+
 ITEM.Flags = {
 	"nogloves"
 }
+
 function ITEM:Drop(ply)
 
 end

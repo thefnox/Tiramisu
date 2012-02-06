@@ -6,6 +6,8 @@ ITEM.Purchaseable = false
 ITEM.Price = 1000
 ITEM.Unusable = true
 ITEM.ItemGroup = 2
+ITEM.Unusable = true
+
 ITEM.Flags = {
 	"armor180",
 	"shieldratio0.8",
@@ -14,6 +16,7 @@ ITEM.Flags = {
 	"kineticarmor0.6",
 	"rigweightheavy"
 }
+
 ITEM.Content = {
 	"materials/models/combine_soldier/combine_elite.vmt",
 	"models/Combine_Super_Soldier.mdl"

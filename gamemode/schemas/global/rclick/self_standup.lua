@@ -1,4 +1,5 @@
 RCLICK.Name = "Stand Up"
+RCLICK.SubMenu = "Actions"
 
 function RCLICK.Condition(target)
 

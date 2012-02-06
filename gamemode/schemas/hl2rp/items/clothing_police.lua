@@ -5,6 +5,8 @@ ITEM.Model = "models/Police.mdl"
 ITEM.Purchaseable = false
 ITEM.Price = 500
 ITEM.ItemGroup = 2
+ITEM.Unusable = true
+
 ITEM.Flags = {
 	"armor70",
 	"shieldratio0.7",
@@ -12,10 +14,12 @@ ITEM.Flags = {
 	"kineticarmor0.6",
 	"bulletarmor0.7"
 }
+
 ITEM.Content = {
 	"materials/models/police/metrocop_sheet.vmt",
 	"models/Police.mdl"
 }
+
 function ITEM:Drop(ply)
 	
 end

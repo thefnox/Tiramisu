@@ -1,4 +1,5 @@
 RCLICK.Name = "Pass Out"
+RCLICK.SubMenu = "Actions"
 
 function RCLICK.Condition(target)
 

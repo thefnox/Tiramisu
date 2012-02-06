@@ -1,4 +1,5 @@
 RCLICK.Name = "Change Name"
+RCLICK.SubMenu = "Settings"
 
 function RCLICK.Condition(target)
 

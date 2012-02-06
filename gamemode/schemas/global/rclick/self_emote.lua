@@ -1,4 +1,5 @@
 RCLICK.Name = "Play Emote"
+RCLICK.SubMenu = "Actions"
 
 function RCLICK.Condition(target)
 

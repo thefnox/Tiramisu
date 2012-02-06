@@ -98,3 +98,5 @@ CAKE.ConVars[ "IntroSubtitle" ] = "A new era in roleplay" -- Character menu and 
 
 --General
 CAKE.ConVars[ "Webpage" ] = "http://www.facepunch.com/" --Set this to whatever you want to, it'll be accessible on the "Forums" tab
+
+CAKE.ConVars[ "MenuText" ] = "Tiramisu"
