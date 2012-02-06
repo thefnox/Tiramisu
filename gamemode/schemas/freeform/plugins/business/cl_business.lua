@@ -29,7 +29,7 @@ local function OpenBusinessMenu()
 	title:SetFont( "Tiramisu48Font")
 	title:SetPos( 10, 23 )
 	title:SizeToContents()
-	local subtitle = Label( "Your funds: " .. CAKE.ConVars[ "CurrencyAbr" ] .. ply:GetNWInt( "money", 0 ), BusinessFrame)
+	local subtitle = Label( "Let's make a deal", BusinessFrame)
 	subtitle:SetPos( 10, 66 )
 	subtitle:SetFont( "Tiramisu24Font")
 	subtitle:SizeToContents()
@@ -57,14 +57,6 @@ local function OpenBusinessMenu()
 					local ContextMenu = DermaMenu()
 					ContextMenu:AddOption("Buy", function() LocalPlayer():ConCommand("rp_buyitem " .. icontable[cur]:GetItem().Class ) end)
 					ContextMenu:Open()
-				end
-				icontable[cur].PaintOver = function()
-					if icontable[cur]:GetItem() then
-						surface.SetTextColor(Color(55,200,55,255))
-						surface.SetFont("TiramisuDefaultFont")
-						surface.SetTextPos( icontable[cur]:GetWide() - 20, icontable[cur]:GetTall() - 15)
-						surface.DrawText( icontable[cur]:GetItem().Price or "0" )
-					end
 				end
 				panel:AddItem( icontable[cur] )
 			end

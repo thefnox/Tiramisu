@@ -1,14 +1,14 @@
-RCLICK.Name = "Give Credits"
+RCLICK.Name = "Give " .. CAKE.ConVars[ "CurrencyName" ] .. "s"
 
 function RCLICK.Condition(target)
 
-if target:IsPlayer() and target != LocalPlayer() then return true end
+	if target:IsPlayer() and target != LocalPlayer() then return true end
 
 end
 
 function RCLICK.Click(target,ply)
 
-	local function PopupCredits()
+	if LocalPlayer():GetNWInt( "money", 0 ) > 0 then
 		local CreditPanel = vgui.Create( "DFrame" )
 		CreditPanel:SetPos(gui.MouseX(), gui.MouseY())
 		CreditPanel:SetSize( 200, 175 )
@@ -34,9 +34,9 @@ function RCLICK.Click(target,ply)
 			LocalPlayer():ConCommand("rp_givemoney " .. target:EntIndex() .. " " .. math.floor( Credits:GetValue() ))
 			CreditPanel:Remove()
 			CreditPanel = nil
-			end
+		end
+	else
+		CAKE.Message( "You don't have any money to give!", "Error", "OK :(" )
 	end
-	
-	PopupCredits()
 
 end

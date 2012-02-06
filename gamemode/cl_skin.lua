@@ -1002,7 +1002,7 @@ function SKIN:PaintDoorTitles()
 			cam.End3D2D()
 		end
 	end
-	if ValidEntity( LocalPlayer().PrevDoor ) and CAKE.IsDoor( LocalPlayer().PrevDoor ) and CAKE.GetDoorTitle( LocalPlayer().PrevDoor ) != "" then
+	if LocalPlayer().PrevDoor and ValidEntity( LocalPlayer().PrevDoor ) and CAKE.IsDoor( LocalPlayer().PrevDoor ) and CAKE.GetDoorTitle( LocalPlayer().PrevDoor ) != "" then
 		if LocalPlayer().PrevDoor.DoorAlpha == 0 then
 			LocalPlayer().PrevDoor.DoorAlpha = false
 			LocalPlayer().PrevDoor = false
@@ -1148,7 +1148,5 @@ function SKIN:PaintTiramisuCrosshair()
 		surface.DrawLine( pos.x, pos.y - 5, pos.x, pos.y + 5 )
 	end
 end
-
-
 
 derma.DefineSkin( "Tiramisu", "Made to look like some good stuff", SKIN )

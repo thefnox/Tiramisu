@@ -5,7 +5,7 @@ CAKE.ConVars = {  }
 CAKE.ConVars[ "LinuxHotfix" ] = false -- TURN THIS ON ONLY IF YOUR SERVER USES LINUX. This is to turn off model swapping therefore disabling some animations. It's the only solution to a current bug in the SRCDS.
 
 CAKE.ConVars[ "Tiramisu" ] = "2"
-CAKE.ConVars[ "Schema" ] = "hl2rp" -- What folder is schema data being loaded from?
+CAKE.ConVars[ "Schema" ] = "freeform" -- What folder is schema data being loaded from?
 
 --General config
 CAKE.ConVars[ "SpawnWithBlackScreen" ] = true --Set this to true if you want people to be welomed with a black screen.
