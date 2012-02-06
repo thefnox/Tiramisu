@@ -18,10 +18,10 @@ function CAKE.FlashlightThink()
 	for k,v in pairs(player.GetAll()) do
 		if v.flashlight and v.flashlight:IsValid() then
 			headpos = v:GetBonePosition(v:LookupBone("ValveBiped.Bip01_Head1"))
-			headang = ply.CurrentLookAt + v:GetAngles()
+			headang = v.CurrentLookAt + v:GetAngles()
 			headnorm = headang:Forward()*14
 			v.flashlight:SetPos(headpos + headnorm)
-			v.flashlight:SetAngles((ply.CurrentLookAt + v:GetAngles()) or Angle(90,90,90))
+			v.flashlight:SetAngles((v.CurrentLookAt + v:GetAngles()) or Angle(90,90,90))
 		end
 	end
 end
