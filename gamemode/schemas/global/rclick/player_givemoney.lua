@@ -2,7 +2,7 @@ RCLICK.Name = "Give " .. CAKE.ConVars[ "CurrencyName" ] .. "s"
 
 function RCLICK.Condition(target)
 
-	if target:IsPlayer() and target != LocalPlayer() then return true end
+	if target:IsPlayer() and target != LocalPlayer() and LocalPlayer():GetNWInt( "money", 0 ) > 0 then return true end
 
 end
 

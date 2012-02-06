@@ -185,7 +185,7 @@ function CAKE.ResendCharData( ply ) -- Network all of the player's character dat
 
 	ply:SetNWString( "name", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "name" ] or "" )
 	ply:SetNWString( "title", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "title" ] or "" )
-	-- ply:SetNWInt( "money", tonumber( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "money" ] ) or 0 )
+	ply:SetNWInt( "money", tonumber( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "money" ] ) or 0 )
 	
 end
 
@@ -198,29 +198,23 @@ function CAKE.SetPlayerField( ply, fieldname, data )
 		CAKE.PlayerData[ SteamID ][ fieldname ] = data
 		CAKE.SavePlayerData(ply)
 	
-	else
-
-		return ""
-	
 	end
 		
-	
 end
 	
 function CAKE.GetPlayerField( ply, fieldname )
 
 	local SteamID = CAKE.FormatText( ply:SteamID() )
 	
-		-- Check to see if this is a valid field
-		if( CAKE.PlayerDataFields[ fieldname ] ) then
-		
-			return CAKE.NilFix(CAKE.PlayerData[ SteamID ][ fieldname ], "")
-		
-		else
+	-- Check to see if this is a valid field
+	if( CAKE.PlayerDataFields[ fieldname ] ) then
 	
-			return ""
-		
-		end
+		return CAKE.NilFix(CAKE.PlayerData[ SteamID ][ fieldname ], false)
+	
+	end
+
+	return false
+
 end
 
 function CAKE.SetCharField( ply, fieldname, data )
@@ -231,10 +225,6 @@ function CAKE.SetCharField( ply, fieldname, data )
 
 		CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ] = data
 		CAKE.SavePlayerData(ply)
-		
-	else
-
-		return ""
 	
 	end
 		
@@ -255,9 +245,10 @@ function CAKE.GetCharField( ply, fieldname )
 			--Character not loaded, return default
 			return CAKE.CharacterDataFields[ fieldname ]
 		end
-	else
-		return false
 	end
+
+	return false
+
 end
 
 function CAKE.SavePlayerData( ply )
