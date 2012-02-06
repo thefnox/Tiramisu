@@ -121,7 +121,7 @@ end
 
 if SERVER then
 	--Weapons that are always aimed
-	AlwaysAimed = {
+	Anims.AlwaysAimed = {
 		"weapon_physgun",
 		"weapon_physcannon",
 		"weapon_frag",
@@ -131,20 +131,22 @@ if SERVER then
 	}
 
 	--Weapons that are never aimed
-	NeverAimed = {
-			"hands"
+	Anims.NeverAimed = {
+		"hands"
 	}
 
 	function meta:PlayEmote( emote )
 		if Anims[ self:GetGender() ].Emotes and Anims[ self:GetGender() ].Emotes[emote] then
-			if self:GetModel() != Anims[ self:GetGender() ]["models"][1] then
-				self:SetModel( Anims[ self:GetGender() ]["models"][1] )
-			end
-			local id, duration = self:LookupSequence( Anims[ self:GetGender() ].Emotes[emote].anim )
+			self.Emote = Anims[ self:GetGender() ].Emotes[emote].anim
+			umsg.Start("Tiramisu.SetEmote", self)
+				umsg.String(Anims[ self:GetGender() ].Emotes[emote].anim)
+			umsg.End()
 			self:Lock()
-			self:SetNWInt("emote", id)
-			timer.Simple(duration, function()
-				self:SetNWInt("emote", 0)
+			timer.Simple(Anims[ self:GetGender() ].Emotes[emote].length, function()
+				self.Emote = ""
+				umsg.Start("Tiramisu.SetEmote", self)
+					umsg.String("")
+				umsg.End()
 				self:UnLock()
 			end)
 		end
@@ -162,10 +164,10 @@ if SERVER then
 			bool = false
 		end
 		if ValidEntity( wep ) and wep:GetClass() != nil and wep.SetNextPrimaryFire != nil then
-			if table.HasValue( AlwaysAimed, wep:GetClass() ) then
+			if table.HasValue( Anims.AlwaysAimed, wep:GetClass() ) then
 				bool = true
 			end
-			if table.HasValue( NeverAimed, wep:GetClass() ) then
+			if table.HasValue( Anims.NeverAimed, wep:GetClass() ) then
 				bool = false
 			end
 
@@ -264,7 +266,11 @@ else
 		if ValidEntity( ply ) then
 			ply:SetPersonality( um:ReadString() )
 		end
-	end)	
+	end)
+
+	usermessage.Hook( "Tiramisu.SetEmote", function(um)
+		LocalPlayer().Emote = um:ReadString()
+	end)
 
 end
 
@@ -677,13 +683,17 @@ function GM:HandleExtraActivities( ply ) --Drop in here everything additional yo
 
 	--Use this hook for all the other sequenced activities you may wanna add, like uh, flying I guess.
 
-	if ply:GetNWInt( "emote", 0) != 0 then
+	if ply.Emote and ply.Emote != "" then
 		if !ply.InEmote then
 			ply:SetCycle(0)
 			ply.InEmote = true
 		end
-		ply.CalcSeqOverride = ply:GetNWInt( "emote", 0)
+		ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, ply.Emote )
 		return true
+	end
+
+	if ply.Emote == "" then
+		ply.InEmote = false
 	end
 
 	if ply:GetNWBool( "sittingchair", false ) then

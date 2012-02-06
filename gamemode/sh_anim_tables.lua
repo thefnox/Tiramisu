@@ -6,27 +6,27 @@ Anims.Male[ "models" ] = {
 }
 Anims.Male.Emotes = {
 	["wave"] = {
-		["anim"] = "Wave",
+		["anim"] = "&sequence:models/breen.mdl;Wave",
 		["name"] = "Wave",
 		["length"] = 4
 	},
 	["bringit"] = {
-		["anim"] = "Wave_close",
+		["anim"] = "&sequence:models/breen.mdl;Wave_close",
 		["name"] = "Bring It",
 		["length"] = 2.4
 	},
 	["disgust"] = {
-		["anim"] = "photo_react_blind",
+		["anim"] = "&sequence:models/breen.mdl;photo_react_blind",
 		["name"] = "Show Disgust",
 		["length"] = 3.4
 	},
 	["startle"] = {
-		["anim"] = "photo_react_startle",
+		["anim"] = "&sequence:models/breen.mdl;photo_react_startle",
 		["name"] = "Startle",
 		["length"] = 2
 	},
 	["throw"] = {
-		["anim"] = "throw1",
+		["anim"] = "&sequence:models/breen.mdl;throw1",
 		["name"] = "Throw",
 		["length"] = 2
 	},
@@ -382,27 +382,27 @@ Anims.Female[ "models" ] = {
 }
 Anims.Female.Emotes = {
 	["wave"] = {
-		["anim"] = "Wave",
+		["anim"] = "&sequence:models/alyx.mdl;Wave",
 		["name"] = "Wave",
 		["length"] = 4
 	},
 	["bringit"] = {
-		["anim"] = "Wave_close",
+		["anim"] = "&sequence:models/alyx.mdl;Wave_close",
 		["name"] = "Bring It",
 		["length"] = 2.4
 	},
 	["disgust"] = {
-		["anim"] = "photo_react_blind",
+		["anim"] = "&sequence:models/alyx.mdl;photo_react_blind",
 		["name"] = "Show Disgust",
 		["length"] = 3.4
 	},
 	["startle"] = {
-		["anim"] = "photo_react_startle",
+		["anim"] = "&sequence:models/alyx.mdl;photo_react_startle",
 		["name"] = "Startle",
 		["length"] = 2
 	},
 	["throw"] = {
-		["anim"] = "throw1",
+		["anim"] = "&sequence:models/alyx.mdl;throw1",
 		["name"] = "Throw",
 		["length"] = 2
 	},

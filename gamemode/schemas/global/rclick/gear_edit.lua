@@ -1,5 +1,5 @@
 RCLICK.Name = "Edit Gear"
-RCLICK.SubMenu = "Clothes"
+RCLICK.SubMenu = "Appearance"
 
 function RCLICK.Condition(target)
 

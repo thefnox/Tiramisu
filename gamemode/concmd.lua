@@ -1,3 +1,10 @@
+concommand.Remove( "gmod_admin_cleanup" )
+concommand.Add( "gmod_admin_cleanup", function( ply, cmd, args )
+	-- Thanks SirMasterCombat
+	print("Cannot use cleanup in this gamemode!")
+end)
+
+
 -- Set Title
 function ccSetTitle( ply, cmd, args )
 
@@ -5,8 +12,7 @@ function ccSetTitle( ply, cmd, args )
 
 	CAKE.SetCharField( ply, "title", title )
 	ply:SetNWString("title", title)
-	
-	return
+
 	
 end
 concommand.Add( "rp_title", ccSetTitle )
