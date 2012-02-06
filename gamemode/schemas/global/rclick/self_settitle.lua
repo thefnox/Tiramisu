@@ -10,7 +10,7 @@ end
 function RCLICK.Click(target,ply)
 
 	
-	CAKE.StringRequest( "Change Your Title", "Change your title to what?", ply:GetNWString( "title", "" ), function( text )
+	CAKE.StringRequest( "Change Your Title", "Change your title to what?", ply:Title(), function( text )
 		RunConsoleCommand( "rp_title", text )
 	end,
 	function() end, "Accept", "Cancel")

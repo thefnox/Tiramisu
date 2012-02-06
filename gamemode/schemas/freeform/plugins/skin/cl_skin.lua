@@ -33,7 +33,7 @@ end
 function SKIN:PaintTiramisuClock()
 	if CAKE.MenuOpen then
 		draw.SimpleTextOutlined( LocalPlayer():Nick(), "TiramisuNamesFont", ScrW() - 10, 30, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
-		draw.SimpleTextOutlined( LocalPlayer():GetNWString( "title", "Connecting..." ), "TiramisuNamesFont", ScrW() - 10, 50, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
+		draw.SimpleTextOutlined( LocalPlayer():Title()), "TiramisuNamesFont", ScrW() - 10, 50, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
 	end
 end
 

@@ -6,7 +6,11 @@ function meta:CanTraceTo( ent ) -- Can the player and the entity "see" eachother
 
 	local trace = {  }
 	trace.start = self:EyePos( )
-	trace.endpos = ent:GetPos()
+	if ent:IsPlayer() then
+		trace.endpos = ent:EyePos()
+	else
+		trace.endpos = ent:GetPos()
+	end
 	trace.filter = self
 	
 	local tr = util.TraceLine( trace )
@@ -18,9 +22,11 @@ function meta:CanTraceTo( ent ) -- Can the player and the entity "see" eachother
 end
 
 function meta:Nick( ) -- Hotfix. Allows you to fetch a character's name quickly.
-	
 	return self:GetNWString( "name", "Unnamed" )
+end
 
+function meta:Title()
+	return self:GetNWString( "title", "" )
 end
 
 --Calculates the position where an item should be created when dropped.

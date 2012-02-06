@@ -903,7 +903,7 @@ function SKIN:PaintTiramisuClock()
 	end
 	if CAKE.MenuOpen then
 		draw.SimpleTextOutlined( LocalPlayer():Nick(), "TiramisuNamesFont", ScrW() - 10, 30, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
-		draw.SimpleTextOutlined( LocalPlayer():GetNWString( "title", "Connecting..." ), "TiramisuNamesFont", ScrW() - 10, 50, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
+		draw.SimpleTextOutlined( LocalPlayer():Title(), "TiramisuNamesFont", ScrW() - 10, 50, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
 		draw.SimpleTextOutlined( LocalPlayer():GetNWInt( "money", 0 ) .. " " .. CAKE.ConVars[ "CurrencySlang" ] .. "s", "TiramisuNamesFont", ScrW() - 10, 70, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
 	end
 end
@@ -949,7 +949,7 @@ end
 
 function SKIN:PaintPlayerTitles()
 	for _, ply in pairs( CAKE.NearbyPlayers ) do
-		if ValidEntity( ply ) and ply:IsPlayer() and ply != LocalPlayer() then
+		if ValidEntity( ply ) and ply:IsPlayer() and ply != LocalPlayer() and LocalPlayer():CanTraceTo(ply) then
 			local pos = (ply:EyePos() + Vector(0, 0, 10)):ToScreen()
 			if ply.FirstSeen and ply.Alpha and CAKE.TitlesFadeTime:GetInt() > 0 and CurTime() - ply.FirstSeen > CAKE.TitlesFadeTime:GetInt() then
 				ply.Alpha = -Lerp( RealFrameTime()*5, -ply.Alpha, 0 )
@@ -966,9 +966,9 @@ function SKIN:PaintPlayerTitles()
 					draw.SimpleTextOutlined( ply:Nick(), "TiramisuNamesFont", pos.x, pos.y - 70, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
 				end
 				if CAKE.FadeTitles:GetBool() then
-					draw.SimpleTextOutlined( ply:GetNWString( "title", "Connecting..." ), "TiramisuTitlesFont", pos.x, pos.y - 45, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,math.Clamp(ply.Alpha, 0, 100)))
+					draw.SimpleTextOutlined( ply:Title(), "TiramisuTitlesFont", pos.x, pos.y - 45, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,math.Clamp(ply.Alpha, 0, 100)))
 				else
-					draw.SimpleTextOutlined( ply:GetNWString( "title", "Connecting..." ), "TiramisuTitlesFont", pos.x, pos.y - 45, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
+					draw.SimpleTextOutlined( ply:Title(), "TiramisuTitlesFont", pos.x, pos.y - 45, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
 				end
 			end
 		end

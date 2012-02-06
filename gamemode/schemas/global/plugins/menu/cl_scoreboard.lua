@@ -63,10 +63,10 @@ local function OpenScoreboard()
 		end
 		TitlePanel:AddItem(namelabel)
 
-		local titlelabel = Label(ply:GetNWString( "title", "Loading..." ))
+		local titlelabel = Label(ply:Title())
 		titlelabel:SetFont("Tiramisu18Font")
 		titlelabel.PaintOver = function()
-			titlelabel:SetText(ply:GetNWString( "title", "Loading..." ))
+			titlelabel:SetText(ply:Title())
 		end
 		TitlePanel:AddItem(titlelabel)
 
