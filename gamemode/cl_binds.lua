@@ -27,7 +27,7 @@ function CAKE.DrawQuickMenu()
 		derma.SkinHook( "Paint", "QuickMenu", QuickMenu )
 	end
 
-	local titlelabel = Label( "Main Menu", QuickMenu )
+	local titlelabel = Label( CAKE.ConVars["MenuText"], QuickMenu )
 	titlelabel:SetSize( QuickMenu:GetWide() - 25, 40 )
 	titlelabel:SetFont( "Tiramisu48Font" )
 	titlelabel:SetTextColor(Color(255, 255, 255, 0))
