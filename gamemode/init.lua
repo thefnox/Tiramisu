@@ -147,12 +147,10 @@ function GM:PlayerSetModel(ply)
 		ply:AddEffects( EF_NOSHADOW )
 		ply:SetPersonality( CAKE.GetCharField( ply, "personality" ))
 	elseif ply:IsCharLoaded() and (CAKE.GetCharField( "specialmodel") == "none" or CAKE.GetCharField( "specialmodel") == "") then
-		ply:SetNWBool( "specialmodel", true )
-		ply:SetModel( CAKE.GetCharField( "specialmodel") )
+		ply:SetSpecialModel( CAKE.GetCharField( "specialmodel") )
 		ply:SetNWString( "gender", "Male" )
 	else
-		ply:SetNWBool( "specialmodel", true ) 
-		ply:SetModel("models/kleiner.mdl")
+		ply:SetSpecialModel( "models/kleiner.mdl" )
 	end
 end
 

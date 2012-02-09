@@ -29,7 +29,6 @@ function RCLICK.Click(target,ply)
 
 	local TextEntry = vgui.Create( "DTextEntry" )
 	TextEntry:SetText( "Name" )
-	TextEntry.OnEnter = function() Window:Close() ply:ConCommand("rp_admin converttoclothing " .. target:EntIndex() .. " \"" .. TextEntry:GetValue() .. "\" \"" .. type .. "\" " .. tostring(CheckBox:GetValue()) ) end
 	InnerPanel:AddItem( TextEntry )
 
 	local Label = vgui.Create( "DLabel" )
@@ -63,7 +62,7 @@ function RCLICK.Click(target,ply)
 	Button:SetTall( 20 )
 	Button:SetWide( Button:GetWide() + 20 )
 	Button:SetPos( 5, 5 )
-	Button.DoClick = function() Window:Close() ply:ConCommand("rp_admin converttoclothing " .. target:EntIndex() .. " \"" .. TextEntry:GetValue() .. "\" \"" .. type .. "\" " .. tostring(CheckBox:GetChecked()) ) end
+	Button.DoClick = function() Window:Close() ply:ConCommand("rp_turnintoclothing " .. target:EntIndex() .. " \"" .. TextEntry:GetValue() .. "\" \"" .. type .. "\" " .. tostring(CheckBox:GetChecked()) ) end
 
 	local ButtonCancel = vgui.Create( "DButton", ButtonPanel )
 	ButtonCancel:SetText( "Cancel" )

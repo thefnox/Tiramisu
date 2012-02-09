@@ -1,7 +1,3 @@
-PLUGIN.Name = "Player Voices" -- What is the plugin name
-PLUGIN.Author = "LuaBanana" -- Author of the plugin
-PLUGIN.Description = "Enables players to say things" -- The description or purpose of the plugin
-
 CAKE.Voices = { } -- I hear voices D:>
 
 function ccVoice( ply, cmd, args ) -- People near you will hear the voice

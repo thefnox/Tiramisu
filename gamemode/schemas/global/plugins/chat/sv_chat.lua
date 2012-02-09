@@ -192,7 +192,8 @@ function CAKE.OOCAdd( ply, text )
 					["text"] = text,
 					["color"] = color,
 					["name"] = playername,
-					["font"] = "TiramisuOOCFont"
+					["font"] = "TiramisuOOCFont",
+					["channel"] = channel or "OOC"
 				})
 			end
 		end

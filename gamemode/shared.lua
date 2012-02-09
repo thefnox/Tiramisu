@@ -4,6 +4,13 @@ local meta = FindMetaTable( "Player" )
 
 function meta:CanTraceTo( ent ) -- Can the player and the entity "see" eachother?
 
+	local filter = ents.FindByClass( ent:GetClass() )
+	for k, v in pairs( filter ) do
+		if v == ent then
+			table.remove( filter, k )
+		end
+	end
+	table.insert( filter, self )
 	local trace = {  }
 	trace.start = self:EyePos( )
 	if ent:IsPlayer() then
@@ -11,7 +18,7 @@ function meta:CanTraceTo( ent ) -- Can the player and the entity "see" eachother
 	else
 		trace.endpos = ent:GetPos()
 	end
-	trace.filter = self
+	trace.filter = filter
 	
 	local tr = util.TraceLine( trace )
 	

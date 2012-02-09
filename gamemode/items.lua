@@ -48,6 +48,7 @@ function CAKE.CreateItemID()
 	local repnum = 0
 	local uidfile = file.Read( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
 	while(uidfile) do
+		repnum = repnum + 1
 		uidfile = file.Read( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
 	end
 	return os.time() .. repnum
@@ -272,7 +273,7 @@ function meta:TakeItemID( id )
 		end
 	end
 	if !count then
-		self:StripWeapon(CAKE.GetUData(id, "weaponclass"))
+		self:StripWeapon(CAKE.GetUData(id, "weaponclass") or "nothing")
 	end
 	self:RefreshInventory()
 	CAKE.SendClothingToClient( self )

@@ -25,9 +25,10 @@ end
 function ITEM:UseItem(ply)
 
 	myid = self:GetNWString("id")
-	datastream.StreamToClients( {ply}, "Tiramisu.ReadNote", {["title"] = CAKE.GetUData(myid, "name"), ["text"] = CAKE.GetUData(myid, "text")})
-	ply:GiveItem("note", myid)
-	self:Remove()
+	datastream.StreamToClients( ply, "Tiramisu.ReadNote", {["title"] = CAKE.GetUData(myid, "name"), ["text"] = CAKE.GetUData(myid, "text")})
+	if !ply:HasItemID( myid ) then
+		ply:GiveItem( "note", myid )
+	end
 
 end
 

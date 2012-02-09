@@ -172,6 +172,8 @@ function CAKE.LoadPlayerDataFile( ply )
 		CAKE.SavePlayerData(ply)
 		
 	end
+
+	hook.Call( "TiramisuPostPlayerLoaded", GAMEMODE, ply, ply.FirstTimeJoining )
 	
 end
 

@@ -5,7 +5,7 @@ CAKE.ConVars = {  }
 CAKE.ConVars[ "LinuxHotfix" ] = false -- TURN THIS ON ONLY IF YOUR SERVER USES LINUX. This is to turn off model swapping therefore disabling some animations. It's the only solution to a current bug in the SRCDS.
 
 CAKE.ConVars[ "Tiramisu" ] = "2"
-CAKE.ConVars[ "Schema" ] = "hl2rp" -- What folder is schema data being loaded from?
+CAKE.ConVars[ "Schema" ] = "freeform" -- What folder is schema data being loaded from?
 
 --General config
 CAKE.ConVars[ "SpawnWithBlackScreen" ] = true --Set this to true if you want people to be welomed with a black screen.
@@ -103,6 +103,10 @@ CAKE.ConVars[ "NoteFont" ] = CAKE.ConVars[ "ChatFont" ]
 CAKE.ConVars[ "NamesFont"] = CAKE.ConVars[ "ChatFont" ]
 CAKE.ConVars[ "TitlesFont"] = CAKE.ConVars[ "ChatFont" ]
 CAKE.BaseColor = Color( 50, 50, 50, 150 ) --The schema's default color. Can be set in game
+
+--Groups
+CAKE.ConVars[ "InviteTimer" ] = 60 --Time that must pass before another invite can be sent. Stops invite harassment.
+CAKE.ConVars[ "AllowGroupChat" ] = true --Disable this to turn off all OOC group chat.
 
 --Intro
 CAKE.ConVars[ "UseIntro" ] = true --Set this to false if you want the player to go directly into the character menu when they join

@@ -22,6 +22,4 @@ CAKE.AddDataField( 2, "flags", CAKE.ConVars[ "DefaultFlags" ] ) -- What flags do
 CAKE.AddDataField( 2, "inventory", CAKE.ConVars[ "DefaultInventory" ] ) -- What inventory do they start with
 CAKE.AddDataField( 2, "gender", "Male" ) -- MAN POWER
 CAKE.AddDataField( 2, "age", 30 ) --Can't think of any puns.
-CAKE.AddDataField( 2, "group", "none" )
-CAKE.AddDataField( 2, "grouprank", "none" )
 CAKE.AddDataField( 2, "gear", {} )

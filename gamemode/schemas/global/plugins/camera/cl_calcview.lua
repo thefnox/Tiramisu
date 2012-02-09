@@ -70,21 +70,22 @@ end)
 
 local amount = 5
 hook.Add( "PlayerBindPress", "TiramisuPlayerBindPressCamera", function( ply, bind, down )
-	if string.find(bind, "invprev") then
-		RunConsoleCommand( "rp_thirdpersondistance",  tostring(Clamp( CAKE.ThirdpersonDistance:GetInt() - amount, 0, 150)))
-	elseif string.find(bind, "invnext") then
-		RunConsoleCommand( "rp_thirdpersondistance",  tostring(Clamp( CAKE.ThirdpersonDistance:GetInt() + amount, 0, 150)))
-	end
-
-	if string.find(bind, "invprev") or string.find(bind, "invnext") then
-		if CAKE.ThirdpersonDistance:GetInt() <= 5 then
-			RunConsoleCommand("rp_thirdperson","0")
-		else
-			RunConsoleCommand("rp_thirdperson","1")
+	if ValidEntity(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() != "weapon_physgun" then
+		if string.find(bind, "invprev") then
+			RunConsoleCommand( "rp_thirdpersondistance",  tostring(Clamp( CAKE.ThirdpersonDistance:GetInt() - amount, 0, 150)))
+		elseif string.find(bind, "invnext") then
+			RunConsoleCommand( "rp_thirdpersondistance",  tostring(Clamp( CAKE.ThirdpersonDistance:GetInt() + amount, 0, 150)))
 		end
-		return true
+
+		if string.find(bind, "invprev") or string.find(bind, "invnext") then
+			if CAKE.ThirdpersonDistance:GetInt() <= 5 then
+				RunConsoleCommand("rp_thirdperson","0")
+			else
+				RunConsoleCommand("rp_thirdperson","1")
+			end
+			return true
+		end
 	end
-	
 end)
 
 local vecMove = Vector()

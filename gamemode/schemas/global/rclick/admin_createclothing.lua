@@ -29,7 +29,6 @@ function RCLICK.Click(target,ply)
 
 	local TextEntry = vgui.Create( "DTextEntry" )
 	TextEntry:SetText( "Name" )
-	TextEntry.OnEnter = function() Window:Close() ply:ConCommand("rp_admin converttoclothing " .. target:EntIndex() .. " \"" .. TextEntry:GetValue() .. "\" \"" .. type .. "\" " .. tostring(CheckBox:GetValue()) ) end
 	InnerPanel:AddItem( TextEntry )
 
 	local Label = vgui.Create( "DLabel" )

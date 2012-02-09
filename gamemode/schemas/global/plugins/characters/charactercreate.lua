@@ -170,7 +170,9 @@ function CAKE.SelectRandomCharacter( ply )
 	for k, _ in pairs(CAKE.PlayerData[ CAKE.FormatText(ply:SteamID()) ][ "characters" ]) do
 		table.insert( tbl, k )
 	end
-	CAKE.SelectChar( ply, table.Random(tbl) )
+	if table.Count( tbl ) > 0 then
+		CAKE.SelectChar( ply, table.Random(tbl) )
+	end
 end
 
 function CAKE.SelectChar( ply, uid )
@@ -298,7 +300,9 @@ concommand.Add( "rp_receivechars", function( ply, cmd, args )
 	umsg.Start("DisplayCharacterList", ply)
 	umsg.End()
 	if !util.tobool(args[1]) then
-		CAKE.SelectRandomCharacter( ply )
+		timer.Simple( 1, function()
+			CAKE.SelectRandomCharacter( ply )
+		end)
 	end
 end)
 

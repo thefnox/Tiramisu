@@ -1,77 +1,68 @@
---Broadcasts a message across the server, if group permissions allow it.
+--Broadcasts a message across the server, if group permissions for the faction allow it.
 local function Broadcast( ply, text )
 
-    -- Check to see if the player's team allows broadcasting
-    local group = CAKE.GetCharField( ply, "group" )
-    
-    if( CAKE.GetGroupFlag( group, "canbroadcast" ) ) then
-        
-        for k, v in pairs( player.GetAll( ) ) do
-        
-            CAKE.SendChat( v, "[BROADCAST]: " .. text, "BudgetLabel", "IC" )
-            
-        end
-    
-    end
-    
-    return ""
-    
+	-- Check to see if the player's team allows broadcasting
+	local group = CAKE.GetCharField( ply, "activegroup" )
+	
+	if( CAKE.GroupExists( group )) then
+		local group = CAKE.GetGroup( group )
+
+		if group:GetField( "type" ) == "faction" and group:CharacterInGroup( ply ) and group:GetRankField( group:GetCharacterInfo( ply ).Rank, "canbroadcast" ) then
+			for k, v in pairs( player.GetAll( ) ) do
+			
+				CAKE.SendChat( v, "[BROADCAST]: " .. text, "BudgetLabel", "IC" )
+				
+			end
+		end
+	
+	end
+	
+	return ""
+	
 end
 
+--Allows communication between group members.
+local function GroupChat( ply, text )
 
---Sends a group only message.
-local function Radio( ply, text )
+	if !CAKE.ConVars[ "AllowGroupChat" ] then return "" end
 
-    local players = player.GetAll()
-    local heardit = {}
-    local group = CAKE.GetCharField( ply, "group" )
-    local color = CAKE.GetGroupField( group, "radiocolor" ) or Color( 255, 255, 255 )
+	print( "whoop whoop!")
 
-    if !ply:IsCharLoaded() then return "" end
-    if !CAKE.GroupExists( group ) then return "" end
+	-- Check to see if the player's team allows broadcasting
+	local exp = string.Explode( " ", text )
+	local color = CAKE.GetPlayerField( ply, "ooccolor" )
+	local group
+	if CAKE.GroupExists( exp[1] ) then
+		group = CAKE.GetGroup( exp[1] )
+		table.remove( exp, 1 )
+		text = table.concat( exp, " " )
+	else
+		group = CAKE.GetGroup( "activegroup" )
+	end
 
-    for _, target in pairs(player.GetAll()) do
-        if target:IsCharLoaded() then
-            if( CAKE.GetCharField( target, "group" ) == group ) then
-                /*
-                if v2 != ply then
-                    CAKE.AddRadioLine( v2, "[RADIO] " .. ply:Nick() .. ": " .. text, CAKE.GetGroupFlag( group, "radiocolor" ) or Color( 255, 255, 255 ) )
-                    else
-                    CAKE.AddRadioLine( v2, "[RADIO] " .. ply:Nick() .. ": " .. text, Color( 255, 0, 0 ) )
-                        
-                    end*/
-                datastream.StreamToClients( target, "TiramisuAddToRadio", {
-                    ["text"] = "<color=white>[RADIO]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.b ) .. "," .. tostring( color.g ) .. ">" .. ply:Nick() .. "</color><color=white>: " .. text .. "</color>" 
-                })
-                table.insert(heardit, target)
-            end
-        end
-    end
-
-    for k, v in pairs(players) do
-        
-        if(!table.HasValue(heardit, v)) then
-        
-            local range = CAKE.ConVars[ "TalkRange" ]
-            
-            if( v:EyePos( ):Distance( ply:EyePos( ) ) <= range ) then
-            
-                CAKE.SendChat( v, ply:Nick() .. ": " .. text, "ChatFont", "IC" )
-                
-            end
-            
-        end
-        
-    end
-    
-    return ""
-
+	print( "talking to group:", group.UniqueID)
+	
+	if group and group:CharInGroup( ply ) then
+		for k, v in pairs( group:GetOnlineChars() ) do
+			datastream.StreamToClients( v, "TiramisuAddToGroupChat", {
+				["text"] = text,
+				["color"] = color,
+				["name"] = ply:Nick(),
+				["channel"] = "[" .. group:Name() .. "]",
+				["handler"] = "/g " .. group.UniqueID .. " "
+			})
+		end
+	end
+	
+	return ""
+	
 end
 
 
 function PLUGIN.Init( )
 
-    CAKE.ChatCommand( "/bc", Broadcast ) -- Broadcast
-    CAKE.ChatCommand( "/r", Radio ) -- Radio
-    CAKE.ChatCommand( "/radio", Radio )
+	CAKE.ChatCommand( "/bc", Broadcast ) -- Broadcast
+	CAKE.ChatCommand( "/g", GroupChat )
+	CAKE.ChatCommand( "/group", GroupChat )
+
 end

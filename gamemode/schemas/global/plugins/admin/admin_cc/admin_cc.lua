@@ -547,6 +547,21 @@ local function Admin_TurnIntoClothing( ply, cmd, args )
 	end
 end
 
+local function Admin_DuplicateItem( ply, cmd, args )
+	if !(args[1] and args[2]) then CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin duplicate item \"entity\" \"amount\" )") return end
+	local entity = ents.GetByIndex( tonumber( args[ 1 ] ))
+	local amount = math.Clamp( tonumber(args[2]), 1, 100 )
+	timer.Create( ply:SteamID() .. "createitems" .. CurTime(), 0.1, amount, function()
+		local origid = entity:GetNWString("id")
+		local class = entity:GetNWString("Class")
+		local id = CAKE.CreateItemID()
+		CAKE.UData[id] = table.Copy( CAKE.UData[origid] )
+		CAKE.SaveUData( id )
+		CAKE.CreateItem( class, ply:CalcDrop( ), Angle( 0,0,0 ), id )
+	end)
+
+end
+
 local function Admin_SetPermaModel( ply, cmd, args )
 
 	if( #args != 2 ) then
@@ -618,6 +633,7 @@ function PLUGIN.Init( )
 	CAKE.AdminCommand( "createpropitem", Admin_CreatePropItem, "Create an item from a prop.", true, true, 1 )
 	CAKE.AdminCommand( "createclothing", Admin_CreateClothing, "Create a new set of clothing.", true, true, 1 )
 	CAKE.AdminCommand( "converttoitem", Admin_TurnIntoItem, "Turns a prop into an item (Right click on prop)", true, true, 1 )
+	CAKE.AdminCommand( "duplicateitem", Admin_DuplicateItem, "Duplicates an item", true, true, 3 )
 	CAKE.AdminCommand( "converttoclothing", Admin_TurnIntoClothing, "Turns a ragdoll into clothing(Right click on prop)", true, true, 1 )
 	
 end

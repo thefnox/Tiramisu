@@ -138,13 +138,15 @@ if SERVER then
 	function meta:PlayEmote( emote )
 		if Anims[ self:GetGender() ].Emotes and Anims[ self:GetGender() ].Emotes[emote] then
 			self.Emote = Anims[ self:GetGender() ].Emotes[emote].anim
-			umsg.Start("Tiramisu.SetEmote", self)
+			umsg.Start("Tiramisu.SetEmote")
+				umsg.Entity(self)
 				umsg.String(Anims[ self:GetGender() ].Emotes[emote].anim)
 			umsg.End()
 			self:Lock()
 			timer.Simple(Anims[ self:GetGender() ].Emotes[emote].length, function()
 				self.Emote = ""
-				umsg.Start("Tiramisu.SetEmote", self)
+				umsg.Start("Tiramisu.SetEmote")
+					umsg.Entity(self)
 					umsg.String("")
 				umsg.End()
 				self:UnLock()
@@ -156,7 +158,6 @@ if SERVER then
 		self:SetNWBool( "specialmodel", true )
    		self:SetModel( model )
 	end
-
 	
 	function meta:SetAiming( bool )
 		local wep = self:GetActiveWeapon()
@@ -244,7 +245,8 @@ else
 
 	hook.Add( "Think", "Tiramisu.StripYouOfYourBones", function()
 		for _, ent in pairs( player.GetAll() ) do
-			if ValidEntity( ent ) and !ent.BonePositionsHooked then
+			if ValidEntity( ent ) and !ent.BonePositionsHooked and !ent:GetNWBool( "specialmodel" ) then
+				ent:SetMaterial("models/null")
 				if !ent.oldbuildbones then
 					ent.oldbuildbones = ent.BuildBonePositions
 				end
@@ -269,7 +271,10 @@ else
 	end)
 
 	usermessage.Hook( "Tiramisu.SetEmote", function(um)
-		LocalPlayer().Emote = um:ReadString()
+		local ply = um:ReadEntity()
+		if ValidEntity( ply ) then
+			ply.Emote = um:ReadString()
+		end
 	end)
 
 end

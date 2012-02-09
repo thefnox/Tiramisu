@@ -55,7 +55,6 @@ function RCLICK.Click(target,ply)
 
 	local TextEntry = vgui.Create( "DTextEntry" )
 	TextEntry:SetText( "Name" )
-	TextEntry.OnEnter = function() Window:Close() ply:ConCommand("rp_admin converttoitem " .. target:EntIndex() .. " \"" .. TextEntry:GetValue() .. "\" " .. tostring( CheckBox:GetChecked() ) .. " " .. tostring( CheckBox2:GetChecked() ) .. " \"" .. bone .. "\"" ) end
 	InnerPanel:AddItem( TextEntry )
 
 	local CheckBox = vgui.Create( "DCheckBoxLabel" )
