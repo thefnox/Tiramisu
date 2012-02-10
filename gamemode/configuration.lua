@@ -56,6 +56,7 @@ CAKE.ConVars[ "DeathRagdoll_Linger" ] = 30 --Time in seconds that it takes for r
 CAKE.ConVars[ "DefaultPhysgun" ] = false -- Are players banned from the physics gun when they first start.
 CAKE.ConVars[ "DefaultGravgun" ] = false -- Are players banned from the gravity gun when they first start.
 CAKE.ConVars[ "DefaultPropTrust" ] = false --Are players allowed to spawn props when they first start.
+CAKE.ConVars[ "DefaultVehicles" ] = false --Are players allowed to spawn vehicles when they first start.
 CAKE.ConVars[ "PropLimit" ] = 20
 CAKE.ConVars[ "RagdollLimit" ] = 1
 CAKE.ConVars[ "VehicleLimit" ] = 0

@@ -81,7 +81,7 @@ function GM:PlayerSpawnRagdoll(ply, mdl)
 	
 	if CAKE.PlayerRank(ply) <= 2 then
 	
-		if !util.tobool( CAKE.GetPlayerField(ply, "tooltrust") ) then
+		if !util.tobool( CAKE.GetPlayerField(ply, "tooltrust") ) and !CAKE.ConVars[ "DefaultPropTrust" ] then
 			CAKE.SendChat(ply, "You are not allowed to spawn ragdolls!")
 			return false
 		end
@@ -117,6 +117,11 @@ function GM:PlayerSpawnVehicle(ply)
 	local spawntable = CAKE.SpawnTable[CAKE.FormatText(ply:SteamID())]
 	
 	if CAKE.PlayerRank(ply) <= 2 then
+
+		if !util.tobool( CAKE.GetPlayerField(ply, "tooltrust") ) and !CAKE.ConVars[ "DefaultVehicles" ] then
+			CAKE.SendChat(ply, "You are not allowed to spawn vehicles!")
+			return false
+		end
 
 		if(!spawntable) then
 			CAKE.CreateSpawnTable(ply)
@@ -161,8 +166,8 @@ function GM:PlayerSpawnEffect(ply, mdl)
 	
 	if CAKE.PlayerRank(ply) <= 2 then
 	
-		if(!tobool(CAKE.GetPlayerField(ply, "tooltrust"))) then
-			CAKE.SendChat(ply, "You are not allowed to spawn effects!")
+		if(!tobool(CAKE.GetPlayerField(ply, "tooltrust")) and !CAKE.ConVars[ "DefaultPropTrust" ]) then
+			CAKE.SendChat(ply, "You are not allowed to spawn effects!" )
 			return false
 		end
 		
