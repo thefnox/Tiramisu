@@ -949,26 +949,26 @@ end
 
 function SKIN:PaintPlayerTitles()
 	for _, ply in pairs( CAKE.NearbyPlayers ) do
+		if not IsValid(ply) and LocalPlayer() then return end
 		if ValidEntity( ply ) and ply:IsPlayer() and ply != LocalPlayer() and LocalPlayer():CanTraceTo(ply) then
-			local pos = (ply:EyePos() + Vector(0, 0, 10)):ToScreen()
-			if ply.FirstSeen and ply.Alpha and CAKE.TitlesFadeTime:GetInt() > 0 and CurTime() - ply.FirstSeen > CAKE.TitlesFadeTime:GetInt() then
-				ply.Alpha = -Lerp( RealFrameTime()*5, -ply.Alpha, 0 )
-			else
-				ply.Alpha = 255
-			end
-			if pos.visible then
-				if ply:GetNWBool( "chatopen" ) then
-					draw.SimpleTextOutlined( "Typing...", "TiramisuTitlesFont", pos.x, pos.y - 90, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
-				end
-				if CAKE.FadeNames:GetBool() then
-					draw.SimpleTextOutlined( ply:Nick(), "TiramisuNamesFont", pos.x, pos.y - 70, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,math.Clamp(ply.Alpha, 0, 100)))
+			local angleto = (ply:GetPos() - LocalPlayer():GetPos()):Angle()
+			local yawdif = math.abs(math.AngleDifference(angleto.y, (LocalPlayer():GetAngles()).y + LocalPlayer().CurrentLookAt.y))
+			local dist = ply:GetPos():Distance(LocalPlayer():GetPos())
+			print("Difference from: " .. yawdif, "Player: " .. LocalPlayer():GetAngles().y, "Other: " .. angleto.y)
+			if yawdif < 30 then
+				local pos = (ply:EyePos() + Vector(0, 0, 10)):ToScreen()
+				if yawdif > 5 then
+					ply.Alpha = 255 -  (255 * (math.pow(yawdif / 30, 2)))
+					print(ply.Alpha)
 				else
-					draw.SimpleTextOutlined( ply:Nick(), "TiramisuNamesFont", pos.x, pos.y - 70, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
+					ply.Alpha = 255
 				end
-				if CAKE.FadeTitles:GetBool() then
-					draw.SimpleTextOutlined( ply:Title(), "TiramisuTitlesFont", pos.x, pos.y - 45, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,math.Clamp(ply.Alpha, 0, 100)))
-				else
-					draw.SimpleTextOutlined( ply:Title(), "TiramisuTitlesFont", pos.x, pos.y - 45, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
+				if pos.visible then
+					if ply:GetNWBool( "chatopen" ) then
+						draw.SimpleTextOutlined( "Typing...", "TiramisuTitlesFont", pos.x, pos.y - 90, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
+					end
+					draw.SimpleTextOutlined( ply:Nick(), "TiramisuNamesFont", pos.x, pos.y - 70, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
+					draw.SimpleTextOutlined( ply:Title(), "TiramisuTitlesFont", pos.x, pos.y - 45, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
 				end
 			end
 		end
