@@ -1,5 +1,10 @@
 local function OpenScoreboard()
 
+	if PlayerMenu then
+		PlayerMenu:Remove()
+		PlayerMenu = nil
+	end
+
 	PlayerMenu = vgui.Create( "DFrame" )
 	PlayerMenu:SetSize( 540, 400 )
 	PlayerMenu:SetTitle( "Scoreboard" )

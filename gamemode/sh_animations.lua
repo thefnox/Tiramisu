@@ -763,10 +763,9 @@ function GM:CalcMainActivity( ply, velocity )
 	ply.CalcIdeal = ACT_IDLE
 	ply.CalcSeqOverride = -1
 	
-	if self:HandleExtraActivities( ply ) or self:HandlePlayerDriving( ply ) or
+	if self:HandleExtraActivities( ply ) or self:HandlePlayerDriving( ply ) or self:HandlePlayerSwimming( ply, velocity ) or
 		self:HandlePlayerJumping( ply ) or
-		self:HandlePlayerDucking( ply, velocity, holdtype ) or
-		self:HandlePlayerSwimming( ply, velocity ) or self:HandlePlayerVaulting( ply, velocity ) then --We do nothing, I guess, lol.
+		self:HandlePlayerDucking( ply, velocity, holdtype ) or self:HandlePlayerVaulting( ply, velocity ) then --We do nothing, I guess, lol.
 	else
 		ply.InEmote = false
 		local len2d = velocity:Length2D()
