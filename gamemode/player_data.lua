@@ -103,12 +103,12 @@ function CAKE.LoadPlayerDataFile( ply )
 		for _, char in pairs( CharTable ) do
 
 			for k, v in pairs( char ) do
-
-				if( CAKE.CharacterDataFields[ k ] == nil ) then
 				
+				if( CAKE.CharacterDataFields[ k ] == nil ) then
 					CAKE.DayLog( "script.txt", "Invalid character data field '" .. tostring( _ ) .. "' in character " .. ply:SteamID( ) .. "-" .. _ .. ", removing." )
-					CAKE.PlayerData[ SteamID ][ "characters" ][ char ][ k ] = nil
-					
+					if CAKE.PlayerData[ SteamID ][ "characters" ][ _ ][ k ] then
+						CAKE.PlayerData[ SteamID ][ "characters" ][ _ ][ k ] = nil
+					end
 				end
 				
 			end

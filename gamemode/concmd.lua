@@ -20,16 +20,11 @@ end)
 concommand.Add( "rp_changename", function( ply, cmd, args )
 
 	local name = table.concat( args, " " )
-	local oldsig = CAKE.GetCharSignature( ply )
-	local group = CAKE.GetCharField( ply, "group" )
+
+	hook.Call( "TiramisuPlayerChangeName", GAMEMODE, ply, name, ply:GetNWString("name", "") )
 
 	CAKE.SetCharField(ply, "name", name )
 	ply:SetNWString("name", name)
-
-	--Changes the name within the group too
-	if CAKE.ChangeMemberName then
-		CAKE.ChangeMemberName( group, ply, oldsig )
-	end
 
 end)
 

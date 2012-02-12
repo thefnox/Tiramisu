@@ -218,7 +218,7 @@ function PANEL:AddLine( text, channel, handler )
 	local tbl = self.Channels[ "All" ]:GetItems()
 	local low = 999999999999
 	local lowest
-	if #tbl > 500 then
+	if #tbl > CAKE.ConVars[ "MaxChatLines" ] then
 		for k, v in pairs( tbl ) do
 			if v and v.numberid < low then
 				low = v.numberid
@@ -237,14 +237,14 @@ function PANEL:AddLine( text, channel, handler )
 
 		tbl = self.Channels[ channel ]:GetItems()
 		low = 999999999999
-		if #tbl > 500 then
+		if #tbl > CAKE.ConVars[ "MaxChatLines" ] then
 			for k, v in pairs( tbl ) do
 				if v and v.numberid < low then
 					low = v.numberid
 					lowest = k 
 				end
 			end
-			--We purge it from existance, as this line will necessarily be purged or has already been purged from the All channel. (The All channel will have either 50 or more items)
+			--We purge it from existance, as this line will necessarily be purged or has already been purged from the All channel. (The All channel will have either the same or more items)
 			self.Channels[ channel ]:RemoveItem( tbl[lowest] )
 			self.Lines[ low ] = nil
 		end

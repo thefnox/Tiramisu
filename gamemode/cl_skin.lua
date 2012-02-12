@@ -242,7 +242,7 @@ function SKIN:PaintQuickMenu(panel)
 end
 
 function SKIN:PaintQuickMenuLabel(panel)
-	draw.SimpleTextOutlined( panel.LabelText or "", "Tiramisu32Font", panel:GetWide()/2, 0, Color(panel.FuckingColor.r,panel.FuckingColor.g,panel.FuckingColor.b,fade), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,fade))
+	draw.SimpleTextOutlined( panel.LabelText or "", "Tiramisu32Font", panel:GetWide()/2, 0, Color(panel.SpecialColor.r,panel.SpecialColor.g,panel.SpecialColor.b,fade), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,fade))
 end
 
 /*---------------------------------------------------------
@@ -871,6 +871,25 @@ function SKIN:PaintHealthBar()
 end
 
 /*---------------------------------------------------------
+	AmmoDisplay
+---------------------------------------------------------*/
+local wep
+function SKIN:PaintAmmoDisplay()
+	wep = LocalPlayer():GetActiveWeapon()
+
+	if ValidEntity( wep ) and Anims.AlwaysAimed and !table.HasValue(Anims.AlwaysAimed, wep:GetClass()) and Anims.NeverAimed and !table.HasValue(Anims.NeverAimed, wep:GetClass()) then
+		draw.SimpleTextOutlined( tostring( wep:Clip1() ), "Tiramisu32Font", ScrW() - 70,ScrH() - 50, Color( 255, 255, 255, 230) , TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP,1,Color(0,0,0,100))
+		draw.SimpleTextOutlined( "/" .. tostring( LocalPlayer():GetAmmoCount(wep:GetPrimaryAmmoType())), "Tiramisu24Font", ScrW() - 68,ScrH() - 50, Color( 255, 255, 255, 230), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP,1,Color(0,0,0,100))
+
+		if wep:Clip2() > 0 then
+			draw.SimpleTextOutlined( tostring( wep:Clip2() ), "Tiramisu18Font", ScrW() - 70,ScrH() - 30, Color( 255, 255, 255, 230), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP,1,Color(0,0,0,100))
+			draw.SimpleTextOutlined( "/" .. tostring( LocalPlayer():GetAmmoCount(wep:GetSecondaryAmmoType())) , "Tiramisu18Font", ScrW() - 68,ScrH() - 30, Color( 255, 255, 255, 230), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP,1,Color(0,0,0,100))
+		end
+	end
+end
+
+
+/*---------------------------------------------------------
 	DeathMessage
 ---------------------------------------------------------*/
 function SKIN:PaintDeathMessage()
@@ -954,7 +973,7 @@ function SKIN:PaintPlayerTitles()
 			local angleto = (ply:GetPos() - LocalPlayer():GetPos()):Angle()
 			local yawdif = math.abs(math.AngleDifference(angleto.y, (LocalPlayer():GetAngles()).y + LocalPlayer().CurrentLookAt.y))
 			local dist = ply:GetPos():Distance(LocalPlayer():GetPos())
-			print("Difference from: " .. yawdif, "Player: " .. LocalPlayer():GetAngles().y, "Other: " .. angleto.y)
+			--print("Difference from: " .. yawdif, "Player: " .. LocalPlayer():GetAngles().y, "Other: " .. angleto.y)
 			if yawdif < 30 then
 				local pos = (ply:EyePos() + Vector(0, 0, 10)):ToScreen()
 				if yawdif > 5 then

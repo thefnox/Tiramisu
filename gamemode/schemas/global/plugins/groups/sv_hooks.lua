@@ -1,31 +1,33 @@
 hook.Add( "PlayerSpawn", "TiramisuGroupSpawnHook", function( ply )
 	if ply:IsCharLoaded() then
-		timer.Simple( 1, function()
-			local groups = CAKE.GetCharField( ply, "groups" )
-			local group
-			if groups then
-				for k, group in pairs(groups) do
-					if group and group != "none" then
-						groupexists, fileexists = CAKE.GroupExists( group )
-						if groupexists then
-							local g = CAKE.GetGroup( group )
-							if g and !g:GetCharacterInfo( ply ) then
-								CAKE.LeaveGroup( ply, group )
+		local groups = CAKE.GetCharField( ply, "groups" )
+		local group
+		if groups then
+			for k, group in pairs(groups) do
+				if group and group != "none" then
+					groupexists, fileexists = CAKE.GroupExists( group )
+					if groupexists then
+						local g = CAKE.GetGroup( group )
+						if g and !g:GetCharacterInfo( ply ) then
+							table.remove(groups, k)
+							if CAKE.GetCharField( ply, "activegroup") == group and table.Count(groups) > 1 then
+								CAKE.SetCharField( ply, "activegroup", table.Random(plygroups))
 							end
-						elseif !groupexists and fileexists then
-							CAKE.LoadGroup( group )
-						elseif !groupexists and !fileexists then
-							table.remove(groups, k )
+							CAKE.SendError( ply, "You have been removed from " .. g:GetField( "name" ))
 						end
-					else
+					elseif !groupexists and fileexists then
+						CAKE.LoadGroup( group )
+					elseif !groupexists and !fileexists then
 						table.remove(groups, k )
 					end
+				else
+					table.remove(groups, k )
 				end
 			end
-			CAKE.SetCharField( ply, "groups", table.Copy(groups) )
+		end
+		CAKE.SetCharField( ply, "groups", table.Copy(groups) )
 
-			CAKE.SendGroupToClient( ply )
-		end)
+		CAKE.SendGroupToClient( ply )
 	end
 end)
 
@@ -51,6 +53,26 @@ hook.Add( "TiramisuPostPlayerLoaded", "TiramisuLoadGroups", function( ply, first
 				end
 			end
 		end 
+	end
+end)
+
+--Updates the name of a player in the group, whenever rp_changename is performed.
+hook.Add( "TiramisuPlayerChangeName", "TiramisuRefreshNameInGroup", function( ply, name, oldname)
+	local groups = CAKE.GetCharField( ply, "groups" )
+	local group
+	if groups then
+		for k, group in pairs(groups) do
+			if group and group != "none" then
+				groupexists = CAKE.GroupExists( group )
+				if groupexists then
+					local g = CAKE.GetGroup( group )
+					if g and g:GetCharacterInfo( ply ) then
+						g:GetCharacterInfo( ply ).Name = name
+						g:Save()
+					end
+				end
+			end
+		end
 	end
 end)
 

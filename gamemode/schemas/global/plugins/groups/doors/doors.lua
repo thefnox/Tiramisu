@@ -95,7 +95,7 @@ function ccLockDoor( ply, cmd, args )
 	local doorgroup = CAKE.GetDoorGroup(entity) or 0
 	local groupdoor = CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or {}
 	if( CAKE.IsDoor( door ) ) then
-		if( ( door.owner != nil ) and door.owner == ply ) or ply:IsSuperAdmin() or ply:IsAdmin() then
+		if (door.owner and door.owner == ply) or ply:IsSuperAdmin() or ply:IsAdmin() or !CAKE.ConVars[ "DoorsPurchaseable" ] then
 			door:Fire( "lock", "", 0 )
 			CAKE.SendChat( ply, "Door locked!" )
 		else
@@ -118,7 +118,7 @@ function ccUnLockDoor( ply, cmd, args )
 	local doorgroup = CAKE.GetDoorGroup(entity) or 0
 	local groupdoor = CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or 0
 	if( CAKE.IsDoor( door ) ) then
-		if( ( door.owner != nil ) and door.owner == ply ) or ply:IsSuperAdmin() or ply:IsAdmin() then
+		if ( door.owner and door.owner == ply ) or ply:IsSuperAdmin() or ply:IsAdmin() or !CAKE.ConVars[ "DoorsPurchaseable" ] then
 			door:Fire( "unlock", "", 0 )
 			CAKE.SendChat( ply, "Door unlocked!" )
 		else
@@ -139,6 +139,13 @@ function ccPurchaseDoor( ply, cmd, args )
 	local door = ents.GetByIndex( tonumber( args[ 1 ] ) )
 	
 	local pos = door:GetPos( )
+
+	if !CAKE.ConVars[ "DoorsPurchaseable" ] then
+
+		CAKE.SendChat( ply, "Purchasing doors is disabled." )
+		return
+
+	end
 	
 		
 	if( CAKE.GetDoorGroup( door ) and !door.purchaseable ) then
@@ -200,7 +207,7 @@ concommand.Add( "rp_purchasedoor", ccPurchaseDoor )
 local function ccDoorTitle( ply, cmd, args )
 
 	local door = ply:GetEyeTrace( ).Entity
-	if ValidEntity( door ) and CAKE.IsDoor( door ) and door.owner == ply then
+	if (ValidEntity( door ) and CAKE.IsDoor( door ) and (door.owner and door.owner == ply)) or !CAKE.ConVars[ "DoorsPurchaseable" ] then
 		local title = table.concat( args, " " )
 		CAKE.SetDoorTitle( door, title )
 	end

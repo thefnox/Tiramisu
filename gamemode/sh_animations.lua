@@ -8,6 +8,31 @@ Anims.PersonalityTypes = {
 	"frustrated"
 }
 
+--Weapons that are always aimed
+Anims.AlwaysAimed = {
+	"weapon_physgun",
+	"weapon_physcannon",
+	"weapon_frag",
+	"weapon_slam",
+	"weapon_rpg",
+	"gmod_tool"
+}
+
+--Weapons that are never aimed
+Anims.NeverAimed = {
+	"hands"
+}
+
+
+Anims.ShotgunHoldTypes = {
+	"shotgun"
+}
+
+Anims.MeleeHoldtypes = {
+	"passive",
+	"melee"
+}
+
 local meta = FindMetaTable( "Player" )
 local model
 
@@ -64,16 +89,6 @@ function meta:SetPersonality( i )
 	end
 
 end
-
-
-local shotgunholdtypes = {
-	"shotgun"
-}
-
-local meleeholdtypes = {
-	"passive",
-	"melee"
-}
 		
 function Anims.DetectHoldType( act ) --This is just a function used to group up similar holdtype for them to use the same sequences, since NPC animations are kinda limited.
 	--You can add or remove to this list as you see fit, if you feel like creating a different holdtype.
@@ -84,12 +99,12 @@ function Anims.DetectHoldType( act ) --This is just a function used to group up 
 	if string.match(  act, "melee2" ) then
 		return "melee2"
 	end
-	for k, v in pairs( shotgunholdtypes ) do
+	for k, v in pairs( Anims.ShotgunHoldTypes ) do
 		if string.match( act, v ) then
 			return "shotgun"
 		end
 	end
-	for k, v in pairs( meleeholdtypes ) do
+	for k, v in pairs( Anims.MeleeHoldtypes ) do
 		if string.match( act, v ) then
 			return "melee"
 		end
@@ -120,21 +135,6 @@ function Anims.DetectHoldType( act ) --This is just a function used to group up 
 end
 
 if SERVER then
-	--Weapons that are always aimed
-	Anims.AlwaysAimed = {
-		"weapon_physgun",
-		"weapon_physcannon",
-		"weapon_frag",
-		"weapon_slam",
-		"weapon_rpg",
-		"gmod_tool"
-	}
-
-	--Weapons that are never aimed
-	Anims.NeverAimed = {
-		"hands"
-	}
-
 	function meta:PlayEmote( emote )
 		if Anims[ self:GetGender() ].Emotes and Anims[ self:GetGender() ].Emotes[emote] then
 			self.Emote = Anims[ self:GetGender() ].Emotes[emote].anim

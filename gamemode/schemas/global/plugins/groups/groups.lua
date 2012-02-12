@@ -104,7 +104,7 @@ end
 --Is the player in the group?
 function meta:PlayerInGroup( ply )
 	if ValidEntity( ply ) and ply:IsPlayer() and ply:IsCharLoaded() then
-		for ply, v in pairs(self:GetRoster()) do
+		for _, v in pairs(self:GetRoster()) do
 			if v and v.SteamID == ply:SteamID() then
 				return true
 			end
@@ -116,7 +116,7 @@ end
 --Is the currently active character of this player in the group?
 function meta:CharacterInGroup( ply )
 	if ValidEntity( ply ) and ply:IsPlayer() and ply:IsCharLoaded() then
-		for ply, v in pairs(self:GetRoster()) do
+		for _, v in pairs(self:GetRoster()) do
 			if v and v.SteamID == ply:SteamID() and v.UID == ply:GetNWString( "uid" ) then
 				return true
 			end
@@ -144,6 +144,15 @@ function meta:GetCharacterInfo( ply )
 	end
 	return false
 end
+
+function meta:GetCharInfo( ply )
+	return self:GetCharacterInfo( ply )
+end
+
+function meta:CharInfo( ply )
+	return self:GetCharacterInfo( ply )
+end
+
 
 --Fetches the information of a member, given an id.
 function meta:GetMemberInfo( text )
@@ -178,7 +187,7 @@ function meta:GetOnlineCharacters()
 end
 
 function meta:GetOnlineChars()
-	return meta:GetOnlineCharacters()
+	return self:GetOnlineCharacters()
 end
 
 --Adds an online player to the roster.
@@ -241,6 +250,7 @@ end
 
 --Does this group currently exist in the group list? Second argument, does the file for this group exist?
 function CAKE.GroupExists( uid )
+	if !uid then return false end
 	return CAKE.Groups[uid] or false, file.Exists(CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/" .. uid.. ".txt")
 end
 
@@ -324,10 +334,11 @@ function CAKE.LeaveGroup( ply, uid )
 		local activegroup = CAKE.GetCharField( ply, "activegroup")
 		for k, v in pairs( plygroups ) do
 			if v == uid then
-				table.remove( plygroups )
-			elseif activegroup == uid then
-				CAKE.SetCharField( ply, "activegroup", v)
+				table.remove( plygroups, k )
 			end
+		end
+		if activegroup == uid and table.Count(plygroups) > 1 then
+			CAKE.SetCharField( ply, "activegroup", table.Random(plygroups))
 		end
 		CAKE.SetCharField( ply, "groups", table.Copy(plygroups) )
 		group:Save()
@@ -376,7 +387,7 @@ function CAKE.SendGroupToClient( ply )
 	group = CAKE.GetGroup( activegroup )
 	tbl["rankpermissions"] = {}
 
-	if activegroup == "none" or !group then
+	if activegroup == "none" or !group or !group:GetCharacterInfo( ply ) then
 		tbl["rankpermissions"]["canpromote"] = false
 		tbl["rankpermissions"]["cankick"] = false
 		tbl["rankpermissions"]["caninvite"] = false
@@ -395,7 +406,7 @@ function CAKE.SendGroupToClient( ply )
 		tbl["rankpermissions"]["canplaceinventory"] = group:GetRankField( rank, "canplaceinventory" )
 	end
 
-	datastream.StreamToClients( ply, "ReceiveGroups", tbl)
+	datastream.StreamToClients( ply, "Tiramisu.ReceiveGroups", tbl)
 end
 
 function PLUGIN.Init()
@@ -415,6 +426,7 @@ function PLUGIN.Init()
 			["description"] = "The one who founded the group"
 		}
 	} )
+	CAKE.AddGroupField( "doorgroup", 0 )
 	CAKE.AddGroupField( "notices", {} )
 	CAKE.AddGroupField( "inventory", {} )
 	CAKE.AddGroupField( "defaultrank", "none" )
@@ -432,7 +444,6 @@ function PLUGIN.Init()
 	CAKE.AddRankField( "cantakeinventory", false )
 	CAKE.AddRankField( "canplaceinventory", false )
 	CAKE.AddRankField( "level", 0 )
-	CAKE.AddRankField( "doorgroup", 0 )
 	CAKE.AddRankField( "name", "none" )
 	CAKE.AddRankField( "handler", "none" )
 	CAKE.AddRankField( "description", "none" )
@@ -442,6 +453,6 @@ function PLUGIN.Init()
 	--Player Fields
 	CAKE.AddDataField( 2, "groups", {} )
 	CAKE.AddDataField( 2, "activegroup", "none" )
-	CAKE.AddDataField( 2, "lastjoined", 0 )
+	CAKE.AddDataField( 2, "lastonline", 0 )
 
 end

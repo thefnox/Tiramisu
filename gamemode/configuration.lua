@@ -104,8 +104,10 @@ CAKE.ConVars[ "NoteFont" ] = CAKE.ConVars[ "ChatFont" ]
 CAKE.ConVars[ "NamesFont"] = CAKE.ConVars[ "ChatFont" ]
 CAKE.ConVars[ "TitlesFont"] = CAKE.ConVars[ "ChatFont" ]
 CAKE.BaseColor = Color( 50, 50, 50, 150 ) --The schema's default color. Can be set in game
+CAKE.ConVars[ "MaxChatLines" ] = 200 --The maximum amount of chatlines the chatbox can hold. Reducing this number may increase FPS in clients.
 
 --Groups
+CAKE.ConVars[ "DoorsPurchaseable" ] = true --Set this to false to make everyone able to lock/unlock ungrouped doors.
 CAKE.ConVars[ "InviteTimer" ] = 60 --Time that must pass before another invite can be sent. Stops invite harassment.
 CAKE.ConVars[ "AllowGroupChat" ] = true --Disable this to turn off all OOC group chat.
 
