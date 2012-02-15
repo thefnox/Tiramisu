@@ -54,6 +54,49 @@ datastream.Hook( "Tiramisu.GetRanksToPromote", function( handler, id, encoded, d
 	end
 end)
 
+datastream.Hook( "Tiramisu.EditCharInfo", function( handler, id, encoded, decoded )
+	if decoded then
+		CAKE.EditCharacterInfo( decoded )
+	end
+end)
+
+datastream.Hook( "Tiramisu.GetSearchResults", function( handler, id, encoded, decoded )
+	local uid = decoded.uid
+	if decoded.results then
+		if table.Count( decoded.results ) == 1 then
+			RunConsoleCommand( "rp_getcharinfo",uid ,CAKE.FormatText(decoded.results[1].SteamID) .. ";" .. decoded.results[1].uid )
+		elseif table.Count( decoded) > 1 then
+			frame = vgui.Create( "DFrame" )
+			frame:SetSize( 300, 200 )
+			frame:SetTitle( "Group Selection" )
+			frame:SetVisible( true )
+			frame:SetDraggable( true )
+			frame:ShowCloseButton( true )
+			frame:SetDeleteOnClose( true )
+			frame:Center()
+
+			local label = Label( "Select a character:", frame)
+			label:Dock(TOP )
+
+			local results = vgui.Create( "DListView" )
+			results:SetParent( frame )
+			results:Dock(FILL)
+			results:SetMultiSelect( false )
+			results:AddColumn("SteamID")
+			results:AddColumn("Name")
+			results:AddColumn("UID")
+			for k, v in pairs( decoded.results ) do
+				results:AddLine( v.SteamID, v.Name, v.uid )
+			end
+			results.OnClickLine = function(parent, line, isselected)
+				RunConsoleCommand("rp_getcharinfo",uid, CAKE.FormatText(line:GetValue(1)) .. ";" .. line:GetValue(3))
+				frame:Remove()
+				frame = nil
+			end
+		end
+	end
+end)
+
 usermessage.Hook( "Tiramisu.GetInvite", function( um )
 	local ply = um:ReadEntity()
 	local uid = um:ReadString()
@@ -67,6 +110,91 @@ end)
 usermessage.Hook( "Tiramisu.GroupCreateQuery", function( um )
 	CAKE.BeginGroupCreation( um:ReadString() )
 end)
+
+function CAKE.EditCharacterInfo( tbl )
+
+	local permissions = tbl.permissions or {}
+	local rank = tbl.rank
+	local ranks = permissions.ranks or {}
+
+	local frame = vgui.Create( "DFrame" )
+	frame:SetSize( 500, 100 )
+	frame:SetTitle( "Editing player " .. tbl.uid .. " on group " .. tbl.groupid )
+	frame:SetVisible( true )
+	frame:SetDraggable( true )
+	frame:ShowCloseButton( true )
+	frame:SetDeleteOnClose( true )
+	frame.Close = function()
+		if permissions["canpromote"] and table.Count( ranks ) > 0 then
+			if rank != "" then
+				CAKE.Query( "Promote this player to " .. rank .. "?", "Promote",
+				"Yes",	function() frame:Remove() RunConsoleCommand("rp_promote", CAKE.FormatText(tbl.SteamID) .. ";" .. tbl.uid, rank, tbl.groupid) end, 
+				"No",	function() end )
+			end
+		end
+		frame:Remove()
+		frame = nil
+	end
+
+	local title = Label( tbl.name, frame)
+	title:SetFont( "Tiramisu48Font")
+	title:SetPos( 10, 23 )
+	title:SizeToContents()
+
+	frame:SetWide( title:GetWide() + 20 )
+
+	local subtitle = Label( "SteamID: " .. tbl.SteamID, frame)
+	subtitle:SetPos( 10, 66 )
+	subtitle:SetFont( "Tiramisu24Font")
+	subtitle:SizeToContents()
+
+	if frame:GetWide() < subtitle:GetWide() then
+		frame:SetWide( subtitle:GetWide() + 20 )
+	end
+
+	frame:Center()
+
+	if permissions["canpromote"] or permissions["cankick"] then
+
+		frame:SetTall( frame:GetTall() + 132 )
+		local actions = vgui.Create( "DForm", frame )
+		actions:SetPos( 2, 90 )
+		actions:SetSize( frame:GetWide() - 4, 70 )
+		--actions.Paint = function() end
+		actions:SetName( "Actions:" )
+		actions:SetPadding(5)
+		actions:SetSpacing(10)
+
+		if permissions["canpromote"] and table.Count( ranks ) > 0 then
+			actions:AddItem( Label( "Promote/Demote to a rank:" ))
+			local setrank = vgui.Create( "DMultiChoice" )
+			setrank:AddChoice( rank, "" )
+			setrank:ChooseOptionID( 1)
+			rank = ""
+			for k, v in pairs( ranks ) do
+				setrank:AddChoice(v, k)
+			end
+			setrank.OnSelect = function( index, value, data )
+				rank = data
+			end
+			actions:AddItem( setrank ) 
+		end
+
+		if permissions["cankick"] then
+			local kick = vgui.Create( "DButton" )
+			kick:SetText( "Kick From Group" )
+			kick.DoClick = function()
+				CAKE.Query( "Are you sure you want to kick " .. tbl.name .. "?", "Kicking a player",
+					"Yes",	function() frame:Remove() RunConsoleCommand("rp_kickfromgroup", CAKE.FormatText(tbl.SteamID) .. ";" .. tbl.uid, tbl.groupid) end, 
+					"No",	function() end )
+			end
+			actions:AddItem(kick)
+		end
+
+		frame:Center()
+
+	end
+end
 
 function CAKE.AddRank( tbl )
 	local rank = {}
@@ -590,7 +718,13 @@ function CAKE.OpenGroupInfo( tbl )
 	FindPlayer:SetText( "Find A Player" )
 	FindPlayer:SetTall( 30 )
 	FindPlayer.DoClick = function()
-		CAKE.Message( "Feature isn't done yet.", "Error!", "OK" )
+		CAKE.StringRequest( "Find A Player", 
+			"Enter the name, rank, or SteamID of the player you want to find:", 
+			LocalPlayer():Nick(), 
+			function( str ) RunConsoleCommand("rp_rostersearch", tbl.uid, str) end,
+			function()end,
+			"Search", 
+		"Cancel" )
 	end
 	actions:AddItem(FindPlayer)
 
@@ -635,13 +769,6 @@ function CAKE.OpenGroupInfo( tbl )
 	actions:AddItem(LeaveGroup)
 
 end
-/*
- CAKE.EditGroup( {
-    ["name"] = "bob",
-    ["uid"] = "0",
-    ["description"] = "none available",
-    ["ranks"] = {}
-} )*/
 
 function CAKE.GetRankPermission( name )
 	if CAKE.Groups and CAKE.ActiveGroup != "none" and CAKE.RankPermissions then

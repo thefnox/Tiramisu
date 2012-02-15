@@ -400,7 +400,7 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 			--"&sequence:modelstring;sequencestring"
 			model = exp2[2]
 			seq = exp[2]
-			if !model then
+			if !model or !table.HasValue(Anims[ply:GetGender()][ "models" ], model) then
 				model = Anims[ply:GetGender()][ "models" ][1]
 			end
 			if( ply:GetModel():lower() != model:lower() and !ply.SpecialModel and ply:GetNWBool( "charloaded", false ) ) then
@@ -442,6 +442,9 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 			--"&number:modelstring;sequencenumber"
 			model = exp2[2]
 			seq = exp[2]
+			if !model or !table.HasValue(Anims[ply:GetGender()][ "models" ], model) then
+				model = Anims[ply:GetGender()][ "models" ][1]
+			end
 			if( ply:GetModel() != string.lower(model) and !ply.SpecialModel and ply:GetNWBool( "charloaded", false )) then
 				ply:SetModel( model )
 			end
@@ -453,6 +456,9 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 			--"&switch:modelstring;sequencestring"
 			model = exp2[2]
 			seq = exp[2]
+			if !model or !table.HasValue(Anims[ply:GetGender()][ "models" ], model) then
+				model = Anims[ply:GetGender()][ "models" ][1]
+			end
 			if( ply:GetModel() != string.lower(model) and !ply.SpecialModel and ply:GetNWBool( "charloaded", false )) then
 				ply:SetModel( model )
 			end

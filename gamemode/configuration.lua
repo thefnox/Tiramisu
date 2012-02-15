@@ -20,46 +20,53 @@ CAKE.ConVars[ "DefaultTime" ] = "1 1 2012 1" --The initial time of the script's 
 CAKE.ConVars[ "DefaultInventory" ] = {  } -- What inventory do characters start out with when they are first made. 
 CAKE.ConVars[ "DefaultAmmo" ] = {  } --The default ammo table your character will have on spawn.
 CAKE.ConVars[ "DefaultClothing" ] = { }--Clothing you can choose on startup
-CAKE.ConVars[ "DefaultModels" ] = {
-	Male = {
-		"models/bloo_ltcom/citizens/male_01.mdl",
-		"models/bloo_ltcom/citizens/male_02.mdl",
-		"models/bloo_ltcom/citizens/male_03.mdl",
-		"models/bloo_ltcom/citizens/male_04.mdl",
-		"models/bloo_ltcom/citizens/male_06.mdl",
-		"models/bloo_ltcom/citizens/male_07.mdl",
-		"models/bloo_ltcom/citizens/male_08.mdl",
-		"models/bloo_ltcom/citizens/male_09.mdl",
-		"models/bloo_ltcom/citizens/male_10.mdl",
-		"models/bloo_ltcom/citizens/male_11.mdl",
-		/*
-		"models/humans/group01/male_01.mdl",
-		"models/humans/group01/male_02.mdl",
-		"models/humans/group01/male_03.mdl",
-		"models/humans/group01/male_04.mdl",
-		"models/humans/group01/male_05.mdl",
-		"models/humans/group01/male_06.mdl",
-		"models/humans/group01/male_07.mdl",
-		"models/humans/group01/male_08.mdl",
-		"models/humans/group01/male_09.mdl"*/
-	},
-	Female = {
-		"models/bloo_ltcom/citizens/female_01.mdl",
-		"models/bloo_ltcom/citizens/female_02.mdl",
-		"models/bloo_ltcom/citizens/female_03.mdl",
-		"models/bloo_ltcom/citizens/female_04.mdl",
-		"models/bloo_ltcom/citizens/female_06.mdl",
-		"models/bloo_ltcom/citizens/female_07.mdl",
-		/*
-		"models/Humans/Group01/Female_01.mdl",
-		"models/Humans/Group01/Female_02.mdl",
-		"models/Humans/Group01/Female_03.mdl",
-		"models/Humans/Group01/Female_04.mdl",
-		"models/Humans/Group01/Female_06.mdl",
-		"models/Humans/Group01/Female_07.mdl"*/
+CAKE.ConVars[ "UseEnhancedCitizens" ] = false --Set this to false if you want to use the default models instead of Enhanced Citizens by Bloocobalt and Lt_Commander.
+if CAKE.ConVars[ "UseEnhancedCitizens" ] then
+	CAKE.ConVars[ "DefaultModels" ] = {
+		Male = {
+			"models/bloo_ltcom/citizens/male_01.mdl",
+			"models/bloo_ltcom/citizens/male_02.mdl",
+			"models/bloo_ltcom/citizens/male_03.mdl",
+			"models/bloo_ltcom/citizens/male_04.mdl",
+			"models/bloo_ltcom/citizens/male_06.mdl",
+			"models/bloo_ltcom/citizens/male_07.mdl",
+			"models/bloo_ltcom/citizens/male_08.mdl",
+			"models/bloo_ltcom/citizens/male_09.mdl",
+			"models/bloo_ltcom/citizens/male_10.mdl",
+			"models/bloo_ltcom/citizens/male_11.mdl",
+		},
+		Female = {
+			"models/bloo_ltcom/citizens/female_01.mdl",
+			"models/bloo_ltcom/citizens/female_02.mdl",
+			"models/bloo_ltcom/citizens/female_03.mdl",
+			"models/bloo_ltcom/citizens/female_04.mdl",
+			"models/bloo_ltcom/citizens/female_06.mdl",
+			"models/bloo_ltcom/citizens/female_07.mdl",
+		}
 	}
-}
-
+else
+	CAKE.ConVars[ "DefaultModels" ] = {
+		Male = {
+			"models/humans/group01/male_01.mdl",
+			"models/humans/group01/male_02.mdl",
+			"models/humans/group01/male_03.mdl",
+			"models/humans/group01/male_04.mdl",
+			"models/humans/group01/male_05.mdl",
+			"models/humans/group01/male_06.mdl",
+			"models/humans/group01/male_07.mdl",
+			"models/humans/group01/male_08.mdl",
+			"models/humans/group01/male_09.mdl"
+		},
+		Female = {
+			"models/Humans/Group01/Female_01.mdl",
+			"models/Humans/Group01/Female_02.mdl",
+			"models/Humans/Group01/Female_03.mdl",
+			"models/Humans/Group01/Female_04.mdl",
+			"models/Humans/Group01/Female_06.mdl",
+			"models/Humans/Group01/Female_07.mdl"
+		}
+	}
+end 
 --DEATH
 CAKE.ConVars[ "Prop_Damage" ] = false --Set this to true if you want props to damage people.
 CAKE.ConVars[ "LoseWeaponsOnDeath" ] = false --Set this to true if you want people to lose their guns once they die.
