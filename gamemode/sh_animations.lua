@@ -17,7 +17,6 @@ Anims.AlwaysAimed = {
 	"weapon_rpg",
 	"gmod_tool"
 }
-
 --Weapons that are never aimed
 Anims.NeverAimed = {
 	"hands"
@@ -137,25 +136,49 @@ end
 if SERVER then
 	function meta:PlayEmote( emote )
 		if Anims[ self:GetGender() ].Emotes and Anims[ self:GetGender() ].Emotes[emote] then
-			self.Emote = Anims[ self:GetGender() ].Emotes[emote].anim
-			umsg.Start("Tiramisu.SetEmote")
-				umsg.Entity(self)
-				umsg.String(Anims[ self:GetGender() ].Emotes[emote].anim)
-			umsg.End()
-			self:Lock()
-			timer.Simple(Anims[ self:GetGender() ].Emotes[emote].length, function()
-				self.Emote = ""
+			if Anims[ self:GetGender() ].Emotes[emote].gesture then
+				self:PlayGesture( Anims[ self:GetGender() ].Emotes[emote].anim, Anims[ self:GetGender() ].Emotes[emote].weight )
+			else
+				self.Emote = Anims[ self:GetGender() ].Emotes[emote].anim
 				umsg.Start("Tiramisu.SetEmote")
 					umsg.Entity(self)
-					umsg.String("")
+					umsg.String(Anims[ self:GetGender() ].Emotes[emote].anim)
 				umsg.End()
-				self:UnLock()
-			end)
+				self:Lock()
+				timer.Simple(Anims[ self:GetGender() ].Emotes[emote].length, function()
+					self.Emote = ""
+					umsg.Start("Tiramisu.SetEmote")
+						umsg.Entity(self)
+						umsg.String("")
+					umsg.End()
+					self:UnLock()
+				end)
+			end
 		end
+	end
+
+	function meta:PlayGesture( gesture, weight )
+		weight = weight or 1
+		local seq, duration = self:LookupSequence( gesture )
+		self.CustomGesture = gesture
+		umsg.Start("Tiramisu.SetGesture")
+			umsg.Entity(self)
+			umsg.String(gesture)
+			umsg.Float(weight)
+		umsg.End()
+		timer.Simple(seq, function()
+			self.CustomGesture = ""
+			umsg.Start("Tiramisu.SetGesture")
+				umsg.Entity(self)
+				umsg.String("")
+				umsg.Float( 0 )
+			umsg.End()
+		end)
 	end
 
 	function meta:SetSpecialModel( model )
 		self:SetNWBool( "specialmodel", true )
+		self:SetNWString( "model", model )
    		self:SetModel( model )
 	end
 	
@@ -277,6 +300,14 @@ else
 		end
 	end)
 
+	usermessage.Hook( "Tiramisu.SetGesture", function(um)
+		local ply = um:ReadEntity()
+		if ValidEntity( ply ) then
+			ply.CustomGesture = um:ReadString()
+			ply.CustomGestureWeight = um:ReadFloat()
+		end
+	end)
+
 end
 
 function meta:GetAiming()
@@ -326,15 +357,32 @@ local function HandleLuaAnimation( ply, animation )
 	
 end
 
-local exp
-local exp2
-local model
-local sequence
-local skeletonanim
-local gender
-local gesture
-local lastseq
-local weight
+local exp, exp2, model, seq, baseseq
+
+function HandleGesture( ply, seq ) -- Internal function to handle gestures.
+	if string.match( seq, ";" ) then
+		exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
+		model = exp[1]
+		seq = exp[2]
+	else
+		model = ply:GetModel()
+	end
+	if !model then
+		model = Anims[ply:GetGender()][ "models" ][1]
+	end
+	if( ply:GetModel():lower() != model:lower() and !ply.SpecialModel and ply:GetNWBool( "charloaded", false ) ) then
+		ply:SetModel( model )
+	end
+	if !Anims.SequenceCache[ply:GetModel()] then
+		Anims.SequenceCache[ply:GetModel()] = {}
+	end
+	if !Anims.SequenceCache[ply:GetModel()][seq] then
+		Anims.SequenceCache[ply:GetModel()][seq] = ply:LookupSequence(string.gsub( seq, ";", "" ))
+	end
+	return Anims.SequenceCache[ply:GetModel()][seq]
+end
+
+
 function HandleSequence( ply, seq ) --Internal function to handle different sequence types.
 	
 	ply.SpecialModel = ply:GetNWBool( "specialmodel", false )
@@ -346,10 +394,10 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 	
 	if string.match( seq, "&" ) then
 		ply.Sequence = seq
+		exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
+		exp2 = string.Explode( ":", exp[1] )
 		if string.match( seq, "sequence" ) then -- NON ENUMERATED SEQUENCE
 			--"&sequence:modelstring;sequencestring"
-			exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
-			exp2 = string.Explode( ":", exp[1] )
 			model = exp2[2]
 			seq = exp[2]
 			if !model then
@@ -365,31 +413,33 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 				Anims.SequenceCache[ply:GetModel()][seq] = ply:LookupSequence(string.gsub( seq, ";", "" ))
 			end
 			return 1, Anims.SequenceCache[ply:GetModel()][seq]
-		elseif string.match( seq, "gesture" ) then --ENUMERATED SEQUENCE WITH A GESTURE
-			--"&gesture:modelstring;enumerationstring;gesturestring;weight(optional)"
-			exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
-			exp2 = string.Explode( ":", exp[1] )
-			seq = exp[2]
-			gesture = ply:LookupSequence(exp[3])
+		elseif string.match( seq, "blend" ) then --Blending base animations with another one on top.
+			--"&blend:modelstring;basesequence;layeredsequence"
+			--
+			--DOESN'T WORK YET
+			--
 			model = exp2[2]
-			if exp[4] then
-				weight = exp[4]
-			else
-				weight = 1
-			end
+			seq = exp[3]
+			baseseq = exp[2]
 			if !model then
 				model = Anims[ply:GetGender()][ "models" ][1]
 			end
-			if( ply:GetModel() != model:lower() and !ply.SpecialModel and ply:GetNWBool( "charloaded", false ) ) then
+			if( ply:GetModel():lower() != model:lower() and !ply.SpecialModel and ply:GetNWBool( "charloaded", false ) ) then
 				ply:SetModel( model )
 			end
-			ply:SetGesture( gesture, weight )
-			return FindEnumeration( seq ), -1
+			if !Anims.SequenceCache[ply:GetModel()] then
+				Anims.SequenceCache[ply:GetModel()] = {}
+			end
+			if !Anims.SequenceCache[ply:GetModel()][seq] then
+				Anims.SequenceCache[ply:GetModel()][seq] = ply:LookupSequence(string.gsub( seq, ";", "" ))
+			end
+			if !Anims.SequenceCache[ply:GetModel()][baseseq] then
+				Anims.SequenceCache[ply:GetModel()][baseseq] = ply:LookupSequence(string.gsub( baseseq, ";", "" ))
+			end
+			return Anims.SequenceCache[ply:GetModel()][seq], Anims.SequenceCache[ply:GetModel()][baseseq]
 
 		elseif string.match( seq, "number" ) then -- NUMBER BASED ENUMERATIONS, BASICALLY THE OPPOSITE OF STRING ONES
 			--"&number:modelstring;sequencenumber"
-			exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
-			exp2 = string.Explode( ":", exp[1] )
 			model = exp2[2]
 			seq = exp[2]
 			if( ply:GetModel() != string.lower(model) and !ply.SpecialModel and ply:GetNWBool( "charloaded", false )) then
@@ -398,28 +448,9 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 			exp = string.Explode( ":", string.gsub( seq, "&", "" ) )
 			
 			return FindName(seq), -1
-		end
 		
-		if string.match( seq, "lua" ) then --LUA BASED ANIMATIONS USING JETBOOMS LIBRARY
-			exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
-			exp2 = string.Explode( ":", exp[1] )
-			sequence = exp2[2]
-			skeletonanim = exp[2] or "ACT_DIERAGDOLL"
-			HandleLuaAnimation( ply, sequence )
-			
-			return FindEnumeration( skeletonanim ), -1
-		else
-			if ply.InLuaSequence then
-				if CLIENT then
-					ply:StopAllLuaAnimations()
-				end
-				ply.InLuaSequence = false
-			end
-		end
-		
-		if string.match( seq, "switch" ) then --Internal handler used to switch skeletons.
-			exp = string.Explode( ";", string.gsub( seq, "&", "" ) )
-			exp2 = string.Explode( ":", exp[1] )
+		elseif string.match( seq, "switch" ) then --Internal handler used to switch skeletons.
+			--"&switch:modelstring;sequencestring"
 			model = exp2[2]
 			seq = exp[2]
 			if( ply:GetModel() != string.lower(model) and !ply.SpecialModel and ply:GetNWBool( "charloaded", false )) then
@@ -535,7 +566,18 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 		ply:SetPoseParameter("spine_yaw", 0 )
 	end
 	ply:SetPoseParameter("head_roll", 0 )
+
+	if CLIENT then
+		GAMEMODE:HandleCustomGestures( ply )
+	end
 	
+end
+
+function GM:HandleCustomGestures( ply )
+	if ply.CustomGesture and ply.CustomGesture != "" then
+		ply:AnimRestartGesture( GESTURE_SLOT_CUSTOM, HandleGesture( ply, ply.CustomGesture ) )
+		ply:AnimSetGestureWeight( GESTURE_SLOT_CUSTOM, ply.CustomGestureWeight or 1 )
+	end
 end
 
 function GM:HandlePlayerJumping( ply ) --Handles jumping
@@ -871,9 +913,9 @@ function GM:DoAnimationEvent( ply, event, data ) -- This is for gestures.
 			else
 				exp = string.Explode( ";", string.gsub( Anims[ ply:GetGender() ][ holdtype ][ "fire" ], "&", "" ) )
 				exp2 = string.Explode( ":", exp[1] )
-				sequence = exp2[2]
+				seq = exp2[2]
 				if CLIENT then
-					ply:SetLuaAnimation( sequence )
+					ply:SetLuaAnimation( seq )
 				end
 			end
 		else

@@ -3,6 +3,7 @@
 CAKE.ConVars = {  }
 
 CAKE.ConVars[ "LinuxHotfix" ] = false -- TURN THIS ON ONLY IF YOUR SERVER USES LINUX. This is to turn off model swapping therefore disabling some animations. It's the only solution to a current bug in the SRCDS.
+CAKE.ConVars[ "ForceJigglebones" ] = true --Forces jigglebones on all clients. Turns this off if you know it causes performance problems. 
 
 CAKE.ConVars[ "Tiramisu" ] = "2"
 CAKE.ConVars[ "Schema" ] = "freeform" -- What folder is schema data being loaded from?
@@ -21,6 +22,17 @@ CAKE.ConVars[ "DefaultAmmo" ] = {  } --The default ammo table your character wil
 CAKE.ConVars[ "DefaultClothing" ] = { }--Clothing you can choose on startup
 CAKE.ConVars[ "DefaultModels" ] = {
 	Male = {
+		"models/bloo_ltcom/citizens/male_01.mdl",
+		"models/bloo_ltcom/citizens/male_02.mdl",
+		"models/bloo_ltcom/citizens/male_03.mdl",
+		"models/bloo_ltcom/citizens/male_04.mdl",
+		"models/bloo_ltcom/citizens/male_06.mdl",
+		"models/bloo_ltcom/citizens/male_07.mdl",
+		"models/bloo_ltcom/citizens/male_08.mdl",
+		"models/bloo_ltcom/citizens/male_09.mdl",
+		"models/bloo_ltcom/citizens/male_10.mdl",
+		"models/bloo_ltcom/citizens/male_11.mdl",
+		/*
 		"models/humans/group01/male_01.mdl",
 		"models/humans/group01/male_02.mdl",
 		"models/humans/group01/male_03.mdl",
@@ -29,16 +41,22 @@ CAKE.ConVars[ "DefaultModels" ] = {
 		"models/humans/group01/male_06.mdl",
 		"models/humans/group01/male_07.mdl",
 		"models/humans/group01/male_08.mdl",
-		"models/humans/group01/male_09.mdl"
+		"models/humans/group01/male_09.mdl"*/
 	},
 	Female = {
-
+		"models/bloo_ltcom/citizens/female_01.mdl",
+		"models/bloo_ltcom/citizens/female_02.mdl",
+		"models/bloo_ltcom/citizens/female_03.mdl",
+		"models/bloo_ltcom/citizens/female_04.mdl",
+		"models/bloo_ltcom/citizens/female_06.mdl",
+		"models/bloo_ltcom/citizens/female_07.mdl",
+		/*
 		"models/Humans/Group01/Female_01.mdl",
 		"models/Humans/Group01/Female_02.mdl",
 		"models/Humans/Group01/Female_03.mdl",
 		"models/Humans/Group01/Female_04.mdl",
 		"models/Humans/Group01/Female_06.mdl",
-		"models/Humans/Group01/Female_07.mdl"
+		"models/Humans/Group01/Female_07.mdl"*/
 	}
 }
 
@@ -51,11 +69,13 @@ CAKE.ConVars[ "FadeToBlackOnDeath" ] = true --Set this to false if you want to d
 CAKE.ConVars[ "Respawn_Timer" ] = 10 --Time in seconds that it takes for people to be allowed to respawn.
 CAKE.ConVars[ "Instant_Respawn" ] = false --Respawn instantly or allow people to lay dead for a while.
 CAKE.ConVars[ "DeathRagdoll_Linger" ] = 30 --Time in seconds that it takes for ragdolls to dissapear, set to 0 if you want corpses to stay forever
+CAKE.ConVars[ "AllowRescaling" ] = true --Allows you to change the size of your current clothes.
+CAKE.ConVars[ "AllowBodygroups" ] = true --Allows you to change the body group of your current clothes.
 
 --Tooltrust
 CAKE.ConVars[ "DefaultPhysgun" ] = false -- Are players banned from the physics gun when they first start.
 CAKE.ConVars[ "DefaultGravgun" ] = false -- Are players banned from the gravity gun when they first start.
-CAKE.ConVars[ "DefaultPropTrust" ] = false --Are players allowed to spawn props when they first start.
+CAKE.ConVars[ "DefaultPropTrust" ] = true --Are players allowed to spawn props when they first start.
 CAKE.ConVars[ "DefaultVehicles" ] = false --Are players allowed to spawn vehicles when they first start.
 CAKE.ConVars[ "PropLimit" ] = 20
 CAKE.ConVars[ "RagdollLimit" ] = 1

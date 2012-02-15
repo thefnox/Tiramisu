@@ -324,7 +324,7 @@ function SKIN:LayoutCharacterSelection( hideclosebutton )
 		CharacterMenu:SetSize( ScrW(), ScrH() )
 		CharacterMenu:Center()
 		CharacterMenu:SetDraggable( false )
-		CharacterMenu:ShowCloseButton( true )
+		CharacterMenu:ShowCloseButton( false )
 		CharacterMenu:SetTitle( "" )
 		CharacterMenu.Paint = function()
 			CAKE.DrawBlurScreen()
@@ -978,7 +978,6 @@ function SKIN:PaintPlayerTitles()
 				local pos = (ply:EyePos() + Vector(0, 0, 10)):ToScreen()
 				if yawdif > 5 then
 					ply.Alpha = 255 -  (255 * (math.pow(yawdif / 30, 2)))
-					print(ply.Alpha)
 				else
 					ply.Alpha = 255
 				end

@@ -34,10 +34,7 @@ function PANEL:Init()
 
 	self.LastPaint = 0
 	self.DirectionalLight = {}
-	self:SetCamPos( LocalPlayer():GetForward() * 80 + Vector( 0, 0, 40 ) )
-	local plyangle = LocalPlayer():GetAngles()
-	plyangle:RotateAroundAxis(plyangle:Up(), 180) 
-	self:SetCamAngle(  plyangle )
+	self:SetTarget( LocalPlayer() )
 	self:SetFOV( 70 )
 	
 	self:SetText( "" )
@@ -102,12 +99,44 @@ end
 function PANEL:SetTarget( entity )
 	if ValidEntity( entity ) then
 		self.CamTarget = entity
-		self:SetCamPos( self.CamTarget:GetForward() * 80 )
-		local angle = self.CamTarget:GetAngles()
-		angle:RotateAroundAxis(angle:Up(), 180) 
+		self:SetTargetBone( "ValveBiped.Bip01_Head1" )
+		local pos, angle = self:GetCamOrigin()
+		angle.p = 0
+		angle.r = 0
+		self:SetCamPos( angle:Forward() * 80 - Vector(0,0,20) )
+		angle:RotateAroundAxis(angle:Up(), 180)
 		self:SetCamAngle( angle )
 	end
-end 
+end
+
+function PANEL:SetTargetBone( bone )
+	self.TargetBone = bone
+end
+
+function PANEL:GetTargetBone()
+	return self.TargetBone
+end
+
+local origbone
+function PANEL:GetCamOrigin()
+	if !self.LastCamOrigin then
+		self.LastCamOrigin = Vector( 0, 0, 0 )
+	end
+	if !self.LastCamAngle then
+		self.LastCamAngle = Angle( 0, 0, 0 )
+	end
+	if self.CamTarget and ValidEntity( self.CamTarget ) then
+		origbone = self.CamTarget:LookupBone( self:GetTargetBone() )
+		if origbone then
+			self.LastCamOrigin, self.LastCamAngle = self.CamTarget:GetBonePosition( origbone )
+			return self.LastCamOrigin, self.LastCamAngle
+		else
+			self.LastCamOrigin, self.LastCamAngle = self.CamTarget:GetPos(), self.CamTarget:GetAngles()
+			return self.CamTarget:GetPos(), self.CamTarget:GetAngles()
+		end
+	end
+	return self.LastCamOrigin, self.LastCamAngle
+end
 
 function PANEL:EndDraw()
 	// Note: Not in menu dll
@@ -152,7 +181,7 @@ function PANEL:Paint()
 	
 	local x, y = self:LocalToScreen( 0, 0 )
 	
-	cam.Start3D( LocalPlayer():GetPos() + self.vCamPos, self.CamAngle, 70, x, y, self:GetWide(), self:GetTall() )
+	cam.Start3D( self:GetCamOrigin() + self.vCamPos, self.CamAngle, 70, x, y, self:GetWide(), self:GetTall() )
 		cam.IgnoreZ( true )
 		
 		render.SuppressEngineLighting( true )
@@ -207,18 +236,23 @@ end
 --The mouse angle calculations are all here.
 local angle
 local distance = -80
-local target
+local offset = 20
+local target, pos, angle
 function PANEL:OnCursorMoved(x, y)
-	target = self.CamTarget or LocalPlayer()
-	if input.IsMouseDown( MOUSE_LEFT ) then
-		angle = Angle(0, target:GetAngles().y, 0 )
+	pos, angle = self:GetCamOrigin()
+	angle.p = 0
+	angle.r = 0
+	if input.IsMouseDown( MOUSE_RIGHT ) and input.IsMouseDown( MOUSE_LEFT ) then
+		offset = ( self:GetTall()/ 2 - y )/8 - 10
+		self:SetCamPos( self.CamAngle:Forward() * distance - Vector(0,0,offset) )
+	elseif input.IsMouseDown( MOUSE_LEFT ) then
 		angle:RotateAroundAxis(angle:Up(), math.NormalizeAngle( 180 - ( x - self:GetWide()/ 2 ) / 2 ) )
 		angle:RotateAroundAxis(angle:Right(), math.NormalizeAngle( 0 - ( y - self:GetTall()/ 2 ) / 2 ) )
-		self:SetCamPos( angle:Forward() * distance + Vector( 0, 0, 40))
+		self:SetCamPos( angle:Forward() * distance - Vector(0,0,offset))
 		self:SetCamAngle( angle )
 	elseif input.IsMouseDown( MOUSE_RIGHT ) then
-		distance =  ( y - self:GetTall()/ 2 ) + -80
-		self:SetCamPos( Vector( 0, 0, 40) + self.CamAngle:Forward() * distance )
+		distance =  math.min(( y - self:GetTall()/ 2 ) - 80, 0)
+		self:SetCamPos( self.CamAngle:Forward() * distance - Vector(0,0,offset) )
 	end
 end
 

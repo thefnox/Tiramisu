@@ -61,6 +61,9 @@ function CAKE.HandleGear( ply, item, bone, itemid, offset, angle, scale, skin )
 		local skin = skin or CAKE.GetUData(itemid, "skin") or CAKE.ItemData[ item ].Skin or 0
 		local bonemerge = true
 		local attachedtohead = bone == "head"
+		local bod1 = CAKE.GetUData(itemid, "bodygroup1") or CAKE.ItemData[ item ].Bodygroup1 or 1
+		local bod2 = CAKE.GetUData(itemid, "bodygroup2") or CAKE.ItemData[ item ].Bodygroup2 or 1
+		local bod3 = CAKE.GetUData(itemid, "bodygroup3") or CAKE.ItemData[ item ].Bodygroup3 or 1
 
 		if itemid then
 			CAKE.SetUData( itemid, "bone", bone )
@@ -91,6 +94,9 @@ function CAKE.HandleGear( ply, item, bone, itemid, offset, angle, scale, skin )
 		ply.Gear[ id ]:SetDTBool( 1, true )
 		ply.Gear[ id ]:SetDTBool( 2, true )
 		ply.Gear[ id ]:SetDTBool( 3, attachedtohead )
+		ply.Gear[ id ]:SetBodygroup(1, bod1)
+		ply.Gear[ id ]:SetBodygroup(2, bod2)
+		ply.Gear[ id ]:SetBodygroup(3, bod3)
 		if ValidEntity( ply.Gear[ id ]:GetPhysicsObject( ) ) then
 			ply.Gear[ id ]:GetPhysicsObject( ):EnableCollisions( false )
 		end
@@ -213,10 +219,16 @@ datastream.Hook( "Tiramisu.GetEditGear", function(ply, handler, id, encoded, dec
 		CAKE.SetUData(ent.itemid, "angle", decoded.angle)
 		CAKE.SetUData(ent.itemid, "skin", decoded.skin)
 		CAKE.SetUData(ent.itemid, "name", decoded.name)
+		CAKE.SetUData(ent.itemid, "bodygroup1", decoded.bodygroup1)
+		CAKE.SetUData(ent.itemid, "bodygroup2", decoded.bodygroup2)
+		CAKE.SetUData(ent.itemid, "bodygroup3", decoded.bodygroup3)
 		ent:SetDTVector( 1, decoded.offset )
 		ent:SetDTVector( 2, decoded.scale )
 		ent:SetDTAngle( 1, decoded.angle )
 		ent:SetSkin( decoded.skin )
+		ent:SetBodygroup( 1, decoded.bodygroup1 )
+		ent:SetBodygroup( 2, decoded.bodygroup2 )
+		ent:SetBodygroup( 3, decoded.bodygroup3 )
 		CAKE.SaveGear( ply )
 		ply:RefreshInventory( )
 		CAKE.SendGearToClient( ply )

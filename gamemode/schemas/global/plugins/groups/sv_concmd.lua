@@ -123,8 +123,10 @@ concommand.Add( "rp_sendinvite", function( ply, cmd, args )
 		ply.LastInviteSent = 0
 	end
 
+	if !ValidEntity(target) then return end
+
 	if CurTime() - ply.LastInviteSent >= CAKE.ConVars[ "InviteTimer" ] and group and group:CharacterInGroup( ply ) and group:GetRankField( group:GetCharacterInfo( ply ).Rank, "caninvite" ) then
-		if !group:CharacterInGroup( ply ) then
+		if !group:CharacterInGroup( target ) then
 			target.AuthorizedToJoin = group.UniqueID
 			umsg.Start( "Tiramisu.GetInvite", target )
 				umsg.String( group )

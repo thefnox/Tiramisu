@@ -13,7 +13,7 @@ local function Admin_Kick( ply, cmd, args )
 	
 	local pl = CAKE.FindPlayer( plyname )
 	
-	if( pl:IsValid( ) and pl:IsPlayer( ) ) then
+	if ValidEntity( pl ) and pl:IsPlayer( ) then
 	
 		local UniqueID = pl:UserID( )
 		

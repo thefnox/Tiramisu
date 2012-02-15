@@ -187,7 +187,7 @@ function CAKE.SelectChar( ply, uid )
 			ply:SetNWString( "gender", m )
 			ply:SetMaterial("models/null")
 
-			CAKE.TestClothing( ply, char[ "model" ], char[ "clothing" ], char[ "helmet" ], char[ "headratio" ],char[ "bodyratio" ], char[ "handratio" ], char[ "clothingid" ], char[ "helmetid" ])
+			CAKE.TestClothing( ply, char[ "model" ], char[ "clothing" ], char[ "helmet" ], char[ "headratio" ],char[ "bodyratio" ], char[ "handratio" ], char[ "clothingid" ], char[ "helmetid" ], char[ "bodygroup1"], char[ "bodygroup2"], char[ "bodygroup3"], char[ "skin"])
 
 			local tbl = char[ "gear" ]
 			CAKE.RemoveAllGear( ply )

@@ -163,7 +163,8 @@ function CAKE.SetClothing( ply, clothing, helmet, clothingid, helmetid )
 		ply:SetNWString( "model", CAKE.GetCharField( ply, "model" ) )
 
 	end
-	
+
+	CAKE.ChangeClothingBodygroups( ply )
 	CAKE.SendClothingToClient( ply )
 		
 end
@@ -183,8 +184,24 @@ function CAKE.ScaleClothing( ply, headratio, bodyratio, handratio )
 	CAKE.SetCharField( ply, "handratio", handratio )
 end
 
+function CAKE.ChangeClothingBodygroups( ply, bodygroup1, bodygroup2, bodygroup3 )
+	bodygroup1, bodygroup2, bodygroup3 = bodygroup1 or CAKE.GetCharField( ply, "bodygroup1" ), bodygroup2 or CAKE.GetCharField( ply, "bodygroup2" ), bodygroup3 or CAKE.GetCharField( ply, "bodygroup3" )
+	local skin = CAKE.GetCharField( ply, "skin" )
+	for _, ent in pairs( ply.Clothing ) do
+		if ValidEntity( ent ) and ent:GetModel() == CAKE.GetCharField( ply, "model" ) then
+			ent:SetBodygroup( 1, bodygroup1 )
+			ent:SetBodygroup( 2, bodygroup2 )
+			ent:SetBodygroup( 3, bodygroup3 )
+			ent:SetSkin( skin )
+		end
+	end
+	CAKE.SetCharField( ply, "bodygroup1", bodygroup1 )
+	CAKE.SetCharField( ply, "bodygroup2", bodygroup2 )
+	CAKE.SetCharField( ply, "bodygroup3", bodygroup3 )
+end
+
 --Allows you to try a set of clothes without actually owning the item.
-function CAKE.TestClothing( ply, model, clothing, helmet, headratio, bodyratio, handratio, clothingid, helmetid )
+function CAKE.TestClothing( ply, model, clothing, helmet, headratio, bodyratio, handratio, clothingid, helmetid, bodygroup1, bodygroup2, bodygroup3, skin )
 
 	CAKE.RemoveClothing( ply )
 
@@ -232,8 +249,17 @@ function CAKE.TestClothing( ply, model, clothing, helmet, headratio, bodyratio, 
 	end
 
 	headratio, bodyratio, handratio = headratio or 1, bodyratio or 1, handratio or 1
+	bodygroup1, bodygroup2, bodygroup3 = bodygroup1 or 0, bodygroup2 or 0, bodygroup3 or 0
+	skin = skin or 0
+
 	for _, ent in pairs( ply.Clothing ) do
 		if ValidEntity( ent ) then
+			if ent:GetModel() == model then
+				ent:SetBodygroup( 1, bodygroup1 )
+				ent:SetBodygroup( 2, bodygroup2 )
+				ent:SetBodygroup( 3, bodygroup3 )
+				ent:SetSkin( skin )
+			end
 			ent:SetDTFloat( CLOTHING_HEADRATIO, headratio )
 			ent:SetDTFloat( CLOTHING_BODYRATIO, bodyratio )
 			ent:SetDTFloat( CLOTHING_HANDRATIO, handratio )
@@ -246,10 +272,14 @@ end
 
 --Internal function to handle clothing creation.
 function CAKE.HandleClothing( ply, item, ctype, itemid, modeloverride )
-	
+
+	local bodygroup1, bodygroup2, bodygroup3 = 1, 1, 1
 	local model
 
 	if CAKE.ItemData[ item ] then
+		bodygroup1 = CAKE.ItemData[ item ].BodyGroup1 or CAKE.GetUData( itemid, "bodygroup1") or 1
+		bodygroup2 = CAKE.ItemData[ item ].BodyGroup2 or CAKE.GetUData( itemid, "bodygroup2") or 1
+		bodygroup3 = CAKE.ItemData[ item ].BodyGroup3 or CAKE.GetUData( itemid, "bodygroup3") or 1
 		if ply:GetGender() == "Female" and CAKE.ItemData[ item ].FemaleModel then
 			model = CAKE.GetUData( itemid, "model") or CAKE.ItemData[ item ].FemaleModel
 		else
@@ -258,6 +288,8 @@ function CAKE.HandleClothing( ply, item, ctype, itemid, modeloverride )
 	else
 		model = modeloverride or CAKE.GetCharField( ply, "model" )
 	end
+
+
 
 	if !ply.Clothing then
 		ply.Clothing = {}
@@ -277,6 +309,9 @@ function CAKE.HandleClothing( ply, item, ctype, itemid, modeloverride )
 	ply.Clothing[ ctype ]:SetParent( ply )
 	ply.Clothing[ ctype ]:SetPos( ply:GetPos() )
 	ply.Clothing[ ctype ]:SetAngles( ply:GetAngles() )
+	ply.Clothing[ ctype ]:SetBodygroup(1, bodygroup1)
+	ply.Clothing[ ctype ]:SetBodygroup(2, bodygroup2)
+	ply.Clothing[ ctype ]:SetBodygroup(3, bodygroup3)
 	if ValidEntity( ply.Clothing[ ctype ]:GetPhysicsObject( ) ) then
 		ply.Clothing[ ctype ]:GetPhysicsObject( ):EnableCollisions( false )
 	end
@@ -350,13 +385,30 @@ concommand.Add( "rp_setclothing", function( ply, cmd, args )
 	CAKE.SetCharField( ply, "helmet", helmet )
 	CAKE.SetCharField( ply, "clothingid", clothingid )
 	CAKE.SetCharField( ply, "helmetid", helmetid )
-	CAKE.ScaleClothing( ply, 1, 1, 1 )
+	if CAKE.ConVars[ "AllowRescaling" ] then
+		CAKE.ScaleClothing( ply, 1, 1, 1 )
+	end
 
 end)
 
 concommand.Add( "rp_scaleclothing", function( ply, cmd, args )
-	local headratio, bodyratio, handratio = math.Clamp(tonumber(args[1] or 1),0.5,1.2), math.Clamp(tonumber(args[2] or 1),0.5,1.2), math.Clamp(tonumber(args[3] or 1),0.5,1.2)
-	CAKE.ScaleClothing( ply, headratio, bodyratio, handratio )
+	if CAKE.ConVars[ "AllowRescaling" ] then
+		local headratio, bodyratio, handratio = math.Clamp(tonumber(args[1] or 1),0.5,1.2), math.Clamp(tonumber(args[2] or 1),0.5,1.2), math.Clamp(tonumber(args[3] or 1),0.5,1.2)
+		CAKE.ScaleClothing( ply, headratio, bodyratio, handratio )
+	end
+end)
+
+concommand.Add( "rp_bodygroupsclothing", function( ply, cmd, args )
+	if CAKE.ConVars[ "AllowBodygroups" ] then
+		local bod1, bod2, bod3 = math.Clamp(tonumber(args[1] or 1),0,10), math.Clamp(tonumber(args[2] or 1),0,10), math.Clamp(tonumber(args[3] or 1),0,10)
+		CAKE.ChangeClothingBodygroups( ply, bod1, bod2, bod3 )
+	end
+end)
+
+concommand.Add( "rp_setplayerskin", function( ply, cmd, args )
+	if CAKE.ConVars[ "AllowBodygroups" ] then
+		CAKE.SetCharField( ply, "skin", tonumber(args[1] or 0))
+	end
 end)
 
 --Sends the clothing entity indexes, in order to use them clientside.
@@ -390,6 +442,10 @@ function PLUGIN.Init()
 	CAKE.AddDataField( 2, "headratio", 1 ) --for those bighead guys.
 	CAKE.AddDataField( 2, "bodyratio", 1 ) --Thick bones, or maybe you're just fat.
 	CAKE.AddDataField( 2, "handratio", 1 ) --You know what they say about big hands.
+	CAKE.AddDataField( 2, "bodygroup1", 0 ) --Bodygroup 1
+	CAKE.AddDataField( 2, "bodygroup2", 0 ) --Bodygroup 2
+	CAKE.AddDataField( 2, "bodygroup3", 0 ) --Bodygroup 3
+	CAKE.AddDataField( 2, "skin", 0 )
 	CAKE.AddDataField( 2, "specialmodel", "none" )
 	
 end

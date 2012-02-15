@@ -31,6 +31,32 @@ local BoneList = {
 	"Left toe"
 }
 
+local RealBoneList = {
+	["pelvis"			] = "ValveBiped.Bip01_Pelvis"		,
+	["stomach"			] = "ValveBiped.Bip01_Spine"		,
+	["lower back"		] = "ValveBiped.Bip01_Spine1"		,
+	["chest"			] = "ValveBiped.Bip01_Spine2"		,
+	["upper back"		] = "ValveBiped.Bip01_Spine4"		,
+	["neck"				] = "ValveBiped.Bip01_Neck1"		,
+	["head"				] = "ValveBiped.Bip01_Head1"		,
+	["right clavicle"	] = "ValveBiped.Bip01_R_Clavicle"	,
+	["right upper arm"	] = "ValveBiped.Bip01_R_UpperArm"	,
+	["right forearm"	] = "ValveBiped.Bip01_R_Forearm"	,
+	["right hand"		] = "ValveBiped.Bip01_R_Hand"		,
+	["left clavicle"	] = "ValveBiped.Bip01_L_Clavicle"	,
+	["left upper arm"	] = "ValveBiped.Bip01_L_UpperArm"	,
+	["left forearm"		] = "ValveBiped.Bip01_L_Forearm"	,
+	["left hand"		] = "ValveBiped.Bip01_L_Hand"		,
+	["right thigh"		] = "ValveBiped.Bip01_R_Thigh"		,
+	["right calf"		] = "ValveBiped.Bip01_R_Calf"		,
+	["right foot"		] = "ValveBiped.Bip01_R_Foot"		,
+	["right toe"		] = "ValveBiped.Bip01_R_Toe0"		,
+	["left thigh"		] = "ValveBiped.Bip01_L_Thigh"		,
+	["left calf"		] = "ValveBiped.Bip01_L_Calf"		,
+	["left foot"		] = "ValveBiped.Bip01_L_Foot"		,
+	["left toe"			] = "ValveBiped.Bip01_L_Toe0"		
+}
+
 local function FetchWornItems()
 	CAKE.WornItems = {}
 
@@ -77,17 +103,17 @@ local function HandleGearEditing( entity, bone, item, name, itemid )
 
 			for k, v in pairs(InventoryTable) do
 				if !string.match( v.Class, "clothing" ) and !string.match( v.Class, "helmet" ) then
-				    local spawnicon = vgui.Create( "SpawnIcon")
-				    spawnicon:SetIconSize( 64 )
-				    spawnicon:SetModel(v.Model)
-				    spawnicon:SetToolTip(v.Name)
-				    spawnicon.DoClick = function()
-				        RunConsoleCommand( "rp_setgear", v.Class, bone, v.ID )
-				        frame:Remove()
-				        frame = nil
+					local spawnicon = vgui.Create( "SpawnIcon")
+					spawnicon:SetIconSize( 64 )
+					spawnicon:SetModel(v.Model)
+					spawnicon:SetToolTip(v.Name)
+					spawnicon.DoClick = function()
+						RunConsoleCommand( "rp_setgear", v.Class, bone, v.ID )
+						frame:Remove()
+						frame = nil
 
-				    end
-				    panel:AddItem( spawnicon )
+					end
+					panel:AddItem( spawnicon )
 				end
 			end
 		else
@@ -97,13 +123,41 @@ local function HandleGearEditing( entity, bone, item, name, itemid )
 
 end
 
+function RefreshGearTree()
+	if GearTree then
+		GearTree:Clear( true )
+		GearTree:Rebuild()
+		local bones = GearTree:AddNode("Bones")
+		local node
+		local node2
+		local amount
+		for _, bone in pairs( BoneList ) do
+			amount = table.Count( CAKE.Gear[ string.lower( bone ) ] or {} )
+			if amount > 0 then
+				node = bones:AddNode( bone .. " (" .. amount .. " items)"  )
+				if CAKE.Gear and CAKE.Gear[ string.lower( bone ) ] then
+					for __, tbl in pairs( CAKE.Gear[ string.lower( bone ) ] ) do
+						node2 = node:AddNode( tbl.name or tbl.item )
+						node2.DoClick = function()
+							HandleGearEditing( tbl.entity, tbl.item, string.lower( bone ), tbl.name, tbl.itemid )
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
+
 function EditGear()
+
+	CAKE.EnableBlackScreen( true )
 
 	PlayerMenu = vgui.Create( "DFrame" )
 	PlayerMenu:SetSize( ScrW(), ScrH() )
 	PlayerMenu:Center()
 	PlayerMenu:SetDraggable( false )
-	PlayerMenu:ShowCloseButton( false )
+	PlayerMenu:ShowCloseButton( true )
 	PlayerMenu:SetTitle( "" )
 	PlayerMenu.Paint = function()
 
@@ -113,22 +167,31 @@ function EditGear()
 	PlayerMenu:MakePopup()
 
 	PlayerModel = vgui.Create( "PlayerPanel", PlayerMenu )
-	PlayerModel:SetSize( 500, 500 )
-	PlayerModel:SetPos( ScrW() / 2 - 150, ScrH() / 2 - 300 )
+	PlayerModel:SetSize( ScrH(), ScrH())
+	PlayerModel:SetPos( ScrW() - ScrH(), 0 )
 
+
+	local title = Label( "Character Editor", PlayerMenu)
+	title:SetFont( "Tiramisu48Font")
+	title:SetPos( 10, 23 )
+	title:SizeToContents()
+	local subtitle = Label( "Customize your character", PlayerMenu)
+	subtitle:SetPos( 10, 66 )
+	subtitle:SetFont( "Tiramisu24Font")
+	subtitle:SizeToContents()
 
 	EditMenu = vgui.Create( "DFrame", PlayerMenu )
-	EditMenu:SetSize( 260, 450 )
+	EditMenu:Dock( LEFT )
+	EditMenu:DockMargin( 10, 70, 10, 10 )
+	EditMenu:SetWide( 300 )
 	EditMenu:ShowCloseButton( false )
-	EditMenu:SetPos( ScrW() / 2 - 370, ScrH() / 2 - 285 )
 	EditMenu:SetTitle( "Character Editor" )
 
 	local PropertySheet = vgui.Create( "DPropertySheet", EditMenu )
+	PropertySheet:Dock( FILL )
 	PropertySheet:SetPos( 5, 28 )
-	PropertySheet:SetSize( 250, 417 )
 
 	local ClothingList = vgui.Create( "DPanelList" )
-	ClothingList:SetSize( 300, 432  )
 	ClothingList:SetSpacing( 3 )
 	ClothingList:SetPadding( 3 )
 	ClothingList:EnableVerticalScrollbar( true )
@@ -166,7 +229,7 @@ function EditGear()
 
 	button = vgui.Create( "SpawnIcon" )
 	button:SetIconSize( 64 )
-	button:SetModel( LocalPlayer():GetModel() )
+	button:SetModel( LocalPlayer():GetNWString("model","models/kleiner.mdl") )
 	button:SetToolTip( "Your default clothes" )
 	button.DoClick = function()
 		CAKE.Clothing = "none"
@@ -204,7 +267,7 @@ function EditGear()
 	end
 	button = vgui.Create( "SpawnIcon" )
 	button:SetIconSize( 64 )
-	button:SetModel( LocalPlayer():GetModel() )
+	button:SetModel( LocalPlayer():GetNWString("model","models/kleiner.mdl") )
 	button:SetToolTip( "Your default head" )
 	button.DoClick = function()
 		CAKE.Helmet = "none"
@@ -215,119 +278,173 @@ function EditGear()
 
 	local entity = CAKE.ClothingTbl
 
-	local headslider = vgui.Create( "DNumSlider" )
-	headslider:SetText( "Head Scale" )
-	if CAKE.ClothingTbl then
-		for _,entity in pairs( CAKE.ClothingTbl ) do
-			if ValidEntity( entity ) then
-				headslider:SetValue( entity:GetDTFloat( 1 ))
-				break
-			end
-		end
-	else
-		headslider:SetValue( 1 )
-	end
-	headslider:SetMinMax( 0.5, 1.2 )
-	headslider:SetDecimals( 2 )
-	headslider.ValueChanged = function(self, value)
+	local headslider, bodyslider, handslider
+	if CAKE.ConVars[ "AllowRescaling" ] then
+		headslider = vgui.Create( "DNumSlider" )
+		headslider:SetText( "Head Scale" )
 		if CAKE.ClothingTbl then
 			for _,entity in pairs( CAKE.ClothingTbl ) do
 				if ValidEntity( entity ) then
-					entity:SetDTFloat( 1, value )
+					headslider:SetValue( entity:GetDTFloat( 1 ))
+					break
+				end
+			end
+		else
+			headslider:SetValue( 1 )
+		end
+		headslider:SetMinMax( 0.5, 1.2 )
+		headslider:SetDecimals( 2 )
+		headslider.ValueChanged = function(self, value)
+			if CAKE.ClothingTbl then
+				for _,entity in pairs( CAKE.ClothingTbl ) do
+					if ValidEntity( entity ) then
+						entity:SetDTFloat( 1, value )
+					end
 				end
 			end
 		end
-	end
-	ClothingList:AddItem( headslider )
+		ClothingList:AddItem( headslider )
 
-	local bodyslider = vgui.Create( "DNumSlider" )
-	bodyslider:SetText( "Body Scale" )
-	if CAKE.ClothingTbl then
-		for _,entity in pairs( CAKE.ClothingTbl ) do
-			if ValidEntity( entity ) then
-				bodyslider:SetValue( entity:GetDTFloat( 2 ))
-				break
-			end
-		end
-	else
-		bodyslider:SetValue( 1 )
-	end
-	bodyslider:SetMinMax( 0.5, 1.2 )
-	bodyslider:SetDecimals( 2 )
-	bodyslider.ValueChanged = function(self, value)
+		bodyslider = vgui.Create( "DNumSlider" )
+		bodyslider:SetText( "Body Scale" )
 		if CAKE.ClothingTbl then
 			for _,entity in pairs( CAKE.ClothingTbl ) do
 				if ValidEntity( entity ) then
-					entity:SetDTFloat( 2, value )
+					bodyslider:SetValue( entity:GetDTFloat( 2 ))
+					break
+				end
+			end
+		else
+			bodyslider:SetValue( 1 )
+		end
+		bodyslider:SetMinMax( 0.5, 1.2 )
+		bodyslider:SetDecimals( 2 )
+		bodyslider.ValueChanged = function(self, value)
+			if CAKE.ClothingTbl then
+				for _,entity in pairs( CAKE.ClothingTbl ) do
+					if ValidEntity( entity ) then
+						entity:SetDTFloat( 2, value )
+					end
 				end
 			end
 		end
-	end
-	ClothingList:AddItem( bodyslider )
+		ClothingList:AddItem( bodyslider )
 
-	local handslider = vgui.Create( "DNumSlider" )
-	handslider:SetText( "Hands Scale" )
-	if CAKE.ClothingTbl then
-		for _,entity in pairs( CAKE.ClothingTbl ) do
-			if ValidEntity( entity ) then
-				handslider:SetValue( entity:GetDTFloat( 3 ))
-				break
-			end
-		end
-	else
-		handslider:SetValue( 1 )
-	end
-	handslider:SetMinMax( 0.5, 1.2 )
-	handslider:SetDecimals( 2 )
-	handslider.ValueChanged = function(self, value)
+		handslider = vgui.Create( "DNumSlider" )
+		handslider:SetText( "Hands Scale" )
 		if CAKE.ClothingTbl then
 			for _,entity in pairs( CAKE.ClothingTbl ) do
 				if ValidEntity( entity ) then
-					entity:SetDTFloat( 3, value )
+					handslider:SetValue( entity:GetDTFloat( 3 ))
+					break
+				end
+			end
+		else
+			handslider:SetValue( 1 )
+		end
+		handslider:SetMinMax( 0.5, 1.2 )
+		handslider:SetDecimals( 2 )
+		handslider.ValueChanged = function(self, value)
+			if CAKE.ClothingTbl then
+				for _,entity in pairs( CAKE.ClothingTbl ) do
+					if ValidEntity( entity ) then
+						entity:SetDTFloat( 3, value )
+					end
 				end
 			end
 		end
+		ClothingList:AddItem( handslider )
 	end
-	ClothingList:AddItem( handslider )
 
+	local bodygroup1, bodygroup2, bodygroup3, plyskin
+	if CAKE.ConVars[ "AllowBodygroups" ] then
 
-	GearList = vgui.Create( "DPanelList" )
-	GearList:SetSize( 300, 432 )
-	PropertySheet:AddSheet( "Gear/Accessories", GearList, "gui/silkicons/wrench", false, false, "Edit your gear" )
-
-	function RefreshGearTree()
-		if GearList and GearList:IsValid() then
-			if GearTree then
-				GearTree:Remove()
-				GearTree = nil
-
+		local ent = false
+		if CAKE.ClothingTbl then
+			for _,entity in pairs( CAKE.ClothingTbl ) do
+				if ValidEntity( entity ) and entity:GetModel() == LocalPlayer():GetNWString("model","models/kleiner.mdl") then
+					ent = entity
+				end
 			end
-			GearTree = vgui.Create( "DTree" )
-			GearTree:SetPadding( 5 )
-			GearTree:SetSize( 290, 400 )
-			GearTree:Clear( true )
-			GearTree:Rebuild()
-			local bones = GearTree:AddNode("Bones")
-			local node
-			local node2
-			local amount
-			for _, bone in pairs( BoneList ) do
-				amount = table.Count( CAKE.Gear[ string.lower( bone ) ] or {} )
-				if amount > 0 then
-					node = bones:AddNode( bone .. " (" .. amount .. " items)"  )
-					if CAKE.Gear and CAKE.Gear[ string.lower( bone ) ] then
-						for __, tbl in pairs( CAKE.Gear[ string.lower( bone ) ] ) do
-							node2 = node:AddNode( tbl.name or tbl.item )
-							node2.DoClick = function()
-								HandleGearEditing( tbl.entity, tbl.item, string.lower( bone ), tbl.name, tbl.itemid )
-							end
+		end
+
+		bodygroup1 = vgui.Create( "DNumSlider" )
+		bodygroup1:SetText( "Bodygroup 1" )
+		if ValidEntity( ent ) then
+			bodygroup1:SetValue( ent:GetBodygroup(1))
+		end
+		bodygroup1:SetMinMax( 0, 10 )
+		bodygroup1:SetDecimals( 0 )
+		bodygroup1.ValueChanged = function(self, value)
+			if CAKE.ClothingTbl then
+				for _,entity in pairs( CAKE.ClothingTbl ) do
+					if ValidEntity( entity ) and entity:GetModel() == LocalPlayer():GetNWString("model","models/kleiner.mdl") then
+						entity:SetBodygroup( 1, value )
+					end
+				end
+			end
+		end
+		ClothingList:AddItem( bodygroup1 )
+
+		bodygroup2 = vgui.Create( "DNumSlider" )
+		bodygroup2:SetText( "Bodygroup 2" )
+		bodygroup2:SetMinMax( 0, 10 )
+		if ValidEntity( ent ) then
+			bodygroup2:SetValue( ent:GetBodygroup(2))
+		end
+		bodygroup2:SetDecimals( 0 )
+		bodygroup2.ValueChanged = function(self, value)
+			if CAKE.ClothingTbl then
+				for _,entity in pairs( CAKE.ClothingTbl ) do
+					if ValidEntity( entity ) and entity:GetModel() == LocalPlayer():GetNWString("model","models/kleiner.mdl") then
+						entity:SetBodygroup( 2, value )
+					end
+				end
+			end
+		end
+		ClothingList:AddItem( bodygroup2 )
+
+		bodygroup3 = vgui.Create( "DNumSlider" )
+		bodygroup3:SetText( "Bodygroup 3" )
+		bodygroup3:SetMinMax( 0, 10 )
+		if ValidEntity( ent ) then
+			bodygroup3:SetValue( ent:GetBodygroup(3))
+		end
+		bodygroup3:SetDecimals( 0 )
+		bodygroup3.ValueChanged = function(self, value)
+			if CAKE.ClothingTbl then
+				for _,entity in pairs( CAKE.ClothingTbl ) do
+					if ValidEntity( entity ) and entity:GetModel() == LocalPlayer():GetNWString("model","models/kleiner.mdl") then
+						entity:SetBodygroup( 3, value )
+					end
+				end
+			end
+		end
+		ClothingList:AddItem( bodygroup3 )
+
+		if ValidEntity( ent ) and ent:SkinCount() > 1 then
+			plyskin = vgui.Create( "DNumSlider" )
+			plyskin:SetText( "Player Skin" )
+			plyskin:SetValue( ent:GetSkin() )
+			plyskin:SetMinMax( 0, ent:SkinCount() )
+			plyskin:SetDecimals( 0 )
+			plyskin.ValueChanged = function(self, value)
+				if CAKE.ClothingTbl then
+					for _,entity in pairs( CAKE.ClothingTbl ) do
+						if ValidEntity( entity ) and entity:GetModel() == LocalPlayer():GetNWString("model","models/kleiner.mdl") then
+							entity:SetSkin( value )
 						end
 					end
 				end
 			end
-			GearList:AddItem( GearTree )
+			ClothingList:AddItem( plyskin )
 		end
 	end
+
+
+	GearTree = vgui.Create( "DTree" )
+	GearTree:SetPadding( 5 )
+	PropertySheet:AddSheet( "Gear/Accessories", GearTree, "gui/silkicons/wrench", false, false, "Edit your gear" )
 
 	RefreshGearTree()
 
@@ -343,37 +460,49 @@ function EditGear()
 		closelabel:SetPos( (ScrW() / 2 )- 40, Lerp( 0.1, y, ScrH() / 2 + 230 ))
 	end
 	closelabel.DoClick = function()
-		RunConsoleCommand( "rp_scaleclothing", tostring(headslider:GetValue()), tostring(bodyslider:GetValue()), tostring(handslider:GetValue()))
 		PlayerModel:Close()
+		if CAKE.ConVars[ "AllowRescaling" ] then
+			RunConsoleCommand( "rp_scaleclothing", tostring(headslider:GetValue()), tostring(bodyslider:GetValue()), tostring(handslider:GetValue()))
+		end
+		if CAKE.ConVars[ "AllowBodygroups" ] then
+			if plyskin then
+				RunConsoleCommand( "rp_setplayerskin", tostring(plyskin:GetValue()))
+			end
+			RunConsoleCommand( "rp_bodygroupsclothing", tostring(bodygroup1:GetValue()),tostring(bodygroup2:GetValue()),tostring(bodygroup3:GetValue()))
+		end
 		CloseGear()
 	end
 
 end
 
 function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, itemid )
-
+	local bod1, bod2, bod3 = entity:GetBodygroup( 1 ), entity:GetBodygroup( 2 ), entity:GetBodygroup( 3 )
 	if PlayerMenu then
-		EditorFrame = vgui.Create( "DFrame", PlayerMenu ) -- Creates the frame itself
-		EditorFrame:Center() -- Position on the players screen
-		EditorFrame:SetSize( 280, 260 ) -- Size of the frame
+		if PlayerModel then
+			PlayerModel:SetTargetBone(RealBoneList[string.lower(bone)])
+		end
+		if EditorFrame then
+			EditorFrame:Remove()
+			EditorFrame = nil
+		end
+		EditorFrame = vgui.Create( "DFrame", PlayerMenu )
+		EditorFrame:SetSize( 250, 230 )
 		EditorFrame:SetDeleteOnClose( true )
-		EditorFrame:SetTitle( "Editing gear in bone " .. bone ) -- Title of the frame
+		EditorFrame:SetTitle( "Editing gear in bone " .. bone )
 		EditorFrame:SetVisible( true )
-		EditorFrame:SetDraggable( true ) -- Draggable by mouse?
-		EditorFrame:ShowCloseButton( true ) -- Show the close button?
+		EditorFrame:SetSizable( true )
+		EditorFrame:SetDraggable( true )
+		EditorFrame:ShowCloseButton( true )
+		EditorFrame:SetPos( 310 , ScrH()/2 - EditorFrame:GetTall()/2 )
 
-		local PropertySheet = vgui.Create( "DPropertySheet" )
-		PropertySheet:SetParent( EditorFrame )
-		PropertySheet:SetPos( 5, 28 )
-		PropertySheet:SetSize( EditorFrame:GetWide() - 10, EditorFrame:GetTall() - 33 )
+		local PropertySheet = vgui.Create( "DPropertySheet", EditorFrame )
+		PropertySheet:Dock( FILL )
 
 		local EditList = vgui.Create( "DPanelList" )
-		EditList:SetPos( 25,25 )
-		EditList:SetSize( 275, 375 )
 		EditList:SetPadding( 3 )
-		EditList:SetSpacing( 10 ) -- Spacing between items
-		EditList:EnableHorizontal( false ) -- Only vertical items
-		EditList:EnableVerticalScrollbar( false ) -- Allow scrollbar if you exceed the Y axis
+		EditList:SetSpacing( 3 )
+		EditList:EnableHorizontal( false )
+		EditList:EnableVerticalScrollbar( false )
 		
 		local itemlabel = vgui.Create( "DLabel" )
 		itemlabel:SetText( "Name:" )
@@ -394,7 +523,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 		EditList:AddItem( skinlabel )
 		
 		local skinnumber = vgui.Create( "DNumberWang" )
-		skinnumber:SetMax( 20 )
+		skinnumber:SetMax( entity:SkinCount() or 20 )
 		skinnumber:SetMin( 0 )
 		skinnumber:SetDecimals( 0 )
 		function skinnumber:OnValueChanged( val )
@@ -404,13 +533,51 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 		end
 		skinnumber:SetValue( skin )
 		EditList:AddItem( skinnumber )
+
+		EditList:AddItem( Label( "Bodygroup 1:") )
+		local bodygroup1 = vgui.Create( "DNumberWang" )
+		bodygroup1:SetMax( 10 )
+		bodygroup1:SetMin( 1 )
+		bodygroup1:SetValue( entity:GetBodygroup(1) )
+		bodygroup1:SetDecimals( 0 )
+		function bodygroup1:OnValueChanged( val )
+			if ValidEntity( entity ) then
+				entity:SetBodygroup( 1, val )
+			end
+		end
+		bodygroup1:SetValue( skin )
+		EditList:AddItem( bodygroup1 )
+
+		EditList:AddItem( Label( "Bodygroup 2:") )
+		local bodygroup2 = vgui.Create( "DNumberWang" )
+		bodygroup2:SetMax( 10 )
+		bodygroup2:SetMin( 1 )
+		bodygroup2:SetValue( entity:GetBodygroup(2) )
+		bodygroup2:SetDecimals( 0 )
+		function bodygroup2:OnValueChanged( val )
+			if ValidEntity( entity ) then
+				entity:SetBodygroup( 2, val )
+			end
+		end
+		EditList:AddItem( bodygroup2 )
+
+		EditList:AddItem( Label( "Bodygroup 3:") )
+		local bodygroup3 = vgui.Create( "DNumberWang" )
+		bodygroup3:SetMax( 10 )
+		bodygroup3:SetMin( 1 )
+		bodygroup3:SetValue( entity:GetBodygroup(3) )
+		bodygroup3:SetDecimals( 0 )
+		function bodygroup3:OnValueChanged( val )
+			if ValidEntity( entity ) then
+				entity:SetBodygroup( 3, val )
+			end
+		end
+		EditList:AddItem( bodygroup3 )
 		
 		PropertySheet:AddSheet( "General", EditList, "gui/silkicons/group", false, false, "Edit general settings")
 
 		local PosList = vgui.Create( "DPanelList" )
-		PosList:SetPos( 25,25 )
 		PosList:SetPadding( 3 )
-		PosList:SetSize( 175, 375 )
 		PosList:SetSpacing( 10 ) -- Spacing between items
 		PosList:EnableHorizontal( false ) -- Only vertical items
 		PosList:EnableVerticalScrollbar( false ) -- Allow scrollbar if you exceed the Y axis
@@ -418,7 +585,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 		local xslider = vgui.Create( "DNumSlider" )
 		xslider:SetText( "X Position" )
 		xslider:SetValue( offset.x )
-		xslider:SetMinMax( -80, 80 )
+		xslider:SetMinMax( -20, 20 )
 		xslider.ValueChanged = function(self, value)
 			if ValidEntity( entity ) then
 				entity:SetDTVector( 1, Vector( value, entity:GetDTVector( 1 ).y, entity:GetDTVector( 1 ).z ))
@@ -429,7 +596,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 		local yslider = vgui.Create( "DNumSlider" )
 		yslider:SetText( "Y Position" )
 		yslider:SetValue( offset.y )
-		yslider:SetMinMax( -80, 80 )
+		yslider:SetMinMax( -20, 20 )
 		yslider.ValueChanged = function(self, value)
 			if ValidEntity( entity ) then
 				entity:SetDTVector( 1, Vector( entity:GetDTVector( 1 ).x, value, entity:GetDTVector( 1 ).z ))
@@ -439,7 +606,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 
 		local zslider = vgui.Create( "DNumSlider" )
 		zslider:SetText( "Z Position" )
-		zslider:SetMinMax( -80, 80 )
+		zslider:SetMinMax( -20, 20 )
 		zslider:SetValue( offset.z )
 		zslider.ValueChanged = function(self, value)
 			if ValidEntity( entity ) then
@@ -461,8 +628,6 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 		PropertySheet:AddSheet( "Position", PosList, "gui/silkicons/anchor", false, false, "Edit gear's position")
 
 		local AngList = vgui.Create( "DPanelList" )
-		AngList:SetPos( 25,25 )
-		AngList:SetSize( 175, 375 )
 		AngList:SetPadding( 3 )
 		AngList:SetSpacing( 10 ) -- Spacing between items
 		AngList:EnableHorizontal( false ) -- Only vertical items
@@ -518,8 +683,6 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 
 		local ScaleList = vgui.Create( "DPanelList" )
 		ScaleList:SetPadding( 3 )
-		ScaleList:SetPos( 25,25 )
-		ScaleList:SetSize( 175, 375 )
 		ScaleList:SetSpacing( 10 ) -- Spacing between items
 		ScaleList:EnableHorizontal( false ) -- Only vertical items
 		ScaleList:EnableVerticalScrollbar( false ) -- Allow scrollbar if you exceed the Y axis
@@ -527,7 +690,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 		local xscale = vgui.Create( "DNumSlider" )
 		xscale:SetValue( scale.x )
 		xscale:SetText( "X Scale" )
-		xscale:SetMinMax( 0, 10 ) 
+		xscale:SetMinMax( 0, 3 ) 
 		xscale.ValueChanged = function(self, value)
 			if ValidEntity( entity ) then
 				entity:SetDTVector( 2, Vector( value, entity:GetDTVector(2).y, entity:GetDTVector(2).z ))
@@ -538,7 +701,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 		local yscale = vgui.Create( "DNumSlider" )
 		yscale:SetText( "Y Scale" )
 		yscale:SetValue( scale.y )
-		yscale:SetMinMax( 0, 10 )
+		yscale:SetMinMax( 0, 3 )
 		yscale.ValueChanged = function(self, value)
 			if ValidEntity( entity ) then
 				entity:SetDTVector( 2, Vector( entity:GetDTVector(2).x, value, entity:GetDTVector(2).z ))
@@ -549,7 +712,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 		local zscale = vgui.Create( "DNumSlider" )
 		zscale:SetValue( scale.z )
 		zscale:SetText( "Z Scale" )
-		zscale:SetMinMax( 0, 10 )
+		zscale:SetMinMax( 0, 3 )
 		zscale.ValueChanged = function(self, value)
 			if ValidEntity( entity ) then
 				entity:SetDTVector( 2, Vector( entity:GetDTVector(2).x, entity:GetDTVector(2).y, value ))
@@ -571,31 +734,41 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 		EditorFrame.Close = function()
 			CAKE.Query( "Save Changes for " .. itemname:GetValue(), "Save",
 			"Yes", function()
-					datastream.StreamToServer( "Tiramisu.GetEditGear", {
-						["entity"] = entity,
-						["offset"] = Vector(xslider:GetValue(), yslider:GetValue(), zslider:GetValue()),
-						["scale"] = Vector(xscale:GetValue(), yscale:GetValue(), zscale:GetValue()),
-						["angle"] = Angle(pitchslider:GetValue(), yawslider:GetValue(), rollslider:GetValue()),
-						["skin"] = skinnumber:GetValue(),
-						["name"] = itemname:GetValue()
-					})
-					EditorFrame:SetVisible( false )
-					EditorFrame:Remove()
-				end,
+				datastream.StreamToServer( "Tiramisu.GetEditGear", {
+					["entity"] = entity,
+					["offset"] = Vector(xslider:GetValue(), yslider:GetValue(), zslider:GetValue()),
+					["scale"] = Vector(xscale:GetValue(), yscale:GetValue(), zscale:GetValue()),
+					["angle"] = Angle(pitchslider:GetValue(), yawslider:GetValue(), rollslider:GetValue()),
+					["skin"] = skinnumber:GetValue(),
+					["name"] = itemname:GetValue(),
+					["bodygroup1"] = bodygroup1:GetValue(),
+					["bodygroup2"] = bodygroup2:GetValue(),
+					["bodygroup3"] = bodygroup3:GetValue()
+				})
+				PlayerModel:SetTargetBone("ValveBiped.Bip01_Head1")
+				EditorFrame:SetVisible( false )
+				EditorFrame:Remove()
+				RefreshGearTree()
+			end,
 			"No", function()
-					entity:SetDTVector( 1, offset )
-					entity:SetDTAngle( 1, angle )
-					entity:SetDTVector( 2, scale )
-					entity:SetSkin( skin )
-					EditorFrame:SetVisible( false )
-					EditorFrame:Remove()
-				end)
+				entity:SetDTVector( 1, offset )
+				entity:SetDTAngle( 1, angle )
+				entity:SetDTVector( 2, scale )
+				entity:SetSkin( skin )
+				entity:SetBodygroup(1, bod1)
+				entity:SetBodygroup(2, bod2)
+				entity:SetBodygroup(3, bod3)
+				PlayerModel:SetTargetBone("ValveBiped.Bip01_Head1")
+				EditorFrame:SetVisible( false )
+				EditorFrame:Remove()
+			end)
 		end
 
 	end
 end
 
 function CloseGear()
+	CAKE.EnableBlackScreen( false )
 	if PlayerMenu then
 		PlayerMenu:Remove()
 		PlayerMenu = nil
@@ -604,35 +777,32 @@ function CloseGear()
 		EditMenu:Remove()
 		EditMenu = nil
 	end
-		LocalPlayer():SetNoDraw( false )
+	LocalPlayer():SetNoDraw( false )
 
-        if CAKE.ClothingTbl then
-            for k, v in pairs( CAKE.ClothingTbl ) do
-                if ValidEntity( v ) then
-                    v:SetNoDraw( false )
-                end
-            end
-        end
+	if CAKE.ClothingTbl then
+		for k, v in pairs( CAKE.ClothingTbl ) do
+			if ValidEntity( v ) then
+				v:SetNoDraw( false )
+			end
+		end
+	end
 
-        if CAKE.Gear then
-            for _, bone in pairs( CAKE.Gear ) do
-                if bone then
-                    for k, v in pairs( bone ) do
-                        if ValidEntity( v.entity ) then
-                            v.entity:SetNoDraw( false )
-                        end
-                    end
-                end
-            end
-        end
+	if CAKE.Gear then
+		for _, bone in pairs( CAKE.Gear ) do
+			if bone then
+				for k, v in pairs( bone ) do
+					if ValidEntity( v.entity ) then
+						v.entity:SetNoDraw( false )
+					end
+				end
+			end
+		end
+	end
 end
 CAKE.RegisterMenuTab( "Character Editor", EditGear, CloseGear )
 
 usermessage.Hook( "cleargear", function( um )
 	CAKE.Gear = {}
-	if RefreshGearTree then
-		RefreshGearTree()
-	end
 	FetchWornItems()
 end)
 
@@ -660,9 +830,6 @@ usermessage.Hook( "addgear", function( um )
 	tbl.itemid = itemid
 
 	table.insert( CAKE.Gear[ bone ], tbl )
-	if RefreshGearTree then
-		RefreshGearTree()
-	end
 	FetchWornItems()
 
 end)
@@ -686,8 +853,5 @@ usermessage.Hook( "editgear", function( um )
 	local ent = ents.GetByIndex( um:ReadShort() )
 
 	StartGearEditor( ent, um:ReadString(), um:ReadString(), ent:GetDTVector( 1 ), ent:GetDTAngle( 1 ), ent:GetDTVector( 2 ), ent:GetSkin(), um:ReadString(), um:ReadString() )
-	if RefreshGearTree then
-		RefreshGearTree()
-	end
 
 end)

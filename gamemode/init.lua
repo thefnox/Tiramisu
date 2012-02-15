@@ -130,6 +130,8 @@ function GM:PlayerSpawn( ply )
 	ply:SetNWInt( "TiramisuAdminLevel", CAKE.PlayerRank(ply) )
 	ply:Give("hands")
 	ply:SelectWeapon("hands")
+
+	ply:SetNWString( "model", CAKE.GetCharField( ply, "model" ))
 	
 	self.BaseClass:PlayerSpawn( ply )
 	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] )

@@ -1,16 +1,18 @@
 hook.Add( "KeyPress", "TiramisuHandleDoors", function( ply, key )
 	if( key == IN_USE ) then
 		local entity = ply:GetEyeTrace( ).Entity
-		if(CAKE.IsDoor(entity)) then
-			local doorgroup = CAKE.GetDoorGroup(entity) or {}
-			local group = CAKE.GetGroup( CAKE.GetCharField( ply, "activegroup" ))
-			local groupdoor = group:GetField( "doorgroup" )
-			if doorgroup == groupdoor then --lol
-				entity:Fire( "IN_USE", "", 0 )
+		if ValidEntity( entity ) then
+			if(CAKE.IsDoor(entity)) then
+				local doorgroup = CAKE.GetDoorGroup(entity) or {}
+				local group = CAKE.GetGroup( CAKE.GetCharField( ply, "activegroup" ))
+				local groupdoor = group:GetField( "doorgroup" )
+				if doorgroup == groupdoor then --lol
+					entity:Fire( "IN_USE", "", 0 )
+				end
 			end
-		end
-		if( entity:GetClass() == "item_prop" ) then
-			ply:ConCommand( "rp_pickup " .. tostring( entity:EntIndex() ) )
+			if( entity:GetClass() == "item_prop" ) then
+				ply:ConCommand( "rp_pickup " .. tostring( entity:EntIndex() ) )
+			end
 		end
 	end
 end)

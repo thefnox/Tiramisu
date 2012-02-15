@@ -71,6 +71,15 @@ include( "shared.lua" )
 include( "cl_binds.lua" )
 include( "cl_skin.lua" )
 
+for _,mdl in pairs(CAKE.ConVars[ "DefaultModels" ].Male) do
+	util.PrecacheModel( mdl )
+end
+
+for _,mdl in pairs(CAKE.ConVars[ "DefaultModels" ].Female) do
+	util.PrecacheModel( mdl )
+end
+
+
 CAKE.Loaded = true
 
 --Some quick utility stuff
@@ -128,6 +137,9 @@ function GM:InitPostEntity()
 	self.BaseClass:InitPostEntity()
 
 	RunConsoleCommand( "rp_ready" )
+	if CAKE.ConVars[ "ForceJigglebones" ] then
+		RunConsoleCommand( "cl_jiggle_bone_framerate_cutoff", "1" )
+	end
 	CAKE.EnableBlackScreen( CAKE.ConVars[ "SpawnWithBlackScreen" ], CAKE.ConVars[ "SpawnWithBlackScreen" ] )
 	
 end

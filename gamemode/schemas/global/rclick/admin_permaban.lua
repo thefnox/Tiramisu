@@ -9,9 +9,7 @@ end
 
 function RCLICK.Click(target,ply)
 
-	local reason
 	CAKE.StringRequest( "Permanently Ban A Player", "Give a reason to permaban " .. target:Nick(), "Bye.", function( text )
-		reason = text
 		ply:ConCommand("rp_admin ban " .. CAKE.FormatText(target:SteamID()) .. " \"" .. reason .. "\" 0" )
 	end,
 	function() end, "Accept", "Cancel")

@@ -41,7 +41,6 @@ hook.Add( "TiramisuPostPlayerLoaded", "TiramisuLoadGroups", function( ply, first
 				for k, group in pairs(char[ "groups" ]) do
 					if group and group != "none" then
 						groupexists, fileexists = CAKE.GroupExists( group )
-						print(CAKE.GroupExists( group ))
 						if !groupexists and fileexists then
 							CAKE.LoadGroup( group )
 							print( "Loading group", group )
