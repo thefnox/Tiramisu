@@ -893,14 +893,22 @@ end
 	DeathMessage
 ---------------------------------------------------------*/
 function SKIN:PaintDeathMessage()
-	if LocalPlayer():GetNWInt("deathmode", 0 ) == 1 then
+	if LocalPlayer():GetNWInt("deathmode", 0 ) != 0 then
 		if LocalPlayer():GetNWInt( "deathmoderemaining" ) < 5 and LocalPlayer():GetNWInt( "deathmoderemaining" ) != 0 then
 			CAKE.EnableBlackScreen( CAKE.ConVars[ "FadeToBlackOnDeath" ] )
 		end
 		if LocalPlayer():GetNWInt( "deathmoderemaining" ) > 0 then
-			draw.DrawText( "You have been mortally wounded. Wait " .. tostring( LocalPlayer( ):GetNWInt( "deathmoderemaining" ) ) .. " seconds", "Tiramisu18Font", ScrW( ) / 2,60, Color( 255,255,255,255 ), TEXT_ALIGN_CENTER )
-		elseif !CAKE.ConVars[ "Instant_Respawn" ] then
-			draw.DrawText( "Press the button to respawn or type rp_acceptdeath in console.", "Tiramisu18Font", ScrW( ) / 2,60, Color( 255,255,255,255 ), TEXT_ALIGN_CENTER )
+			--Normal death.
+			if LocalPlayer():GetNWInt("deathmode", 0 ) == 1 then
+				draw.DrawText( "You have been mortally wounded. Wait " .. tostring( LocalPlayer( ):GetNWInt( "deathmoderemaining" ) ) .. " seconds", "Tiramisu18Font", ScrW( ) / 2,60, Color( 255,255,255,255 ), TEXT_ALIGN_CENTER )
+			--Death while unconcious.
+			elseif LocalPlayer():GetNWInt("deathmode", 0 ) == 2 then
+				draw.DrawText( "You have died while unconcious. Wait " .. tostring( LocalPlayer( ):GetNWInt( "deathmoderemaining" ) ) .. " seconds", "Tiramisu18Font", ScrW( ) / 2,60, Color( 255,255,255,255 ), TEXT_ALIGN_CENTER )
+			end
+		else
+			if !CAKE.ConVars[ "Instant_Respawn" ] then
+				draw.DrawText( "Press the button to respawn or type rp_acceptdeath in console.", "Tiramisu18Font", ScrW( ) / 2,60, Color( 255,255,255,255 ), TEXT_ALIGN_CENTER )
+			end
 		end
 	end
 	

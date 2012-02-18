@@ -1,7 +1,7 @@
 CLPLUGIN.Name = "Sitting System"
 CLPLUGIN.Author = "F-Nox/Big Bang"
 
-usermessage.Hook( "ToggleFreescroll", function( um )
+usermessage.Hook( "Tiramisu.Freescroll", function( um )
 
 	local bool = um:ReadBool()
 

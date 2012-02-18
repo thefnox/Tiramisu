@@ -11,9 +11,11 @@ end)
 
 function GM:PlayerDeath(ply)
 	
-	CAKE.WakeUp( ply )
+	if !ply.DeadWhileUnconcious then
+		CAKE.WakeUp( ply )
+	end
 	CAKE.StandUp( ply )
-	CAKE.DeathMode(ply)
+	CAKE.DeathMode( ply, ply.DeadWhileUnconcious )
 
 end
 
@@ -38,15 +40,15 @@ function GM:PlayerDeathThink(ply)
 				ply.nextsecond = nil
 				ply:SetNWInt("deathmoderemaining", 0)
 				if !CAKE.ConVars[ "ReturnToSpawnOnDeath" ] then
-					if ValidEntity( ply.deathrag ) then
-						ply:SetPos(ply.deathrag:GetPos() + Vector( 0, 0, 30 ))
+					if ValidEntity( ply.rag ) then
+						ply:SetPos(ply.rag:GetPos() + Vector( 0, 0, 30 ))
 					end
-					ply.deathrag:Remove()
-					ply.deathrag = nil
+					ply.rag:Remove()
+					ply.rag = nil
 				else
 					if CAKE.ConVars[ "DeathRagdoll_Linger" ] > 0 then
 						timer.Simple( CAKE.ConVars[ "DeathRagdoll_Linger" ], function()
-							local rag = ply.deathrag
+							local rag = ply.rag
 							timer.Create("deadragdollremove".. ply:SteamID(), 0.1, 0, function()
 								if ValidEntity(rag) then
 									local r, g, b, alpha = rag:GetColor()
@@ -90,15 +92,11 @@ function GM:CanPlayerSuicide( ply )
 end
 
 --Handles death ragdoll creation.
-function CAKE.DeathMode( ply )
+function CAKE.DeathMode( ply, noragdoll )
 	
 	local speed = ply:GetVelocity()
 
 	timer.Destroy("deadragdollremove".. ply:SteamID())
-	if ValidEntity( ply.deathrag ) then
-		ply.deathrag:Remove()
-		ply.deathrag = nil
-	end
 
 	if CAKE.ConVars[ "LoseWeaponsOnDeath" ] then
 		if CAKE.ConVars[ "LoseItemsOnDeath" ] then
@@ -115,20 +113,28 @@ function CAKE.DeathMode( ply )
 	end
 	
 	CAKE.DayLog( "script.txt", "Starting death mode for " .. ply:SteamID( ) )
-	
-	local rag = CAKE.CreatePlayerRagdoll( ply )
 
-	ply.deathrag = rag
+	local rag
+	if !noragdoll then
+		if ValidEntity( ply.rag ) then
+			ply.rag:Remove()
+			ply.rag = nil
+		end
+		rag = CAKE.CreatePlayerRagdoll( ply )
+		ply.rag = rag
+		ply:SetNWInt( "deathmode", 1 )
+		timer.Simple( 1, function()
+			umsg.Start( "Tiramisu.ReceiveRagdoll", ply )
+				umsg.Short( rag:EntIndex() )
+			umsg.End()
+		end)
+	else
+		ply:SetNWInt( "deathmode", 2 )
+		ply.DeadWhileUnconcious = false
+	end
 	
-	ply:SetNWInt( "deathmode", 1 )
 	ply:SetNWInt("deathmoderemaining", CAKE.ConVars[ "Respawn_Timer" ] )
 
-	timer.Simple( 1, function()
-		umsg.Start( "Tiramisu.ReceiveRagdoll", ply )
-			umsg.Short( rag:EntIndex() )
-		umsg.End()
-	end)
-	
 	ply.deathtime = 0
 	ply.nextsecond = CurTime( ) + 1
 	

@@ -108,7 +108,7 @@ local function ccSitDown( ply, cmd, args )
 			end
 		end
 		if hassit then
-			umsg.Start( "ToggleFreescroll", ply )
+			umsg.Start( "Tiramisu.Freescroll", ply )
 				umsg.Bool( true )
 			umsg.End()
 			CAKE.SendChat( ply, "Use !stand, or right click yourself in thirdperson mode to get back on your feet." )
@@ -117,7 +117,7 @@ local function ccSitDown( ply, cmd, args )
 		end
 	elseif !ply.SitTimer then
 		if ply:OnGround() then
-			umsg.Start( "ToggleFreescroll", ply )
+			umsg.Start( "Tiramisu.Freescroll", ply )
 				umsg.Bool( true )
 			umsg.End()
 			ply:SetNWBool( "sittingground", true )
@@ -145,7 +145,7 @@ function CAKE.StandUp( ply )
 		elseif ply:GetNWBool( "sittingground", false ) then
 			ply:SetNWBool( "sittingground", false )
 		end
-		umsg.Start( "ToggleFreescroll", ply )
+		umsg.Start( "Tiramisu.Freescroll", ply )
 			umsg.Bool( false )
 		umsg.End()
 		ply:SetParent()

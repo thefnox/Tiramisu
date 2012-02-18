@@ -15,7 +15,7 @@ local function HL2RPPostProcess()
 	tab[ "$pp_colour_mulg" ] = 0
 	tab[ "$pp_colour_mulb" ] = 0
 	blurmultiply = 0
-	if LocalPlayer():Health() < 40 and LocalPlayer():GetNWInt("deathmode", 0 ) != 1 and LocalPlayer():Alive() then
+	if LocalPlayer():Health() < 40 and LocalPlayer():GetNWInt("deathmode", 0 ) == 0 and LocalPlayer():Alive() then
 		perc = ( LocalPlayer():Health() - 40 ) * -0.4
 		blurmultiply = 1 - perc
 		tab[ "$pp_colour_colour" ] = perc

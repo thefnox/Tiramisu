@@ -95,7 +95,7 @@ local middleDown = false
 
 hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 	
-	if !IronsightsOn() and !LocalPlayer():InVehicle() then
+	if !IronsightsOn() and !LocalPlayer():InVehicle() and cmd:GetButtons() & IN_USE == 0 then
 		if input.IsMouseDown(MOUSE_MIDDLE) then
 			CAKE.FreeScroll = true
 		else

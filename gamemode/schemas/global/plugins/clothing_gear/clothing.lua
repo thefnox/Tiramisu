@@ -27,25 +27,6 @@ CLOTHING_HEADRATIO = 1
 CLOTHING_BODYRATIO = 2
 CLOTHING_HANDRATIO = 3
 
-
---Removes a player's clothing on death
-hook.Add( "PlayerDeath", "TiramisuRemoveClothingOnDeath", function( Victim, Inflictor, Attacker )
-
-	if( Victim.Clothing ) then
-		for k, v in pairs( Victim.Clothing ) do
-			if( ValidEntity( v ) ) then
-				if ValidEntity( Victim.deathrag ) then
-					v:SetParent( Victim.deathrag )
-				else
-					v:SetParent( Victim:GetRagdollEntity() )
-				end
-				v:Initialize()
-			end
-		end
-	end
-
-end )
-
 hook.Add( "PlayerSetModel", "TiramisuSpawnClothing", function( ply )
 
 	--This is a kinda ridiculous override I use for gear that uses bonemerge. It's the only way to allow gear with bones to be rendered manually.

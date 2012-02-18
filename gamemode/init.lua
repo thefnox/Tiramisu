@@ -106,7 +106,7 @@ function GM:PlayerSpawn( ply )
 	
 	ply:StripWeapons( )
 	
-	if( ply:GetNWInt( "deathmode" ) == 1 ) then
+	if ply:GetNWInt( "deathmode", 0 ) != 0 then
 	
 		ply:SetNWInt( "deathmode", 0 )
 		ply:SetViewEntity( ply )

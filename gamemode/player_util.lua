@@ -105,12 +105,11 @@ function CAKE.CreatePlayerRagdoll( ply )
 	end
 	
 	timer.Simple(.03, function()
-			umsg.Start("Tiramisu.PlayerRagged")
-				umsg.Entity( ply )
-				umsg.Entity( rag )
-			umsg.End()
-		end
-	)
+		umsg.Start("Tiramisu.PlayerRagged")
+			umsg.Entity( ply )
+			umsg.Entity( rag )
+		umsg.End()
+	end)
 	
 	ply.Clothing = nil
 	ply.Gear = nil
