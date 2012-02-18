@@ -114,7 +114,7 @@ function PANEL:SetTargetBone( bone )
 end
 
 function PANEL:GetTargetBone()
-	return self.TargetBone
+	return self.TargetBone or "ValveBiped.Bip01_Head1"
 end
 
 local origbone

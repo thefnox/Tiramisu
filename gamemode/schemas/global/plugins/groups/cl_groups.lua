@@ -42,18 +42,6 @@ datastream.Hook( "Tiramisu.GetGroupInfo", function( handler, id, encoded, decode
 	CAKE.OpenGroupInfo( decoded )
 end)
 
-datastream.Hook( "Tiramisu.GetRanksToPromote", function( handler, id, encoded, decoded )
-	if table.Count(tbl.ranks) > 1 then
-		CAKE.ChoiceRequest( "Confirm Promotion",
-		"Select the rank you want to promote " .. tbl.target:Nick() .. " to, then press 'Accept'" ,
-		tbl.ranks,
-			function( choice ) RunConsoleCommand( "rp_promote", choice ) end,
-		function( choice ) end,
-		"Accept",
-		"Cancel")
-	end
-end)
-
 datastream.Hook( "Tiramisu.EditCharInfo", function( handler, id, encoded, decoded )
 	if decoded then
 		CAKE.EditCharacterInfo( decoded )
@@ -99,11 +87,11 @@ end)
 
 usermessage.Hook( "Tiramisu.GetInvite", function( um )
 	local ply = um:ReadEntity()
-	local uid = um:ReadString()
 	local name = um:ReadString()
+	local uid = um:ReadString()
 
 	CAKE.Query( "You have been invited to join group: " .. name .. ", accept?", "Group Invite",
-		"Accept", function() RunConsoleCommand( "rp_joingroup", uid, CAKE.FormatText(ply:SteamID()))end, 
+		"Accept", function() RunConsoleCommand( "rp_joingroup", uid, CAKE.FormatText(ply:SteamID())) end, 
 		"Deny",	function() end)
 end)
 
@@ -128,7 +116,7 @@ function CAKE.EditCharacterInfo( tbl )
 		if permissions["canpromote"] and table.Count( ranks ) > 0 then
 			if rank != "" then
 				CAKE.Query( "Promote this player to " .. rank .. "?", "Promote",
-				"Yes",	function() frame:Remove() RunConsoleCommand("rp_promote", CAKE.FormatText(tbl.SteamID) .. ";" .. tbl.uid, rank, tbl.groupid) end, 
+				"Yes",	function() RunConsoleCommand("rp_promote", CAKE.FormatText(tbl.SteamID) .. ";" .. tbl.uid, rank, tbl.groupid) end, 
 				"No",	function() end )
 			end
 		end
@@ -168,14 +156,12 @@ function CAKE.EditCharacterInfo( tbl )
 		if permissions["canpromote"] and table.Count( ranks ) > 0 then
 			actions:AddItem( Label( "Promote/Demote to a rank:" ))
 			local setrank = vgui.Create( "DMultiChoice" )
-			setrank:AddChoice( rank, "" )
-			setrank:ChooseOptionID( 1)
 			rank = ""
 			for k, v in pairs( ranks ) do
-				setrank:AddChoice(v, k)
+				setrank:AddChoice(k)
 			end
 			setrank.OnSelect = function( index, value, data )
-				rank = data
+				rank = value
 			end
 			actions:AddItem( setrank ) 
 		end

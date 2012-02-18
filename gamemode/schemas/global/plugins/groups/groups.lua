@@ -318,7 +318,7 @@ function CAKE.PromoteCharacter( group, promoter, ply, rank )
 		local promoinfo = group:GetCharacterInfo( promoter )
 		local plyinfo = group:GetCharacterInfo( ply )
 		if !group:GetRankField(promoinfo.Rank, "canpromote") then return end
-		if group:GetRankField( rank, "level" ) > group:GetRankField(promoinfo.Rank, "level") then return end
+		if tonumber(group:GetRankField( rank, "level" )) > tonumber(group:GetRankField(promoinfo.Rank, "level")) then return end
 		plyinfo.Rank = rank
 		group:Save()
 		CAKE.SendGroupToClient( ply )
@@ -326,7 +326,7 @@ function CAKE.PromoteCharacter( group, promoter, ply, rank )
 end
 
 --Makes a player leave a group, given a group ID
-function CAKE.LeaveGroup( ply, uid )
+function CAKE.LeaveGroup( ply, uid, reason )
 	if CAKE.GroupExists( uid ) then
 		group = CAKE.GetGroup( uid )
 		group:RemoveFromRoster( ply )
@@ -343,14 +343,14 @@ function CAKE.LeaveGroup( ply, uid )
 		CAKE.SetCharField( ply, "groups", table.Copy(plygroups) )
 		group:Save()
 		CAKE.SendGroupToClient( ply )
-		CAKE.SendError( ply, "You have left " .. group:GetField( "name" ))
+		CAKE.SendError( ply, reason or "You have left " .. group:GetField( "name" ))
 	end
 end
 
 function CAKE.JoinGroup( ply, uid, referral )
-	if ValidEntity( ply ) and ply:IsTiraPlayer() and CAKE.GroupExists( uid ) then
+	if ValidEntity( ply ) and ply:IsPlayer() and CAKE.GroupExists( uid ) and ply:IsCharLoaded() then
 		local group = CAKE.GetGroup( uid )
-		if ((ValidEntity( referral ) and referral:IsTiraPlayer() and ply.AuthorizedToJoin == uid and group:GetCharacterInfo( referral ) and group:GetRankField(group:GetCharacterInfo( referral ).Rank, "caninvite")) or group:GetField("type") == "public") then
+		if group:GetField("type") == "public" or (ValidEntity( referral ) and referral:IsPlayer() and ply.AuthorizedToJoin == uid and group:GetCharacterInfo( referral ) and group:GetRankField(group:GetCharacterInfo( referral ).Rank, "caninvite")) then
 			if !group:GetCharacterInfo( ply ) then
 				local plygroups = CAKE.GetCharField( ply, "groups")
 				if !table.HasValue( plygroups, uid ) then
@@ -360,7 +360,9 @@ function CAKE.JoinGroup( ply, uid, referral )
 				CAKE.SetCharField( ply, "activegroup", uid)
 				group:AddToRoster( ply )
 				CAKE.SendError( ply, "You have joined " .. group:GetField( "name" ))
-				CAKE.SendError( referral, ply:Nick() .. " has accepted your invitation to join " .. group:GetField( "name" ))
+				if ValidEntity( referral ) and referral:IsPlayer() then
+					CAKE.SendError( referral, ply:Nick() .. " has accepted your invitation to join " .. group:GetField( "name" ))
+				end
 				group:Save()
 				CAKE.SendGroupToClient( ply )
 			else

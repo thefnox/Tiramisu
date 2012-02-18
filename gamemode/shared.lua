@@ -2,27 +2,25 @@ CAKE.Name = string.Replace( GM.Folder, "gamemodes/", "" )
 
 local meta = FindMetaTable( "Player" )
 
-function meta:CanTraceTo( ent ) -- Can the player and the entity "see" eachother?
-
-	local filter = ents.FindByClass( ent:GetClass() )
-	for k, v in pairs( filter ) do
-		if v == ent then
-			table.remove( filter, k )
-		end
-	end
-	table.insert( filter, self )
+function meta:CanTraceTo( ent, filter ) -- Can the player and the entity "see" eachother?
+	filter = self
 	local trace = {  }
-	trace.start = self:EyePos( )
+	if CLIENT and self == LocalPlayer() then
+		trace.start = CAKE.CameraPos
+	else
+		trace.start = self:EyePos()
+	end
 	if ent:IsTiraPlayer() then
 		trace.endpos = ent:EyePos()
 	else
 		trace.endpos = ent:GetPos()
 	end
 	trace.filter = filter
+	--trace.mask = CONTENTS_SOLID + CONTENTS_MOVEABLE + CONTENTS_OPAQUE + CONTENTS_DEBRIS + CONTENTS_HITBOX + CONTENTS_MONSTER
 	
 	local tr = util.TraceLine( trace )
 	
-	if( tr.Entity:IsValid( ) and tr.Entity:EntIndex( ) == ent:EntIndex( ) ) then return true end
+	if !tr.HitWorld and !tr.HitSky and tr.Entity == ent then return true end
 	
 	return false
 
