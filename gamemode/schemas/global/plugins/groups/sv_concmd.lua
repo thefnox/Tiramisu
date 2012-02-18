@@ -15,7 +15,7 @@ end)
 
 concommand.Add( "rp_joingroup", function( ply, cmd, args )
 
-	CAKE.JoinGroup( ply, args[1], CAKE.FindPlayer( args[2] ))
+	CAKE.JoinGroup( ply, args[1], CAKE.FindPlayer( args[2] or "nothingatall!" ))
 
 end )
 
@@ -129,7 +129,9 @@ concommand.Add( "rp_sendinvite", function( ply, cmd, args )
 		if !group:CharacterInGroup( target ) then
 			target.AuthorizedToJoin = group.UniqueID
 			umsg.Start( "Tiramisu.GetInvite", target )
-				umsg.String( group )
+				umsg.Entity( ply )
+				umsg.String( group:Name() )
+				umsg.String( group.UniqueID )
 			umsg.End()
 		else
 			CAKE.SendError( ply, target:Nick() .. " is already in the group!")
@@ -140,26 +142,27 @@ concommand.Add( "rp_sendinvite", function( ply, cmd, args )
 end)
 
 concommand.Add( "rp_promote", function( ply, cmd, args )
-	
+
 	local uid = args[3] or CAKE.GetCharField( ply, "activegroup" )
 	local group = CAKE.GetGroup(uid)
-	if !group or !group:CharacterInGroup( ply ) or !args[2] or !group:IsRank(args[2]) then return end
-
+	if !group or !group:CharacterInGroup( ply ) or !args[2] then return end
 	if !group:GetRankField(group:GetCharacterInfo( ply ).Rank, "canpromote" ) then return end
-	if group:GetRankField(args[2], "level" ) >= group:GetRankField(group:GetCharacterInfo( ply ).Rank, "level" ) then return end
+	if tonumber(group:GetRankField(args[2], "level" )) >= tonumber(group:GetRankField(group:GetCharacterInfo( ply ).Rank, "level" )) then return end
 
-	local target = CAKE.FindPlayer( args[1] )
 	local roster = group:GetRoster()
-	if !target and roster[args[1]] then
-		roster[CAKE.FormatText(ply:SteamID()) .. ";" .. ply:GetNWString( "uid" )].Rank = args[2]
+	if roster[args[1]] then
+		local target = CAKE.FindPlayer( roster[args[1]].SteamID )
+		if target then
+			CAKE.PromoteCharacter( uid, ply, target, args[2])
+			CAKE.SendError( target, "You have been promoted to " .. group:GetRankField(args[2], "name"))
+			CAKE.SendError( ply, "You have promoted " .. ply:Nick() .. " to: " .. group:GetRankField(args[2], "name"))
+		else
+			roster[args[1]].Rank = args[2]
+			CAKE.SendError( ply, "You have promoted " .. roster[args[1]].Name .. " to: " .. group:GetRankField(args[2], "name"))
+		end
 		group:SetField( "roster", roster )
 		return
 	end
-	if !target or !group:CharacterInGroup( target ) then return end
-
-	CAKE.PromoteCharacter( uid, ply, target, args[2])
-	CAKE.SendError( ply, "You have promoted " .. target:Nick() " to: " .. group:GetRankField(args[2], "name"))
-	CAKE.SendError( target, "You have been promoted to " .. group:GetRankField(args[2], "name"))
 
 end)
 
@@ -169,11 +172,17 @@ concommand.Add( "rp_kickfromgroup", function( ply, cmd, args )
 	if !group or !group:CharacterInGroup( ply ) then return end
 	if !group:GetRankField(group:GetCharacterInfo( ply ).Rank, "cankick" ) then return end
 
-	local target = CAKE.FindPlayer( args[1] )
 	local roster = group:GetRoster()
-	if !target and roster[args[1]] then
-		if group:GetRankField(roster[args[1]].Rank, "level" ) < group:GetRankField(group:GetCharacterInfo( ply ).Rank, "level" ) then
-			roster[CAKE.FormatText(ply:SteamID()) .. ";" .. ply:GetNWString( "uid" )] = nil
+	if roster[args[1]] then
+		if tonumber(group:GetRankField(roster[args[1]].Rank, "level" )) < tonumber(group:GetRankField(group:GetCharacterInfo( ply ).Rank, "level" )) then
+			CAKE.SendError( ply, "You have kicked " .. roster[args[1]].Name .. " out of " .. group:GetField( "name" ))
+			local target = CAKE.FindPlayer( roster[args[1]].SteamID )
+			if target then
+				CAKE.LeaveGroup( target, group.UniqueID, "You have been kicked out of " .. group:GetField( "name" ) )
+				group:RemoveFromRoster( target )
+			else
+				roster[args[1]] = nil
+			end
 			group:SetField( "roster", roster )
 			if table.Count( roster ) < 1 then
 				group:Delete()
@@ -181,25 +190,6 @@ concommand.Add( "rp_kickfromgroup", function( ply, cmd, args )
 		end
 		return
 	end
-	if !target or !group:CharacterInGroup( target ) then return end
-
-	if group:GetRankField(group:GetCharacterInfo( target ).Rank, "level" ) >= group:GetRankField(group:GetCharacterInfo( ply ).Rank, "level" ) then return end
-	
-	local uid = group.UniqueID
-	local plygroups = CAKE.GetCharField( target, "groups")
-	local activegroup = CAKE.GetCharField( target, "activegroup")
-	for k, v in pairs( plygroups ) do
-		if v == uid then
-			table.remove( plygroups, k )
-		elseif activegroup != uid then
-			CAKE.SetCharField( target, "activegroup", v or "none")
-		end
-	end
-	CAKE.SetCharField( target, "groups", table.Copy(plygroups) )
-	group:Save()
-	CAKE.SendGroupToClient( target )
-	CAKE.SendError( target, "You have been kicked out of " .. group:GetField( "name" ))
-	CAKE.SendError( ply, "You have kicked " .. target:Nick() .. " out of " .. group:GetField( "name" ))
 
 end)
 
@@ -218,7 +208,7 @@ concommand.Add( "rp_getcharinfo", function( ply, cmd, args )
 
 	if roster[args[2]] then
 		local myrank = group:GetCharInfo( ply ).Rank
-		local outranked = group:GetRankField(roster[args[2]].Rank, "level" ) >= group:GetRankField(myrank, "level" )
+		local outranked = tonumber(group:GetRankField(roster[args[2]].Rank, "level" )) >= tonumber(group:GetRankField(myrank, "level" ))
 		local tbl = {
 			["groupid"] = group.UniqueID,
 			["uid"] = roster[args[2]].UID,
@@ -232,7 +222,7 @@ concommand.Add( "rp_getcharinfo", function( ply, cmd, args )
 			}
 		}
 		for k, v in pairs( group:GetField( "ranks" ) ) do
-			if v.level < group:GetRankField(myrank, "level" ) then
+			if tonumber(v.level) < tonumber(group:GetRankField(myrank, "level" )) then
 				tbl["permissions"]["ranks"][k] = v.name
 			end
 		end

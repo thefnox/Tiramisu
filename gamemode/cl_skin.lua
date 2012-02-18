@@ -968,7 +968,7 @@ end
 
 function SKIN:PaintPlayerTitles()
 	for _, ply in pairs( CAKE.NearbyPlayers ) do
-		if not IsValid(ply) and LocalPlayer() then return end
+		if !LocalPlayer() then return end
 		if ValidEntity( ply ) and ply:IsPlayer() and ply != LocalPlayer() and LocalPlayer():CanTraceTo(ply) then
 			local angleto = (ply:GetPos() - LocalPlayer():GetPos()):Angle()
 			local yawdif = math.abs(math.AngleDifference(angleto.y, (LocalPlayer():GetAngles()).y + LocalPlayer().CurrentLookAt.y))
@@ -1049,7 +1049,7 @@ end
 local screenpos
 function SKIN:PaintTargetInfo()
 	for _, ent in pairs( ents.FindInSphere( LocalPlayer():GetPos(), 500 ) ) do
-		if ValidEntity( ent ) and !ent:IsWorld() then
+		if ValidEntity( ent ) and !ent:IsWorld() and LocalPlayer():CanTraceTo(ent) then
 			if ent:GetClass() == "item_prop" then
 				screenpos = ent:GetPos() + Vector( 0,0,10)
 				if screenpos:Distance( LocalPlayer():GetPos() ) > 200 and LocalPlayer():CanTraceTo(ent) then

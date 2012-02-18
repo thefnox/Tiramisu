@@ -39,7 +39,6 @@ local function GroupChat( ply, text )
 	end
 	
 	if group and group:CharInGroup( ply ) then
-		print( "talking to group:", group.UniqueID)
 		for k, v in pairs( group:GetOnlineChars() ) do
 			datastream.StreamToClients( v, "TiramisuAddToGroupChat", {
 				["text"] = text,
