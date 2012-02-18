@@ -103,7 +103,7 @@ end
 
 --Is the player in the group?
 function meta:PlayerInGroup( ply )
-	if ValidEntity( ply ) and ply:IsPlayer() and ply:IsCharLoaded() then
+	if ValidEntity( ply ) and ply:IsTiraPlayer() and ply:IsCharLoaded() then
 		for _, v in pairs(self:GetRoster()) do
 			if v and v.SteamID == ply:SteamID() then
 				return true
@@ -115,7 +115,7 @@ end
 
 --Is the currently active character of this player in the group?
 function meta:CharacterInGroup( ply )
-	if ValidEntity( ply ) and ply:IsPlayer() and ply:IsCharLoaded() then
+	if ValidEntity( ply ) and ply:IsTiraPlayer() and ply:IsCharLoaded() then
 		for _, v in pairs(self:GetRoster()) do
 			if v and v.SteamID == ply:SteamID() and v.UID == ply:GetNWString( "uid" ) then
 				return true
@@ -135,7 +135,7 @@ end
 
 --Fetches the information of a character, given a player.
 function meta:GetCharacterInfo( ply )
-	if ValidEntity( ply ) and ply:IsPlayer() and ply:IsCharLoaded() then
+	if ValidEntity( ply ) and ply:IsTiraPlayer() and ply:IsCharLoaded() then
 		for plyid, v in pairs(self:GetRoster()) do
 			if v and v.SteamID == ply:SteamID() and v.UID == ply:GetNWString( "uid" ) then
 				return v
@@ -192,7 +192,7 @@ end
 
 --Adds an online player to the roster.
 function meta:AddToRoster( ply, rank )
-	if ValidEntity( ply ) and ply:IsPlayer() and ply:IsCharLoaded() then
+	if ValidEntity( ply ) and ply:IsTiraPlayer() and ply:IsCharLoaded() then
 		if !self:GetCharacterInfo( ply ) then
 			local tbl = {}
 			tbl.Name = ply:Nick()
@@ -208,7 +208,7 @@ end
 
 --Removes an online player from the roster.
 function meta:RemoveFromRoster( ply )
-	if ValidEntity( ply ) and ply:IsPlayer() and ply:IsCharLoaded() then
+	if ValidEntity( ply ) and ply:IsTiraPlayer() and ply:IsCharLoaded() then
 		if self:GetCharacterInfo( ply ) then
 			local roster = self:GetRoster()
 			roster[CAKE.FormatText(ply:SteamID()) .. ";" .. ply:GetNWString( "uid" )] = nil
@@ -310,7 +310,7 @@ end
 
 --Makes a character promote another to a certain rank, if possible.
 function CAKE.PromoteCharacter( group, promoter, ply, rank )
-	if ValidEntity(promoter) and promoter:IsPlayer() and ValidEntity(ply) and ply:IsPlayer() and CAKE.GroupExists( group ) then
+	if ValidEntity(promoter) and promoter:IsTiraPlayer() and ValidEntity(ply) and ply:IsTiraPlayer() and CAKE.GroupExists( group ) then
 		group = CAKE.GetGroup( group )
 		if !group:CharacterInGroup( ply ) then return end
 		if !group:CharacterInGroup( promoter ) then return end
@@ -348,9 +348,9 @@ function CAKE.LeaveGroup( ply, uid )
 end
 
 function CAKE.JoinGroup( ply, uid, referral )
-	if ValidEntity( ply ) and ply:IsPlayer() and CAKE.GroupExists( uid ) then
+	if ValidEntity( ply ) and ply:IsTiraPlayer() and CAKE.GroupExists( uid ) then
 		local group = CAKE.GetGroup( uid )
-		if ((ValidEntity( referral ) and referral:IsPlayer() and ply.AuthorizedToJoin == uid and group:GetCharacterInfo( referral ) and group:GetRankField(group:GetCharacterInfo( referral ).Rank, "caninvite")) or group:GetField("type") == "public") then
+		if ((ValidEntity( referral ) and referral:IsTiraPlayer() and ply.AuthorizedToJoin == uid and group:GetCharacterInfo( referral ) and group:GetRankField(group:GetCharacterInfo( referral ).Rank, "caninvite")) or group:GetField("type") == "public") then
 			if !group:GetCharacterInfo( ply ) then
 				local plygroups = CAKE.GetCharField( ply, "groups")
 				if !table.HasValue( plygroups, uid ) then

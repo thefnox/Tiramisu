@@ -64,20 +64,6 @@ concommand.Add( "rp_givemoney", function( ply, cmd, args )
 	
 end)	
 
---Makes you fall unconcious.
-concommand.Add( "rp_passout", function( ply, cmd, args )
-	CAKE.UnconciousMode( ply )
-end)
-
---Makes you wake up if unconcious.
-concommand.Add( "rp_wakeup", function( ply, cmd, args )
-
-	if ply:GetNWBool( "unconciousmode", false ) then
-		CAKE.UnconciousMode( ply )
-	end
-
-end)
-
 --Selects a weapon.
 concommand.Add( "rp_selectweapon", function( ply, cmd, args )
 	if ply:HasWeapon(args[1]) then

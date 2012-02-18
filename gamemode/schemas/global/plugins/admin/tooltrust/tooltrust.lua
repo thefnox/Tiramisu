@@ -260,7 +260,7 @@ function Admin_Tooltrust(ply, cmd, args)
 	
 	local target = CAKE.FindPlayer(args[1])
 	
-	if !(target and target:IsValid() and target:IsPlayer()) then
+	if !(target and target:IsValid() and target:IsTiraPlayer()) then
 		CAKE.SendChat( ply, "Target not found!" )
 		return
 	end
@@ -302,7 +302,7 @@ hook.Add( "PhysgunPickup", "TiramisuPhysgunPickup", function( ply, ent )
 	end
 
 	if ValidEntity(ent) then
-		if ent:IsPlayer() or ent:GetClass() == "item_prop" then
+		if ent:IsTiraPlayer() or ent:GetClass() == "item_prop" then
 			return CAKE.PlayerRank(ply) > 0
 		end
 	end

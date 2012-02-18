@@ -3,11 +3,13 @@ RCLICK.SubMenu = "Groups"
 
 function RCLICK.Condition(target)
 
-if target:IsPlayer() and CAKE.GetRankPermission( "caninvite" ) and target != LocalPlayer() and CAKE.ActiveGroup != "none" then return true end
+if target:IsTiraPlayer() and CAKE.GetRankPermission( "caninvite" ) and target != LocalPlayer() and CAKE.ActiveGroup != "none" then return true end
 
 end
 
 function RCLICK.Click(target,ply)
+
+	target = target:IsTiraPlayer()
 
 	RunConsoleCommand( "rp_sendinvite", CAKE.FormatText( target:SteamID() ) )
 

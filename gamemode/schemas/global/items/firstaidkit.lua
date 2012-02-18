@@ -23,7 +23,7 @@ function ITEM:UseItem(ply)
 	-- Find the target
 	for k, v in pairs(ents.FindInSphere(self:GetPos(), 10)) do
 	
-		if(v != nil and v:IsValid() and v:IsPlayer() and v != ply) then
+		if(v != nil and v:IsValid() and v:IsTiraPlayer() and v != ply) then
 		
 			table.insert(possible, v)
 			

@@ -11,6 +11,7 @@ end)
 
 function GM:PlayerDeath(ply)
 	
+	CAKE.WakeUp( ply )
 	CAKE.StandUp( ply )
 	CAKE.DeathMode(ply)
 

@@ -161,7 +161,7 @@ function CAKE.ICAdd( ply, text, range, font, channel )
 			tracedata.endpos = ply:EyePos()
 			tracedata.filter = pl
 			tracedata.mask = CONTENTS_SOLID + CONTENTS_MOVEABLE + CONTENTS_OPAQUE + CONTENTS_DEBRIS + CONTENTS_HITBOX + CONTENTS_MONSTER
-			if( pl:IsPlayer() and (pl:EyePos( ):Distance( ply:EyePos( ) ) <= range or util.TraceLine(tracedata).Entity == ply )) then
+			if( pl:IsTiraPlayer() and (pl:EyePos( ):Distance( ply:EyePos( ) ) <= range or util.TraceLine(tracedata).Entity == ply )) then
 			
 				CAKE.SendChat( pl, text, font, channel or "IC" )
 			

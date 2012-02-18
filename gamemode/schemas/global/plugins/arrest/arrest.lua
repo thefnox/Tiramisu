@@ -7,9 +7,9 @@ local function ccArrest( ply, cmd, args )
 	local trace = ply:GetEyeTrace( )
 	if trace.StartPos:Distance( trace.HitPos ) < 150 then
 		if ply:HasItem( "zipties" ) then
-			if trace.Entity:IsPlayer() then
+			if trace.Entity:IsTiraPlayer() then
 				CAKE.ArrestPlayer( ply, trace.Entity )
-			elseif trace.Entity.ply:IsPlayer() then
+			elseif trace.Entity.ply:IsTiraPlayer() then
 				CAKE.ArrestPlayer( ply, trace.Entity.ply )
 			end
 		end

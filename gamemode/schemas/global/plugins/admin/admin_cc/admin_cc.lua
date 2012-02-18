@@ -13,7 +13,7 @@ local function Admin_Kick( ply, cmd, args )
 	
 	local pl = CAKE.FindPlayer( plyname )
 	
-	if ValidEntity( pl ) and pl:IsPlayer( ) then
+	if ValidEntity( pl ) and pl:IsTiraPlayer( ) then
 	
 		local UniqueID = pl:UserID( )
 		
@@ -52,7 +52,7 @@ local function Admin_Ban( ply, cmd, args )
 	
 	local pl = CAKE.FindPlayer( plyname )
 	
-	if( pl and pl:IsValid( ) and pl:IsPlayer( ) ) then
+	if( pl and pl:IsValid( ) and pl:IsTiraPlayer( ) ) then
 	
 		local UniqueID = pl:UserID( )
 		
@@ -170,7 +170,7 @@ local function Admin_SuperBan( ply, cmd, args )
 	
 	local pl = CAKE.FindPlayer( plyname )
 	
-	if( pl and pl:IsValid( ) and pl:IsPlayer( ) ) then
+	if( pl and pl:IsValid( ) and pl:IsTiraPlayer( ) ) then
 	
 		local UniqueID = pl:UserID( )
 		
@@ -356,7 +356,7 @@ local function Admin_Bring( ply, cmd, args )
 	
 	local target = CAKE.FindPlayer( args[1] )
 	
-	if( target and target:IsValid() and target:IsPlayer() ) then
+	if( target and target:IsValid() and target:IsTiraPlayer() ) then
 	
 		target:SetPos( ply:CalcDrop() + Vector( 0, 0, 6 ) )			
 		CAKE.SendChat( ply, "Bringing " .. target:Nick() .. "." )
@@ -375,7 +375,7 @@ local function Admin_GoTo( ply, cmd, args )
 	
 	local target = CAKE.FindPlayer( args[1] )
 	
-	if( target and target:IsValid() and target:IsPlayer() ) then
+	if( target and target:IsValid() and target:IsTiraPlayer() ) then
 	
 		ply:SetPos( target:CalcDrop() + Vector( 0, 0, 6 ) )
 		CAKE.SendChat( ply, "Teleporting to " .. target:Nick() .. ".")
@@ -394,7 +394,7 @@ local function Admin_Slay( ply, cmd, args )
 
 	local target = CAKE.FindPlayer( args[1] )
 	
-	if( target and target:IsValid( ) and target:IsPlayer( ) ) then -- Target found, is player
+	if( target and target:IsValid( ) and target:IsTiraPlayer( ) ) then -- Target found, is player
 	
 		target:Kill()
 		CAKE.SendChat( ply:Nick() .. "has slayed you. =)")
@@ -420,7 +420,7 @@ end
 local function Admin_SetRank( ply, cmd, args)
 	print( args[1], args[2] )
 	if #args != 2 then
-		if ValidEntity( ply ) and ply:IsPlayer() then
+		if ValidEntity( ply ) and ply:IsTiraPlayer() then
 			CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin setrank \"name\" \"rank\" )")
 		end
 		return
@@ -428,7 +428,7 @@ local function Admin_SetRank( ply, cmd, args)
 	
 	args[1] = CAKE.FindPlayer(args[1])
 	if !args[1] then
-		if ValidEntity( ply ) and ply:IsPlayer() then
+		if ValidEntity( ply ) and ply:IsTiraPlayer() then
 			CAKE.SendChat(ply, "Target not found!")
 		end
 		return

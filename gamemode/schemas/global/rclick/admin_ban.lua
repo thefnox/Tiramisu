@@ -3,12 +3,13 @@ RCLICK.SubMenu = "Admin"
 
 function RCLICK.Condition(target)
 
-	if target:IsPlayer() and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 2 then return true end
+	if target:IsTiraPlayer() and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 2 then return true end
 
 end
 
 function RCLICK.Click(target,ply)
 
+	target = target:IsTiraPlayer()
 	local reason
 	CAKE.StringRequest( "Ban A Player", "Give a reason to ban " .. target:Nick(), "Bye.", function( text )
 		reason = text

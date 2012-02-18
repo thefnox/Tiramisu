@@ -934,7 +934,7 @@ local foundents, ply, tracehull
 function SKIN:ThinkPlayerTitles()
 	foundents = ents.FindInSphere( LocalPlayer():GetPos(), CAKE.TitleDrawDistance:GetInt() )
 	for _, ply in pairs(CAKE.NearbyPlayers) do
-		if ValidEntity( ply ) and ply:IsPlayer() then
+		if ValidEntity( ply ) and ply:IsTiraPlayer() then
 			if !table.HasValue( foundents, ply ) then
 				ply.FirstSeen = false
 			else
@@ -953,13 +953,13 @@ function SKIN:ThinkPlayerTitles()
 			mins = LocalPlayer():OBBMins(),
 			maxs = LocalPlayer():OBBMaxs()
 		})
-		if tracehull.Entity and ValidEntity(tracehull.Entity) and tracehull.Entity:IsPlayer() then
+		if tracehull.Entity and ValidEntity(tracehull.Entity) and tracehull.Entity:IsTiraPlayer() then
 			tracehull.Entity.Alpha = 255
 			tracehull.Entity.FirstSeen = CurTime()
 		end
 	else
 		ply = LocalPlayer():GetEyeTrace().Entity
-		if ValidEntity(ply) and ply:IsPlayer() then
+		if ValidEntity(ply) and ply:IsTiraPlayer() then
 			ply.Alpha = 255
 			ply.FirstSeen = CurTime()
 		end
@@ -969,12 +969,13 @@ end
 function SKIN:PaintPlayerTitles()
 	for _, ply in pairs( CAKE.NearbyPlayers ) do
 		if not IsValid(ply) and LocalPlayer() then return end
-		if ValidEntity( ply ) and ply:IsPlayer() and ply != LocalPlayer() and LocalPlayer():CanTraceTo(ply) then
+		if ValidEntity( ply ) and ply:IsTiraPlayer() and ply:IsTiraPlayer() != LocalPlayer() and LocalPlayer():CanTraceTo(ply) then
 			local angleto = (ply:GetPos() - LocalPlayer():GetPos()):Angle()
 			local yawdif = math.abs(math.AngleDifference(angleto.y, (LocalPlayer():GetAngles()).y + LocalPlayer().CurrentLookAt.y))
 			local dist = ply:GetPos():Distance(LocalPlayer():GetPos())
 			--print("Difference from: " .. yawdif, "Player: " .. LocalPlayer():GetAngles().y, "Other: " .. angleto.y)
 			if yawdif < 30 then
+				local plyt = ply:IsTiraPlayer()
 				local pos = (ply:EyePos() + Vector(0, 0, 10)):ToScreen()
 				if yawdif > 5 then
 					ply.Alpha = 255 -  (255 * (math.pow(yawdif / 30, 2)))
@@ -982,11 +983,11 @@ function SKIN:PaintPlayerTitles()
 					ply.Alpha = 255
 				end
 				if pos.visible then
-					if ply:GetNWBool( "chatopen" ) then
+					if plyt:GetNWBool( "chatopen" ) then
 						draw.SimpleTextOutlined( "Typing...", "TiramisuTitlesFont", pos.x, pos.y - 90, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
 					end
-					draw.SimpleTextOutlined( ply:Nick(), "TiramisuNamesFont", pos.x, pos.y - 70, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
-					draw.SimpleTextOutlined( ply:Title(), "TiramisuTitlesFont", pos.x, pos.y - 45, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
+					draw.SimpleTextOutlined( plyt:Nick(), "TiramisuNamesFont", pos.x, pos.y - 70, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
+					draw.SimpleTextOutlined( plyt:Title(), "TiramisuTitlesFont", pos.x, pos.y - 45, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
 				end
 			end
 		end

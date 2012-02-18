@@ -5,7 +5,7 @@ CAKE.AdminRanks = {  }
 function CAKE.AnnounceAction( ply, action )
 
 	local s
-	if ply:IsPlayer() then
+	if ply:IsTiraPlayer() then
 		s = "[ ADMIN ] " .. ply:Name( ) .. " " .. action
 
 		for k, v in pairs( player.GetAll( ) ) do

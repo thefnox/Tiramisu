@@ -13,7 +13,7 @@ function meta:CanTraceTo( ent ) -- Can the player and the entity "see" eachother
 	table.insert( filter, self )
 	local trace = {  }
 	trace.start = self:EyePos( )
-	if ent:IsPlayer() then
+	if ent:IsTiraPlayer() then
 		trace.endpos = ent:EyePos()
 	else
 		trace.endpos = ent:GetPos()
