@@ -66,9 +66,9 @@ function CAKE.UnconciousMode( ply, wait, delay )
 			umsg.Start( "Tiramisu.Freescroll", ply )
 				umsg.Bool( true )
 			umsg.End()
-		end)
-		
-		timer.Simple( wait or CAKE.ConVars[ "UnconciousTimer" ], function()
+		end)		
+		 
+		timer.Create(ply:SteamID() .. "unconcioustimer", wait or CAKE.ConVars[ "UnconciousTimer" ], 1, function()
 			ply.CanWakeUp = true
 			umsg.Start( "Tiramisu.DisplayWakeUpButton", ply )
 				umsg.Bool( true )
@@ -102,9 +102,6 @@ function CAKE.WakeUp(ply, dontdestroyragdoll)
 		umsg.Start( "Tiramisu.Freescroll", ply )
 			umsg.Bool( false )
 		umsg.End()
-	end
-	if timer.IsTimer( ply:SteamID() .. "UnconciousActionTimer" ) then
-		timer.Destroy( ply:SteamID() .. "UnconciousActionTimer" )
 	end
 	if timer.IsTimer( ply:SteamID() .. "unconcioustimer" ) then
 		timer.Destroy( ply:SteamID() .. "unconcioustimer"  )
