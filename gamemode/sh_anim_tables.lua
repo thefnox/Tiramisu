@@ -715,12 +715,12 @@ if CAKE.ConVars[ "UseEnhancedCitizens" ] then
 	Anims.Female[ "models" ] = {
 		"models/bloo_ltcom/citizens/female_01.mdl",
 		"models/alyx.mdl",
-		"models/player/breen.mdl"
+		"models/player/mossman.mdl"
 	}
 else
 	Anims.Female[ "models" ] = {
 		"models/alyx.mdl",
-		"models/player/breen.mdl"
+		"models/player/mossman.mdl"
 	}
 end
 Anims.Female.Emotes = {
@@ -775,7 +775,7 @@ Anims.Female[ "default" ] = {
 	[ "fly" ] = "ACT_GLIDE",
 	[ "sit" ] = "ACT_BUSY_SIT_CHAIR",
 	[ "swim" ] = {
-		["model"] = "models/player/breen.mdl",
+		["model"] = "models/player/mossman.mdl",
 		["type"] = "sequence",
 		["act"] = "ACT_MP_SWIM"
 	},
@@ -818,7 +818,7 @@ Anims.Female[ "relaxed" ] = {
 	[ "sitexit" ] = "ACT_BUSY_SIT_CHAIR_EXIT",
 	[ "sit" ] = "ACT_BUSY_SIT_CHAIR",
 	[ "swim" ] = {
-		["model"] = "models/player/breen.mdl",
+		["model"] = "models/player/mossman.mdl",
 		["type"] = "sequence",
 		["act"] = "ACT_MP_SWIM"
 	},
@@ -867,7 +867,7 @@ Anims.Female[ "headstrong" ] = {
 	[ "sitexit" ] = "ACT_BUSY_SIT_CHAIR_EXIT",
 	[ "sit" ] = "ACT_BUSY_SIT_CHAIR",
 	[ "swim" ] = {
-		["model"] = "models/player/breen.mdl",
+		["model"] = "models/player/mossman.mdl",
 		["type"] = "sequence",
 		["act"] = "ACT_MP_SWIM"
 	},
@@ -908,7 +908,7 @@ Anims.Female[ "frustrated" ] = {
 	[ "sitexit" ] = "ACT_BUSY_SIT_CHAIR_EXIT",
 	[ "sit" ] = "ACT_BUSY_SIT_CHAIR",
 	[ "swim" ] = {
-		["model"] = "models/player/breen.mdl",
+		["model"] = "models/player/mossman.mdl",
 		["type"] = "switch",
 		["act"] = "ACT_MP_SWIM"
 	},
@@ -1095,29 +1095,29 @@ Anims.Female[ "melee" ] = {
 		},
 		[ "walk" ] = "ACT_WALK_CROUCH",
 		[ "aimidle" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_IDLE_CROUCH_MELEE"
 		},
 		[ "aimwalk" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_WALK_CROUCH_MELEE"
 		},
 	},
 	[ "aim" ] = {
 		[ "idle" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_IDLE_MELEE"
 		},
 		[ "walk" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_WALK_MELEE"
 		},
 		[ "run" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_RUN_MELEE"
 		},
@@ -1136,29 +1136,29 @@ Anims.Female[ "melee2" ] = {
 		},
 		[ "walk" ] = "ACT_WALK_CROUCH",
 		[ "aimidle" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_IDLE_CROUCH_MELEE2"
 		},
 		[ "aimwalk" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_WALK_CROUCH_MELEE2"
 		},
 	},
 	[ "aim" ] = {
 		[ "idle" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_IDLE_MELEE2"
 		},
 		[ "walk" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_WALK_MELEE2"
 		},
 		[ "run" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_RUN_MELEE2"
 		},
@@ -1177,29 +1177,29 @@ Anims.Female[ "knife" ] = {
 		},
 		[ "walk" ] = "ACT_WALK_CROUCH",
 		[ "aimidle" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_IDLE_CROUCH_KNIFE"
 		},
 		[ "aimwalk" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_WALK_CROUCH_KNIFE"
 		},
 	},
 	[ "aim" ] = {
 		[ "idle" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_IDLE_KNIFE"
 		},
 		[ "walk" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_WALK_KNIFE"
 		},
 		[ "run" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_RUN_KNIFE"
 		},
@@ -1218,29 +1218,29 @@ Anims.Female[ "fist" ] = {
 		},
 		[ "walk" ] = "ACT_WALK_CROUCH",
 		[ "aimidle" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_IDLE_CROUCH_FIST"
 		},
 		[ "aimwalk" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_WALK_CROUCH_FIST"
 		},
 	},
 	[ "aim" ] = {
 		[ "idle" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_IDLE_FIST"
 		},
 		[ "walk" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_WALK_FIST"
 		},
 		[ "run" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_RUN_FIST"
 		},
@@ -1259,29 +1259,29 @@ Anims.Female[ "grenade" ] = {
 		},
 		[ "walk" ] = "ACT_WALK_CROUCH",
 		[ "aimidle" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_IDLE_CROUCH_GRENADE"
 		},
 		[ "aimwalk" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_WALK_CROUCH_GRENADE"
 		},
 	},
 	[ "aim" ] = {
 		[ "idle" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_IDLE_GRENADE"
 		},
 		[ "walk" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_WALK_GRENADE"
 		},
 		[ "run" ] = {
-			["model"] = "models/player/breen.mdl",
+			["model"] = "models/player/mossman.mdl",
 			["type"] = "switch",
 			["act"] = "ACT_HL2MP_RUN_GRENADE"
 		},
