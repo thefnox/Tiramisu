@@ -225,11 +225,11 @@ end
 --Disables default HUD elements
 function GM:HUDShouldDraw( name )
 
-	if name == "CHudCloseCaption" or name == "CHudMenu" or name == "CHudGMod" or name == "CHudDamageIndicator" then
-		return true
+	if name == "CHudHealth" or name == "CHudSuitPower" or name == "CHudBattery" or name == "CHudCrosshair" or name == "CHudAmmo" or name == "CHudSecondaryAmmo" or name == "CHudChat" or name == "CHudDeathNotice" or name == "CHudWeaponSelection" or name == "CHudDamageIndicator" or name == "CHudZoom" or name == "CHudPoisonDamageIndicator" then
+		return false
 	end
 
-	return false
+	return true
 
 end
 
