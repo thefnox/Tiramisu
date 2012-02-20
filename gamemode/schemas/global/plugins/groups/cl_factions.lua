@@ -41,7 +41,7 @@ function CAKE.OpenWeaponList( tbl )
 	list:AddColumn( "Name" )
 
 	function list:OnClickLine( Line )
-		Line:SetSelected( true )
+		Line:SetSelected( !Line:GetSelected() )
 		Line.m_fClickTime = SysTime()
 
 		self:OnRowSelected( Line:GetID(), Line )
@@ -90,7 +90,7 @@ function CAKE.OpenItemList( tbl )
 	list:AddColumn( "Name" )
 
 	function list:OnClickLine( Line )
-		Line:SetSelected( true )
+		Line:SetSelected( !Line:GetSelected() )
 		Line.m_fClickTime = SysTime()
 
 		self:OnRowSelected( Line:GetID(), Line )
@@ -156,7 +156,7 @@ function CAKE.OpenFactionInfo( tbl )
 
 	local description = vgui.Create( "DLabel" )
 	description:SetAutoStretchVertical( true )
-	description:SetText(tbl.description .. "\n\nFounded by: " .. tbl.founder )
+	description:SetText(tbl.description)
 	description:SetFont("Tiramisu16Font")
 	description:SetWrap(true)
 
@@ -211,6 +211,22 @@ function CAKE.OpenFactionInfo( tbl )
 			"No",	function() end )
 	end
 	actions:AddItem(LeaveGroup)
+
+	local SetActive = vgui.Create( "DButton" )
+	SetActive:SetText( "Set As Active Group" )
+	SetActive:SetTall( 30 )
+	if CAKE.ActiveGroup == tbl.uid then
+		SetActive:SetText("Currently Active Group")
+		SetActive:SetDisabled( true ) 
+	end
+	SetActive.DoClick = function()
+		if !SetActive:GetDisabled() then
+			CAKE.Query( "Make " .. tbl.name .. " your active group?", "Active Group",
+				"Yes",	function() RunConsoleCommand("rp_setactivegroup", tbl.uid) SetActive:SetText("Currently Active Group") SetActive:SetDisabled( true ) end, 
+				"No",	function() end )
+		end
+	end
+	actions:AddItem(SetActive)
 
 end
 
@@ -406,7 +422,7 @@ function CAKE.EditFactionRank( tbl, rankname )
 
 	local frame = vgui.Create( "DFrame" )
 	frame:SetSize( 500, 300)
-	frame:SetTitle("Creating a rank")
+	frame:SetTitle("Editing a rank")
 	frame:ShowCloseButton( false )
 	frame:SetDeleteOnClose( true )
 	frame:MakePopup()
@@ -449,7 +465,7 @@ function CAKE.EditFactionRank( tbl, rankname )
 	InfoForm:AddItem(Name)
 
 	local DefaultGroup = vgui.Create("DButton")
-	DefaultGroup:SetText("Set As Default Group")
+	DefaultGroup:SetText("Set As Default Rank")
 	DefaultGroup.DoClick = function()
 		tbl["defaultrank"] = rank.handler
 	end

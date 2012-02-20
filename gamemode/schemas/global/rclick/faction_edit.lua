@@ -1,5 +1,5 @@
-RCLICK.Name = "Edit Faction"
-RCLICK.SubMenu = "Admin"
+RCLICK.Name = "Edit"
+RCLICK.SubMenu = "Faction"
 
 function RCLICK.Condition(target)
 
@@ -11,7 +11,7 @@ function RCLICK.Click(target,ply)
 
 	timer.Simple( 0, function() --This timer is so the system can close down the previous DermaMenu without closing this one too
 		local dmenu = DermaMenu()
-		local main = dmenu:AddSubMenu( "Edit Faction" )
+		local main = dmenu:AddSubMenu( "Edit" )
 
 		for faction, uid in pairs( CAKE.Factions ) do
 			main:AddOption(faction, function() RunConsoleCommand("rp_editfaction", uid) end)
