@@ -367,7 +367,7 @@ function CAKE.EditRank( tbl, rankname )
 
 	local frame = vgui.Create( "DFrame" )
 	frame:SetSize( 500, 300)
-	frame:SetTitle("Creating a rank")
+	frame:SetTitle("Editing a rank")
 	frame:ShowCloseButton( false )
 	frame:SetDeleteOnClose( true )
 	frame:MakePopup()
@@ -410,7 +410,7 @@ function CAKE.EditRank( tbl, rankname )
 	InfoForm:AddItem(Name)
 
 	local DefaultGroup = vgui.Create("DButton")
-	DefaultGroup:SetText("Set As Default Group")
+	DefaultGroup:SetText("Set As Default Rank")
 	DefaultGroup.DoClick = function()
 		tbl["defaultrank"] = rank.handler
 	end
@@ -700,7 +700,7 @@ function CAKE.OpenGroupInfo( tbl )
 	--actions.Paint = function() end
 	actions:SetName( "Actions:" )
 	actions:SetPadding(5)
-	actions:SetSpacing(10)
+	actions:SetSpacing(5)
 
 	local FindPlayer = vgui.Create( "DButton" )
 	FindPlayer:SetText( "Find A Player" )
@@ -756,6 +756,23 @@ function CAKE.OpenGroupInfo( tbl )
 	end
 	actions:AddItem(LeaveGroup)
 
+
+	local SetActive = vgui.Create( "DButton" )
+	SetActive:SetText( "Set As Active Group" )
+	SetActive:SetTall( 30 )
+	if CAKE.ActiveGroup == tbl.uid then
+		SetActive:SetText("Currently Active Group")
+		SetActive:SetDisabled( true ) 
+	end
+	SetActive.DoClick = function()
+		if !SetActive:GetDisabled() then
+			CAKE.Query( "Make " .. tbl.name .. " your active group?", "Active Group",
+				"Yes",	function() RunConsoleCommand("rp_setactivegroup", tbl.uid) SetActive:SetText("Currently Active Group") SetActive:SetDisabled( true ) end, 
+				"No",	function() end )
+		end
+	end
+	actions:AddItem(SetActive)
+
 end
 
 function CAKE.GetRankPermission( group, name )
@@ -780,7 +797,11 @@ local function OpenGroups()
 		"Yes", function() CAKE.BeginGroupCreation() end, 
 		"No",	function() end)
 	elseif table.Count(CAKE.Groups) == 1 then
-		RunConsoleCommand("rp_getgroupinfo", CAKE.ActiveGroup)
+		if table.HasValue(CAKE.Factions, CAKE.ActiveGroup ) then
+			RunConsoleCommand("rp_getfactioninfo", CAKE.ActiveGroup)
+		else
+			RunConsoleCommand("rp_getgroupinfo", CAKE.ActiveGroup)
+		end
 	elseif table.Count(CAKE.Groups) > 1 then
 		PlayerMenu = vgui.Create( "DFrame" )
 		PlayerMenu:SetSize( 300, 200 )

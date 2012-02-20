@@ -117,6 +117,7 @@ concommand.Add( "rp_createfaction", function( ply, cmd, args )
 		else
 			local group = CAKE.CreateGroup()
 			group:SetField( "name", name )
+			group:SetField( "type", "faction" )
 			group:Save()
 			CAKE.Factions[group:Name()] = group.UniqueID
 			CAKE.SaveFactions()
@@ -188,13 +189,12 @@ concommand.Add( "rp_getfactioninfo", function( ply, cmd, args )
 	if CAKE.GroupExists( id ) then
 		local group = CAKE.GetGroup( id )
 		local tbl = {}
-		if group:CharInGroup( ply ) then
+		if group:CharInGroup( ply ) and group:GetField("type") == "faction" then
 			tbl["name"] = group:Name()
 			tbl["founder"] = group:GetField("founder")
 			tbl["description"] = group:GetField("description")
 			tbl["uid"] = group.UniqueID
-			tbl["canedit"] = group:GetRankField( group:GetCharInfo( ply ).Rank, "canedit" )
-			datastream.StreamToClients( ply, "Tiramisu.GetGroupInfo", tbl)
+			datastream.StreamToClients( ply, "Tiramisu.GetFactionInfo", tbl)
 		end
 	end
 end)
@@ -251,7 +251,7 @@ local function Admin_JoinFaction( ply, cmd, args )
 	if ValidEntity( ply ) and ply:IsTiraPlayer( ) then
 		if CAKE.GroupHandlerExists( faction ) then
 			local group = CAKE.FindByHandler( faction )
-			if group and !group:CharInGroup( pl ) then
+			if group and !group:CharInGroup( pl ) and group:GetField("type") == "faction" then
 				group:AddToRoster( pl )
 				if rank and group:IsRank( rank ) then
 					group:GetCharInfo( pl ).Rank = rank
@@ -262,12 +262,13 @@ local function Admin_JoinFaction( ply, cmd, args )
 					table.insert( plygroups, group.UniqueID )
 				end
 				CAKE.SetCharField( pl, "groups", table.Copy(plygroups))
-				CAKE.SetCharField( pl, "activegroup", uid)
+				CAKE.SetCharField( pl, "activegroup", group.UniqueID)
 				CAKE.SendGroupToClient( pl )
+				CAKE.SendError( pl, "You have been placed into the faction " .. group:Name() .. " by an admin.")
 			end
 		elseif CAKE.GroupNameExists( faction ) then
 			local group = CAKE.FindGroupByName( faction )
-			if group and !group:CharInGroup( pl ) then
+			if group and !group:CharInGroup( pl ) and group:GetField("type") == "faction" then
 				group:AddToRoster( pl )
 				if rank and group:IsRank( rank ) then
 					group:GetCharInfo( pl ).Rank = rank
@@ -278,8 +279,9 @@ local function Admin_JoinFaction( ply, cmd, args )
 					table.insert( plygroups, group.UniqueID )
 				end
 				CAKE.SetCharField( pl, "groups", table.Copy(plygroups))
-				CAKE.SetCharField( pl, "activegroup", uid)
+				CAKE.SetCharField( pl, "activegroup", group.UniqueID)
 				CAKE.SendGroupToClient( pl )
+				CAKE.SendError( pl, "You have been placed into the faction " .. group:Name() .. " by an admin.")
 			end
 		else
 			CAKE.SendChat( ply, "Can't find faction!" )
@@ -293,5 +295,6 @@ end
 
 function PLUGIN.Init()
 	CAKE.AdminCommand( "joinfaction", Admin_JoinFaction, "Force a player to join a faction", true, true, 4 )
+	CAKE.AdminCommand( "forcejoin", Admin_JoinFaction, "Force a player to join a faction", true, true, 4 )
 	CAKE.AddGroupField( "handler", "" )
 end

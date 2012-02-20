@@ -1,5 +1,5 @@
-RCLICK.Name = "Create New Faction"
-RCLICK.SubMenu = "Admin"
+RCLICK.Name = "Create"
+RCLICK.SubMenu = "Faction"
 
 function RCLICK.Condition(target)
 
