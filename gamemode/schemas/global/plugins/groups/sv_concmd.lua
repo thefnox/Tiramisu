@@ -13,6 +13,17 @@ datastream.Hook( "Tiramisu.GetEditGroup", function(ply, handler, id, encoded, de
 	end
 end)
 
+concommand.Add( "rp_setactivegroup", function( ply, cmd, args )
+	local id = args[1]
+	if CAKE.GroupExists( id ) then
+		local group = CAKE.GetGroup( id )
+		if group:CharInGroup( ply ) then
+			CAKE.SetCharField( ply, "activegroup", id )
+			CAKE.SendGroupToClient( ply )
+		end
+	end
+end)
+
 concommand.Add( "rp_joingroup", function( ply, cmd, args )
 
 	CAKE.JoinGroup( ply, args[1], CAKE.FindPlayer( args[2] or "nothingatall!" ))

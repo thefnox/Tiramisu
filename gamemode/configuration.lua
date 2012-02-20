@@ -68,6 +68,8 @@ else
 	}
 end 
 --DEATH
+CAKE.ConVars[ "NPCCanAttackRagdoll" ] = true --Can NPC's attack player ragdolls?
+CAKE.ConVars[ "DamageWhileUnconcious" ] = true --Can players be damaged while unconcious?
 CAKE.ConVars[ "Prop_Damage" ] = false --Set this to true if you want props to damage people.
 CAKE.ConVars[ "LoseWeaponsOnDeath" ] = false --Set this to true if you want people to lose their guns once they die.
 CAKE.ConVars[ "LoseItemsOnDeath" ] = false --Set this to true if you want people to lose their items once they die. LoseWeaponsOnDeath must be set to true for this to work

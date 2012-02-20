@@ -3,7 +3,7 @@ RCLICK.SubMenu = "Groups"
 
 function RCLICK.Condition(target)
 
-if target:IsTiraPlayer() and CAKE.GetRankPermission( "caninvite" ) and target != LocalPlayer() and CAKE.ActiveGroup != "none" then return true end
+if target:IsTiraPlayer() and CAKE.GetRankPermission( CAKE.ActiveGroup, "caninvite" ) and target != LocalPlayer() and CAKE.ActiveGroup != "none" then return true end
 
 end
 

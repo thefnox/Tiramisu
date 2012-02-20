@@ -20,7 +20,6 @@ usermessage.Hook( "Tiramisu.DisplayWakeUpButton", function(um)
 			uncbutton = nil
 		end
 	else
-		print "YA"
 		gui.EnableScreenClicker( false )
 		if uncbutton then
 			uncbutton:Remove()

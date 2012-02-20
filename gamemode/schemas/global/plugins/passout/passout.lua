@@ -57,6 +57,24 @@ function CAKE.UnconciousMode( ply, wait, delay )
 		ply.rag = rag
 		ply.unconcioustime = 0
 
+		local bull = ents.Create("npc_bullseye")
+		bull:SetPos( rag:LocalToWorld( rag:OBBCenter( )))
+		bull:SetParent( rag )
+		bull:SetKeyValue("health","9999")
+		bull:SetKeyValue("minangle","360")
+		bull:SetKeyValue("spawnflags","516")
+		bull:SetNotSolid( true )
+		bull:Spawn()
+		bull:Activate()
+
+		for _, npc in pairs( ents.GetAll() ) do
+			if ValidEntity( npc ) and npc:IsNPC( ) and npc:Disposition(ply) == D_HT then
+				npc:AddEntityRelationship( rag, D_HT, 999 )
+				npc:AddRelationship("npc_bullseye D_HT 1")
+				npc:AddEntityRelationship( ply, D_NU, 1 )
+			end
+		end
+
 		ply:SetNWBool( "unconciousmode", true ) 
 		
 		timer.Simple( 1, function()
@@ -90,6 +108,11 @@ function CAKE.WakeUp(ply, dontdestroyragdoll)
 	ply:DrawWorldModel(true)
 	ply:DrawViewModel(true)
 	if !dontdestroyragdoll then
+		for _, npc in pairs( ents.GetAll( ) ) do
+			if ValidEntity( npc ) and npc:IsNPC( ) and npc:Disposition(ply.rag) == D_HT then
+				npc:AddEntityRelationship( ply, D_HT, 99 )
+			end
+		end
 		CAKE.RestoreClothing( ply )
 		CAKE.RestoreGear( ply )
 		ply:SetViewEntity( ply )
@@ -116,11 +139,13 @@ end
 function CAKE.RagDamage( ent, inflictor, attacker, amount )
  
 	if ValidEntity(ent.ply) and ent.ply:Alive() then
-		ent.ply:SetHealth(ent.ply:Health()-amount)
-		if ent.ply:Health() <= 0 then
-			CAKE.WakeUp(ent.ply, true)
-			ent.ply.DeadWhileUnconcious = true
-			ent.ply:Kill()
+		if CAKE.ConVars[ "DamageWhileUnconcious" ] then
+			ent.ply:SetHealth(ent.ply:Health()-amount)
+			if ent.ply:Health() <= 0 then
+				CAKE.WakeUp(ent.ply, true)
+				ent.ply.DeadWhileUnconcious = true
+				ent.ply:Kill()
+			end
 		end
 	end
  

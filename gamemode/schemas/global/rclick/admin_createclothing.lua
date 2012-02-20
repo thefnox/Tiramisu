@@ -3,7 +3,7 @@ RCLICK.SubMenu = "Admin"
 
 function RCLICK.Condition(target)
 
-	if ValidEntity( target) and target:GetClass() == "prop_ragdoll" and target:LookupBone("ValveBiped.Bip01_Head1") and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 0 then return true end
+	if ValidEntity( target) and target:GetClass() == "prop_ragdoll" and !target:IsTiraPlayer() and target:LookupBone("ValveBiped.Bip01_Head1") and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 0 then return true end
 
 end
 

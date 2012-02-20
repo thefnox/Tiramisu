@@ -310,13 +310,13 @@ local linetbl = {}
 function PANEL:Think()
 	if self.Lines and !self.Open then
 		for k, v in pairs( self.Lines ) do
-			if v[ "panel" ] and v[ "timestamp" ] + 10 < CurTime() then
+			if v[ "panel" ] and v[ "timestamp" ] + 10 < CurTime() and v[ "panel" ].SetAlpha then
 				v[ "panel" ]:SetAlpha( Lerp( 0.05, v[ "panel" ]:GetAlpha() , 0 ) )
 			end
 		end
 	else
 		for k, v in pairs( self.Lines ) do
-			if v[ "panel" ] then
+			if v[ "panel" ] and v[ "panel" ].SetAlpha then
 				v[ "panel" ]:SetAlpha( 255 )
 			end
 		end

@@ -1,190 +1,220 @@
-CLPLUGIN.Name = "Clientside Group Utilities"
-CLPLUGIN.Author = "FNox"
-
-CAKE.Groups = {}
-CAKE.ActiveGroup = "none"
-CAKE.RankPermissions = {}
 CAKE.Factions = {}
 
-datastream.Hook( "TiramisuAddToGroupChat", function( handler, id, encoded, decoded )
-	
-	local color = decoded.color
-	local playername = decoded.name
-	local text = decoded.text
-	local channel = decoded.channel
-	local handler = decoded.handler
-
-	text = text:gsub("<%s*%w*%s*=%s*%w*%s*>", "")
-	text = text:gsub("</font>", "")
-	text = text:gsub("<%s*%w*%s*=%s*%w*%s*,%s*%w*%s*,%s*%w*%s*,%s*%w*%s*>", "")
-	text = text:gsub("</color>", "")
-	CAKE.Chatbox:AddLine(  "<font=TiramisuOOCFont><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>:" .. text .. "</color></font>", channel, handler or "/g " )
-
-	text = "[" .. channel .. "]" .. playername .. ": " .. text
-
-	for i = 0, text:len() / 255 do
-		MsgN(string.sub( text, i * 255 + 1, i * 255 + 255 ) )
-	end
+datastream.Hook( "Tiramisu.GetFactionInfo", function( handler, id, encoded, decoded )
+	CAKE.OpenFactionInfo( decoded )
 end)
 
-datastream.Hook( "Tiramisu.ReceiveGroups", function( handler, id, encoded, decoded )
-
-	CAKE.Groups = decoded["groups"]
-	CAKE.ActiveGroup = decoded["activegroup"]
-	CAKE.RankPermissions = decoded["rankpermissions"]
-	CAKE.Factions = decoded["factions"]
-
-end )
-
-datastream.Hook( "Tiramisu.EditGroup", function( handler, id, encoded, decoded )
-	CAKE.EditGroup( decoded )
+datastream.Hook( "Tiramisu.EditFaction", function( handler, id, encoded, decoded )
+	CAKE.EditFaction( decoded )
 end)
 
-datastream.Hook( "Tiramisu.GetGroupInfo", function( handler, id, encoded, decoded )
-	CAKE.OpenGroupInfo( decoded )
+datastream.Hook( "Tiramisu.ReceiveFactions", function( handler, id, encoded, decoded )
+	CAKE.Factions = decoded
 end)
 
-datastream.Hook( "Tiramisu.EditCharInfo", function( handler, id, encoded, decoded )
-	if decoded then
-		CAKE.EditCharacterInfo( decoded )
-	end
+usermessage.Hook( "Tiramisu.FactionCreateQuery", function( um )
+	CAKE.BeginFactionCreation( um:ReadString() )
 end)
 
-datastream.Hook( "Tiramisu.GetSearchResults", function( handler, id, encoded, decoded )
-	local uid = decoded.uid
-	if decoded.results then
-		if table.Count( decoded.results ) == 1 then
-			RunConsoleCommand( "rp_getcharinfo",uid ,CAKE.FormatText(decoded.results[1].SteamID) .. ";" .. decoded.results[1].uid )
-		elseif table.Count( decoded) > 1 then
-			frame = vgui.Create( "DFrame" )
-			frame:SetSize( 300, 200 )
-			frame:SetTitle( "Group Selection" )
-			frame:SetVisible( true )
-			frame:SetDraggable( true )
-			frame:ShowCloseButton( true )
-			frame:SetDeleteOnClose( true )
-			frame:Center()
+function CAKE.BeginFactionCreation( title )
+	CAKE.StringRequest( "Faction Creation", "Please enter the name of the faction you want to create", title or "New Faction",
+	function( entry )
+		RunConsoleCommand( "rp_createfaction", entry )
+	end,
+	function() end, "Create Faction", "Cancel" )
+end
 
-			local label = Label( "Select a character:", frame)
-			label:Dock(TOP )
-
-			local results = vgui.Create( "DListView" )
-			results:SetParent( frame )
-			results:Dock(FILL)
-			results:SetMultiSelect( false )
-			results:AddColumn("SteamID")
-			results:AddColumn("Name")
-			results:AddColumn("UID")
-			for k, v in pairs( decoded.results ) do
-				results:AddLine( v.SteamID, v.Name, v.uid )
-			end
-			results.OnClickLine = function(parent, line, isselected)
-				RunConsoleCommand("rp_getcharinfo",uid, CAKE.FormatText(line:GetValue(1)) .. ";" .. line:GetValue(3))
-				frame:Remove()
-				frame = nil
-			end
-		end
-	end
-end)
-
-usermessage.Hook( "Tiramisu.GetInvite", function( um )
-	local ply = um:ReadEntity()
-	local name = um:ReadString()
-	local uid = um:ReadString()
-
-	CAKE.Query( "You have been invited to join group: " .. name .. ", accept?", "Group Invite",
-		"Accept", function() RunConsoleCommand( "rp_joingroup", uid, CAKE.FormatText(ply:SteamID())) end, 
-		"Deny",	function() end)
-end)
-
-usermessage.Hook( "Tiramisu.GroupCreateQuery", function( um )
-	CAKE.BeginGroupCreation( um:ReadString() )
-end)
-
-function CAKE.EditCharacterInfo( tbl )
-
-	local permissions = tbl.permissions or {}
-	local rank = tbl.rank
-	local ranks = permissions.ranks or {}
-
+local list
+function CAKE.OpenWeaponList( tbl )
 	local frame = vgui.Create( "DFrame" )
-	frame:SetSize( 500, 100 )
-	frame:SetTitle( "Editing player " .. tbl.uid .. " on group " .. tbl.groupid )
-	frame:SetVisible( true )
-	frame:SetDraggable( true )
-	frame:ShowCloseButton( true )
-	frame:SetDeleteOnClose( true )
-	frame.Close = function()
-		if permissions["canpromote"] and table.Count( ranks ) > 0 then
-			if rank != "" then
-				CAKE.Query( "Promote this player to " .. rank .. "?", "Promote",
-				"Yes",	function() RunConsoleCommand("rp_promote", CAKE.FormatText(tbl.SteamID) .. ";" .. tbl.uid, rank, tbl.groupid) end, 
-				"No",	function() end )
-			end
-		end
-		frame:Remove()
-		frame = nil
+	frame:SetSize( 300, 250 )
+	frame:SetTitle( "Select which weapons to make available" )
+	frame:Center()
+	frame:MakePopup()
+	frame:SetSizable( true )
+
+	list = vgui.Create( "DListView", frame )
+	list:Dock( FILL )
+	list:SetSortable( true )
+	list:SetMultiSelect( true )
+	list:AddColumn( "Class" )
+	list:AddColumn( "Name" )
+
+	function list:OnClickLine( Line )
+		Line:SetSelected( true )
+		Line.m_fClickTime = SysTime()
+
+		self:OnRowSelected( Line:GetID(), Line )
 	end
 
-	local title = Label( tbl.name, frame)
+	local line
+	for k, weapon in pairs(weapons.GetList()) do
+		line = list:AddLine( weapon.ClassName, weapon.PrintName )
+		if table.HasValue(tbl, weapon.ClassName) then
+			line:SetSelected( true )
+		end
+	end
+
+	frame.Close = function()
+		CAKE.Query( "Save changes to weapon loadout?", "Save changes",
+		"Yes",	function()
+			table.Empty(tbl)
+			for k, line in pairs(list.Lines) do
+				if line and line:GetSelected() then
+					table.insert(tbl, line:GetValue(1)) 
+				end
+			end
+			frame:Remove()
+			frame = nil
+		end, 
+		"No",	function()
+			frame:Remove()
+			frame = nil
+		end )
+	end
+end
+
+function CAKE.OpenItemList( tbl )
+	local frame = vgui.Create( "DFrame" )
+	frame:SetSize( 300, 250 )
+	frame:SetTitle( "Select which items to make available" )
+	frame:Center()
+	frame:MakePopup()
+	frame:SetSizable( true )
+
+	list = vgui.Create( "DListView", frame )
+	list:Dock( FILL )
+	list:SetSortable( true )
+	list:SetMultiSelect( true )
+	list:AddColumn( "Class" )
+	list:AddColumn( "Name" )
+
+	function list:OnClickLine( Line )
+		Line:SetSelected( true )
+		Line.m_fClickTime = SysTime()
+
+		self:OnRowSelected( Line:GetID(), Line )
+	end
+
+	local line
+	for k, item in pairs(CAKE.ItemData) do
+		line = list:AddLine( k, item.Name )
+		if table.HasValue(tbl, k) then
+			line:SetSelected( true )
+		end
+	end
+
+	frame.Close = function()
+		CAKE.Query( "Save changes to item loadout?", "Save changes",
+		"Yes",	function()
+			table.Empty(tbl)
+			for k, line in pairs(list.Lines) do
+				if line and line:GetSelected() then
+					table.insert(tbl, line:GetValue(1)) 
+				end
+			end
+			frame:Remove()
+			frame = nil
+		end, 
+		"No", function()
+			frame:Remove()
+			frame = nil 
+		end )
+	end
+end
+
+function CAKE.OpenFactionInfo( tbl )
+	PlayerMenu = vgui.Create( "DFrame" )
+	PlayerMenu:SetSize( 500, 340 )
+	PlayerMenu:SetTitle( "Faction" )
+	PlayerMenu:SetVisible( true )
+	PlayerMenu:SetDraggable( true )
+	PlayerMenu:ShowCloseButton( true )
+	PlayerMenu:SetDeleteOnClose( true )
+	PlayerMenu:Center()
+
+	local title = Label( tbl.name, PlayerMenu)
 	title:SetFont( "Tiramisu48Font")
 	title:SetPos( 10, 23 )
 	title:SizeToContents()
 
-	frame:SetWide( title:GetWide() + 20 )
-
-	local subtitle = Label( "SteamID: " .. tbl.SteamID, frame)
+	local subtitle = Label( "UID:" .. tbl.uid, PlayerMenu)
 	subtitle:SetPos( 10, 66 )
 	subtitle:SetFont( "Tiramisu24Font")
 	subtitle:SizeToContents()
 
-	if frame:GetWide() < subtitle:GetWide() then
-		frame:SetWide( subtitle:GetWide() + 20 )
+	local info = vgui.Create("DPanelList", PlayerMenu)
+	info:SetSpacing( 10 )
+	info:SetPadding( 10 )
+	info.Paint = function() end
+	info:EnableHorizontal(false)
+	info:EnableVerticalScrollbar(true)
+	info:SetAutoSize(false)
+	info:Dock( LEFT )
+	info:SetWidth( 310 )
+	info:DockMargin( 0,70,5,0 )
+
+	local description = vgui.Create( "DLabel" )
+	description:SetAutoStretchVertical( true )
+	description:SetText(tbl.description .. "\n\nFounded by: " .. tbl.founder )
+	description:SetFont("Tiramisu16Font")
+	description:SetWrap(true)
+
+	info:AddItem(description)
+
+	local actions = vgui.Create( "DForm", PlayerMenu )
+	actions:Dock( FILL )
+	actions:DockMargin( 0, 70, 0, 0 )
+	--actions.Paint = function() end
+	actions:SetName( "Actions:" )
+	actions:SetPadding(5)
+	actions:SetSpacing(10)
+
+	local FindPlayer = vgui.Create( "DButton" )
+	FindPlayer:SetText( "Find A Player" )
+	FindPlayer:SetTall( 30 )
+	FindPlayer.DoClick = function()
+		CAKE.StringRequest( "Find A Player", 
+			"Enter the name, rank, or SteamID of the player you want to find:", 
+			LocalPlayer():Nick(), 
+			function( str ) RunConsoleCommand("rp_rostersearch", tbl.uid, str) end,
+			function()end,
+			"Search", 
+		"Cancel" )
 	end
+	actions:AddItem(FindPlayer)
 
-	frame:Center()
-
-	if permissions["canpromote"] or permissions["cankick"] then
-
-		frame:SetTall( frame:GetTall() + 132 )
-		local actions = vgui.Create( "DForm", frame )
-		actions:SetPos( 2, 90 )
-		actions:SetSize( frame:GetWide() - 4, 70 )
-		--actions.Paint = function() end
-		actions:SetName( "Actions:" )
-		actions:SetPadding(5)
-		actions:SetSpacing(10)
-
-		if permissions["canpromote"] and table.Count( ranks ) > 0 then
-			actions:AddItem( Label( "Promote/Demote to a rank:" ))
-			local setrank = vgui.Create( "DMultiChoice" )
-			rank = ""
-			for k, v in pairs( ranks ) do
-				setrank:AddChoice(k)
-			end
-			setrank.OnSelect = function( index, value, data )
-				rank = value
-			end
-			actions:AddItem( setrank ) 
+	local OpenChat = vgui.Create( "DButton" )
+	OpenChat:SetText( "Open Group Chat" )
+	OpenChat:SetTall( 30 )
+	OpenChat.DoClick = function()
+		if CAKE.Chatbox then
+			CAKE.Chatbox:AddChannel( "[" .. tbl.name .. "]", "Group: " .. tbl.uid, "/g " .. tbl.uid .. " " )
 		end
-
-		if permissions["cankick"] then
-			local kick = vgui.Create( "DButton" )
-			kick:SetText( "Kick From Group" )
-			kick.DoClick = function()
-				CAKE.Query( "Are you sure you want to kick " .. tbl.name .. "?", "Kicking a player",
-					"Yes",	function() frame:Remove() RunConsoleCommand("rp_kickfromgroup", CAKE.FormatText(tbl.SteamID) .. ";" .. tbl.uid, tbl.groupid) end, 
-					"No",	function() end )
-			end
-			actions:AddItem(kick)
-		end
-
-		frame:Center()
-
 	end
+	actions:AddItem(OpenChat)
+
+	local OpenInventory = vgui.Create( "DButton" )
+	OpenInventory:SetText( "Open Group Inventory" )
+	OpenInventory:SetTall( 30 )
+	OpenInventory.DoClick = function()
+		CAKE.Message( "Feature isn't done yet.", "Error!", "OK" )
+	end
+	actions:AddItem(OpenInventory)
+
+	local LeaveGroup = vgui.Create( "DButton" )
+	LeaveGroup:SetText( "Leave Group" )
+	LeaveGroup:SetTall( 30 )
+	LeaveGroup.DoClick = function()
+		CAKE.Query( "Are you sure you want to leave " .. tbl.name .. "?", "Leaving a group",
+			"Yes",	function() PlayerMenu:Remove() RunConsoleCommand("rp_leavegroup", tbl.uid) end, 
+			"No",	function() end )
+	end
+	actions:AddItem(LeaveGroup)
+
 end
 
-function CAKE.AddRank( tbl )
+function CAKE.AddFactionRank( tbl )
 	local rank = {}
 	rank["canedit"] = false
 	rank["caninvite"] = false
@@ -196,6 +226,8 @@ function CAKE.AddRank( tbl )
 	rank["name"] = "New Rank"
 	rank["handler"] = "none"
 	rank["description"] = "None Available"
+	rank["weapons"] = {}
+	rank["loadout"] = {}
 
 	local frame = vgui.Create( "DFrame" )
 	frame:SetSize( 500, 300)
@@ -282,14 +314,6 @@ function CAKE.AddRank( tbl )
 	Permissions:SetPadding(5)
 	Permissions:SetSpacing(5)
 
-	local CanEdit = vgui.Create( "DCheckBoxLabel" )
-	CanEdit:SetText("Can edit the group's data")
-	CanEdit:SetValue(0)
-	CanEdit.OnChange = function( panel, value )
-		rank["canedit"] = CanEdit:GetChecked()
-	end
-	Permissions:AddItem(CanEdit)
-
 	local CanInvite = vgui.Create( "DCheckBoxLabel" )
 	CanInvite:SetText("Can invite people to join")
 	CanInvite:SetValue(0)
@@ -330,6 +354,20 @@ function CAKE.AddRank( tbl )
 	end
 	Permissions:AddItem(CanPlaceInventory)
 
+	local ItemLoadout = vgui.Create( "DButton" )
+	ItemLoadout:SetText( "Edit Item Loadout" )
+	ItemLoadout.DoClick = function()
+		CAKE.OpenItemList( rank["loadout"] )
+	end	
+	Permissions:AddItem(ItemLoadout)
+
+	local WeaponLoadout = vgui.Create( "DButton" )
+	WeaponLoadout:SetText( "Edit Weapon Loadout" )
+	WeaponLoadout.DoClick = function()
+		CAKE.OpenWeaponList( rank["weapons"] )
+	end	
+	Permissions:AddItem(WeaponLoadout)
+
 	local Accept = vgui.Create( "DButton", Buttons )
 	Accept:SetText( "Accept, create rank" )
 	Accept:Dock( LEFT )
@@ -344,7 +382,7 @@ function CAKE.AddRank( tbl )
 				tbl["defaultrank"] = rank.handler
 			end
 			tbl["ranks"][rank.handler] = rank
-			CAKE.EditGroup( tbl )
+			CAKE.EditFaction( tbl )
 			frame:Remove()
 			frame = nil
 		end
@@ -356,12 +394,13 @@ function CAKE.AddRank( tbl )
 	Cancel:SetTall( 30 )
 	Cancel:DockMargin( 20, 2, 20, 2 )
 	Cancel.DoClick = function()
-		CAKE.EditGroup( tbl )
+		CAKE.EditFaction( tbl )
 		frame:Remove()
 	end
 end
 
-function CAKE.EditRank( tbl, rankname )
+
+function CAKE.EditFactionRank( tbl, rankname )
 
 	local rank = table.Copy(tbl["ranks"][rankname])
 
@@ -448,14 +487,6 @@ function CAKE.EditRank( tbl, rankname )
 	Permissions:SetPadding(5)
 	Permissions:SetSpacing(5)
 
-	local CanEdit = vgui.Create( "DCheckBoxLabel" )
-	CanEdit:SetText("Can edit the group's data")
-	CanEdit:SetValue(0)
-	CanEdit.OnChange = function( panel, value )
-		rank["canedit"] = CanEdit:GetChecked()
-	end
-	Permissions:AddItem(CanEdit)
-
 	local CanInvite = vgui.Create( "DCheckBoxLabel" )
 	CanInvite:SetText("Can invite people to join")
 	CanInvite:SetValue(0)
@@ -496,6 +527,20 @@ function CAKE.EditRank( tbl, rankname )
 	end
 	Permissions:AddItem(CanPlaceInventory)
 
+	local ItemLoadout = vgui.Create( "DButton" )
+	ItemLoadout:SetText( "Edit Item Loadout" )
+	ItemLoadout.DoClick = function()
+		CAKE.OpenItemList( rank["loadout"] )
+	end	
+	Permissions:AddItem(ItemLoadout)
+
+	local WeaponLoadout = vgui.Create( "DButton" )
+	WeaponLoadout:SetText( "Edit Weapon Loadout" )
+	WeaponLoadout.DoClick = function()
+		CAKE.OpenWeaponList( rank["weapons"] )
+	end	
+	Permissions:AddItem(WeaponLoadout)
+
 	local Accept = vgui.Create( "DButton", Buttons )
 	Accept:SetText( "Accept Changes" )
 	Accept:Dock( LEFT )
@@ -504,7 +549,7 @@ function CAKE.EditRank( tbl, rankname )
 	Accept:DockMargin( 20, 2, 5, 2 )
 	Accept.DoClick = function()
 		tbl["ranks"][rankname] = rank
-		CAKE.EditGroup( tbl )
+		CAKE.EditFaction( tbl )
 		frame:Remove()
 		frame = nil
 	end
@@ -516,18 +561,18 @@ function CAKE.EditRank( tbl, rankname )
 	Cancel:DockMargin( 20, 2, 20, 2 )
 	Cancel.DoClick = function()
 		frame:Remove()
-		CAKE.EditGroup( tbl )
+		CAKE.EditFaction( tbl )
 	end
 
 end
 
-function CAKE.EditGroup( tbl )
+function CAKE.EditFaction( tbl )
 	if EditGroup then
 		EditGroup:Remove()
 	end
 	EditGroup = vgui.Create( "DFrame" )
 	EditGroup:SetSize( 650, 560 )
-	EditGroup:SetTitle( "Editing Group: " .. tbl.uid )
+	EditGroup:SetTitle( "Editing Faction: " .. tbl.uid )
 	EditGroup:SetVisible( true )
 	EditGroup:SetDraggable( true )
 	EditGroup:ShowCloseButton( false )
@@ -535,7 +580,7 @@ function CAKE.EditGroup( tbl )
 	EditGroup:MakePopup()
 	EditGroup:Center()
 
-	local title = Label( "Editing group: " .. tbl.name , EditGroup)
+	local title = Label( "Editing faction: " .. tbl.name , EditGroup)
 	title:SetFont( "Tiramisu48Font")
 	title:SetPos( 10, 23 )
 	title:SizeToContents()
@@ -571,12 +616,27 @@ function CAKE.EditGroup( tbl )
 	Name:SetDrawBackground( false )
 	Name.OnTextChanged = function()
 		tbl["name"] = Name:GetValue()
-		title:SetText("Editing group: " .. Name:GetValue())
+		title:SetText("Editing faction: " .. Name:GetValue())
 		title:SizeToContents()
 	end
 	NameForm:AddItem(Name)
 
 	Group:AddItem(NameForm)
+
+	local HandlerForm = vgui.Create( "DForm" )
+	HandlerForm:SetName( "Handler (Shorthand form of the name):" )
+	HandlerForm:SetSpacing( 5 )
+	HandlerForm:SetPadding( 5 )
+
+	local Handler = vgui.Create( "DTextEntry" )
+	Handler:SetValue( tbl.handler ) 
+	Handler:SetDrawBackground( false )
+	Handler.OnTextChanged = function()
+		tbl["handler"] = Handler:GetValue()
+	end
+	HandlerForm:AddItem(Handler)
+
+	Group:AddItem(HandlerForm)
 
 	local DescForm = vgui.Create( "DForm" )
 	DescForm:SetName( "Description:" )
@@ -584,7 +644,7 @@ function CAKE.EditGroup( tbl )
 	DescForm:SetPadding( 5 )
 
 	local Desc = vgui.Create( "DTextEntry" )
-	Desc:SetTall( 300 )
+	Desc:SetTall( 250 )
 	Desc:SetValue( tbl.description ) 
 	Desc:SetMultiline( true )
 	Desc:SetDrawBackground( false )
@@ -615,7 +675,7 @@ function CAKE.EditGroup( tbl )
 			end
 		end
 		Ranks.OnClickLine = function(parent, line, isselected)
-			CAKE.EditRank( tbl, line:GetValue(1) )
+			CAKE.EditFactionRank( tbl, line:GetValue(1) )
 			EditGroup:Remove()
 			EditGroup = nil
 		end
@@ -626,7 +686,7 @@ function CAKE.EditGroup( tbl )
 	AddRank:SetText( "Add a rank" )
 	AddRank:SetTall( 30 )
 	AddRank.DoClick = function()
-		CAKE.AddRank( tbl )
+		CAKE.AddFactionRank( tbl )
 		EditGroup:Remove()
 		EditGroup = nil
 	end
@@ -640,7 +700,7 @@ function CAKE.EditGroup( tbl )
 	Accept:DockMargin( 20, 2, 5, 2 )
 
 	Accept.DoClick = function()
-		datastream.StreamToServer( "Tiramisu.GetEditGroup", tbl )
+		datastream.StreamToServer( "Tiramisu.GetEditFaction", tbl )
 		EditGroup:Remove()
 		EditGroup = nil
 	end
@@ -653,175 +713,4 @@ function CAKE.EditGroup( tbl )
 	Cancel.DoClick = function()
 		EditGroup:Remove()
 	end
-end
-
-function CAKE.OpenGroupInfo( tbl )
-	PlayerMenu = vgui.Create( "DFrame" )
-	PlayerMenu:SetSize( 500, 340 )
-	PlayerMenu:SetTitle( "Group" )
-	PlayerMenu:SetVisible( true )
-	PlayerMenu:SetDraggable( true )
-	PlayerMenu:ShowCloseButton( true )
-	PlayerMenu:SetDeleteOnClose( true )
-	PlayerMenu:Center()
-
-	local title = Label( tbl.name, PlayerMenu)
-	title:SetFont( "Tiramisu48Font")
-	title:SetPos( 10, 23 )
-	title:SizeToContents()
-
-	local subtitle = Label( "UID:" .. tbl.uid, PlayerMenu)
-	subtitle:SetPos( 10, 66 )
-	subtitle:SetFont( "Tiramisu24Font")
-	subtitle:SizeToContents()
-
-	local info = vgui.Create("DPanelList", PlayerMenu)
-	info:SetSpacing( 10 )
-	info:SetPadding( 10 )
-	info.Paint = function() end
-	info:EnableHorizontal(false)
-	info:EnableVerticalScrollbar(true)
-	info:SetAutoSize(false)
-	info:Dock( LEFT )
-	info:SetWidth( 310 )
-	info:DockMargin( 0,70,5,0 )
-
-	local description = vgui.Create( "DLabel" )
-	description:SetAutoStretchVertical( true )
-	description:SetText(tbl.description .. "\n\nFounded by: " .. tbl.founder )
-	description:SetFont("Tiramisu16Font")
-	description:SetWrap(true)
-
-	info:AddItem(description)
-
-	local actions = vgui.Create( "DForm", PlayerMenu )
-	actions:Dock( FILL )
-	actions:DockMargin( 0, 70, 0, 0 )
-	--actions.Paint = function() end
-	actions:SetName( "Actions:" )
-	actions:SetPadding(5)
-	actions:SetSpacing(10)
-
-	local FindPlayer = vgui.Create( "DButton" )
-	FindPlayer:SetText( "Find A Player" )
-	FindPlayer:SetTall( 30 )
-	FindPlayer.DoClick = function()
-		CAKE.StringRequest( "Find A Player", 
-			"Enter the name, rank, or SteamID of the player you want to find:", 
-			LocalPlayer():Nick(), 
-			function( str ) RunConsoleCommand("rp_rostersearch", tbl.uid, str) end,
-			function()end,
-			"Search", 
-		"Cancel" )
-	end
-	actions:AddItem(FindPlayer)
-
-	local OpenChat = vgui.Create( "DButton" )
-	OpenChat:SetText( "Open Group Chat" )
-	OpenChat:SetTall( 30 )
-	OpenChat.DoClick = function()
-		if CAKE.Chatbox then
-			CAKE.Chatbox:AddChannel( "[" .. tbl.name .. "]", "Group: " .. tbl.uid, "/g " .. tbl.uid .. " " )
-		end
-	end
-	actions:AddItem(OpenChat)
-
-	local OpenInventory = vgui.Create( "DButton" )
-	OpenInventory:SetText( "Open Group Inventory" )
-	OpenInventory:SetTall( 30 )
-	OpenInventory.DoClick = function()
-		CAKE.Message( "Feature isn't done yet.", "Error!", "OK" )
-	end
-	actions:AddItem(OpenInventory)
-
-	if tbl.canedit then
-		local EditGroup = vgui.Create( "DButton" )
-		EditGroup:SetText( "Edit Group Info" )
-		EditGroup:SetTall( 30 )
-		EditGroup.DoClick = function()
-			RunConsoleCommand("rp_editgroup", tbl.uid)
-			PlayerMenu:Remove()
-			PlayerMenu = nil
-		end
-		actions:AddItem(EditGroup)
-	end
-
-	local LeaveGroup = vgui.Create( "DButton" )
-	LeaveGroup:SetText( "Leave Group" )
-	LeaveGroup:SetTall( 30 )
-	LeaveGroup.DoClick = function()
-		CAKE.Query( "Are you sure you want to leave " .. tbl.name .. "?", "Leaving a group",
-			"Yes",	function() PlayerMenu:Remove() RunConsoleCommand("rp_leavegroup", tbl.uid) end, 
-			"No",	function() end )
-	end
-	actions:AddItem(LeaveGroup)
-
-end
-
-function CAKE.GetRankPermission( group, name )
-	if CAKE.Groups and CAKE.ActiveGroup != "none" and CAKE.RankPermissions and CAKE.RankPermissions[group] then
-		return CAKE.RankPermissions[group][name]
-	end
-	return false
-end
-
-function CAKE.BeginGroupCreation( title )
-	CAKE.StringRequest( "Group Creation", "Please enter the name of the group you want to create", title or "New Group",
-	function( entry )
-		RunConsoleCommand( "rp_creategroup", entry )
-	end,
-	function() end, "Create Group", "Cancel" )
-end
-
-local function OpenGroups()
-
-	if table.Count(CAKE.Groups) < 1 then
-		CAKE.Query( "You do not currently belong to any groups, would you like to create one?", "Groups",
-		"Yes", function() CAKE.BeginGroupCreation() end, 
-		"No",	function() end)
-	elseif table.Count(CAKE.Groups) == 1 then
-		RunConsoleCommand("rp_getgroupinfo", CAKE.ActiveGroup)
-	elseif table.Count(CAKE.Groups) > 1 then
-		PlayerMenu = vgui.Create( "DFrame" )
-		PlayerMenu:SetSize( 300, 200 )
-		PlayerMenu:SetTitle( "Group Selection" )
-		PlayerMenu:SetVisible( true )
-		PlayerMenu:SetDraggable( true )
-		PlayerMenu:ShowCloseButton( true )
-		PlayerMenu:SetDeleteOnClose( true )
-		PlayerMenu:Center()
-
-		local label = Label( "Select which group to open:", PlayerMenu)
-		label:Dock(TOP )
-
-		local Groups = vgui.Create( "DListView" )
-		Groups:SetParent( PlayerMenu )
-		Groups:Dock(FILL)
-		Groups:SetMultiSelect( false )
-		Groups:AddColumn("UniqueID")
-		Groups:AddColumn("Name")
-		for k, v in pairs( CAKE.Groups ) do
-			Groups:AddLine( k, v )
-		end
-		Groups.OnClickLine = function(parent, line, isselected)
-			if table.HasValue(CAKE.Factions, line:GetValue(1) ) then
-				RunConsoleCommand("rp_getfactioninfo", line:GetValue(1))
-			else
-				RunConsoleCommand("rp_getgroupinfo", line:GetValue(1))
-			end
-			PlayerMenu:Remove()
-			PlayerMenu = nil
-		end
-	end
-
-end
-
-local function CloseGroups()
-	if PlayerMenu then
-		PlayerMenu:Remove()
-		PlayerMenu = nil
-	end
-end
-function CLPLUGIN.Init()
-	CAKE.RegisterMenuTab( "Groups", OpenGroups, CloseGroups )
 end

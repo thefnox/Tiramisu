@@ -85,7 +85,10 @@ end
 --Does this rank exist?
 function meta:IsRank( rankname )
 	local ranks = self:GetRanks()
-	return ranks[rankname] or false
+	if ranks[rankname] then
+		return true
+	end
+	return false
 end
 
 --Alias for self:GetField( "defaultrank" )
@@ -215,7 +218,7 @@ function meta:RemoveFromRoster( ply )
 			self:SetField( "roster", roster )
 		end
 	end
-	if table.Count( self:GetRoster() ) < 1 then
+	if table.Count( self:GetRoster() ) < 1 and self:GetField( "type" ) != "faction" then
 		self:Delete()
 	end
 end
@@ -275,6 +278,17 @@ function CAKE.GroupNameExists( name )
 	end
 	return false
 end
+
+--Finds a group object based on a name
+function CAKE.FindGroupByName( name )
+	for id, group in pairs( CAKE.Groups ) do
+		if group and group:Name() == name then
+			return group
+		end
+	end	
+	return false
+end
+
 
 function CAKE.CreateGroupObject( filename )
 	local group = FindMetaTable("Group"):New()
@@ -378,35 +392,27 @@ function CAKE.SendGroupToClient( ply )
 	local groups = CAKE.GetCharField( ply, "groups" )
 	local group
 	local activegroup = CAKE.GetCharField( ply, "activegroup" )
+	local rank
 	tbl["groups"] = {}
+	tbl["rankpermissions"] = {}
 	for k, v in pairs(groups) do
 		if CAKE.GroupExists( v ) then
 			group = CAKE.GetGroup( v )
 			tbl["groups"][group.UniqueID] = group:Name()
+			tbl["rankpermissions"][group.UniqueID] = {}
+			rank = group:GetCharacterInfo( ply ).Rank
+			tbl["rankpermissions"][group.UniqueID]["canpromote"] = group:GetRankField( rank, "canpromote" )
+			tbl["rankpermissions"][group.UniqueID]["cankick"] = group:GetRankField( rank, "cankick" )
+			tbl["rankpermissions"][group.UniqueID]["caninvite"] = group:GetRankField( rank, "caninvite" )
+			tbl["rankpermissions"][group.UniqueID]["canedit"] = group:GetRankField( rank, "canedit" )
+			tbl["rankpermissions"][group.UniqueID]["cannotice"] = group:GetRankField( rank, "cannotice" )
+			tbl["rankpermissions"][group.UniqueID]["cantakeinventory"] = group:GetRankField( rank, "cantakeinventory" )
+			tbl["rankpermissions"][group.UniqueID]["canplaceinventory"] = group:GetRankField( rank, "canplaceinventory" )
 		end
 	end
 	tbl["activegroup"] = activegroup
-	group = CAKE.GetGroup( activegroup )
-	tbl["rankpermissions"] = {}
 
-	if activegroup == "none" or !group or !group:GetCharacterInfo( ply ) then
-		tbl["rankpermissions"]["canpromote"] = false
-		tbl["rankpermissions"]["cankick"] = false
-		tbl["rankpermissions"]["caninvite"] = false
-		tbl["rankpermissions"]["canedit"] = false
-		tbl["rankpermissions"]["cannotice"] = false
-		tbl["rankpermissions"]["cantakeinventory"] = false
-		tbl["rankpermissions"]["canplaceinventory"] = false
-	else
-		local rank = group:GetCharacterInfo( ply ).Rank
-		tbl["rankpermissions"]["canpromote"] = group:GetRankField( rank, "canpromote" )
-		tbl["rankpermissions"]["cankick"] = group:GetRankField( rank, "cankick" )
-		tbl["rankpermissions"]["caninvite"] = group:GetRankField( rank, "caninvite" )
-		tbl["rankpermissions"]["canedit"] = group:GetRankField( rank, "canedit" )
-		tbl["rankpermissions"]["cannotice"] = group:GetRankField( rank, "cannotice" )
-		tbl["rankpermissions"]["cantakeinventory"] = group:GetRankField( rank, "cantakeinventory" )
-		tbl["rankpermissions"]["canplaceinventory"] = group:GetRankField( rank, "canplaceinventory" )
-	end
+	tbl["factions"] = CAKE.Factions
 
 	datastream.StreamToClients( ply, "Tiramisu.ReceiveGroups", tbl)
 end

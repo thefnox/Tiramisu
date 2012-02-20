@@ -74,29 +74,3 @@ hook.Add( "TiramisuPlayerChangeName", "TiramisuRefreshNameInGroup", function( pl
 		end
 	end
 end)
-
-hook.Add( "PlayerLoadout", "TiramisuGroupWeaponsLoadout", function( ply )
-
-	if ply:IsCharLoaded() then
-		timer.Simple( 2, function()
-			local group = CAKE.GetCharField( ply, "activegroup" )
-			if CAKE.GroupExists( group ) then
-				group = CAKE.GetGroup( group )
-				if group and group:GetField( "type" ) == "faction" and group:CharacterInGroup( ply ) then
-					local plyinfo = group:GetCharacterInfo( ply )
-					for k, v in pairs( group:GetRankField( plyinfo.Rank, "loadout" ) ) do
-						if !ply:HasItem( v ) then
-							ply:GiveItem( v )
-						end
-					end
-					for k, v in pairs( group:GetRankField( plyinfo.Rank, "weapons" ) ) do
-						if !ply:HasWeapon( v ) then
-							ply:Give( v )
-						end
-					end
-				end
-			end
-		end)
-	end
-
-end)
