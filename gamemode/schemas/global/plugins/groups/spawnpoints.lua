@@ -1,5 +1,21 @@
 CAKE.SpawnPoints = {}
 
+--rp_admin addspawn, while standing on the point you want the player to spawn on.
+local function Admin_AddSpawn( ply, cmd, args)
+	
+	if #args == 1 then
+		local pos = ply:GetPos()
+		local ang = ply:EyeAngles( )
+		local team = team.GetName(ply:Team())
+		CAKE.AddSpawn(pos, ang, team)
+	else
+		local pos = ply:GetPos()
+		local ang = ply:EyeAngles( )
+		CAKE.AddSpawn(pos, ang)
+	end
+	
+end
+
 --Adds a spawnpoint
 
 function CAKE.AddSpawn(pos, ang, plyteam)
@@ -61,9 +77,9 @@ function CAKE.SpawnPointHandle(ply)
 				return
 			end
 		end
-			spawn = table.Random( CAKE.SpawnPoints )
-			ply:SetPos(spawn.pos)
-			ply:SetEyeAngles(spawn.ang)
+		spawn = table.Random( CAKE.SpawnPoints )
+		ply:SetPos(spawn.pos)
+		ply:SetEyeAngles(spawn.ang)
 	end
   	
 end
@@ -88,3 +104,7 @@ end)
 hook.Add( "PlayerSpawn", "TiramisuSpawnHandle", function( ply )
 	CAKE.SpawnPointHandle(ply)
 end)
+
+function PLUGIN.Init()
+	CAKE.AdminCommand( "addspawn", Admin_AddSpawn, "Add a new spawn point on your position.", true, true, 4 )
+end

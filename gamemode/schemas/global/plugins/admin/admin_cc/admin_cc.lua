@@ -298,22 +298,6 @@ local function Admin_Help( ply, cmd, args )
 	
 end
 
---rp_admin addspawn, while standing on the point you want the player to spawn on.
-local function Admin_AddSpawn( ply, cmd, args)
-	
-	if #args == 1 then
-		local pos = ply:GetPos()
-		local ang = ply:EyeAngles( )
-		local team = team.GetName(ply:Team())
-		CAKE.AddSpawn(pos, ang, team)
-	else
-		local pos = ply:GetPos()
-		local ang = ply:EyeAngles( )
-		CAKE.AddSpawn(pos, ang)
-	end
-	
-end
-
 --rp_admin setmoney name money. This sets, not adds the money.
 --[[ local function Admin_SetMoney( ply, cmd, args )
 
@@ -446,22 +430,6 @@ local function Admin_SetRank( ply, cmd, args)
 		CAKE.AnnounceAction( ply, "made " .. args[1]:Nick( ).. " a " ..args[2] )
 	end
 
-end
-
---rp_admin addspawn. Adds a spawnpoint at your current position.
-local function Admin_AddSpawn( ply, cmd, args)
-	
-	if #args == 1 then
-		local pos = ply:GetPos()
-		local ang = ply:EyeAngles( )
-		local team = team.GetName(ply:Team())
-		CAKE.AddSpawn(pos, ang, team)
-	else
-		local pos = ply:GetPos()
-		local ang = ply:EyeAngles( )
-		CAKE.AddSpawn(pos, ang)
-	end
-	
 end
 
 --rp_admin setmodel name model. Forces someone's model to the model specified ( DOES NOT WORK WITH CLOTHING )
@@ -625,7 +593,6 @@ function PLUGIN.Init( )
 	CAKE.AdminCommand( "listvars", Admin_ListVars, "List convars", true, true, 4 )
 	CAKE.AdminCommand( "createitem", Admin_CreateItem, "Creates an item", true, true, 4 )
 	-- CAKE.AdminCommand( "setmoney", Admin_SetMoney, "Set the money of another player", true, true, 4 )
-	CAKE.AdminCommand( "addspawn", Admin_AddSpawn, "Add a new spawn point on your position.", true, true, 4 )
 	CAKE.AdminCommand( "bring", Admin_Bring, "Brings a player to you", true, true, 3)
 	CAKE.AdminCommand( "goto", Admin_GoTo, "Takes you to a player", true, true, 3 )
 	CAKE.AdminCommand( "slay", Admin_Slay, "Kills a player", true, true, 3 )
