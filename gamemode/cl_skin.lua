@@ -995,7 +995,18 @@ function SKIN:PaintPlayerTitles()
 						draw.SimpleTextOutlined( "Typing...", "TiramisuTitlesFont", pos.x, pos.y - 90, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
 					end
 					draw.SimpleTextOutlined( plyt:Nick(), "TiramisuNamesFont", pos.x, pos.y - 70, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
-					draw.SimpleTextOutlined( plyt:Title(), "TiramisuTitlesFont", pos.x, pos.y - 45, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
+					
+					local curleft = string.len(plyt:Title())
+					local line = 0
+					local lines = {}
+					while curleft > 52 do
+						draw.SimpleTextOutlined( plyt:Title():sub(line*52+1, line*52+52+1), "TiramisuTitlesFont", pos.x, pos.y - 45 + line*10, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
+						curleft = curleft - 52
+						line = line + 1
+					end
+					last = plyt:Title():sub(line*52+1, line*52+curleft)
+					
+					draw.SimpleTextOutlined( last, "TiramisuTitlesFont", pos.x, pos.y - 45 + line*10, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
 				end
 			end
 		end
