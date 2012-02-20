@@ -145,6 +145,7 @@ function CAKE.RagDamage( ent, inflictor, attacker, amount )
 				CAKE.WakeUp(ent.ply, true)
 				ent.ply.DeadWhileUnconcious = true
 				ent.ply:Kill()
+				ent.ply = nil
 			end
 		end
 	end
