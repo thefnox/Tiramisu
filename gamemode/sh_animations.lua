@@ -316,7 +316,7 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 			if !Anims.SequenceCache[ply:GetModel()][seq] then
 				Anims.SequenceCache[ply:GetModel()][seq] = ply:LookupSequence(seq)
 			end
-			return 1, Anims.SequenceCache[ply:GetModel()][seq]
+			return 1, Anims.SequenceCache[model][seq]
 		elseif seq.type == "number" then --NUMBER RELATED TO A ENUMERATED SEQUENCE
 			seq = seq.act or -1
 			return seq, -1
