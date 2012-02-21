@@ -11,182 +11,70 @@ function SCHEMA.SetUp( )
 
 	SetGlobalInt( "rations", CAKE.MaxRations )
 
-	--Here's an example on how to set up ranks in a more flag linke fashion, while still using the Groups system.
-	function CAKE.AddMetroPoliceRank( name, formalname, loadout, level, canedit, cankick, canpromote )
-		if !CAKE.GroupExists( "CCA") then
-			local tbl = {
-			[ "Name" ]		= "CCA",
-			[ "Type" ]		= "faction",
-			[ "Founder" ]	= "C17 Combine Command",
-			[ "Members" ]	= {},
-			[ "Inventory" ]	= {},
-			[ "Flags" ]		= 	{
-				[ "soundgroup" ] 	= 2,
-				[ "canbroadcast" ] 	= true,
-				[ "loadouts" ] 		= true,
-				[ "doorgroup" ] 	= true,
-				[ "primaryrank" ] 	= "rct",
-				[ "doorgroups" ] 	= 1,
-				[ "radiocolor" ] 	= Color( 220, 220, 220 ),
-				[ "iscombine" ]		= true,
-				[ "radiogroup" ] 	= 1
-			},
-			[ "Ranks" ]		= {},
-			[ "Description" ] = "The Combine's elite police force, based on City " .. CAKE.CityNumber
-			}
-			
-			CAKE.CreateGroup( "CCA", tbl )
-		end
-
-		if CAKE.RankExists( "CCA", name ) then
-			CAKE.SetRankField( "CCA", name, "formalname", formalname or "none")
-			CAKE.SetRankField( "CCA", name, "loadout", loadout or {})
-			CAKE.SetRankField( "CCA", name, "level", level or 1)
-			CAKE.SetRankField( "CCA", name, "canedit", canedit )
-			CAKE.SetRankField( "CCA", name, "cankick", cankick )
-			CAKE.SetRankField( "CCA", name, "cankick", canpromote )
-		else
-			CAKE.CreateRank( "CCA", name, {
-				[ "formalname" ] = formalname or "none",
-				[ "loadout" ] = loadout or {},
-				[ "level" ] = level or 1,
-				[ "canedit" ] = canedit,
-				[ "cankick" ] = cankick,
-				[ "canpromote" ] = canpromote
-			})
-		end
-	end
-
-	function CAKE.AddOverwatchRank( name, formalname, loadout, level, canedit, cankick, canpromote )
-		if !CAKE.GroupExists( "Combine Overwatch") then
-			local tbl = {
-			[ "Name" ]		= "Combine Overwatch",
-			[ "Type" ]		= "faction",
-			[ "Founder" ]	= "Combine High Command",
-			[ "Members" ]	= {},
-			[ "Inventory" ]	= {},
-			[ "Flags" ]		= 	{
-				[ "soundgroup" ] 	= 2,
-				[ "canbroadcast" ] 	= true,
-				[ "loadouts" ] 		= true,
-				[ "doorgroup" ] 	= true,
-				[ "primaryrank" ] 	= "ow",
-				[ "doorgroups" ] 	= 1,
-				[ "radiocolor" ] 	= Color( 100, 100, 220 ),
-				[ "iscombine" ]		= true,
-				[ "radiogroup" ] 	= 1
-			},
-			[ "Ranks" ]		= {},
-			[ "Description" ] = "The fearsome Overwatch, the Combine's trans-human military force"
-			}
-			
-			CAKE.CreateGroup( "Combine Overwatch", tbl )
-		end
-
-		if CAKE.RankExists( "Combine Overwatch", name ) then
-			CAKE.SetRankField( "Combine Overwatch", name, "formalname", formalname or "none")
-			CAKE.SetRankField( "Combine Overwatch", name, "loadout", loadout or {})
-			CAKE.SetRankField( "Combine Overwatch", name, "level", level or 1)
-			CAKE.SetRankField( "Combine Overwatch", name, "canedit", canedit )
-			CAKE.SetRankField( "Combine Overwatch", name, "cankick", cankick )
-			CAKE.SetRankField( "Combine Overwatch", name, "cankick", canpromote )
-		else
-			CAKE.CreateRank( "Combine Overwatch", name, {
-				[ "formalname" ] = formalname or "none",
-				[ "loadout" ] = loadout or {},
-				[ "level" ] = level or 1,
-				[ "canedit" ] = canedit,
-				[ "cankick" ] = cankick,
-				[ "canpromote" ] = canpromote
-			})
-		end
-	end
-
-	function CAKE.AddResistanceRank( name, formalname, loadout, level, canedit, cankick, canpromote, buygroup )
-		if !CAKE.GroupExists( "Resistance") then
-			local tbl = {
-			[ "Name" ]		= "Resistance",
-			[ "Type" ]		= "faction",
-			[ "Founder" ]	= "The Citizens of C17",
-			[ "Members" ]	= {},
-			[ "Inventory" ]	= {},
-			[ "Flags" ]		= 	{
-				[ "soundgroup" ] 	= 1,
-				[ "canbroadcast" ] 	= false,
-				[ "loadouts" ] 		= true,
-				[ "doorgroup" ] 	= true,
-				[ "primaryrank" ] 	= "rookie",
-				[ "doorgroups" ] 	= 2,
-				[ "radiocolor" ] 	= Color( 220, 20, 20 ),
-				[ "radiogroup" ] 	= 2
-			},
-			[ "Ranks" ]		= {},
-			[ "Description" ] = "Members of the civil insurgence, fighting for human liberation."
-			}
-			
-			CAKE.CreateGroup( "Resistance", tbl )
-		end
-
-		if CAKE.RankExists( "Resistance", name ) then
-			CAKE.SetRankField( "Resistance", name, "formalname", formalname or "none")
-			CAKE.SetRankField( "Resistance", name, "loadout", loadout or {})
-			CAKE.SetRankField( "Resistance", name, "level", level or 1)
-			CAKE.SetRankField( "Resistance", name, "canedit", canedit )
-			CAKE.SetRankField( "Resistance", name, "cankick", cankick )
-			CAKE.SetRankField( "Resistance", name, "cankick", canpromote )
-			CAKE.SetRankField( "Resistance", name, "buygroups", buygroup )
-			print( CAKE.GetRankField( "Resistance", name, "buygroups" ) )
-		else
-			CAKE.CreateRank( "Resistance", name, {
-				[ "formalname" ] = formalname or "none",
-				[ "loadout" ] = loadout or {},
-				[ "level" ] = level or 1,
-				[ "canedit" ] = canedit,
-				[ "cankick" ] = cankick,
-				[ "canpromote" ] = canpromote,
-				[ "buygroups" ] = buygroups
-			})
-		end
-	end
-
-	--Civil Protection
+	--CCA
+	CAKE.CreateFaction( "Combine Civil Authority", "cca", [[
+	Part of the Combine Overwatch,[1] CPs are ordinary human volunteers who have "willingly" joined the Combine,[5] either for more privileges, such as additional food, better living conditions, an increase in authority and status over others, or out of genuine sympathy and identification with the Combine's aims. As such, they are not bio-mechanically modified in any way, unlike the two other Overwatch units.]] )
 	--Recruit
-	CAKE.AddMetroPoliceRank( "rct", "Civil Protection Recruit", {"clothing_police", "weapon_zipties", "weapon_stunstick" }, 1)
+	CAKE.AddFactionRank( "cca", "Civil Protection Recruit", "rct", "The starter, non commisoned rank in the CCA",
+	0, {"weapon_zipties", "weapon_stunstick"}, {"clothing_police"} )
 	--CP-1
-	CAKE.AddMetroPoliceRank( "cp1", "Civil Protection Officer Rank 1", {"clothing_police", "helmet_police", "weapon_zipties", "weapon_stunstick", "weapon_pistol", "weapon_smg1" },2)
+	CAKE.AddFactionRank( "cca", "Civil Protection Officer Rank 1", "cp1", "Non commisioned officer, first rank in the CP forces",
+	1, {"weapon_zipties", "weapon_stunstick", "weapon_pistol", "weapon_smg1"}, {"clothing_police", "helmet_police"} )
 	--CP-2
-	CAKE.AddMetroPoliceRank( "cp2", "Civil Protection Officer Rank 2", {"clothing_police", "helmet_police", "weapon_zipties", "weapon_stunstick", "weapon_pistol", "weapon_smg1" },3)
+	CAKE.AddFactionRank( "cca", "Civil Protection Officer Rank 2", "cp2", "Non commisioned officer, second rank in the CP forces",
+	2, {"weapon_zipties", "weapon_stunstick", "weapon_pistol", "weapon_smg1"}, {"clothing_police", "helmet_police"} )
 	--CP-3
-	CAKE.AddMetroPoliceRank( "cp3", "Civil Protection Officer Rank 3", {"clothing_police", "helmet_police", "weapon_zipties", "weapon_stunstick", "weapon_pistol", "weapon_smg1" },4)
+	CAKE.AddFactionRank( "cca", "Civil Protection Officer Rank 3", "cp3", "Non commisioned officer, third rank in the CP forces",
+	3, {"weapon_zipties", "weapon_stunstick", "weapon_pistol", "weapon_smg1"}, {"clothing_police", "helmet_police"} )
 	--TL
-	CAKE.AddMetroPoliceRank( "tl", "Civil Protection Team Leader", {"clothing_police", "helmet_police", "weapon_zipties", "weapon_stunstick", "weapon_pistol", "weapon_smg1", "weapon_shotgun" }, 5, false, true, true )
+	CAKE.AddFactionRank( "cca", "Civil Protection Team Leader", "tl", "Commisioned officer, leader of a squad of CPs",
+	4, {"weapon_zipties", "weapon_stunstick", "weapon_pistol", "weapon_smg1", "weapon_shotgun"}, {"clothing_police", "helmet_police"},
+	{ ["canpromote"] = true } )
 	--Medic
-	CAKE.AddMetroPoliceRank( "m", "Civil Protection Medical Specialist", {"clothing_police", "helmet_police", "weapon_zipties", "weapon_stunstick", "weapon_pistol", "weapon_smg1", "firstaidkit", "small_medikit", "small_medikit", "small_medikit" },3)
+	CAKE.AddFactionRank( "cca", "Civil Protection Medic", "medic", "Equivalent to a CP-3 in rank, dedicated combat medic of the CCA",
+	3, {"weapon_zipties", "weapon_stunstick", "weapon_pistol", "weapon_smg1"}, {"clothing_police", "helmet_police","firstaidkit", "small_medikit"} )
 	--Engineer
-	CAKE.AddMetroPoliceRank( "en", "Civil Protection Engineer", {"clothing_police", "helmet_police", "helmet_elite", "weapon_zipties", "weapon_stunstick", "weapon_pistol", "weapon_smg1" }, 3)
+	CAKE.AddFactionRank( "cca", "Civil Protection Engineer", "en", "Equivalent to a CP-3 in rank, dedicated to the maintenance and upkeeping of CCA equipment",
+	3, {"weapon_zipties", "weapon_stunstick", "weapon_pistol", "weapon_smg1"}, {"clothing_police", "helmet_police"} )
 	--Division Leader
-	CAKE.AddMetroPoliceRank( "dl", "Civil Protection Division Leader", {"clothing_police", "helmet_police", "weapon_zipties", "weapon_stunstick", "weapon_pistol", "weapon_smg1", "weapon_shotgun" }, 6, true, true, true )
+	CAKE.AddFactionRank( "cca", "Civil Protection Division Leader", "dl", "Commisioned officer, in charge of the CP forces of the city",
+	5, {"weapon_zipties", "weapon_stunstick", "weapon_pistol", "weapon_smg1", "weapon_shotgun"}, {"clothing_police", "helmet_police"},
+	{ ["canpromote"] = true, ["caninvite"] = true, ["cankick"] = true } )
 
 	--Overwatch
+	CAKE.CreateFaction( "Combine Overwatch", "ow", [[
+	The Forces of the Overwatch consist mainly of Combine Soldiers supported by Synths and divided into distinct "sectors" designated around an urban center. They are overseen by the Overwatch Voice as their immediate commander which issues orders and instructions to fulfill its objectives on behalf of the Combine government.]] )
 	--OW
-	CAKE.AddOverwatchRank( "ow", "Overwatch Soldier", {"clothing_soldier", "helmet_soldier", "weapon_zipties", "weapon_stunstick", "weapon_smg1", "weapon_shotgun" }, 1)
+	CAKE.AddFactionRank( "ow", "Overwatch Soldier", "ow", "The standard footsoldier of the Combine Overwatch",
+	0, {"weapon_zipties", "weapon_stunstick","weapon_smg1", "weapon_shotgun"}, {"clothing_soldier", "helmet_soldier"} )
 	--Airwatch
-	CAKE.AddOverwatchRank( "aw", "Airwatch Soldier", {"clothing_soldier", "helmet_soldier", "weapon_zipties", "weapon_stunstick", "weapon_smg1", "weapon_shotgun" }, 1)
+	CAKE.AddFactionRank( "ow", "Airwatch Soldier", "aw", "Member of the aerial urban tactics group of the Combine",
+	0, {"weapon_zipties", "weapon_stunstick","weapon_smg1", "weapon_shotgun"}, {"clothing_soldier", "helmet_soldier"} )
 	--Commander
-	CAKE.AddOverwatchRank( "cw", "Overwatch Squad Commander", {"clothing_soldier", "helmet_soldier", "weapon_zipties", "weapon_stunstick", "weapon_ar2", "weapon_smg1", "weapon_shotgun" }, 2, false, true, true )
+	CAKE.AddFactionRank( "ow", "Overwatch Squad Commander", "cw", "Leader of a squad sized force of Combine Soldiers",
+	2, {"weapon_zipties", "weapon_stunstick","weapon_smg1", "weapon_shotgun", "weapon_ar2"}, {"clothing_soldier", "helmet_soldier"},
+	{["canpromote"] = true, ["caninvite"] = true, ["cankick"] = true} )
 	--Elite
-	CAKE.AddOverwatchRank( "ew", "Overwatch Elite Soldier", {"clothing_elite", "helmet_elite", "weapon_zipties", "weapon_stunstick", "weapon_ar2", "weapon_smg1", "weapon_shotgun" }, 2, false, true, true )
+	CAKE.AddFactionRank( "ow", "Overwatch Elite Soldier", "ew", "Elite trooper of the highest ranks of the Overwatch",
+	1, {"weapon_zipties", "weapon_stunstick","weapon_smg1", "weapon_shotgun", "weapon_ar2"}, {"clothing_elite", "helmet_elite"},
+	{["canpromote"] = true, ["caninvite"] = true, ["cankick"] = true} )
+
 
 	--Lambda Rebels
+	CAKE.CreateFaction( "Lambda Resistance", "r", [[
+	The Resistance is a loose, covert network of humans and Vortigaunts with the shared goal of defeating the Combine and restoring their freedom.]] )
 	--Recruit
-	CAKE.AddResistanceRank( "rookie", "Resistance Rookie", {"clothing_combat"}, 1 )
+	CAKE.AddFactionRank( "r", "Resistance Rookie", "rookie", "A militant of the Resistance",
+	0, {}, {"clothing_combat"} )
 	--Regular members
-	CAKE.AddResistanceRank( "member", "Resistance Member", { "clothing_combat", "helmet_balaclava", "weapon_smg1" }, 2 )
+	CAKE.AddFactionRank( "r", "Resistance Member", "rebel", "A footsoldier of the Resistance",
+	1, {"weapon_smg1"}, {"clothing_combat", "helmet_balaclava"} )
 	--Medics
-	CAKE.AddResistanceRank( "medic", "Resistance Medic", { "clothing_combat", "clothing_medic", "helmet_balaclava", "weapon_smg1" }, 2 )
-	--Dealer
-	CAKE.AddResistanceRank( "dealer", "Resistance Supplier", { "clothing_combat", "helmet_balaclava", "weapon_smg1" }, 2, false, false, false, {1,2,3} )
+	CAKE.AddFactionRank( "r", "Resistance Medic", "medic", "A combat medic of the Resistance",
+	1, {"weapon_smg1"}, {"clothing_medic", "helmet_balaclava"} )
 	--Leader
-	CAKE.AddResistanceRank( "leader", "Resistance Leader", { "clothing_combat", "helmet_balaclava", "weapon_smg1","weapon_357"}, 3, true, true, true, {1,2,3} )
+	CAKE.AddFactionRank( "r", "Resistance Leader", "leader", "Leader of the Resistance",
+	2, {"weapon_smg1","weapon_357"}, {"clothing_combat", "helmet_balaclava"},
+	{["canpromote"] = true, ["caninvite"] = true, ["cankick"] = true} )
 
 end

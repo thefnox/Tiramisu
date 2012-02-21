@@ -66,9 +66,9 @@ function CAKE.AddFactionRank( faction, name, handler, description, level, weapon
 	weapons = weapons or {}
 	items = items or {}
 	permissions = permissions or {}
-	if CAKE.GroupHandlerExists( handler ) then
+	if CAKE.GroupHandlerExists( faction ) then
 		group = CAKE.FindByHandler( faction )
-		if !group:IsRank( handler ) then
+		if group and !group:IsRank( handler ) then
 			group:AddRank( handler )
 			group:SetRankField( handler, "name", name, true )
 			group:SetRankField( handler, "description", description, true )
@@ -77,6 +77,9 @@ function CAKE.AddFactionRank( faction, name, handler, description, level, weapon
 			group:SetRankField( handler, "weapons", weapons, true )
 			for k, v in pairs( permissions ) do
 				group:SetRankField( handler, k, v, true )
+			end
+			if group:GetField( "defaultrank" ) == "none" then
+				group:SetField( "defaultrank", handler )
 			end
 			group:Save()
 		end

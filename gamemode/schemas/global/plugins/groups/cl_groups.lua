@@ -363,7 +363,17 @@ end
 
 function CAKE.EditRank( tbl, rankname )
 
-	local rank = table.Copy(tbl["ranks"][rankname])
+	local rank = {}
+	rank["canedit"] = tbl["ranks"][rankname]["canedit"]
+	rank["caninvite"] = tbl["ranks"][rankname]["caninvite"]
+	rank["cankick"] = tbl["ranks"][rankname]["cankick"]
+	rank["canpromote"] = tbl["ranks"][rankname]["canpromote"]
+	rank["cantakeinventory"] = tbl["ranks"][rankname]["cantakeinventory"]
+	rank["canplaceinventory"] = tbl["ranks"][rankname]["canplaceinventory"]
+	rank["level"] = tbl["ranks"][rankname]["level"]
+	rank["name"] = tbl["ranks"][rankname]["name"]
+	rank["handler"] = tbl["ranks"][rankname]["handler"]
+	rank["description"] = tbl["ranks"][rankname]["description"]
 
 	local frame = vgui.Create( "DFrame" )
 	frame:SetSize( 500, 300)
@@ -417,7 +427,7 @@ function CAKE.EditRank( tbl, rankname )
 	InfoForm:AddItem(DefaultGroup)
 
 	local Level = vgui.Create( "DNumSlider", DermaPanel )
-	Level:SetValue(0)
+	Level:SetValue(tonumber(rank["level"]))
 	Level:SetText( "Level (In rank hirearchy)" )
 	Level:SetMin( 0 ) -- Minimum number of the slider
 	Level:SetMax( 50 ) -- Maximum number of the slider
@@ -450,7 +460,11 @@ function CAKE.EditRank( tbl, rankname )
 
 	local CanEdit = vgui.Create( "DCheckBoxLabel" )
 	CanEdit:SetText("Can edit the group's data")
-	CanEdit:SetValue(0)
+	if rank["canedit"] then
+		CanEdit:SetValue(1)
+	else
+		CanEdit:SetValue(0)
+	end
 	CanEdit.OnChange = function( panel, value )
 		rank["canedit"] = CanEdit:GetChecked()
 	end
@@ -458,7 +472,11 @@ function CAKE.EditRank( tbl, rankname )
 
 	local CanInvite = vgui.Create( "DCheckBoxLabel" )
 	CanInvite:SetText("Can invite people to join")
-	CanInvite:SetValue(0)
+	if rank["caninvite"] then
+		CanInvite:SetValue(1)
+	else
+		CanInvite:SetValue(0)
+	end
 	CanInvite.OnChange = function( panel, value )
 		rank["caninvite"] = CanInvite:GetChecked()
 	end
@@ -466,7 +484,11 @@ function CAKE.EditRank( tbl, rankname )
 
 	local CanKick = vgui.Create( "DCheckBoxLabel" )
 	CanKick:SetText("Can kick people off the group")
-	CanKick:SetValue(0)
+	if rank["cankick"] then
+		CanKick:SetValue(1)
+	else
+		CanKick:SetValue(0)
+	end
 	CanKick.OnChange = function( panel, value )
 		rank["cankick"] = CanKick:GetChecked()
 	end
@@ -474,7 +496,11 @@ function CAKE.EditRank( tbl, rankname )
 
 	local CanPromote = vgui.Create( "DCheckBoxLabel" )
 	CanPromote:SetText("Can promote people to higher ranks")
-	CanPromote:SetValue(0)
+	if rank["canpromote"] then
+		CanPromote:SetValue(1)
+	else
+		CanPromote:SetValue(0)
+	end
 	CanPromote.OnChange = function( panel, value )
 		rank["canpromote"] = CanPromote:GetChecked()
 	end
@@ -482,7 +508,11 @@ function CAKE.EditRank( tbl, rankname )
 
 	local CanTakeInventory = vgui.Create( "DCheckBoxLabel" )
 	CanTakeInventory:SetText("Can take things off the inventory")
-	CanTakeInventory:SetValue(0)
+	if rank["cantakeinventory"] then
+		CanTakeInventory:SetValue(1)
+	else
+		CanTakeInventory:SetValue(0)
+	end
 	CanTakeInventory.OnChange = function( panel, value )
 		rank["cantakeinventory"] = CanTakeInventory:GetChecked()
 	end
@@ -490,9 +520,13 @@ function CAKE.EditRank( tbl, rankname )
 
 	local CanPlaceInventory = vgui.Create( "DCheckBoxLabel" )
 	CanPlaceInventory:SetText("Can place things in the inventory")
-	CanPlaceInventory:SetValue(0)
+	if rank["canplaceinventory"] then
+		CanPlaceInventory:SetValue(1)
+	else
+		CanPlaceInventory:SetValue(0)
+	end
 	CanPlaceInventory.OnChange = function( panel, value )
-		rank["canedit"] = CanPlaceInventory:GetChecked()
+		rank["canplaceinventory"] = CanPlaceInventory:GetChecked()
 	end
 	Permissions:AddItem(CanPlaceInventory)
 
