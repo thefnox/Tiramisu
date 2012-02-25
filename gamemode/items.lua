@@ -44,15 +44,20 @@ function CAKE.GetUData(id, key)
 	return CAKE.UData[id][key]
 end
 
+local lastostime = 0
+local genned = {}
 function CAKE.CreateItemID()
-	local repnum = 0
-	local f = os.time() .. repnum .. math.random(0,99)
-	local uidfile = file.Exists( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. f .. ".txt" )
-	while uidfile do
-		repnum = repnum + 1
-		f = os.time() .. repnum .. math.random(0,99)
-		uidfile = file.Exists( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. f .. ".txt" )
+	if lastostime != os.time() then
+		genned = {} 
+		lastostime = os.time()
 	end
+	local repnum = 0
+	local f = os.time() .. repnum
+	while genned[f] do
+		repnum = repnum + 1
+		f = os.time() .. repnum
+	end
+	genned[f] = true
 	return f
 end
 
