@@ -113,16 +113,8 @@ function CAKE.LoadPlayerDataFile( ply )
 				
 			end
 
-			if char["inventory"] then
-				for k, v in pairs( char["inventory"] ) do
-					if type(v) == "string" then
-						char["inventory"][k] = {v, CAKE.CreateItemID()}
-					else
-						break
-					end
-				end
-			else
-				char["inventory"] = {}
+			if !char["inventory"] then
+				char["inventory"] = CAKE.CreatePlayerInventory( ply, _ )
 				CAKE.DayLog( "script.txt", "Character " .. ply:SteamID( ) .. "-" .. _ .. " does not have a valid inventory" )
 			end
 			

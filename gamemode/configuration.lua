@@ -6,9 +6,11 @@ CAKE.ConVars[ "LinuxHotfix" ] = false -- TURN THIS ON ONLY IF YOUR SERVER USES L
 CAKE.ConVars[ "ForceJigglebones" ] = true --Forces jigglebones on all clients. Turns this off if you know it causes performance problems. 
 
 CAKE.ConVars[ "Tiramisu" ] = "2"
-CAKE.ConVars[ "Schema" ] = "freeform" -- What folder is schema data being loaded from?
+CAKE.ConVars[ "Schema" ] = "hl2rp" -- What folder is schema data being loaded from?
 
 --General config
+CAKE.ConVars[ "PlayerInventoryRows" ] = 4 --Set to 0 for infinite. Each row holds 10 items
+CAKE.ConVars[ "StaticInventory" ] = false --Set this to false to make the inventory expandable with containers
 CAKE.ConVars[ "SpawnWithBlackScreen" ] = true --Set this to true if you want people to be welomed with a black screen.
 CAKE.ConVars[ "WalkSpeed" ] = 80 -- How fast do they walk
 CAKE.ConVars[ "RunSpeed" ] = 420 -- How fast do they run
@@ -17,7 +19,6 @@ CAKE.ConVars[ "SuicideEnabled" ] = false -- Can players compulsively suicide by 
 CAKE.ConVars[ "UnconciousTimer" ] = 5 --Time that must be spent unconcious before being able to wake up. Set to 0 to disable (not recommended)
 CAKE.ConVars[ "DisplayClock" ] = false --Use the clock system?
 CAKE.ConVars[ "DefaultTime" ] = "1 1 2012 1" --The initial time of the script's clock.
-CAKE.ConVars[ "DefaultInventory" ] = {  } -- What inventory do characters start out with when they are first made. 
 CAKE.ConVars[ "DefaultAmmo" ] = {  } --The default ammo table your character will have on spawn.
 CAKE.ConVars[ "DefaultClothing" ] = { }--Clothing you can choose on startup
 CAKE.ConVars[ "UseEnhancedCitizens" ] = false --Set this to false if you want to use the default models instead of Enhanced Citizens by Bloocobalt and Lt_Commander.

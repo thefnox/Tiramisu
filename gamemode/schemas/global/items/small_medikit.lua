@@ -19,6 +19,7 @@ end
 function ITEM:UseItem(ply)
 
 	ply:SetHealth(math.Clamp(ply:Health() + 15, 0, ply:MaxHealth()))
+	ply:TakeItem("small_medikit")
 	self:Remove()
 
 end

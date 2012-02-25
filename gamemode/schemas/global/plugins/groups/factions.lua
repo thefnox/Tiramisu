@@ -105,6 +105,8 @@ datastream.Hook( "Tiramisu.GetEditFaction", function(ply, handler, id, encoded, 
 			group:SetField("description", decoded.description)
 			group:SetField("ranks", decoded.ranks)
 			group:SetField("defaultrank", decoded.defaultrank)
+			group:SetField("spawngroup", decoded.spawngroup)
+			group:SetField("doorgroup", decoded.doorgroup)
 		end
 	end
 end)
@@ -131,6 +133,8 @@ concommand.Add( "rp_createfaction", function( ply, cmd, args )
 				["handler"] = group:GetField( "handler" ),
 				["defaultrank"] = group:GetField( "defaultrank" ),
 				["description"] = group:GetField( "description" ),
+				["doorgroup"] = group:GetField( "doorgroup" ),
+				["spawngroup"] = group:GetField( "spawngroup" ),
 				["uid"] = group.UniqueID,
 				["ranks"] = {}
 			}
@@ -164,6 +168,8 @@ concommand.Add( "rp_editfaction", function( ply, cmd, args )
 				["handler"] = group:GetField( "handler" ),
 				["defaultrank"] = group:GetField( "defaultrank" ),
 				["description"] = group:GetField( "description" ),
+				["doorgroup"] = group:GetField( "doorgroup" ),
+				["spawngroup"] = group:GetField( "spawngroup" ),
 				["uid"] = group.UniqueID,
 				["ranks"] = {}
 			}
@@ -195,6 +201,7 @@ concommand.Add( "rp_getfactioninfo", function( ply, cmd, args )
 		if group:CharInGroup( ply ) and group:GetField("type") == "faction" then
 			tbl["name"] = group:Name()
 			tbl["founder"] = group:GetField("founder")
+			tbl["inventory"] = group:GetField("inventory")
 			tbl["description"] = group:GetField("description")
 			tbl["uid"] = group.UniqueID
 			datastream.StreamToClients( ply, "Tiramisu.GetFactionInfo", tbl)
@@ -300,4 +307,5 @@ function PLUGIN.Init()
 	CAKE.AdminCommand( "joinfaction", Admin_JoinFaction, "Force a player to join a faction", true, true, 4 )
 	CAKE.AdminCommand( "forcejoin", Admin_JoinFaction, "Force a player to join a faction", true, true, 4 )
 	CAKE.AddGroupField( "handler", "" )
+	CAKE.AddGroupField( "spawngroup", 0 )
 end

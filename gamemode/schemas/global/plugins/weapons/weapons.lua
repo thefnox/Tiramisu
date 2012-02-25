@@ -80,9 +80,16 @@ hook.Add( "WeaponEquip", "Tiramisu.GetWeaponAsItem", function(wep)
 			end
 		else
 			local haveit = false
-			for k, v in pairs( CAKE.GetCharField(ply, "inventory" ) ) do
-				if CAKE.GetUData( v[2], "weaponclass" ) == wep:GetClass() then
-					haveit = true
+			for _, tbl in pairs( ply:GetInventory().Items ) do
+				for k, v in pairs(tbl) do
+					if v and v.itemid and v.class then
+						if CAKE.GetUData( v.itemid, "weaponclass" ) == wep:GetClass() then
+							haveit = true
+							break
+						end
+					end
+				end
+				if haveit then
 					break
 				end
 			end
@@ -97,9 +104,15 @@ end)
 hook.Add( "PlayerLoadout", "TiramisuWeaponsLoadout", function( ply )
 	if ply:IsCharLoaded() then
 		if(ply:GetNWInt("charactercreate", 0 ) != 1) then
-			for k, v in pairs( CAKE.GetCharField( ply, "inventory" ) ) do
-				if string.match( v[1], "weapon" ) then
-					ply:Give( CAKE.GetUData(v[2], "weaponclass") or v[1] )
+			for _, tbl in pairs( ply:GetInventory().Items ) do
+				for k, v in pairs(tbl) do
+					if v and v.itemid and v.class then
+						if CAKE.GetUData( v.itemid, "weaponclass" ) then
+							ply:Give( CAKE.GetUData(v.itemid, "weaponclass") or v.class )
+						elseif string.match( v.class, "weapon_" ) then
+							ply:Give( v.class )
+						end
+					end
 				end
 			end
 			ply:RemoveAllAmmo( )

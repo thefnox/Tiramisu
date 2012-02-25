@@ -63,19 +63,8 @@ end)
 concommand.Add( "rp_renameitem", function( ply, cmd, args )
 	if ply:HasItemID( args[1] ) and !CAKE.GetUData( args[2], "uniquename" ) then
 		CAKE.SetUData( args[1], "name", args[2])
-		ply:RefreshInventory( )
+		CAKE.SendUData( ply, args[1] )
 	elseif CAKE.GetUData( args[2], "uniquename" ) then
 		CAKE.SendError( ply, "You cannot rename that item!" )
 	end
-end)
-
-concommand.Add( "test_viewmodel", function( ply, cmd, args)
-	local model = CAKE.GetUData( CAKE.GetCharField( ply, "clothingid" ), "model") or CAKE.ItemData[ CAKE.GetCharField( ply, "clothing" ) ].Model or ply:GetModel()
-	ply.ViewModelTest = ents.Create( "player_viewmodel" )
-	ply.ViewModelTest:SetModel( model )
-	ply.ViewModelTest:SetParent( ply:GetViewModel() )
-	if ValidEntity( ply.ViewModelTest:GetPhysicsObject( ) ) then
-		ply.ViewModelTest:GetPhysicsObject( ):EnableCollisions( false )
-	end
-	ply.ViewModelTest:Spawn()
 end)

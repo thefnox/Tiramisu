@@ -71,6 +71,7 @@ concommand.Add( "rp_getgroupinfo", function( ply, cmd, args )
 			tbl["founder"] = group:GetField("founder")
 			tbl["description"] = group:GetField("description")
 			tbl["uid"] = group.UniqueID
+			tbl["inventory"] = group:GetField("inventory")
 			tbl["canedit"] = group:GetRankField( group:GetCharInfo( ply ).Rank, "canedit" )
 			datastream.StreamToClients( ply, "Tiramisu.GetGroupInfo", tbl)
 		end

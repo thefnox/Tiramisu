@@ -5,7 +5,10 @@ hook.Add( "KeyPress", "TiramisuHandleDoors", function( ply, key )
 			if(CAKE.IsDoor(entity)) then
 				local doorgroup = CAKE.GetDoorGroup(entity) or {}
 				local group = CAKE.GetGroup( CAKE.GetCharField( ply, "activegroup" ))
-				local groupdoor = group:GetField( "doorgroup" )
+				local groupdoor = 0
+				if group and group:CharInGroup(ply) then
+					groupdoor = tonumber(group:GetField( "doorgroup" )) or 0
+				end
 				if doorgroup == groupdoor then --lol
 					entity:Fire( "IN_USE", "", 0 )
 				end

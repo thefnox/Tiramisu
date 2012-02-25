@@ -83,7 +83,7 @@ local function HandleGearEditing( entity, bone, item, name, itemid )
 	if entity and ValidEntity( entity ) then
 		StartGearEditor( entity, item, bone, entity:GetDTVector( 1 ), entity:GetDTAngle( 1 ), entity:GetDTVector( 2 ), entity:GetSkin(), name, itemid )
 	else
-		if InventoryTable and #InventoryTable > 0 then
+		if CAKE.Containers[CAKE.Inventory] then
 			if frame then
 				frame:Remove()
 				frame = nil
@@ -101,7 +101,7 @@ local function HandleGearEditing( entity, bone, item, name, itemid )
 			panel:SetPadding( 5 )
 			panel:EnableHorizontal( true )
 
-			for k, v in pairs(InventoryTable) do
+			for k, v in pairs(CAKE.Containers[CAKE.Inventory].Items) do
 				if !string.match( v.Class, "clothing" ) and !string.match( v.Class, "helmet" ) then
 					local spawnicon = vgui.Create( "SpawnIcon")
 					spawnicon:SetIconSize( 64 )
@@ -210,8 +210,8 @@ function EditGear()
 	ClothesCategory:SetContents( clist )
 
 	local button
-	if InventoryTable and #InventoryTable > 0 then
-		for k, v in pairs( InventoryTable ) do
+	if CAKE.Containers[CAKE.Inventory] then
+		for k, v in pairs( CAKE.Containers[CAKE.Inventory].Items ) do
 			if( string.match( v.Class, "clothing" ) ) then
 				button = vgui.Create( "SpawnIcon" )
 				button:SetIconSize( 64 )
@@ -251,7 +251,7 @@ function EditGear()
 	hlist:EnableVerticalScrollbar( true )
 	HelmetCategory:SetContents( hlist )
 
-	for k, v in pairs( InventoryTable ) do
+	for k, v in pairs( CAKE.Containers[CAKE.Inventory].Items ) do
 		if( string.match( v.Class, "helmet" ) ) then
 			button = vgui.Create( "SpawnIcon" )
 			button:SetIconSize( 64 )

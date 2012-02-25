@@ -217,7 +217,9 @@ function CAKE.OpenFactionInfo( tbl )
 	OpenInventory:SetText( "Open Group Inventory" )
 	OpenInventory:SetTall( 30 )
 	OpenInventory.DoClick = function()
-		CAKE.Message( "Feature isn't done yet.", "Error!", "OK" )
+		if tbl.inventory then
+			RunConsoleCommand("rp_opencontainer", tbl.inventory)
+		end
 	end
 	actions:AddItem(OpenInventory)
 
@@ -701,8 +703,35 @@ function CAKE.EditFaction( tbl )
 		tbl["handler"] = Handler:GetValue()
 	end
 	HandlerForm:AddItem(Handler)
-
 	Group:AddItem(HandlerForm)
+
+	local PermissionForm = vgui.Create( "DForm" )
+	PermissionForm:SetName( "Faction Permissions:" )
+	PermissionForm:SetSpacing( 5 )
+	PermissionForm:SetPadding( 5 )
+
+	local Spawngroup = vgui.Create( "DNumSlider", DermaPanel )
+	Spawngroup:SetText( "Spawn Group (Leave at 0 for none):" )
+	Spawngroup:SetMin( 0 ) -- Minimum number of the slider
+	Spawngroup:SetMax( 10 ) -- Maximum number of the slider
+	Spawngroup:SetDecimals( 0 ) -- Sets a decimal. Zero means it's a whole number
+	Spawngroup.OnValueChanged = function( panel, value )
+		tbl["spawngroup"] = tonumber(value)
+	end
+	Spawngroup:SetValue(tonumber(tbl["spawngroup"]))
+	PermissionForm:AddItem(Spawngroup)
+
+	local Doorgroup = vgui.Create( "DNumSlider", DermaPanel )
+	Doorgroup:SetText( "Door Group:" )
+	Doorgroup:SetMin( 0 ) -- Minimum number of the slider
+	Doorgroup:SetMax( 10 ) -- Maximum number of the slider
+	Doorgroup:SetDecimals( 0 ) -- Sets a decimal. Zero means it's a whole number
+	Doorgroup.OnValueChanged = function( panel, value )
+		tbl["doorgroup"] = tonumber(value)
+	end
+	Doorgroup:SetValue(tonumber(tbl["doorgroup"]))
+	PermissionForm:AddItem(Doorgroup)
+	Group:AddItem(PermissionForm)
 
 	local DescForm = vgui.Create( "DForm" )
 	DescForm:SetName( "Description:" )
@@ -710,7 +739,7 @@ function CAKE.EditFaction( tbl )
 	DescForm:SetPadding( 5 )
 
 	local Desc = vgui.Create( "DTextEntry" )
-	Desc:SetTall( 250 )
+	Desc:SetTall( 200 )
 	Desc:SetValue( tbl.description ) 
 	Desc:SetMultiline( true )
 	Desc:SetDrawBackground( false )

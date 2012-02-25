@@ -8,8 +8,8 @@ datastream.Hook( "Tiramisu.WriteNote", function( ply, handler, id, encoded, deco
 		else 
 			CAKE.SetUData(paper, "uses", uses)
 			CAKE.SetUData(paper, "name", "Paper (" .. uses .. " uses left)")
-			ply:RefreshInventory()
 		end
+		CAKE.SendUData( ply, paper )
 		local note = CAKE.CreateItem("note", ply:CalcDrop(), Angle(0, 0, 0))
 		timer.Simple( 0, function()
 			CAKE.SetUData( note:GetNWString("id"), "name", decoded["title"] )

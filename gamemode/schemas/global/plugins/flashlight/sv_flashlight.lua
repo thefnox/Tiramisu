@@ -21,7 +21,6 @@ function CAKE.TurnOnFlashlight(ply, cmd, arg)
 		umsg.Start( "flashlighton" )
 			umsg.Entity( ply )
 			umsg.Entity( ply.flashlight )
-			print(ply.flashlight)
 		umsg.End()
 	end)
 end

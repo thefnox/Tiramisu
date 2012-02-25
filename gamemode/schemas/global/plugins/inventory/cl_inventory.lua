@@ -1,6 +1,3 @@
-CLPLUGIN.Name = "Inventory Menu"
-CLPLUGIN.Author = "F-Nox/Big Bang"
-
 local BoneList = {
 	"pelvis",
 	"stomach",
@@ -28,259 +25,59 @@ local BoneList = {
 }
 
 
-InventoryTable = {}
+CAKE.Inventory = "none"
+CAKE.UData = {}
 CAKE.InventorySlot = {}
-CAKE.SavedPositions = {}
 
---Saves a player's icon positioning preferences.
-local function SavePositions()
+datastream.Hook( "Tiramisu.ReceiveUData", function( handler, id, encoded, decoded )
+	local uid = decoded.uid
+	if !CAKE.UData[uid] then
+		CAKE.UData[uid] = {}
+	end
+	CAKE.UData[uid].Name = decoded.name
+	CAKE.UData[uid].Wearable = decoded.wearable
+	CAKE.UData[uid].Model = decoded.model
+	CAKE.UData[uid].Container = decoded.container
 	if CAKE.InventorySlot then
-		for k, v in ipairs( CAKE.InventorySlot ) do
-			if v:GetItem() then
-				CAKE.SavedPositions[v:GetItem().Class] = k
-			end 
+		for _, tbl in pairs(CAKE.InventorySlot) do
+			for k, v in pairs(CAKE.InventorySlot) do
+				if v and v.Item and CAKE.ItemData[v.Item] and v.ItemID and v.ItemID == uid then
+					v:SetTooltip(decoded.name .. "\n" .. CAKE.ItemData[v.Item].Description or "" )
+				end
+			end
 		end
 	end
-	file.Write( CAKE.Name .. "/personaldata/inventory.txt", glon.encode( CAKE.SavedPositions ) )
-end
+end)
 
---Loads a player's icon positioning preferences.
-local function LoadPositions()
-	if file.Exists( CAKE.Name .. "/personaldata/inventory.txt" ) then
-		CAKE.SavedPositions = glon.decode( file.Read( CAKE.Name .. "/personaldata/inventory.txt"  ))
-	else
-		SavePositions()
-	end
-end
+datastream.Hook( "Tiramisu.SendInventory", function( handler, id, encoded, decoded )
+	local items = decoded.items
+	local uid = decoded.uid
+	local width = decoded.width
+	local height = decoded.height
+	table.Merge(CAKE.UData, decoded.udata)
+	CAKE.Containers[uid] = CAKE.CreateContainerObject( uid )
+	CAKE.Containers[uid]:SetSize( width, height )
+	CAKE.Containers[uid].Items = items
+	CAKE.Inventory = uid
 
---Determines which slots are available for item placement.
-local function AvailableSlot()
-	if CAKE.InventorySlot then
-		for k, v in ipairs( CAKE.InventorySlot ) do
-			if !v:GetItem() then
-				return k
-			end 
-		end
-	end
-	return false
-end
-
---Eliminates all items from all slots.
-local function ClearAllSlots()
-	if CAKE.InventorySlot then
-		for k, v in ipairs( CAKE.InventorySlot ) do
-			if v:GetItem() then
-				v:ClearItem()
-			end 
-		end
-	end
-end
-
---Determines on which slot should the item in question be placed.
-local function CalculateItemPosition( item )
-	local slot
-	if CAKE.SavedPositions[ item ] then
-		if CAKE.InventorySlot[ CAKE.SavedPositions[ item ] ]:GetItem() and CAKE.InventorySlot[ CAKE.SavedPositions[ item ] ]:GetItem().Class == item then
-			return CAKE.SavedPositions[ item ]
-		elseif !CAKE.InventorySlot[ CAKE.SavedPositions[ item ] ]:GetItem() and CAKE.SavedPositions[ item ] < AvailableSlot() then
-			return CAKE.SavedPositions[ item ]
-		else
-			return AvailableSlot()
-		end
-	else
-		return AvailableSlot()
-	end
-end
-
---InventorySlot_Icon
-
---Taken from Garry's spawnicon code. Calculates view position and angles for most things.
-local function RenderSpawnIcon_Prop( model, pos, middle, size )
-
-	size = size * (1 - ( size / 900 ))
-
-	local ViewAngle = Angle( 25, 40, 0 )
-	local ViewPos = pos + ViewAngle:Forward() * size * -15
-	local view = {}
-	
-	view.fov		= 4 + size * 0.04
-	view.origin 	= ViewPos + middle
-	view.znear		= 1
-	view.zfar		= ViewPos:Distance( pos ) + size * 2
-	view.angles		= ViewAngle
-
-	return view
-	
-end
-
---Determines positioning for bipeds.
-local function RenderSpawnIcon_Ragdoll( model, pos, middle, size )
-
-	local at = model:GetAttachment( model:LookupAttachment( "eyes" ) )
-
-	local ViewAngle = at.Ang + Angle( -10, 160, 0 )
-	local ViewPos = at.Pos + ViewAngle:Forward() * -60 + ViewAngle:Up() * -2
-	local view = {}
-	
-	view.fov		= 10
-	view.origin 	= ViewPos
-	view.znear		= 0.01
-	view.zfar		= 200
-	view.angles		= ViewAngle
-
-	return view
-	
-end
-
-//
-// For some TF2 ragdolls which do not have "eye" attachments
-//
-local function RenderSpawnIcon_Ragdoll_Head( model, pos, middle, size )
-
-	local at = model:GetAttachment( model:LookupAttachment( "head" ) )
-
-	local ViewAngle = at.Ang + Angle( -10, 160, 0 )
-	local ViewPos = at.Pos + ViewAngle:Forward() * -67 + ViewAngle:Up() * -7 + ViewAngle:Right() * 1.5
-	local view = {}
-	
-	view.fov		= 10
-	view.origin 	= ViewPos
-	view.znear		= 0.01
-	view.zfar		= 200
-	view.angles		= ViewAngle
-
-	return view
-	
-end
-
---Determines which of the above positioning schemes to use.
-function PositionSpawnIcon( model, pos )
-
-	local mn, mx = model:GetRenderBounds()
-	local middle = (mn + mx) * 0.5
-	local size = 0
-	size = math.max( size, math.abs(mn.x) + math.abs(mx.x) )
-	size = math.max( size, math.abs(mn.y) + math.abs(mx.y) )
-	size = math.max( size, math.abs(mn.z) + math.abs(mx.z) )
-	
-	model:SetPos( pos )
-	model:SetAngles( Angle( 0, 180, 0 ) )
-	
-	if ( model:LookupAttachment( "eyes" ) > 0 ) then
-		return RenderSpawnIcon_Ragdoll( model, pos, middle, size )
-	end
-	
-	if ( model:LookupAttachment( "head" ) > 0 ) then
-		return RenderSpawnIcon_Ragdoll_Head( model, pos, middle, size )
-	end
-
-	return RenderSpawnIcon_Prop( model, pos, middle, size )
-
-end
-
-local PANEL = {}
-
-/*---------------------------------------------------------
-   Name: Paint
----------------------------------------------------------*/
-function PANEL:Init()
-
-	self:SetMouseInputEnabled( false )
-	self:SetKeyboardInputEnabled( false )
-
-end
-
-function PANEL:OnMousePressed( mcode )
-end
-
-function PANEL:OnMouseReleased()
-end
-
-function PANEL:DoClick()
-end
-
-function PANEL:OpenMenu()
-end
-
-function PANEL:OnCursorEntered()
-end
-
-function PANEL:OnCursorExited()
-end
-
-function PANEL:PerformLayout()
-end
-
---Does the actual 3D drawing.
-function PANEL:Paint()
-
-	if ( !IsValid( self.Entity ) ) then return end
-	
-	local x, y = self:LocalToScreen( 0, 0 )
-	
-	cam.Start3D( self.ViewCoords.origin, self.ViewCoords.angles, self.ViewCoords.fov, x, y, self:GetSize() )
-		cam.IgnoreZ( true )
-		
-		render.SuppressEngineLighting( true )
-		render.SetLightingOrigin( self.Entity:GetPos() )
-		render.ResetModelLighting( 1,1,1 )
-		render.SetColorModulation( 1,1,1 )
-		render.SetBlend( 1 )
-
-		self.Entity:DrawModel()
-		
-		render.SuppressEngineLighting( false )
-		cam.IgnoreZ( false )
-	cam.End3D()
-	
-end
-
---Sets the icon's model.
-function PANEL:SetModel( mdl )
-
-	// Note - there's no real need to delete the old
-	// entity, it will get garbage collected, but this is nicer.
-	if ( IsValid( self.Entity ) ) then
-		self.Entity:Remove()
-		self.Entity = nil		
-	end
-	
-	// Note: Not in menu dll
-	if ( !ClientsideModel ) then return end
-	
-	self.Entity = ClientsideModel( mdl, RENDER_GROUP_OPAQUE_ENTITY )
-	if ( !IsValid(self.Entity) ) then return end
-
-	self.Entity:SetNoDraw( true )
-	self.ViewCoords = PositionSpawnIcon( self.Entity, self.Entity:GetPos() )
-
-end
-
-function PANEL:Think()
-
-end
-
-vgui.Register( "InventorySlot_Icon", PANEL, "Panel" )
+	CAKE.CreateInventory()
+end)
 
 --InventorySlot. The square slots used on the inventory.
 
-PANEL = {}
-
+local PANEL = {}
 AccessorFunc( PANEL, "m_bPaintBackground",			  "PaintBackground" )
 AccessorFunc( PANEL, "m_bDisabled",					 "Disabled" )
 AccessorFunc( PANEL, "m_bgColor",			   "BackgroundColor" )
 Derma_Hook( PANEL, "Paint", "Paint", "Panel" )
 
-/*---------------------------------------------------------
-   Name: Paint
----------------------------------------------------------*/
 function PANEL:Init()
 	self:SetPaintBackground( true )
 		
 	// This turns off the engine drawing
 	self:SetPaintBackgroundEnabled( false )
 	self:SetPaintBorderEnabled( false )
-	self.Icon = vgui.Create( "InventorySlot_Icon", self )
+	self.Icon = vgui.Create( "ContainerSlot_Icon", self )
 	self:SetIconSize( 64 )
 	self:SetToolTip( "Empty Slot")
 	self.DragDisabled = false
@@ -299,36 +96,40 @@ function PANEL:SetIconSize( size )
 
 end
 
---If it has any items, sets the amount of them
-function PANEL:SetAmount( amount )
-	self.Amount = amount or 1
+function PANEL:GetName()
+	if self.Item then
+		if self.ItemID and CAKE.UData[self.ItemID] and CAKE.UData[self.ItemID].Name then
+			return CAKE.UData[self.ItemID].Name
+		else
+			return CAKE.ItemData[self.Item].Name
+		end
+	end
 end
 
 --Sets an item to be used on the inventory slot. The item thing is a table, not a string. Amount defaults to 1.
-function PANEL:SetItem( item, amount )
-	self.Item = item
-	if !self.Icon then
-		self.Icon = vgui.Create( "InventorySlot_Icon", self )
-		self:SetIconSize( self.IconSize )
-	end
-	if item.Description != "" then self:SetToolTip( item.Name .. "\n" .. item.Description )
-	else self:SetToolTip( item.Name ) end
-	self.Icon:SetModel( item.Model )
-	self:SetAmount( amount or 1 )
-	self:OnUseItem( item, amount )
-end
-
---Utility function. Allows you to set an item to a slot, and if that item already exists on that slot, add one to it.
-function PANEL:AddItem( item )
-	if self:GetItem() and self:GetItem().Class == item.Class then
-		self:SetAmount( self:GetAmount() + 1 )
-	else
-		self:SetItem( item, 1 )
+function PANEL:SetItem( item, itemid )
+	local itemtable = CAKE.ItemData[item]
+	if itemtable then
+		self.Item = itemtable.Class
+		self.ItemID = itemid
+		if !self.Icon then
+			self.Icon = vgui.Create( "ContainerSlot_Icon", self )
+			self:SetIconSize( self.IconSize )
+		end
+		if itemtable.Description != "" then self:SetToolTip( self:GetName() .. "\n" .. itemtable.Description )
+		else self:SetToolTip( self:GetName() ) end
+		if CAKE.UData[itemid] then
+			self.Model = CAKE.UData[itemid].Model or itemtable.Model
+		else
+			self.Model = itemtable.Model
+		end
+		self.Icon:SetModel( self.Model )
 	end
 end
 
---In case you need to hook anything on item usage.
-function PANEL:OnUseItem( item, amount )
+--Returns the model of the slot
+function PANEL:GetModel()
+	return self.Model or ""
 end
 
 --Returns the item table.
@@ -336,9 +137,8 @@ function PANEL:GetItem()
 	return self.Item
 end
 
---Returns the current item amount.
-function PANEL:GetAmount()
-	return self.Amount or 1
+function PANEL:GetItemID()
+	return self.ItemID
 end
 
 --Clears the item off the slot.
@@ -349,23 +149,30 @@ function PANEL:ClearItem()
 		self.Icon = nil
 	end
 	self.Item = false
-	self:SetAmount()
+	self.ItemID = false
 	self:SetToolTip( "Empty Slot" )
 
 end
 
---Discounts one item from the slot. If this reduces the count to 0, then it clears the slot.
-function PANEL:RemoveItem()
+function PANEL:SetContainer( uid )
+	self.Container = uid
+end
 
-	if self.Item then
-		local count = self:GetAmount() - 1
-		if count > 0 then
-			self:SetAmount( count - 1 )
-		else
-			self:ClearItem()
-		end
-	end
+function PANEL:GetContainer()
+	return self.Container or "none"
+end
 
+function PANEL:SetPosition( x, y )
+	self.PosX = x
+	self.PosY = y
+end
+
+function PANEL:GetX()
+	return self.PosX or 0
+end
+
+function PANEL:GetY()
+	return self.PosY or 0
 end
 
 --Disables dragging in and out on that slot.
@@ -376,42 +183,38 @@ end
 --Utility to handle item dropping.
 function PANEL:DropItem()
 	if self.Item then
-		if !self:GetItem().Stack then
-			LocalPlayer():ConCommand("rp_dropitem " .. self:GetItem().ID )
-		else
-			LocalPlayer():ConCommand("rp_dropitemunspecific " .. self:GetItem().Class )
-		end
-		self:RemoveItem()
+		LocalPlayer():ConCommand("rp_dropitem " .. self:GetItemID() )
 	end
 end
 
 function PANEL:DropAllItem()
 	if self.Item then
-		LocalPlayer():ConCommand("rp_dropallitem " .. self:GetItem().Class )
+		LocalPlayer():ConCommand("rp_dropallitem " .. self:GetItem())
 	end
 end
 
 --Utility to handle item using.
 function PANEL:UseItem(dofunc)
-	if self.Stack then 
-		command = "rp_useinventory "
-		argone = self:GetItem().Class 
-	else
-		command = "rp_useinventoryid "
-		argone = self:GetItem().ID
-	end
-	if self.Item and dofunc then
-		LocalPlayer():ConCommand(command .. argone .. " " .. dofunc )
-		self:RemoveItem()
-	elseif self.Item and !self:GetItem().Unusable then
-		LocalPlayer():ConCommand(command .. argone )
-		self:RemoveItem()
+	if self.Item then
+		if dofunc then
+			LocalPlayer():ConCommand("rp_useinventoryid " .. self:GetItemID() .. " " .. dofunc )
+		elseif !CAKE.ItemData[self:GetItem()].Unusable then
+			LocalPlayer():ConCommand("rp_useinventoryid " .. self:GetItemID() )
+		end
 	end
 end
 
-/*---------------------------------------------------------
-   Name: OnMousePressed
----------------------------------------------------------*/
+function PANEL:GetWearable()
+	if self.Item then
+		if string.match(self.Item, "clothing_") or string.match(self.Item, "helmet_") then
+			return true
+		elseif self.ItemID and CAKE.UData[self.ItemID] and CAKE.UData[self.ItemID].Wearable then
+			return true
+		end
+	end
+	return false
+end
+
 function PANEL:OnMousePressed( mcode )
 
 	if ( mcode == MOUSE_LEFT ) and self.Item then
@@ -434,94 +237,43 @@ end
 
 --Begins dragging operation. Creates icon display.
 function PANEL:StartDrag()
-	if !LocalPlayer().OnDrag and !self.DragDisabled and self:GetItem() then
-		LocalPlayer().OnDrag = true
-		LocalPlayer().DragIcon = vgui.Create( "InventorySlot_Icon" )
-		LocalPlayer().DragIcon:SetSize( self.IconSize, self.IconSize )
-		LocalPlayer().DragIcon:MoveToFront( )
-		LocalPlayer().DragIcon:SetModel( self:GetItem().Model )
+	if !LocalPlayer().Drag and !self.DragDisabled and self:GetItem() then
+		LocalPlayer().Drag = true
+		LocalPlayer().DragIcon = ClientsideModel( self:GetModel(), RENDER_GROUP_OPAQUE_ENTITY )
+		LocalPlayer().DragIcon.Tall = self.IconSize
+		LocalPlayer().DragIcon.Wide = self.IconSize
+		LocalPlayer().DragIcon.viewcords = PositionSpawnIcon( LocalPlayer().DragIcon, LocalPlayer().DragIcon:GetPos() )
+		LocalPlayer().DragIcon:SetModel( self:GetModel() )
+		LocalPlayer().DragIcon:SetNoDraw(true)
+		--LocalPlayer().DragIcon:MakePopup()
 		LocalPlayer().DragOrigin = self
-		LocalPlayer().DragAmount = self:GetAmount()
-		LocalPlayer().DragItem = self:GetItem()
-		local x, y
-		LocalPlayer().DragIcon.Think = function()
-			x, y = gui.MousePos()
-			LocalPlayer().DragIcon:SetPos( x - LocalPlayer().DragIcon:GetWide() / 2, y - LocalPlayer().DragIcon:GetTall() / 2 )
-		end
-		LocalPlayer().DragIcon.PaintOver = function()
-			surface.SetTextColor(Color(255,255,255,255))
-			surface.SetFont("TabLarge")
-			surface.SetTextPos( LocalPlayer().DragIcon:GetWide() - 12, LocalPlayer().DragIcon:GetTall() - 14)
-			surface.DrawText( LocalPlayer().DragAmount )
-		end
-		self:ClearItem()
+		LocalPlayer().DragContainer = self:GetContainer()
+		LocalPlayer().DragOriginX = self:GetX()
+		LocalPlayer().DragOriginY = self:GetY()
+		LocalPlayer().DragItemClass, LocalPlayer().DragItemID = self:GetItem(), self:GetItemID()
 	end
 end
 
 --Finishes dragging operation. Performs the actual transfer operation.
 function PANEL:EndDrag()
-	if LocalPlayer().OnDrag and !self.DragDisabled then
-		LocalPlayer().OnDrag = false
+	if LocalPlayer().Drag and !self.DragDisabled then
+		LocalPlayer().Drag = false
 		LocalPlayer().DragIcon:Remove()
 		LocalPlayer().DragIcon = nil
 		if LocalPlayer().DragTarget then
-			if LocalPlayer().DragTarget:GetItem() then
-				--Trade items between the origin and target slots.
-				LocalPlayer().DragOrigin:SetItem( LocalPlayer().DragTarget:GetItem(), LocalPlayer().DragTarget:GetAmount() )
-				LocalPlayer().DragTarget:SetItem( LocalPlayer().DragItem, LocalPlayer().DragAmount )
+			if LocalPlayer().DragTarget:GetContainer() == LocalPlayer().DragContainer then
+				if LocalPlayer().DragTarget.ItemID and CAKE.UData[LocalPlayer().DragTarget.ItemID] and CAKE.UData[LocalPlayer().DragTarget.ItemID].Container then
+					print("rp_transfertocontainer", LocalPlayer().DragContainer, CAKE.UData[LocalPlayer().DragTarget.ItemID].Container, LocalPlayer().DragItemClass, LocalPlayer().DragItemID)
+					RunConsoleCommand("rp_transfertocontainer", LocalPlayer().DragContainer, CAKE.UData[LocalPlayer().DragTarget.ItemID].Container, LocalPlayer().DragItemClass, LocalPlayer().DragItemID)
+				elseif LocalPlayer().DragTarget:GetX() != LocalPlayer().DragOriginX or LocalPlayer().DragTarget:GetY() != LocalPlayer().DragOriginY then
+					RunConsoleCommand("rp_containerswap", LocalPlayer().DragContainer, LocalPlayer().DragOriginX, LocalPlayer().DragOriginY, LocalPlayer().DragTarget:GetX(), LocalPlayer().DragTarget:GetY() )
+				end
 			else
-				--Just set the currently empty slot to the dragged item, and clear the origin.
-				LocalPlayer().DragOrigin:ClearItem()
-				LocalPlayer().DragTarget:SetItem( LocalPlayer().DragItem, LocalPlayer().DragAmount )
+				RunConsoleCommand("rp_transfertocontainer", LocalPlayer().DragContainer, LocalPlayer().DragTarget:GetContainer(), LocalPlayer().DragItemClass, LocalPlayer().DragItemID,LocalPlayer().DragTarget:GetX(), LocalPlayer().DragTarget:GetY())
 			end
-		else
-			--Nothing resulted out of the drag, reverse to normal.
-			LocalPlayer().DragOrigin:SetItem( LocalPlayer().DragItem, LocalPlayer().DragAmount )
-		end
-		if !LocalPlayer().MouseInFrame then
-			LocalPlayer().DragOrigin:DropItem()
+			LocalPlayer().DragTarget = nil
 		end
 	end
-	SavePositions()
-end
-
-/*---------------------------------------------------------
-   Name: OpenMenu
----------------------------------------------------------*/
-function PANEL:OpenMenu()
-
-	local ContextMenu = DermaMenu()
-	if self:GetItem() then
-		if !self:GetItem().Unusable then
-			ContextMenu:AddOption("Use", function() self:UseItem() end)
-		end
-		for k,v in pairs(self:GetItem().RightClick or {}) do
-			ContextMenu:AddOption( k, function() self:UseItem(v) end)
-		end
-		if self:GetItem().Wearable or string.match( self:GetItem().Class, "clothing_" ) or string.match( self:GetItem().Class, "helmet_" ) then
-			ContextMenu:AddOption("Wear", function() RunConsoleCommand( "rp_wearitem", self:GetItem().Class, self:GetItem().ID ) end)
-		end
-		if CAKE.WornItems and table.HasValue( CAKE.WornItems, self:GetItem().ID ) then
-			ContextMenu:AddOption("Take Off", function() RunConsoleCommand( "rp_takeoffitem", self:GetItem().Class, self:GetItem().ID ) end)
-		end
-		if self:GetItem().Wearable and !string.match( self:GetItem().Class, "clothing_" ) and !string.match( self:GetItem().Class, "helmet_" ) then
-			local attachto = ContextMenu:AddSubMenu( "Attach to" )
-			for _, bone in pairs( BoneList ) do
-				attachto:AddOption(bone, function() RunConsoleCommand( "rp_wearitem", self:GetItem().Class, self:GetItem().ID, bone ) end)
-			end
-		end
-		ContextMenu:AddOption("Rename", function() 
-		CAKE.StringRequest( "Rename an Item", "Rename '" .. self:GetItem().Name .. "' to what?", self:GetItem().Name,
-			function( text )
-				LocalPlayer():ConCommand( "rp_renameitem \"" .. self:GetItem().ID .. "\" \"" .. text .. "\"" )
-			end,
-			function() end, "Accept", "Cancel")
-		end)
-		ContextMenu:AddOption("Drop", function() self:DropItem() end)
-		if self.Amount > 1 then ContextMenu:AddOption("Drop All", function() self:DropAllItem() end) end
-	end
-	ContextMenu:Open()
-	
 end
 
 /*---------------------------------------------------------
@@ -529,7 +281,7 @@ end
 ---------------------------------------------------------*/
 function PANEL:OnCursorEntered()
 
-	if LocalPlayer().OnDrag then
+	if LocalPlayer().Drag then
 		LocalPlayer().DragTarget = self
 	end
 
@@ -540,10 +292,49 @@ end
 ---------------------------------------------------------*/
 function PANEL:OnCursorExited()
 
-	if LocalPlayer().OnDrag then
+	if LocalPlayer().Drag then
 		LocalPlayer().DragTarget = nil
 	end
 
+end
+
+
+/*---------------------------------------------------------
+   Name: OpenMenu
+---------------------------------------------------------*/
+function PANEL:OpenMenu()
+	local ContextMenu = DermaMenu()
+	if self:GetItem() and CAKE.ItemData[self.Item] then
+		if !CAKE.ItemData[self:GetItem()].Unusable then
+			ContextMenu:AddOption("Use", function() self:UseItem() end)
+		end
+		for k,v in pairs(CAKE.ItemData[self:GetItem()].RightClick or {}) do
+			ContextMenu:AddOption( k, function() self:UseItem(v) end)
+		end
+		if self:GetWearable() then
+			ContextMenu:AddOption("Wear", function() RunConsoleCommand( "rp_wearitem", self:GetItem(), self:GetItemID() ) end)
+		end
+		if CAKE.WornItems and self:GetItemID() and table.HasValue( CAKE.WornItems, self:GetItemID() ) then
+			ContextMenu:AddOption("Take Off", function() RunConsoleCommand( "rp_takeoffitem", self:GetItem(), self:GetItemID() ) end)
+		end
+		if self:GetWearable() and !string.match( self:GetItem(), "clothing_" ) and !string.match( self:GetItem(), "helmet_" ) then
+			local attachto = ContextMenu:AddSubMenu( "Attach to" )
+			for _, bone in pairs( BoneList ) do
+				attachto:AddOption(bone, function() RunConsoleCommand( "rp_wearitem", self:GetItem(), self:GetItemID(), bone ) end)
+			end
+		end
+		ContextMenu:AddOption("Rename", function() 
+		CAKE.StringRequest( "Rename an Item", "Rename '" .. self:GetName() .. "' to what?", self:GetName(),
+			function( text )
+				LocalPlayer():ConCommand( "rp_renameitem \"" .. self:GetItemID() .. "\" \"" .. text .. "\"" )
+			end,
+			function() end, "Accept", "Cancel")
+		end)
+		ContextMenu:AddOption("Drop", function() self:DropItem() end)
+		ContextMenu:AddOption("Drop All", function() self:DropAllItem() end)
+	end
+	ContextMenu:Open()
+	
 end
 
 --All of the drawing goes here.
@@ -551,37 +342,25 @@ function PANEL:Paint()
 	x, y = self:ScreenToLocal( 0, 0 )
 	surface.SetDrawColor(50,50,50,255)
 	surface.DrawOutlinedRect( 0, 0, self:GetWide(), self:GetTall() )
-	if CAKE.WornItems and self:GetItem() and table.HasValue( CAKE.WornItems, self:GetItem().ID ) then
+	if self.ItemID and CAKE.UData[self.ItemID] and CAKE.UData[self.ItemID].Container then
+		surface.SetDrawColor(0,0,255,255)
+		surface.DrawOutlinedRect( 1, 1, self:GetWide()-1, self:GetTall()-1 )
+		surface.DrawOutlinedRect( 2, 2, self:GetWide()-2, self:GetTall()-2 )	
+	end
+	if CAKE.WornItems and self:GetItemID() and table.HasValue( CAKE.WornItems, self:GetItemID() ) then
 		surface.SetDrawColor(255,0,0,255)
 		surface.DrawOutlinedRect( 1, 1, self:GetWide()-1, self:GetTall()-1 )
 		surface.DrawOutlinedRect( 2, 2, self:GetWide()-2, self:GetTall()-2 )
 	end
 end
 
---Draws the item count
-function PANEL:PaintOver()
-	if self:GetAmount() > 1 then
-		surface.SetTextColor(Color(255,255,255,255))
-		surface.SetFont("TabLarge")
-		surface.SetTextPos( self:GetWide() - 16, self:GetTall() - 14)
-		surface.DrawText( self:GetAmount() )
-	end
-end
-
-/*---------------------------------------------------------
-   Name: Think
----------------------------------------------------------*/
-function PANEL:Think()
-	if !input.IsMouseDown( MOUSE_LEFT ) and LocalPlayer().OnDrag then
-		self:EndDrag()
-	end
-end
-
-
 vgui.Register( "InventorySlot", PANEL, "Panel" )
 
 --Internal to be hooked to the "Inventory" tab on the main menu.
-local function OpenInventory()
+function OpenInventory()
+	if !CAKE.InventoryFrame then
+		CAKE.CreateInventory()
+	end
 	CAKE.InventoryFrame.Display = !CAKE.InventoryFrame.Display
 	CAKE.InventoryFrame:MakePopup()
 	CAKE.InventoryFrame:SetVisible( true )
@@ -598,7 +377,7 @@ local function OpenInventory()
 end
 
 --Same as above.
-local function CloseInventory()
+function CloseInventory()
 	CAKE.InventoryFrame.Display = false
 	CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
 	CAKE.InventoryFrame:SetMouseInputEnabled( false )
@@ -606,41 +385,22 @@ local function CloseInventory()
 	CAKE.InventoryFrame:RequestFocus()
 end
 
-datastream.Hook("addinventory", function(handler, id, encoded, decoded )
+function CAKE.CreateInventory()
 
-	ClearAllSlots()
-
-	InventoryTable = decoded
-
-	for k, v in pairs( decoded ) do
-		possiblename = v.Name
-		possiblemodel = v.Model
-
-		for key, val in pairs(CAKE.ItemData[v.Class]) do
-			v[key] = val
-		end
-
-		if v.Stack == nil then v.Stack = true end
-		v.Name = possiblename or v.Name
-		v.Model = possiblemodel or v.Model
-
-		if !v.Stack then
-			CAKE.InventorySlot[ AvailableSlot( ) ]:AddItem( v )
-		elseif CalculateItemPosition( v.Class ) and CAKE.InventorySlot[ CalculateItemPosition( v.Class ) ] then
-			CAKE.InventorySlot[ CalculateItemPosition( v.Class ) ]:AddItem( v ) 
-		end
+	if CAKE.Inventory == "none" then
+		return
 	end
-	SavePositions()
-	
-end )
 
-hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
-	
-	--Everything related to the layout of the inventory goes here.
+	if CAKE.InventoryFrame then
+		CAKE.InventoryFrame:Remove()
+	end
 
-	LoadPositions()
+	CAKE.InventorySlot = {}
+
+	local container = CAKE.Containers[CAKE.Inventory]
+
 	CAKE.InventoryFrame = vgui.Create( "DFrame" )
-	CAKE.InventoryFrame:SetSize( 560, 260 )
+	CAKE.InventoryFrame:SetSize( 566, 50 + (math.max(CAKE.ConVars[ "PlayerInventoryRows" ],1) * 56) )
 	if CAKE.MinimalHUD:GetBool() then
 		CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, ScrH() )
 	else
@@ -649,16 +409,16 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 	CAKE.InventoryFrame.Display = false
 	CAKE.InventoryFrame:SetDeleteOnClose( false )
 	CAKE.InventoryFrame:SetMouseInputEnabled( true )
+	local x, y
+	local color = CAKE.BaseColor or Color( 100, 100, 115, 150 )
+	local alpha = 0
+	local matBlurScreen = Material( "pp/blurscreen" ) 
 	CAKE.InventoryFrame.OnCursorEntered = function()
 		LocalPlayer().MouseInFrame = true
 	end
 	CAKE.InventoryFrame.OnCursorExited = function()
 		LocalPlayer().MouseInFrame = false
 	end
-	local x, y
-	local color = CAKE.BaseColor or Color( 100, 100, 115, 150 )
-	local alpha = 0
-	local matBlurScreen = Material( "pp/blurscreen" ) 
 	CAKE.InventoryFrame.Paint = function()
 		if CAKE.InventoryFrame.Display then
 			x,y = CAKE.InventoryFrame:GetPos()
@@ -708,61 +468,49 @@ hook.Add( "InitPostEntity", "TiramisuCreateQuickBar", function()
 	CAKE.InventoryFrame.CloseButton:SetDrawBackground( false )
 
 	local grid = vgui.Create( "DGrid", CAKE.InventoryFrame )
-	grid:SetSize( CAKE.InventoryFrame:GetWide(), 55 )
-	grid:SetPos( 2, 23 )
+	grid:Dock(FILL)
 	grid:SetCols( 10 )
 	grid:SetColWide( 56 )
-	grid:SetRowHeight( 52 )
+	grid:SetRowHeight( 56 )
 
-	local icon
-	for i = 1, 10 do
-		icon = vgui.Create( "InventorySlot" )
-		icon:SetIconSize( 48 )
-		CAKE.InventorySlot[ i ] = icon
-		CAKE.InventorySlot[ i ].PaintOver = function()
-			surface.SetTextColor(Color(255,255,255,255))
-			surface.SetFont("Tiramisu12Font")
-			surface.SetTextPos( 3, 3)
-			surface.DrawText( "ALT+" .. i - 1 )
-			if CAKE.InventorySlot[ i ]:GetAmount() > 1 then
-				surface.SetTextPos( CAKE.InventorySlot[ i ]:GetWide() - 16, CAKE.InventorySlot[ i ]:GetTall() - 14)
-				surface.DrawText( CAKE.InventorySlot[ i ]:GetAmount() )
+	for i=1, container.Height do
+		CAKE.InventorySlot[i] = {}
+		for j=1, container.Width do
+			local slot = vgui.Create( "InventorySlot" )
+			slot:SetIconSize( 48 )
+			slot:SetPosition( j, i )
+			slot:SetContainer(CAKE.Inventory)
+			grid:AddItem(slot)
+			CAKE.InventorySlot[i][j] = slot
+		end 
+	end
+
+	CAKE.InventoryFrame.OldThink = CAKE.InventoryFrame.Think
+	CAKE.InventoryFrame.Think = function()
+		CAKE.InventoryFrame:OldThink()
+		if CAKE.Containers[CAKE.Inventory] then
+			if CAKE.Containers[CAKE.Inventory].Resized then
+				CAKE.Containers[CAKE.Inventory].Resized = false
+				CAKE.CreateInventory()
 			end
-		end
-		grid:AddItem( CAKE.InventorySlot[ i ] )
-	end
-
-	local grid2 = vgui.Create( "DGrid", CAKE.InventoryFrame )
-	grid2:SetSize( CAKE.InventoryFrame:GetWide(), 110 )
-	grid2:SetPos( 2, 83 )
-	grid2:SetCols( 10 )
-	grid2:SetColWide( 56 )
-	grid2:SetRowHeight( 56 )
-
-	for i = 11, 40 do
-		icon = vgui.Create( "InventorySlot" )
-		icon:SetIconSize( 48 )
-		CAKE.InventorySlot[ i ] = icon
-		grid2:AddItem( CAKE.InventorySlot[ i ] )
-	end
-
-	local keydown = {}
-	hook.Add( "Think", "TiramisuCheckQuickBarKey", function()
-		if input.IsKeyDown( KEY_LALT )then
-			for i=1, 10 do
-				if input.IsKeyDown( i ) and !keydown[ i ] then
-					if CAKE.InventorySlot[ i ]:GetItem() then
-						CAKE.InventorySlot[ i ]:UseItem()
+			for i, tbl in pairs(CAKE.InventorySlot) do
+				for j, v in pairs(tbl) do
+					if v then
+						if CAKE.Containers[CAKE.Inventory]:IsSlotEmpty(j,i) then
+							v:ClearItem()
+						elseif CAKE.Containers[CAKE.Inventory].Items[i][j] then
+							if v.Item != CAKE.Containers[CAKE.Inventory].Items[i][j].class or (v.ItemID and v.ItemID != CAKE.Containers[CAKE.Inventory].Items[i][j].itemid) then
+								v:SetItem( CAKE.Containers[CAKE.Inventory].Items[i][j].class, CAKE.Containers[CAKE.Inventory].Items[i][j].itemid )
+							end
+						end
 					end
-					keydown[ i ] = true
-				elseif !input.IsKeyDown( i ) and keydown[i] then
-					keydown[ i ] = false
 				end
 			end
 		end
-	end)
+	end
 
-end)
+end
+
 
 function CLPLUGIN.Init()
 	CAKE.RegisterMenuTab( "Inventory", OpenInventory, CloseInventory )

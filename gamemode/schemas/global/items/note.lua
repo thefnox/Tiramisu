@@ -26,9 +26,6 @@ function ITEM:UseItem(ply)
 
 	myid = self:GetNWString("id")
 	datastream.StreamToClients( ply, "Tiramisu.ReadNote", {["title"] = CAKE.GetUData(myid, "name"), ["text"] = CAKE.GetUData(myid, "text")})
-	if !ply:HasItemID( myid ) then
-		ply:GiveItem( "note", myid )
-	end
 
 end
 
@@ -44,7 +41,6 @@ function ITEM:Copy(ply)
 			else 
 				CAKE.SetUData(paper, "uses", uses)
 				CAKE.SetUData(paper, "name", "Paper " ..uses)
-				ply:RefreshInventory()
 			end
 			myid = self:GetNWString("id")
 			name = CAKE.GetUData(myid, "name")

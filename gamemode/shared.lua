@@ -16,7 +16,7 @@ function meta:CanTraceTo( ent, filter ) -- Can the player and the entity "see" e
 		trace.endpos = ent:GetPos()
 	end
 	trace.filter = filter
-	--trace.mask = CONTENTS_SOLID + CONTENTS_MOVEABLE + CONTENTS_OPAQUE + CONTENTS_DEBRIS + CONTENTS_HITBOX + CONTENTS_MONSTER
+	trace.mask = CONTENTS_SOLID
 	
 	local tr = util.TraceLine( trace )
 	

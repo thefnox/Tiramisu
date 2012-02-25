@@ -135,14 +135,12 @@ local function ccFinishCreate( ply, cmd, args )
 		local SteamID = CAKE.FormatText( ply:SteamID() )
 		
 		for fieldname, default in pairs( CAKE.CharacterDataFields ) do
-		
 			if( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ] == nil) then
-
 				CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ] = CAKE.ReferenceFix(default)
-		
 			end
-			
 		end
+
+		CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ]["inventory"] = CAKE.CreatePlayerInventory( ply )
 		
 		ply:SetTeam( 1 )
 		

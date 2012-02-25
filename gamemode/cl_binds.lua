@@ -190,6 +190,16 @@ function GM:GUIMousePressed(mc)
 
 			ContextMenu:Open()
 		end
+	elseif mc == MOUSE_LEFT then
+		local ang = gui.ScreenToVector(gui.MouseX(), gui.MouseY())
+		local tracedata = {}
+		tracedata.start = CAKE.CameraPos
+		tracedata.endpos = CAKE.CameraPos+(ang*2000)
+		tracedata.filter = LocalPlayer()
+		local trace = util.TraceLine(tracedata)
+		if trace.StartPos:Distance( LocalPlayer():EyePos() ) <= 200 and ValidEntity(trace.Entity) then
+			RunConsoleCommand("rp_pickup", trace.Entity:EntIndex())
+		end
 	end
 end
 

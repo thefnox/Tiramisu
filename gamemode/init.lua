@@ -123,9 +123,7 @@ function GM:PlayerSpawn( ply )
 		end
 	end)
 
-	timer.Simple( .5, function()
-		ply:RefreshInventory( )
-	end)
+	ply:RefreshInventory( )
 
 	ply:SetNWInt( "TiramisuAdminLevel", CAKE.PlayerRank(ply) )
 	ply:Give("hands")

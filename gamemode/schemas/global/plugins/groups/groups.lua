@@ -230,10 +230,10 @@ CAKE.RankFields = {}
 --Creates an unique ID for the currently active group.
 function CAKE.CreateGroupID()
 	local repnum = 0
-	local uidfile = file.Read( CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
+	local uidfile = file.Exists( CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
 	while uidfile do
 		repnum = repnum + 1
-		uidfile = file.Read( CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
+		uidfile = file.Exists( CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
 	end
 	return os.time() .. repnum
 end
@@ -289,6 +289,13 @@ function CAKE.FindGroupByName( name )
 	return false
 end
 
+function CAKE.CreateGroupInventory(uid)
+	local container = CAKE.CreateContainerObject()
+	container:SetSize(10,5)
+	container.Group = uid
+	container:Save()
+	return container.UniqueID
+end
 
 function CAKE.CreateGroupObject( filename )
 	local group = FindMetaTable("Group"):New()
@@ -299,11 +306,17 @@ function CAKE.CreateGroupObject( filename )
 			group:SetField( k, v, true )
 		end
 		group.UniqueID = tbl.UniqueID
+		if type(group:GetField("inventory")) == "table" or group:GetField("inventory") == "none" then
+			group:SetField("inventory", CAKE.CreateGroupInventory(group.UniqueID))
+		end
 		group:Save()
 	else
 		group.UniqueID = CAKE.CreateGroupID()
 		for k, v in pairs(CAKE.GroupFields) do
 			group:SetField( k, v, true )
+		end
+		if type(group:GetField("inventory")) == "table" or group:GetField("inventory") == "none" then
+			group:SetField("inventory", CAKE.CreateGroupInventory(group.UniqueID))
 		end
 		group:Save()
 	end
@@ -436,7 +449,7 @@ function PLUGIN.Init()
 	} )
 	CAKE.AddGroupField( "doorgroup", 0 )
 	CAKE.AddGroupField( "notices", {} )
-	CAKE.AddGroupField( "inventory", {} )
+	CAKE.AddGroupField( "inventory", "none" )
 	CAKE.AddGroupField( "defaultrank", "none" )
 	CAKE.AddGroupField( "name", "New Group" )
 	CAKE.AddGroupField( "description", "None available." )

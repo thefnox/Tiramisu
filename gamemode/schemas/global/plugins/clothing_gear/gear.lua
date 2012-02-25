@@ -230,7 +230,6 @@ datastream.Hook( "Tiramisu.GetEditGear", function(ply, handler, id, encoded, dec
 		ent:SetBodygroup( 2, decoded.bodygroup2 )
 		ent:SetBodygroup( 3, decoded.bodygroup3 )
 		CAKE.SaveGear( ply )
-		ply:RefreshInventory( )
 		CAKE.SendGearToClient( ply )
 	end
 end)

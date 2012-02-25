@@ -1,7 +1,7 @@
 CAKE.PermaProps = {}
 
 --Adds a permanent prop to the CAKE.PermaProps table. This is for storage only.
-function CAKE.AddPermaProp( mdl, pos, ang )
+function CAKE.AddPermaProp( mdl, pos, ang, containerid )
 
 	if !CAKE.PermaProps[ game.GetMap( ) ] then
 		CAKE.PermaProps[ game.GetMap( ) ] = {}
@@ -11,6 +11,9 @@ function CAKE.AddPermaProp( mdl, pos, ang )
 	tbl[ "model" ] = mdl
 	tbl[ "position" ] = pos
 	tbl[ "angles" ] = ang
+	if containerid then
+		tbl[ "container" ] = containerid
+	end
 	
 	table.insert( CAKE.PermaProps[ game.GetMap( ) ], tbl )  
 	
@@ -44,6 +47,9 @@ function CAKE.CreatePermaProp( id )
 		prop:SetModel( CAKE.PermaProps[ game.GetMap( ) ][ id ][ "model" ] )
 		prop:SetPos( CAKE.PermaProps[ game.GetMap( ) ][ id ][ "position" ] )
 		prop:SetAngles( CAKE.PermaProps[ game.GetMap( ) ][ id ][ "angles" ] )
+		if CAKE.PermaProps[ game.GetMap( ) ][ id ][ "container" ] then
+			prop:SetNWString("container", CAKE.PermaProps[ game.GetMap( ) ][ id ][ "container" ])
+		end
 		prop:SetUnFreezable( false )
 		prop:SetMoveType( MOVETYPE_NONE )
 		prop.PermaID = id
@@ -74,6 +80,7 @@ function CAKE.LoadPermaProps()
 			timer.Simple( time + 0.1, function()
 				CAKE.CreatePermaProp( k )
 			end)
+			time = time + 0.1
 		end
 	end
 end

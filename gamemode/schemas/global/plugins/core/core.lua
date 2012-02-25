@@ -19,7 +19,6 @@ CAKE.AddDataField( 2, "personality", "default" ) --Don't be making a cult over i
 CAKE.AddDataField( 2, "title", CAKE.ConVars[ "DefaultTitle" ] ) -- What is their default title.
 CAKE.AddDataField( 2, "money", CAKE.ConVars[ "DefaultMoney" ] ) -- How much money do players start out with.
 CAKE.AddDataField( 2, "flags", CAKE.ConVars[ "DefaultFlags" ] ) -- What flags do they start with.
-CAKE.AddDataField( 2, "inventory", CAKE.ConVars[ "DefaultInventory" ] ) -- What inventory do they start with
 CAKE.AddDataField( 2, "gender", "Male" ) -- MAN POWER
 CAKE.AddDataField( 2, "age", 30 ) --Can't think of any puns.
 CAKE.AddDataField( 2, "gear", {} )

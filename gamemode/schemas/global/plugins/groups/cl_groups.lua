@@ -5,6 +5,7 @@ CAKE.Groups = {}
 CAKE.ActiveGroup = "none"
 CAKE.RankPermissions = {}
 CAKE.Factions = {}
+CAKE.SpawnPoints = {}
 
 datastream.Hook( "TiramisuAddToGroupChat", function( handler, id, encoded, decoded )
 	
@@ -48,6 +49,10 @@ datastream.Hook( "Tiramisu.EditCharInfo", function( handler, id, encoded, decode
 	if decoded then
 		CAKE.EditCharacterInfo( decoded )
 	end
+end)
+
+datastream.Hook( "Tiramisu.ReceiveSpawnPoints", function( handler, id, encoded, decoded )
+	CAKE.SpawnPoints = decoded
 end)
 
 datastream.Hook( "Tiramisu.GetSearchResults", function( handler, id, encoded, decoded )
@@ -764,7 +769,9 @@ function CAKE.OpenGroupInfo( tbl )
 	OpenInventory:SetText( "Open Group Inventory" )
 	OpenInventory:SetTall( 30 )
 	OpenInventory.DoClick = function()
-		CAKE.Message( "Feature isn't done yet.", "Error!", "OK" )
+		if tbl.inventory then
+			RunConsoleCommand("rp_opencontainer", tbl.inventory)
+		end
 	end
 	actions:AddItem(OpenInventory)
 

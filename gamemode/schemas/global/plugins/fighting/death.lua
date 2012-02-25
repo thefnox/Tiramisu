@@ -99,17 +99,18 @@ function CAKE.DeathMode( ply, noragdoll )
 	timer.Destroy("deadragdollremove".. ply:SteamID())
 
 	if CAKE.ConVars[ "LoseWeaponsOnDeath" ] then
-		if CAKE.ConVars[ "LoseItemsOnDeath" ] then
-			for k, v in pairs( CAKE.GetCharField( ply, "inventory" ) ) do
-				ply:TakeItem( v )
+		local container = ply:GetInventory()
+		for i, tbl in pairs( ply:GetInventory().Items ) do
+			for j, v in pairs(tbl) do
+				if CAKE.GetUData( v.itemid, "weaponclass" ) or string.match( v.class, "weapon_" ) then
+					container:ClearSlot(j,i)
+				end
 			end
 		end
-		for k, v in pairs( CAKE.GetCharField( ply, "weapons" ) ) do
-			ply:TakeItem( v )
+		if CAKE.ConVars[ "LoseItemsOnDeath" ] then
+			container:Clear()
 		end
-		ply:RemoveAllAmmo( )
-		CAKE.SetCharField( ply, "weapons", {} )
-		CAKE.SetCharField( ply, "ammo", {} )
+		ply:RemoveAllAmmo()
 	end
 	
 	CAKE.DayLog( "script.txt", "Starting death mode for " .. ply:SteamID( ) )

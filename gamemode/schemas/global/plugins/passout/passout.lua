@@ -138,7 +138,7 @@ end
 
 function CAKE.RagDamage( ent, inflictor, attacker, amount )
  
-	if ValidEntity(ent.ply) and ent.ply:Alive() then
+	if ValidEntity(ent.ply) and ent.ply:Alive() and ValidEntity(inflictor) and (inflictor:IsPlayer() or inflictor:IsNPC()) then
 		if CAKE.ConVars[ "DamageWhileUnconcious" ] then
 			ent.ply:SetHealth(ent.ply:Health()-amount)
 			if ent.ply:Health() <= 0 then
