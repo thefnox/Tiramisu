@@ -44,3 +44,29 @@ concommand.Add( "rp_turnintoclothing", function( ply, cmd, args )
 		end
 	end
 end)
+
+concommand.Add("rp_makecontainer", function(ply, cmd, args)
+	if !(args[1] and args[2] and args[3]) then CAKE.SendChat(ply, "Invalid number of arguments!") return end
+	local ent = ents.GetByIndex( tonumber( args[ 1 ] ))
+	local width =  math.Clamp(tonumber(args[2]) or 1, 1, 5)
+	local height = math.Clamp(tonumber(args[3]) or 1, 1, 5)
+	local pickable = util.tobool(args[4])
+	local permanent = !pickable
+	local container = CAKE.CreateContainerObject()
+	container:SetSize(width, height)
+
+	if pickable then
+		local id = CAKE.CreateItemID()
+		CAKE.SetUData(id, "container", container.UniqueID)
+		CAKE.SetUData(id, "creator", ply:Nick() .. ":" .. ply:Name() .. " (" .. ply:SteamID() .. ")")
+		CAKE.SetUData(id, "model", ent:GetModel())
+		CAKE.CreateItem( "container_base", ent:GetPos(), ent:GetAngles(), id )
+		ent:Remove()
+	else
+		ent:SetNWBool("permaprop", true)
+		ent:SetNWString("container", container.UniqueID)
+		ent:SetUnFreezable( false )
+		ent:SetMoveType( MOVETYPE_NONE )
+	end
+	container:Save()
+end)

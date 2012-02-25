@@ -400,7 +400,7 @@ function CAKE.CreateInventory()
 	local container = CAKE.Containers[CAKE.Inventory]
 
 	CAKE.InventoryFrame = vgui.Create( "DFrame" )
-	CAKE.InventoryFrame:SetSize( 566, 50 + (math.max(CAKE.ConVars[ "PlayerInventoryRows" ],1) * 56) )
+	CAKE.InventoryFrame:SetSize( 566, 50 + (math.Clamp(CAKE.ConVars[ "PlayerInventoryRows" ],1,4) * 56) )
 	if CAKE.MinimalHUD:GetBool() then
 		CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, ScrH() )
 	else
@@ -467,24 +467,34 @@ function CAKE.CreateInventory()
 	CAKE.InventoryFrame.CloseButton:SetDrawBorder( false )
 	CAKE.InventoryFrame.CloseButton:SetDrawBackground( false )
 
-	local grid = vgui.Create( "DGrid", CAKE.InventoryFrame )
-	grid:Dock(FILL)
-	grid:SetCols( 10 )
-	grid:SetColWide( 56 )
-	grid:SetRowHeight( 56 )
+	if CAKE.ConVars[ "PlayerInventoryRows" ] <= 4 then
+		local grid = vgui.Create( "DGrid", CAKE.InventoryFrame )
+		grid:Dock(FILL)
+		grid:SetCols( 10 )
+		grid:SetColWide( 56 )
+		grid:SetRowHeight( 56 )
 
-	for i=1, container.Height do
-		CAKE.InventorySlot[i] = {}
-		for j=1, container.Width do
-			local slot = vgui.Create( "InventorySlot" )
-			slot:SetIconSize( 48 )
-			slot:SetPosition( j, i )
-			slot:SetContainer(CAKE.Inventory)
-			grid:AddItem(slot)
-			CAKE.InventorySlot[i][j] = slot
-		end 
+		for i=1, container.Height do
+			CAKE.InventorySlot[i] = {}
+			for j=1, container.Width do
+				local slot = vgui.Create( "InventorySlot" )
+				slot:SetIconSize( 48 )
+				slot:SetPosition( j, i )
+				slot:SetContainer(CAKE.Inventory)
+				grid:AddItem(slot)
+				CAKE.InventorySlot[i][j] = slot
+			end 
+		end
+
+	else
+		CAKE.InventoryFrame.PropertySheet = vgui.Create( "DPropertySheet", CAKE.InventoryFrame )
+		CAKE.InventoryFrame.PropertySheet:SetSize( CAKE.InventoryFrame.Width - 5 , CAKE.InventoryFrame.Height - 30 )
+		CAKE.InventoryFrame.PropertySheet:SetPos( 3, 3 )
+		CAKE.InventoryFrame.PropertySheet:SetShowIcons( false )
+		CAKE.InventoryFrame.PropertySheet.Paint = function()
+		end
+
 	end
-
 	CAKE.InventoryFrame.OldThink = CAKE.InventoryFrame.Think
 	CAKE.InventoryFrame.Think = function()
 		CAKE.InventoryFrame:OldThink()
@@ -508,7 +518,6 @@ function CAKE.CreateInventory()
 			end
 		end
 	end
-
 end
 
 

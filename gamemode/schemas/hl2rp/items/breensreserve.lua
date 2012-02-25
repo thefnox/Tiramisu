@@ -18,6 +18,7 @@ end
 
 function ITEM:UseItem(ply)
 
+	ply:TakeItem("breensreserve")
 	self:Remove()
 
 end

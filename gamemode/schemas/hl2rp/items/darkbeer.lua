@@ -18,6 +18,7 @@ end
 
 function ITEM:UseItem(ply)
 
+	ply:TakeItem("darkbeer")
 	CAKE.DrugPlayer(ply, 3)
 	self:Remove()
 

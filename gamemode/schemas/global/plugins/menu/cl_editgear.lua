@@ -78,51 +78,6 @@ local function FetchWornItems()
 
 end
 
-local function HandleGearEditing( entity, bone, item, name, itemid )
-
-	if entity and ValidEntity( entity ) then
-		StartGearEditor( entity, item, bone, entity:GetDTVector( 1 ), entity:GetDTAngle( 1 ), entity:GetDTVector( 2 ), entity:GetSkin(), name, itemid )
-	else
-		if CAKE.Containers[CAKE.Inventory] then
-			if frame then
-				frame:Remove()
-				frame = nil
-			end
-
-			local frame = vgui.Create( "DFrame", PlayerMenu )
-			frame:SetSize( 360, 423 )
-			frame:Center()
-			frame:SetTitle( "Choose the item you want to use for your gear" )
-
-			local panel = vgui.Create( "DPanelList", frame )
-			panel:SetSize( 350, 390 )
-			panel:SetPos( 5, 28 )
-			panel:SetSpacing( 5 )
-			panel:SetPadding( 5 )
-			panel:EnableHorizontal( true )
-
-			for k, v in pairs(CAKE.Containers[CAKE.Inventory].Items) do
-				if !string.match( v.Class, "clothing" ) and !string.match( v.Class, "helmet" ) then
-					local spawnicon = vgui.Create( "SpawnIcon")
-					spawnicon:SetIconSize( 64 )
-					spawnicon:SetModel(v.Model)
-					spawnicon:SetToolTip(v.Name)
-					spawnicon.DoClick = function()
-						RunConsoleCommand( "rp_setgear", v.Class, bone, v.ID )
-						frame:Remove()
-						frame = nil
-
-					end
-					panel:AddItem( spawnicon )
-				end
-			end
-		else
-			CAKE.Message( "You don't have any items!", "Error!", "OK" )
-		end
-	end
-
-end
-
 function RefreshGearTree()
 	if GearTree then
 		GearTree:Clear( true )
@@ -138,9 +93,6 @@ function RefreshGearTree()
 				if CAKE.Gear and CAKE.Gear[ string.lower( bone ) ] then
 					for __, tbl in pairs( CAKE.Gear[ string.lower( bone ) ] ) do
 						node2 = node:AddNode( tbl.name or tbl.item )
-						node2.DoClick = function()
-							HandleGearEditing( tbl.entity, tbl.item, string.lower( bone ), tbl.name, tbl.itemid )
-						end
 					end
 				end
 			end
@@ -168,7 +120,7 @@ function EditGear()
 
 	PlayerModel = vgui.Create( "PlayerPanel", PlayerMenu )
 	PlayerModel:SetSize( ScrH(), ScrH())
-	PlayerModel:SetPos( ScrW() - ScrH(), 0 )
+	PlayerModel:SetPos( ScrW() - ScrH(), 23 )
 
 
 	local title = Label( "Character Editor", PlayerMenu)
@@ -211,18 +163,20 @@ function EditGear()
 
 	local button
 	if CAKE.Containers[CAKE.Inventory] then
-		for k, v in pairs( CAKE.Containers[CAKE.Inventory].Items ) do
-			if( string.match( v.Class, "clothing" ) ) then
-				button = vgui.Create( "SpawnIcon" )
-				button:SetIconSize( 64 )
-				button:SetModel( v.Model )
-				button:SetToolTip(v.Description)
-				button.DoClick = function()
-					CAKE.Clothing = v.Class
-					CAKE.ClothingID = v.ID
-					RunConsoleCommand("rp_setclothing", CAKE.Clothing, CAKE.Helmet, CAKE.ClothingID, CAKE.HelmetID)
+		for _, tbl in pairs( CAKE.Containers[CAKE.Inventory].Items ) do
+			for k, v in pairs(tbl) do
+				if( v.class and string.match( v.class, "clothing" ) ) then
+					button = vgui.Create( "SpawnIcon" )
+					button:SetIconSize( 64 )
+					button:SetModel( CAKE.ItemData[v.class].Model )
+					button:SetToolTip(CAKE.ItemData[v.class].Description)
+					button.DoClick = function()
+						CAKE.Clothing = v.class
+						CAKE.ClothingID = v.itemid
+						RunConsoleCommand("rp_setclothing", CAKE.Clothing, CAKE.Helmet, CAKE.ClothingID, CAKE.HelmetID)
+					end
+					clist:AddItem( button )
 				end
-				clist:AddItem( button )
 			end
 		end
 	end
@@ -251,18 +205,20 @@ function EditGear()
 	hlist:EnableVerticalScrollbar( true )
 	HelmetCategory:SetContents( hlist )
 
-	for k, v in pairs( CAKE.Containers[CAKE.Inventory].Items ) do
-		if( string.match( v.Class, "helmet" ) ) then
-			button = vgui.Create( "SpawnIcon" )
-			button:SetIconSize( 64 )
-			button:SetModel( v.Model )
-			button:SetToolTip(v.Description)
-			button.DoClick = function()
-				CAKE.Helmet = v.Class
-				CAKE.HelmetID = v.ID
-				RunConsoleCommand("rp_setclothing", CAKE.Clothing, CAKE.Helmet, CAKE.ClothingID, CAKE.HelmetID)
+	for _, tbl in pairs( CAKE.Containers[CAKE.Inventory].Items ) do
+		for k, v in pairs(tbl) do
+			if( v.class and string.match( v.class, "helmet" ) ) then
+				button = vgui.Create( "SpawnIcon" )
+				button:SetIconSize( 64 )
+				button:SetModel( CAKE.ItemData[v.class].Model )
+				button:SetToolTip(CAKE.ItemData[v.class].Description)
+				button.DoClick = function()
+					CAKE.Helmet = v.class
+					CAKE.HelmetID = v.itemid
+					RunConsoleCommand("rp_setclothing", CAKE.Clothing, CAKE.Helmet, CAKE.ClothingID, CAKE.HelmetID)
+				end
+				hlist:AddItem( button )
 			end
-			hlist:AddItem( button )
 		end
 	end
 	button = vgui.Create( "SpawnIcon" )

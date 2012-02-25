@@ -27,7 +27,7 @@ function ITEM:UseItem(ply)
 		
 			table.insert(possible, v)
 			
-		elseif(v != nil and v:IsValid() and v:GetClass() == "prop_ragdoll" and v.isdeathdoll and v.ply:GetNWInt("deathmode") == 1 and v.ply != ply) then
+		elseif(v != nil and v:IsValid() and v:GetClass() == "prop_ragdoll" and v.ply:GetNWInt("deathmode") > 0 and v.ply != ply) then
 		
 			-- This is what makes 'revival' possible, and makes deathmode have a purpose.
 			
@@ -57,7 +57,6 @@ function ITEM:UseItem(ply)
 	end
 	
 	possible[1]:SetHealth(math.Clamp(possible[1]:Health() + 100, 0, possible[1]:MaxHealth()))
-	ply:Say("/me heals " .. possible[1]:Nick())
 	self:Remove()
 
 end

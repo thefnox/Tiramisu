@@ -21,7 +21,6 @@ function ITEM:UseItem(ply)
 	ply:RemoveClothing()
 	CAKE.RemoveAllGear( ply )
 	ply:SetSpecialModel( "models/AntLion.mdl" )
-	ply:GiveItem( "antlion_pill" )
 	self:Remove()
 
 end

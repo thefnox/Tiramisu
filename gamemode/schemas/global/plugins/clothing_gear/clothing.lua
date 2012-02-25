@@ -254,13 +254,9 @@ end
 --Internal function to handle clothing creation.
 function CAKE.HandleClothing( ply, item, ctype, itemid, modeloverride )
 
-	local bodygroup1, bodygroup2, bodygroup3 = 1, 1, 1
 	local model
 
 	if CAKE.ItemData[ item ] then
-		bodygroup1 = CAKE.ItemData[ item ].BodyGroup1 or CAKE.GetUData( itemid, "bodygroup1") or 1
-		bodygroup2 = CAKE.ItemData[ item ].BodyGroup2 or CAKE.GetUData( itemid, "bodygroup2") or 1
-		bodygroup3 = CAKE.ItemData[ item ].BodyGroup3 or CAKE.GetUData( itemid, "bodygroup3") or 1
 		if ply:GetGender() == "Female" and CAKE.ItemData[ item ].FemaleModel then
 			model = CAKE.GetUData( itemid, "model") or CAKE.ItemData[ item ].FemaleModel
 		else
@@ -290,9 +286,6 @@ function CAKE.HandleClothing( ply, item, ctype, itemid, modeloverride )
 	ply.Clothing[ ctype ]:SetParent( ply )
 	ply.Clothing[ ctype ]:SetPos( ply:GetPos() )
 	ply.Clothing[ ctype ]:SetAngles( ply:GetAngles() )
-	ply.Clothing[ ctype ]:SetBodygroup(1, bodygroup1)
-	ply.Clothing[ ctype ]:SetBodygroup(2, bodygroup2)
-	ply.Clothing[ ctype ]:SetBodygroup(3, bodygroup3)
 	if ValidEntity( ply.Clothing[ ctype ]:GetPhysicsObject( ) ) then
 		ply.Clothing[ ctype ]:GetPhysicsObject( ):EnableCollisions( false )
 	end

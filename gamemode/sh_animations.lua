@@ -32,6 +32,26 @@ Anims.MeleeHoldtypes = {
 	"melee"
 }
 
+function Anims.FormatName( mdl )
+	mdl = mdl or ""
+	mdl = string.gsub(mdl, "models/", "")
+	mdl = string.gsub(mdl, ".mdl", "")
+	return mdl
+end
+
+function Anims.AddNonBiped( mdl, idle, walk, run, crouch, jump, aimidle, aimwalk, aimrun )
+	local name = Anims.FormatName( mdl )
+	Anims[name] = {}
+	Anims[name]["idle"] = idle
+	Anims[name]["walk"] = walk
+	Anims[name]["run"] = run
+	Anims[name]["crouch"] = crouch
+	Anims[name]["jump"] = jump
+	Anims[name]["aimidle"] = aimidle or idle
+	Anims[name]["aimwalk"] = aimwalk or walk
+	Anims[name]["aimrun"] = aimrun or run
+end
+
 local meta = FindMetaTable( "Player" )
 local model
 
@@ -427,7 +447,7 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 			end
 		end
 		--print("HEAD YAW:", ply:GetPoseParameter("head_yaw"))
-	elseif (SERVER or ply != LocalPlayer()) and !ply:GetNWBool( "specialmodel", false ) then
+	elseif (SERVER or ply != LocalPlayer()) then
 		--This set of boneparameters are all set to 0 to avoid having the engine setting them to something else, thus resulting in  awkwardly twisted models
 		ply.CurrentLookAt = Angle( 0, 0, 0 )
 		--ply:SetPoseParameter("aim_yaw", 0 )
@@ -652,82 +672,126 @@ function GM:CalcMainActivity( ply, velocity )
 	--This is the hook used to handle sequences, if you need to add additional activities you should check the hook above.
 	--By a general rule you don't have to touch this hook at all.
 
-	local holdtype = "default"
-	if( ValidEntity(ply:GetActiveWeapon()) ) then
-		holdtype = Anims.DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
-	end
-
-	if (holdtype == "default" and ply:GetPersonality() != "default" and !ply:GetNWBool( "specialmodel" )) or CAKE.ConVars[ "LinuxHotfix" ] then
-		holdtype = ply:GetPersonality() --We use the personality custom animation table, rather than the default.
-	end
-
-	ply.CalcIdeal = ACT_IDLE
-	ply.CalcSeqOverride = -1
-	
-	if self:HandleExtraActivities( ply ) or self:HandlePlayerDriving( ply ) or self:HandlePlayerSwimming( ply, velocity ) or
-		self:HandlePlayerJumping( ply ) or
-		self:HandlePlayerDucking( ply, velocity, holdtype ) or self:HandlePlayerVaulting( ply, velocity ) then --We do nothing, I guess, lol.
-	else
-		ply.InEmote = false
+	if ply:GetNWBool("specialmodel") and Anims[Anims.FormatName(ply:GetModel())] then
+		local name = Anims.FormatName(ply:GetModel())
 		local len2d = velocity:Length2D()
-		if ply:GetNWBool( "aiming", false ) then
-			if len2d > 320 then
-				ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sprint" ] )
-				if SERVER then
-					if ply:GetAiming() and !ply.WasAimingBeforeRunning then
-						ply.WasAimingBeforeRunning = true
+		if ply:Crouching() and ply:WaterLevel() <= 0 then
+			ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[name]["crouch"] )
+		elseif !ply:OnGround() or ply:WaterLevel() > 0 then
+			ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[name]["jump"] )
+		else
+			if ply:GetNWBool( "aiming", false ) then
+				if len2d > 135 then
+					ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[name]["aimrun" ] )
+				elseif len2d > 0.1 and len2d <= 135 then
+					if ply.WasAimingBeforeRunning then
+						ply:SetAiming( true )
+						ply.WasAimingBeforeRunning = false
 					end
-					ply:SetAiming( false )
-				end				
-			elseif len2d > 135 and len2d <= 320 then
-				ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
-				if SERVER then
-					if ply:GetAiming() and !ply.WasAimingBeforeRunning then
-						ply.WasAimingBeforeRunning = true
-					end
-					ply:SetAiming( false )
-				end
-			elseif len2d > 0.1 and len2d <= 135 then
-				if ply.WasAimingBeforeRunning then
-					ply:SetAiming( true )
-					ply.WasAimingBeforeRunning = false
-				end
-				ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "aim" ][ "walk" ] )
-			else
-				if ply.WasAimingBeforeRunning then
-					ply:SetAiming( true )
-					ply.WasAimingBeforeRunning = false
-				end
-				if !ply:GetNWBool( "specialmodel" ) then
-					ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "aim" ][ "idle" ] )
+					ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[name]["aimwalk" ] )
 				else
-					ply.CalcIdeal, ply.CalcSeqOverride = ACT_IDLE, -1
+					if ply.WasAimingBeforeRunning then
+						ply:SetAiming( true )
+						ply.WasAimingBeforeRunning = false
+					end
+					ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[name]["aimidle" ] )
+				end
+			else
+				if len2d > 135 then
+					ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[name][ "run" ] )
+				elseif len2d > 0.1 and len2d <= 135 then
+					if ply.WasAimingBeforeRunning then
+						ply:SetAiming( true )
+						ply.WasAimingBeforeRunning = false
+					end
+					ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[name][ "walk" ] )
+				else
+					if ply.WasAimingBeforeRunning then
+						ply:SetAiming( true )
+						ply.WasAimingBeforeRunning = false
+					end
+					ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[name][ "idle" ] )
 				end
 			end
+		end
+	else
+		local holdtype = "default"
+		if( ValidEntity(ply:GetActiveWeapon()) ) then
+			holdtype = Anims.DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
+		end
+
+		if (holdtype == "default" and ply:GetPersonality() != "default" and !ply:GetNWBool( "specialmodel" )) or CAKE.ConVars[ "LinuxHotfix" ] then
+			holdtype = ply:GetPersonality() --We use the personality custom animation table, rather than the default.
+		end
+
+		ply.CalcIdeal = ACT_IDLE
+		ply.CalcSeqOverride = -1
+		
+		if self:HandleExtraActivities( ply ) or self:HandlePlayerDriving( ply ) or self:HandlePlayerSwimming( ply, velocity ) or
+			self:HandlePlayerJumping( ply ) or
+			self:HandlePlayerDucking( ply, velocity, holdtype ) or self:HandlePlayerVaulting( ply, velocity ) then --We do nothing, I guess, lol.
 		else
-			if len2d > 320 then
-				if !ply:GetNWBool( "specialmodel" ) then
+			ply.InEmote = false
+			local len2d = velocity:Length2D()
+			if ply:GetNWBool( "aiming", false ) then
+				if len2d > 320 then
 					ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sprint" ] )
-				else
+					if SERVER then
+						if ply:GetAiming() and !ply.WasAimingBeforeRunning then
+							ply.WasAimingBeforeRunning = true
+						end
+						ply:SetAiming( false )
+					end				
+				elseif len2d > 135 and len2d <= 320 then
 					ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
-				end
-			elseif len2d > 135 and len2d <= 320 then
-				ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
-			elseif len2d > 0.1 and len2d <= 135 then
-				if ply.WasAimingBeforeRunning then
-					ply:SetAiming( true )
-					ply.WasAimingBeforeRunning = false
-				end
-				ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "walk" ] )
-			else
-				if ply.WasAimingBeforeRunning then
-					ply:SetAiming( true )
-					ply.WasAimingBeforeRunning = false
-				end
-				if !ply:GetNWBool( "specialmodel" ) then
-					ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "idle" ] )
+					if SERVER then
+						if ply:GetAiming() and !ply.WasAimingBeforeRunning then
+							ply.WasAimingBeforeRunning = true
+						end
+						ply:SetAiming( false )
+					end
+				elseif len2d > 0.1 and len2d <= 135 then
+					if ply.WasAimingBeforeRunning then
+						ply:SetAiming( true )
+						ply.WasAimingBeforeRunning = false
+					end
+					ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "aim" ][ "walk" ] )
 				else
-					ply.CalcIdeal, ply.CalcSeqOverride = ACT_IDLE, -1
+					if ply.WasAimingBeforeRunning then
+						ply:SetAiming( true )
+						ply.WasAimingBeforeRunning = false
+					end
+					if !ply:GetNWBool( "specialmodel" ) then
+						ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "aim" ][ "idle" ] )
+					else
+						ply.CalcIdeal, ply.CalcSeqOverride = ACT_IDLE, -1
+					end
+				end
+			else
+				if len2d > 320 then
+					if !ply:GetNWBool( "specialmodel" ) then
+						ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ ply:GetPersonality() ][ "sprint" ] )
+					else
+						ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
+					end
+				elseif len2d > 135 and len2d <= 320 then
+					ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "run" ] )
+				elseif len2d > 0.1 and len2d <= 135 then
+					if ply.WasAimingBeforeRunning then
+						ply:SetAiming( true )
+						ply.WasAimingBeforeRunning = false
+					end
+					ply.CalcIdeal, ply.CalcSeqOverride =  HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "walk" ] )
+				else
+					if ply.WasAimingBeforeRunning then
+						ply:SetAiming( true )
+						ply.WasAimingBeforeRunning = false
+					end
+					if !ply:GetNWBool( "specialmodel" ) then
+						ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][  holdtype ][ "idle" ] )
+					else
+						ply.CalcIdeal, ply.CalcSeqOverride = ACT_IDLE, -1
+					end
 				end
 			end
 		end

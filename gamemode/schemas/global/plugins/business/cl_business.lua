@@ -53,13 +53,13 @@ local function OpenBusinessMenu()
 			local icontable = {}
 			for k, item in pairs( BusinessTable[buygroup] ) do
 				local cur = #icontable + 1
-				icontable[cur] = vgui.Create( "InventorySlot" )
+				icontable[cur] = vgui.Create( "ContainerSlot" )
 				icontable[cur]:SetIconSize( 48 )
-				icontable[cur]:SetItem( CAKE.ItemData[item] )
+				icontable[cur]:SetItem( item )
 				icontable[cur]:DisableDrag()
 				icontable[cur].OpenMenu = function()
 					local ContextMenu = DermaMenu()
-					ContextMenu:AddOption("Buy", function() LocalPlayer():ConCommand("rp_buyitem " .. icontable[cur]:GetItem().Class ) end)
+					ContextMenu:AddOption("Buy", function() LocalPlayer():ConCommand("rp_buyitem " .. icontable[cur]:GetItem() ) end)
 					ContextMenu:Open()
 				end
 				icontable[cur].PaintOver = function()
@@ -67,13 +67,14 @@ local function OpenBusinessMenu()
 						surface.SetTextColor(Color(55,200,55,255))
 						surface.SetFont("TiramisuDefaultFont")
 						surface.SetTextPos( icontable[cur]:GetWide() - 20, icontable[cur]:GetTall() - 15)
-						surface.DrawText( icontable[cur]:GetItem().Price or "0" )
+						surface.DrawText( CAKE.ItemData[icontable[cur]:GetItem()].Price or "0" )
 					end
 				end
 				panel:AddItem( icontable[cur] )
 			end
 			for i=#icontable + 1, 60 do
-				icontable[i] = vgui.Create( "InventorySlot" )
+				icontable[i] = vgui.Create( "ContainerSlot" )
+				icontable[i]:DisableDrag()
 				icontable[i]:SetIconSize( 48 )
 				panel:AddItem(icontable[i])
 			end

@@ -1314,3 +1314,15 @@ end
 for _,mdl in pairs(Anims.Female[ "models" ]) do
 	util.PrecacheModel( mdl )
 end
+
+Anims.AddNonBiped( "models/headcrab.mdl", "ACT_IDLE", "ACT_RUN", "ACT_RUN", "ACT_IDLE", "ACT_HEADCRAB_DROWN" )
+Anims.AddNonBiped( "models/headcrabclassic.mdl", "ACT_IDLE", "ACT_RUN", "ACT_RUN", "ACT_IDLE", "ACT_HEADCRAB_DROWN" )
+Anims.AddNonBiped( "models/headcrabblack.mdl", "ACT_IDLE", "ACT_RUN", "ACT_BLACKHEADCRAB_RUN_PANIC", "ACT_IDLE", "ACT_HEADCRAB_DROWN" )
+Anims.AddNonBiped( "models/dog.mdl", "ACT_IDLE", "ACT_WALK", "ACT_RUN", "ACT_IDLE", "ACT_DOG_WAITING" )
+Anims.AddNonBiped( "models/vortigaunt.mdl", "ACT_IDLE", "ACT_WALK", "ACT_RUN", {
+	["type"] = "sequence",
+	["act"] = "ActionIdle"
+}, "ACT_BARNACLE_PULL" )
+Anims.AddNonBiped( "models/pigeon.mdl", "ACT_IDLE", "ACT_WALK", "ACT_RUN", "ACT_HOP", "ACT_FLY" )
+Anims.AddNonBiped( "models/antlion.mdl", "ACT_IDLE", "ACT_WALK", "ACT_RUN", "ACT_GLIDE", "ACT_GLIDE" )
+Anims.AddNonBiped( "models/antlion_guard.mdl", "ACT_IDLE", "ACT_WALK", "ACT_RUN", "ACT_ANTLIONGUARD_PEEK1"," ACT_RUN")

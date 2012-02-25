@@ -1,9 +1,9 @@
-RCLICK.Name = "Make Container"
-RCLICK.SubMenu = "Admin"
+RCLICK.Name = "Clothing out of ragdoll"
+RCLICK.SubMenu = "Create"
 
 function RCLICK.Condition(target)
 
-	if ValidEntity( target) and target:GetClass() == "prop_physics" and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 3 then return true end
+	if ValidEntity( target) and target:GetClass() == "prop_physics" and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) <= 3 then return true end
 
 end
 
@@ -22,7 +22,7 @@ function RCLICK.Click(target,ply)
 	Height:SetValue(1)
 	Height:SetText( "Container Height" )
 	Height:SetMin( 1 ) -- Minimum number of the slider
-	Height:SetMax( 10 ) -- Maximum number of the slider
+	Height:SetMax( 5 ) -- Maximum number of the slider
 	Height:SetDecimals( 0 ) -- Sets a decimal. Zero means it's a whole number
 	InnerPanel:AddItem(Height)
 
@@ -30,7 +30,7 @@ function RCLICK.Click(target,ply)
 	Width:SetValue(1)
 	Width:SetText( "Container Width" )
 	Width:SetMin( 1 ) -- Minimum number of the slider
-	Width:SetMax( 10 ) -- Maximum number of the slider
+	Width:SetMax( 5 ) -- Maximum number of the slider
 	Width:SetDecimals( 0 ) -- Sets a decimal. Zero means it's a whole number
 	InnerPanel:AddItem(Width)
 
@@ -50,7 +50,7 @@ function RCLICK.Click(target,ply)
 	Button:SetTall( 20 )
 	Button:SetWide( Button:GetWide() + 20 )
 	Button:SetPos( 5, 5 )
-	Button.DoClick = function() Window:Close() ply:ConCommand("rp_admin makecontainer " .. target:EntIndex() .. " " .. tostring(Width:GetValue()) .. " " ..  tostring(Height:GetValue()) .. " " .. tostring(CheckBox:GetChecked()) ) end
+	Button.DoClick = function() Window:Close() ply:ConCommand("rp_makecontainer " .. target:EntIndex() .. " " .. tostring(Width:GetValue()) .. " " ..  tostring(Height:GetValue()) .. " " .. tostring(CheckBox:GetChecked()) ) end
 
 	local ButtonCancel = vgui.Create( "DButton", ButtonPanel )
 	ButtonCancel:SetText( "Cancel" )
