@@ -41,7 +41,7 @@ datastream.Hook( "TiramisuAddToOOC", function( handler, id, encoded, decoded )
 	text = text:gsub("</font>", "")
 	text = text:gsub("<%s*%w*%s*=%s*%w*%s*,%s*%w*%s*,%s*%w*%s*,%s*%w*%s*>", "")
 	text = text:gsub("</color>", "")
-	CAKE.Chatbox:AddLine(  "<font=TiramisuOOCFont><color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>:" .. text .. "</color></font>", "OOC", "TiramisuOOCFontOutline" )
+	CAKE.Chatbox:AddLine(  "<font=TiramisuOOCFont><color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>:" .. text .. "</color></font>", "OOC", "" ,"TiramisuOOCFontOutline" )
 
 	text = "[OOC]" .. playername .. ": " .. text
 
@@ -133,34 +133,53 @@ function PANEL:AddChannel( name, description, handler, cantclose )
 	if !self.Channels[ name ] then
 		local panel = vgui.Create( "DPanelList" )
 		panel:EnableVerticalScrollbar(true)
+		panel.Lines = 0
+		local offset = 0
 		panel.Paint = function()
+			offset = 0
 			draw.RoundedBox( 4, 0, 0, panel:GetWide(), panel:GetTall(), Color( 50, 50, 50, self.Alpha ) )
 			if panel.VBar and panel.VBar.Enabled then
 				panel.VBar:SetVisible( self.Open )
 			end
 			render.SetScissorRect( 4, 0, 0, panel:GetWide(), panel:GetTall(), true )
-			for _, pnl in pairs( panel:GetItems() ) do
-				x, y = pnl:GetPos()
-				if panel.VBar then
-					y = y - panel.VBar:GetScroll()
-				end
-				if pnl.StrOutline then
-					steps = (pnl.StrOutline.OutlineSize*2) / 3
-					if ( steps < 1 )  then steps = 1 end
-					for _x=-pnl.StrOutline.OutlineSize, pnl.StrOutline.OutlineSize, steps do
-						for _y=-pnl.StrOutline.OutlineSize, pnl.StrOutline.OutlineSize, steps do
-							pnl.StrOutline:Draw(x+(_x)+2, y+(_y), pnl.Align, pnl.VerticalAlign, pnl.Alpha)
-						end
+			for i = math.max(panel.Lines - CAKE.ConVars[ "MaxChatLines" ],1), panel.Lines do
+				local pnl = panel.Items[i]
+				if pnl and pnl:Valid() then
+					if self.Open then
+						pnl.Alpha = 255
+						pnl.timestamp = CurTime()
 					end
-				end
-				if pnl.StrOutlineCheap then
-					pnl.StrOutlineCheap:Draw(x+2, y, pnl.Align, pnl.VerticalAlign, pnl.Alpha )		
-				end
-				if pnl.Str then
-					pnl.Str:Draw(x+2, y, pnl.Align, pnl.VerticalAlign, pnl.Alpha )
+					x, y = 0, offset
+					if panel.VBar then
+						y = y - panel.VBar:GetScroll()
+					end
+					if pnl.StrOutlineCheap then
+						pnl.StrOutlineCheap:Draw(x+2, y, pnl.Align, pnl.VerticalAlign, pnl.Alpha )		
+					end
+					if pnl.Str then
+						pnl.Str:Draw(x+2, y, pnl.Align, pnl.VerticalAlign, pnl.Alpha )
+					end
+					offset = offset + pnl:GetTall()
 				end
 			end
 			render.SetScissorRect( 4, 0, 0, panel:GetWide(), panel:GetTall(), false )
+		end
+		panel.AddItem = function(pnl, item)
+			panel.Lines = panel.Lines + 1
+
+			if panel.Lines > CAKE.ConVars[ "MaxChatLines" ] then
+				panel.Items[panel.Lines - CAKE.ConVars[ "MaxChatLines" ]]:Remove()
+				panel.Items[panel.Lines - CAKE.ConVars[ "MaxChatLines" ]] = nil
+			end
+
+			if (!item || !item:IsValid()) then return end
+
+			item:SetVisible( true )
+			item:SetParent( panel:GetCanvas() )
+			panel.Items[panel.Lines] = item 
+
+			panel:InvalidateLayout()
+
 		end
 		self.Channels[ name ] = panel
 		local tab = self.PropertySheet:AddSheet( name, panel, "", false, false, description or name )
@@ -227,58 +246,22 @@ function PANEL:AddLine( text, channel, handler, outline )
 		label = MarkupLabel( text, self.Width - 30)
 	end
 	local number = self.Lines + 1
-	if !self.Channels[ "All" ].Lines then
-		self.Channels[ "All" ].Lines = 0
-	end
-	self.Channels[ "All" ].Lines = self.Channels[ "All" ].Lines + 1
 	label.Paint = function() end
-	label.channelid = self.Channels[ "All" ].Lines
 	label.numberid = number
 	label.timestamp = CurTime()
 	self.Channels[ "All" ]:AddItem( label )
-	local tbl = self.Channels[ "All" ]:GetItems()
-	local low = 999999999999
-	local lowest
-	local tblcount = #tbl
-	if tblcount > CAKE.ConVars[ "MaxChatLines" ] then
-		for i = tblcount - CAKE.ConVars[ "MaxChatLines" ], tblcount do
-			local v = tbl[i] or NULL
-			if v and v:Valid() and v.channelid <= self.Channels[ "All" ].Lines - CAKE.ConVars[ "MaxChatLines" ] then
-				self.Channels[ "All" ]:RemoveItem(v)
-				break
-			end
-		end
-	end
 	
 	if channel then
 		self:AddChannel( channel, channel, handler )
-		if !self.Channels[ channel ].Lines then
-			self.Channels[ channel ].Lines = 0
-		end
-		self.Channels[ channel ].Lines = self.Channels[ channel ].Lines + 1
 		if outline then
 			label = MarkupLabelOutlineCheap( text, self.Width - 30, outline, Color( 0,0,0, 255) )
 		else
 			label = MarkupLabel( text, self.Width - 30)
 		end
-		label.channelid = self.Channels[ channel ].Lines
 		label.numberid = number
 		label.timestamp = CurTime()
 		label.Paint = function() end
 		self.Channels[ channel ]:AddItem( label )
-
-		tbl = self.Channels[ channel ]:GetItems()
-		low = 999999999999
-		local tblcount = #tbl
-		if #tbl > CAKE.ConVars[ "MaxChatLines" ] then
-			for i = tblcount - CAKE.ConVars[ "MaxChatLines" ], tblcount do
-				local v = tbl[i] or NULL
-				if v and v:Valid() and v.channelid <= self.Channels[ channel ].Lines - CAKE.ConVars[ "MaxChatLines" ] then
-					self.Channels[ channel ]:RemoveItem(v)
-					break
-				end
-			end
-		end
 	end
 
 	timer.Simple( 0.1, function()
@@ -338,16 +321,19 @@ end
 ---------------------------------------------------------*/
 --Calculations to determine which lines fade out.
 local linetbl = {}
+local tblcount
+local tbl
 function PANEL:Think()
-	for k, v in pairs(self.Channels) do
-		if v and v:Valid() and v:GetItems() then
-			for _, pnl in pairs(v:GetItems()) do
-				pnl = pnl or NULL
-				if pnl:Valid() and pnl.timestamp + 10 < CurTime() then
-					if !self.Open then
-						pnl:SetAlpha( Lerp( 0.05, pnl:GetAlpha() , 0 ) )
-					else
-						pnl:SetAlpha( 255 )
+	if !self.Open then
+		for k, v in pairs(self.Channels) do
+			if v and v:Valid() and v:GetItems() then
+				tbl = v:GetItems()
+				tblcount = v.Lines or 0
+				if tblcount > 0 then
+					for i = tblcount - 20, tblcount do
+						if tbl[i] and tbl[i]:Valid() and tbl[i].timestamp + 10 < CurTime() then
+							tbl[i]:SetAlpha( 255 - (CurTime()-tbl[i].timestamp + 10) * 10 )
+						end				
 					end
 				end
 			end
