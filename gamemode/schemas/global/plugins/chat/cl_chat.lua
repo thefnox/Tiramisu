@@ -154,7 +154,7 @@ function PANEL:AddChannel( name, description, handler, cantclose )
 						y = y - panel.VBar:GetScroll()
 					end
 					if pnl.StrOutlineCheap then
-						pnl.StrOutlineCheap:Draw(x+2, y, pnl.Align, pnl.VerticalAlign, pnl.Alpha )		
+						pnl.StrOutlineCheap:Draw(x+3, y+1, pnl.Align, pnl.VerticalAlign, pnl.Alpha )		
 					end
 					if pnl.Str then
 						pnl.Str:Draw(x+2, y, pnl.Align, pnl.VerticalAlign, pnl.Alpha )

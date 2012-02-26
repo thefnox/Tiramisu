@@ -56,15 +56,15 @@ surface.CreateFont(CAKE.ConVars[ "MenuFont" ], 14, 500, true, false, "Tiramisu14
 surface.CreateFont(CAKE.ConVars[ "MenuFont" ], 14, 300, true, false, "TiramisuDefaultFont") -- Replacement for "Default"
 surface.CreateFont(CAKE.ConVars[ "MenuFont" ], 12, 400, true, false, "Tiramisu12Font", true ) -- Smallest, used in tabs and the quick menu
 surface.CreateFont(CAKE.ConVars[ "WhisperFont" ], 12, 500, true, false, "TiramisuWhisperFont") -- Used only for whispering
-surface.CreateFont(CAKE.ConVars[ "WhisperFont" ], 12, 500, true, false, "TiramisuWhisperFontOutline", false, true, 2)
+surface.CreateFont(CAKE.ConVars[ "WhisperFont" ], 12, 500, true, false, "TiramisuWhisperFontOutline", false, false)
 surface.CreateFont(CAKE.ConVars[ "YellFont" ], 24, 700, true, false, "TiramisuYellFont") -- Used only for yelling
-surface.CreateFont(CAKE.ConVars[ "YellFont" ], 24, 700, true, false, "TiramisuYellFontOutline", false, true, 2)
+surface.CreateFont(CAKE.ConVars[ "YellFont" ], 24, 700, true, false, "TiramisuYellFontOutline", false, false)
 surface.CreateFont(CAKE.ConVars[ "ChatFont" ], 16, 500, true, false, "TiramisuChatFont")
-surface.CreateFont(CAKE.ConVars[ "ChatFont" ], 16, 500, true, false, "TiramisuChatFontOutline", false, true, 2)
+surface.CreateFont(CAKE.ConVars[ "ChatFont" ], 16, 500, true, false, "TiramisuChatFontOutline", false, false)
 surface.CreateFont(CAKE.ConVars[ "EmoteFont" ], 16,500, true, false, "TiramisuEmoteFont")
-surface.CreateFont(CAKE.ConVars[ "EmoteFont" ], 16,500, true, false, "TiramisuEmoteFontOutline", false, true, 2)
+surface.CreateFont(CAKE.ConVars[ "EmoteFont" ], 16,500, true, false, "TiramisuEmoteFontOutline", false, false)
 surface.CreateFont(CAKE.ConVars[ "OOCFont" ], 16, 500, true, false, "TiramisuOOCFont")
-surface.CreateFont(CAKE.ConVars[ "OOCFont" ], 16, 500, true, false, "TiramisuOOCFontOutline", false, true, 2)
+surface.CreateFont(CAKE.ConVars[ "OOCFont" ], 16, 500, true, false, "TiramisuOOCFontOutline", false, false)
 surface.CreateFont(CAKE.ConVars[ "NoteFont" ], 18, 500, true, false, "TiramisuNoteFont" )
 surface.CreateFont(CAKE.ConVars[ "NamesFont"], 20, 400, true, false, "TiramisuNamesFont" ) --Font used for names
 surface.CreateFont(CAKE.ConVars[ "TitlesFont"], 14, 400, true, false, "TiramisuTitlesFont" ) --Font used for titles
