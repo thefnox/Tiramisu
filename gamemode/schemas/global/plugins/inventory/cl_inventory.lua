@@ -400,7 +400,7 @@ function CAKE.CreateInventory()
 	local container = CAKE.Containers[CAKE.Inventory]
 
 	CAKE.InventoryFrame = vgui.Create( "DFrame" )
-	CAKE.InventoryFrame:SetSize( 566, 50 + (math.Clamp(CAKE.ConVars[ "PlayerInventoryRows" ],1,4) * 56) )
+	CAKE.InventoryFrame:SetSize( 566, 50 + (math.Clamp(CAKE.Containers[CAKE.Inventory].Height,1,4) * 56) )
 	if CAKE.MinimalHUD:GetBool() then
 		CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, ScrH() )
 	else
@@ -487,7 +487,7 @@ function CAKE.CreateInventory()
 	CAKE.InventoryFrame.CloseButton:SetDrawBorder( false )
 	CAKE.InventoryFrame.CloseButton:SetDrawBackground( false )
 
-	if CAKE.Containers[CAKE.Inventory].Height <= 4 or CAKE.Containers[CAKE.Inventory].Height == 0 then
+	if CAKE.Containers[CAKE.Inventory].Height <= 4 then
 		local grid = vgui.Create( "DGrid", CAKE.InventoryFrame )
 		grid:Dock(FILL)
 		grid:SetCols( 10 )
@@ -505,8 +505,7 @@ function CAKE.CreateInventory()
 				CAKE.InventorySlot[i][j] = slot
 			end 
 		end
-
-	else
+	elseif CAKE.Containers[CAKE.Inventory].Height > 4 then
 		CAKE.InventoryFrame.PropertySheet = vgui.Create( "DPropertySheet", CAKE.InventoryFrame )
 		CAKE.InventoryFrame.PropertySheet:Dock(FILL)
 		CAKE.InventoryFrame.PropertySheet:SetShowIcons( false )
@@ -569,7 +568,6 @@ function CAKE.CreateInventory()
 				end
 			end
 		end
-		CAKE.InventoryFrame:SetSize(576, 70 + 4 * 56)
 	end
 	CAKE.InventoryFrame.OldThink = CAKE.InventoryFrame.Think
 	CAKE.InventoryFrame.Think = function()

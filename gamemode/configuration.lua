@@ -6,7 +6,7 @@ CAKE.ConVars[ "LinuxHotfix" ] = false -- TURN THIS ON ONLY IF YOUR SERVER USES L
 CAKE.ConVars[ "ForceJigglebones" ] = true --Forces jigglebones on all clients. Turns this off if you know it causes performance problems. 
 
 CAKE.ConVars[ "Tiramisu" ] = "2"
-CAKE.ConVars[ "Schema" ] = "hl2rp" -- What folder is schema data being loaded from?
+CAKE.ConVars[ "Schema" ] = "freeform" -- What folder is schema data being loaded from?
 
 --General config
 CAKE.ConVars[ "AllowVoices" ] = true --Set this to false to disable rp_voice. This is HL2 chatter, not actual microphone speech.
@@ -81,8 +81,8 @@ CAKE.ConVars[ "FadeToBlackOnDeath" ] = true --Set this to false if you want to d
 CAKE.ConVars[ "Respawn_Timer" ] = 10 --Time in seconds that it takes for people to be allowed to respawn.
 CAKE.ConVars[ "Instant_Respawn" ] = false --Respawn instantly or allow people to lay dead for a while.
 CAKE.ConVars[ "DeathRagdoll_Linger" ] = 30 --Time in seconds that it takes for ragdolls to dissapear, set to 0 if you want corpses to stay forever
-CAKE.ConVars[ "AllowRescaling" ] = false --Allows you to change the size of your current clothes.
-CAKE.ConVars[ "AllowBodygroups" ] = false --Allows you to change the body group of your current clothes.
+CAKE.ConVars[ "AllowRescaling" ] = true --Allows you to change the size of your current clothes.
+CAKE.ConVars[ "AllowBodygroups" ] = true --Allows you to change the body group of your current clothes.
 
 --Tooltrust
 CAKE.ConVars[ "DefaultPhysgun" ] = false -- Are players banned from the physics gun when they first start.
