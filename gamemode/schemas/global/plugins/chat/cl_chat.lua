@@ -240,17 +240,16 @@ function PANEL:AddLine( text, channel, handler, outline )
 	local low = 999999999999
 	local lowest
 	local tblcount = #tbl
-	if #tbl > CAKE.ConVars[ "MaxChatLines" ] then
-		for k, v in pairs(tbl) do
-			v = v or NULL
-			if v:Valid() and v.channelid <= self.Channels[ "All" ].Lines - CAKE.ConVars[ "MaxChatLines" ] then
+	if tblcount > CAKE.ConVars[ "MaxChatLines" ] then
+		for i = tblcount - CAKE.ConVars[ "MaxChatLines" ], tblcount do
+			local v = tbl[i] or NULL
+			if v and v:Valid() and v.channelid <= self.Channels[ "All" ].Lines - CAKE.ConVars[ "MaxChatLines" ] then
 				self.Channels[ "All" ]:RemoveItem(v)
 				break
 			end
 		end
 	end
-	print(tblcount)
-
+	
 	if channel then
 		self:AddChannel( channel, channel, handler )
 		if !self.Channels[ channel ].Lines then
@@ -272,9 +271,9 @@ function PANEL:AddLine( text, channel, handler, outline )
 		low = 999999999999
 		local tblcount = #tbl
 		if #tbl > CAKE.ConVars[ "MaxChatLines" ] then
-			for k, v in pairs(tbl) do
-				v = v or NULL
-				if v:Valid() and v.channelid <= self.Channels[ channel ].Lines - CAKE.ConVars[ "MaxChatLines" ] then
+			for i = tblcount - CAKE.ConVars[ "MaxChatLines" ], tblcount do
+				local v = tbl[i] or NULL
+				if v and v:Valid() and v.channelid <= self.Channels[ channel ].Lines - CAKE.ConVars[ "MaxChatLines" ] then
 					self.Channels[ channel ]:RemoveItem(v)
 					break
 				end
