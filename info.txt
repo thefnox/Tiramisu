@@ -1,12 +1,12 @@
 "Gamemode"
 {
 	"name"		"Tiramisu"
-	"version"	"1.2"
+	"version"	"2"
 
-	"author_name"	"FNox and Ryaga"
+	"author_name"	"FNox and Matt B"
 	"author_email"	""
 	"author_url"	""
 	
-	"info"		"The free and better alternative."
+	"info"		"A revolution in RP gamemodes"
 	"hide"		"0"
 }

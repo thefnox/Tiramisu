@@ -40,7 +40,7 @@ datastream.Hook( "Tiramisu.ReceiveUData", function( handler, id, encoded, decode
 	CAKE.UData[uid].Container = decoded.container
 	if CAKE.InventorySlot then
 		for _, tbl in pairs(CAKE.InventorySlot) do
-			for k, v in pairs(CAKE.InventorySlot) do
+			for k, v in pairs(tbl) do
 				if v and v.Item and CAKE.ItemData[v.Item] and v.ItemID and v.ItemID == uid then
 					v:SetTooltip(decoded.name .. "\n" .. CAKE.ItemData[v.Item].Description or "" )
 				end

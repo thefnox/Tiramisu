@@ -128,20 +128,9 @@ function CAKE.SetClothing( ply, clothing, helmet, clothingid, helmetid )
 			item = clothing
 		end
 
-		if CAKE.ItemData[ item ] then
-			if ply:GetGender() == "Female" and CAKE.ItemData[ item ].FemaleModel then
-				ply:SetNWString( "model", CAKE.GetUData( clothingid, "model") or CAKE.ItemData[ item ].FemaleModel )
-			else
-				ply:SetNWString( "model", CAKE.GetUData( clothingid, "model") or CAKE.ItemData[ item ].Model )
-			end
-		else
-			ply:SetNWString( "model", CAKE.GetCharField( ply, "model" ) )
-		end
-
 	elseif !clothing or clothing == "none" then
 
 		CAKE.HandleClothing( ply, "none" , CLOTHING_FULL, "none" )
-		ply:SetNWString( "model", CAKE.GetCharField( ply, "model" ) )
 
 	end
 

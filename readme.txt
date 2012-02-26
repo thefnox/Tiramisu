@@ -1,7 +1,3 @@
-NOTE: DO NOT DOWNLOAD REPO! IT'S NOT STABLE!
-
-We're working here!
-
 Right, so, changelog.
 
 --GENERAL
@@ -72,3 +68,6 @@ Right, so, changelog.
 * Moved ALL the configuration options to configuration.lua, including clientside options too, this is to easen up the task of editing Tiramisu
 
 * Moved ALL the VGUI and HUD drawing hooks to a single cl_skin.lua file, using derma.Hook. You can now change the way each and every element of the schema looks just by modifying a single file.
+
+
+There's really so much more stuff there that I'm forgetting to add. So why not just go ahead, download the script, and try it!

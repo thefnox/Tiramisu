@@ -127,13 +127,6 @@ function meta:ConCommand( cmd ) --Rewriting this due to Garry fucking it up.
 	umsg.End()
 end
 
---Does the player have a character currently loaded?
-function meta:IsCharLoaded()
-	
-	return self:GetNWBool( "charloaded", false )
-
-end
-
 function CAKE.ChangeMoney( ply, amount ) -- Modify someone's money amount.
 
 	-- Come on, Nori, how didn't you see the error in this?

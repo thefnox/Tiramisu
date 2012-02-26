@@ -1,61 +1,45 @@
-CAKE.Voices = { } -- I hear voices D:>
-
-function ccVoice( ply, cmd, args ) -- People near you will hear the voice
-
+concommand.Add( "rp_voice", function(ply, cmd, args)
 	local id = args[ 1 ]
 	
-	if( CAKE.Voices[ id ] == nil ) then
-
-		CAKE.SendConsole( ply, "This sound does not exist. Use rp_listvoices" )
+	if !CAKE.Voices[ id ] then
+		CAKE.SendError( ply, "This sound does not exist. Use rp_listvoices" )
 		return
-		
+	end
+
+	if !CAKE.CanVoice(ply, CAKE.Voices[ id ].Group) then
+		CAKE.SendError( ply, "You don't have permission to use that voice." )
+		return		
 	end
 
 	local voice = CAKE.Voices[ id ]
+
+	local path
+	if ply:GetGender() == "Female" then
+		path = CAKE.Voices[ id ].FemalePath
+	else
+		path = CAKE.Voices[ id ].MalePath
+	end
+
+	util.PrecacheSound( path )
+	ply:EmitSound( path )
+end )
+
+concommand.Add( "rp_listvoices", function(ply, cmd, args)
+
+	CAKE.SendConsole( ply, "---List of Voices---" )
+	CAKE.SendConsole( ply, "Please note, these are only for your current permissions" )
 	
-	if( CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "soundgroup" ) and CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "soundgroup" ) == voice.soundgroup ) then
-		
-		local path = voice.path
-		
-		if((string.find(string.lower(ply:GetModel()), "female") or string.lower(ply:GetModel()) == "models/alyx.mdl") and voice.femalealt != "") then
-			path = voice.femalealt
+	for voicegroup, _ in pairs(CAKE.VoiceGroups) do
+
+		if CAKE.CanVoice(ply, voicegroup) then
+			CAKE.SendConsole( ply, "--" .. voicegroup .. "--\n\n" )
+			for k, v in pairs(CAKE.Voices) do
+				if v.Group == voicegroup then
+					CAKE.SendConsole( ply, k .. " - " .. voice.Name .. " - " .. voice.MalePath )
+				end
+			end
+			CAKE.SendConsole( ply, "\n")
 		end
-			
-		util.PrecacheSound( path )
-		ply:EmitSound( path )
-		ply:ConCommand( "say " .. voice.line .. "\n" )
-		
 	end
 	
-end
-concommand.Add( "rp_voice", ccVoice )
-
-function ccListVoice( ply, cmd, args ) -- LIST DA FUKKEN VOICES
-
-	CAKE.SendConsole( ply, "---List of CakeScript Voices---" )
-	CAKE.SendConsole( ply, "Please note, these are only for your current flag" )
-	
-	for _, voice in pairs(CAKE.Voices) do
-
-		if( CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "soundgroup" ) and CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "soundgroup" ) == voice.soundgroup ) then
-		
-			CAKE.SendConsole( ply, _ .. " - " .. voice.line .. " - " .. voice.path )
-			
-		end
-		
-	end
-	
-end
-concommand.Add( "rp_listvoices", ccListVoice )
-
-function CAKE.AddVoice( id, path, soundgroup, text, fa) -- Registers a voice command. FA is the female alternative to the voice.
-
-	local voice = { }
-	voice.path = path
-	voice.soundgroup = CAKE.NilFix(soundgroup, 0)
-	voice.line = CAKE.NilFix(text, "")
-	voice.femalealt = CAKE.NilFix(fa, "")
-	
-	CAKE.Voices[ id ] = voice
-	
-end
+end )

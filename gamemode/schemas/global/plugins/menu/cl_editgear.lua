@@ -93,6 +93,9 @@ function RefreshGearTree()
 				if CAKE.Gear and CAKE.Gear[ string.lower( bone ) ] then
 					for __, tbl in pairs( CAKE.Gear[ string.lower( bone ) ] ) do
 						node2 = node:AddNode( tbl.name or tbl.item )
+						node2.DoClick = function()
+							StartGearEditor( tbl.entity, tbl.item, bone, tbl.entity:GetDTVector( 1 ), tbl.entity:GetDTAngle( 1 ), tbl.entity:GetDTVector( 2 ), tbl.entity:GetSkin(), tbl.name )
+						end
 					end
 				end
 			end
@@ -764,6 +767,8 @@ end)
 
 usermessage.Hook( "clearclothing", function( um )
 	CAKE.ClothingTbl = {}
+	CAKE.Helmet = "none"
+	CAKE.Clothing = "none"
 end)
 
 
@@ -798,6 +803,13 @@ usermessage.Hook( "addclothing", function( um )
 
 	entity.item = item 
 	entity.itemid = itemid
+
+	if string.match(item, "helmet_") then
+		CAKE.Helmet = item
+	end
+	if string.match(item, "clothing_") then
+		CAKE.Clothing = item
+	end
 
 	table.insert( CAKE.ClothingTbl, entity )
 	FetchWornItems()

@@ -49,6 +49,13 @@ function meta:CalcDrop( )
 	
 end
 
+--Does the player have a character currently loaded?
+function meta:IsCharLoaded()
+	
+	return self:GetNWBool( "charloaded", false )
+
+end
+
 --Returns a door's title
 function CAKE.GetDoorTitle( door )
 	return door:GetNWString( "doortitle", "" )
