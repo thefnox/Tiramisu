@@ -69,6 +69,26 @@ Anims.Male[ "default" ] = {
 	[ "sit" ] = "ACT_BUSY_SIT_CHAIR",
 	[ "sitentry" ] = "ACT_BUSY_SIT_CHAIR_ENTRY",
 	[ "sitexit" ] = "ACT_BUSY_SIT_CHAIR_EXIT",
+	[ "drivejeep" ] = {
+		["model"] = "models/player/breen.mdl",
+		["type"] = "sequence",
+		["act"] = "drive_jeep"
+	},
+	[ "driveairboat" ] = {
+		["model"] = "models/player/breen.mdl",
+		["type"] = "sequence",
+		["act"] = "drive_airboat"
+	},
+	[ "drive_pd" ] = {
+		["model"] = "models/player/breen.mdl",
+		["type"] = "sequence",
+		["act"] = "drive_pd"
+	},
+	[ "drive_chair" ] = {
+		["model"] = "models/player/breen.mdl",
+		["type"] = "sequence",
+		["act"] = "sit_rollercoaster"
+	},
 	[ "swim" ] = {
 		["model"] = "models/player/breen.mdl",
 		["type"] = "switch",
@@ -774,6 +794,26 @@ Anims.Female[ "default" ] = {
 	[ "land" ] = "ACT_LAND",
 	[ "fly" ] = "ACT_GLIDE",
 	[ "sit" ] = "ACT_BUSY_SIT_CHAIR",
+	[ "drivejeep" ] = {
+		["model"] = "models/player/mossman.mdl",
+		["type"] = "sequence",
+		["act"] = "drive_jeep"
+	},
+	[ "driveairboat" ] = {
+		["model"] = "models/player/mossman.mdl",
+		["type"] = "sequence",
+		["act"] = "drive_airboat"
+	},
+	[ "drive_pd" ] = {
+		["model"] = "models/player/mossman.mdl",
+		["type"] = "sequence",
+		["act"] = "drive_pd"
+	},
+	[ "drive_chair" ] = {
+		["model"] = "models/player/mossman.mdl",
+		["type"] = "sequence",
+		["act"] = "sit_rollercoaster"
+	},
 	[ "swim" ] = {
 		["model"] = "models/player/mossman.mdl",
 		["type"] = "sequence",
@@ -1323,6 +1363,6 @@ Anims.AddNonBiped( "models/vortigaunt.mdl", "ACT_IDLE", "ACT_WALK", "ACT_RUN", {
 	["type"] = "sequence",
 	["act"] = "ActionIdle"
 }, "ACT_BARNACLE_PULL" )
-Anims.AddNonBiped( "models/pigeon.mdl", "ACT_IDLE", "ACT_WALK", "ACT_RUN", "ACT_HOP", "ACT_FLY" )
-Anims.AddNonBiped( "models/antlion.mdl", "ACT_IDLE", "ACT_WALK", "ACT_RUN", "ACT_GLIDE", "ACT_GLIDE" )
+Anims.AddNonBiped( "models/pigeon.mdl", "ACT_IDLE", "ACT_WALK", "ACT_RUN", "ACT_IDLE", "ACT_FLY" )
+Anims.AddNonBiped( "models/antlion.mdl", "ACT_IDLE", "ACT_WALK", "ACT_RUN", "ACT_IDLE", "ACT_GLIDE" )
 Anims.AddNonBiped( "models/antlion_guard.mdl", "ACT_IDLE", "ACT_WALK", "ACT_RUN", "ACT_ANTLIONGUARD_PEEK1"," ACT_RUN")

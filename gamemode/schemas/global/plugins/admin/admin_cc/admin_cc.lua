@@ -551,20 +551,8 @@ local function Admin_SetPermaModel( ply, cmd, args )
 				CAKE.SetCharField( target, "gender", "Male" )
 			end
 		end
-
-		local m = ""
-		if( CAKE.GetCharField( target, "gender" ) == "Female" ) then
-			m = "models/tiramisu/animationtrees/alyxanimtree.mdl"
-			ply:SetNWString( "gender", "Female" )
-		else
-			m = "models/tiramisu/animationtrees/maleanimtree.mdl"
-			ply:SetNWString( "gender", "Male" )
-		end
-		ply:SetMaterial( "" )
-		ply:SetModel( m )
-
 		CAKE.SetCharField( target, "model", args[2] )
-		CAKE.RestoreClothing( target )
+		ply:Spawn()
 	end
 end
 	
@@ -586,7 +574,7 @@ function PLUGIN.Init( )
 	CAKE.AdminCommand( "noclip", Admin_Noclip, "Enter admin only noclip mode", true, true, 1 )
 	CAKE.AdminCommand( "kick", Admin_Kick, "Kick someone on the server", true, true, 2 )
 	CAKE.AdminCommand( "setmodel", Admin_SetModel, "Set someone's model to something", true, true, 2 )
-	CAKE.AdminCommand( "setpermamodel", Admin_SetModel, "Set someone's model permanently to something", true, true, 2 )
+	CAKE.AdminCommand( "setpermamodel", Admin_SetPermaModel, "Set someone's model permanently to something", true, true, 2 )
 	CAKE.AdminCommand( "ban", Admin_Ban, "Ban someone on the server", true, true, 3 )
 	CAKE.AdminCommand( "superban", Admin_SuperBan, "Ban someone on the server ( Permanent allowed )", true, true, 4 )
 	CAKE.AdminCommand( "setconvar", Admin_SetConVar, "Set a Convar", true, true, 4 )

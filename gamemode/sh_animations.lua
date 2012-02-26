@@ -251,38 +251,6 @@ if SERVER then
 	end)
 
 else
-	
-	local matrix
-	local function ScaleDemBones( ply, n, physbones )
-		if ply and n then
-			matrix = ply:GetBoneMatrix( n )
-			if matrix then
-				matrix:Scale(Vector( 0.001,0.001,0.001 ))
-				ply:SetBoneMatrix(n, matrix)
-			end
-		end
-	end
-
-	hook.Add( "Think", "Tiramisu.StripYouOfYourBones", function()
-		for _, ent in pairs( player.GetAll() ) do
-			if ValidEntity( ent ) and !ent.BonePositionsHooked and !ent:GetNWBool( "specialmodel" ) then
-				ent:SetMaterial("models/null")
-				if !ent.oldbuildbones then
-					ent.oldbuildbones = ent.BuildBonePositions
-				end
-				if ent.oldbuildbones then
-					ent.BuildBonePositions = function( ent, numbones, numphysbones)
-						ent.oldbuildbones(ent, numbones, numphysbones)
-						ScaleDemBones( ent, numbones, numphysbones )
-					end
-				else
-					ent.BuildBonePositions = ScaleDemBones
-				end
-				ent.BonePositionsHooked = true
-			end
-		end
-	end)
-
 	usermessage.Hook( "Tiramisu.SendPersonality", function(um)
 		local ply = um:ReadEntity()
 		if ValidEntity( ply ) then
@@ -382,7 +350,7 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 		local Vehicle =  ply:GetVehicle()
 		
 		// We only need to do this clientside..
-		if ( CLIENT ) then
+		if CLIENT and Vehicle then
 			//
 			// This is used for the 'rollercoaster' arms
 			//
@@ -562,13 +530,13 @@ function GM:HandlePlayerDriving( ply ) --Handles sequences while in vehicles.
 		vehicle = ply:GetVehicle()
 		class = vehicle:GetClass()
 		if ( class == "prop_vehicle_jeep" ) then
-			ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, "&sequence:models/player/breen.mdl;drive_jeep" )
+			ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "drivejeep" ] )
 		elseif ( class == "prop_vehicle_airboat" ) then
-			ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, "&sequence:models/player/breen.mdl;drive_airboat" )
+			ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "driveairboat" ] )
 		elseif ( class == "prop_vehicle_prisoner_pod" and vehicle:GetModel() == "models/vehicles/prisoner_pod_inner.mdl" ) then
-			ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, "&sequence:models/player/breen.mdl;drive_pd" )
+			ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "drive_pd" ] )
 		else
-			ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, "&sequence:models/player/breen.mdl;sit_rollercoaster" )
+			ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "drive_chair" ] )
 		end
 		return true
 	end

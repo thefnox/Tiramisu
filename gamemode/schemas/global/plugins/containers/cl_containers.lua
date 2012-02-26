@@ -52,8 +52,9 @@ usermessage.Hook("c_Expand", function(um)
 	if CAKE.Containers[uid] then
 		CAKE.Containers[uid].Height = height
 		CAKE.Containers[uid].Resized = true
+		CAKE.Containers[uid].Items[CAKE.Containers[uid].Height] = {}
 		for i=1, CAKE.Containers[uid].Width do
-			CAKE.Containers[uid].Items[i][CAKE.Containers[uid].Height] = {}
+			CAKE.Containers[uid].Items[CAKE.Containers[uid].Height][i] = {}
 		end
 	end
 end)

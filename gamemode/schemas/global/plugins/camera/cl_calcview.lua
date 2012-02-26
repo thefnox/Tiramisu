@@ -332,7 +332,7 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 			pos = ply:EyePos() + CAKE.FirstpersonForward:GetFloat() * headang:Forward() + CAKE.FirstpersonUp:GetFloat() * headang:Up()
 		end
 	elseif CAKE.Headbob:GetBool() then
-
+		--Todo
 	end
 	return GAMEMODE:CalcView(ply, pos , angles ,fov)
 end)
@@ -389,12 +389,3 @@ hook.Add( "UpdateAnimation", "TiramisuAnimateRotate", function( ply, velocity, m
 		end
 	end
 end)
-
-/*
-hook.Add( "HUDPaint", "tits", function()
-	draw.SimpleTextOutlined( "CURRENT ANGLE: " .. tostring( CAKE.CurAng ), "ScoreboardText", 10, 10, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT, 1, Color( 0,0,0,255))
-	draw.SimpleTextOutlined( "LAST ANGLE: " .. tostring( CAKE.LastAng ), "ScoreboardText", 10, 30, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT, 1, Color( 0,0,0,255))
-	draw.SimpleTextOutlined( "ANGLE DIFFERENCE: " .. tostring( CAKE.DiffAng ), "ScoreboardText", 10, 50, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT, 1, Color( 0,0,0,255))
-	draw.SimpleTextOutlined( "RAW MOUSE ANGLE: " .. tostring( CAKE.RealAng ), "ScoreboardText", 10, 70, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT, 1, Color( 0,0,0,255))
-	draw.SimpleTextOutlined( "LAST VIEW ANGLE: " .. tostring( CAKE.LastViewAng ), "ScoreboardText", 10, 90, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT, 1, Color( 0,0,0,255))
-end)*/

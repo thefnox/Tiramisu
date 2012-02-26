@@ -1,6 +1,7 @@
 datastream.Hook( "TiramisuAddToChat", function( handler, id, encoded, decoded )
 
 	local text = decoded.text
+	local outline = false
 
 	text = text:gsub("<%s*%w*%s*=%s*%w*%s*>", "")
 	text = text:gsub("</font>", "")
@@ -9,10 +10,19 @@ datastream.Hook( "TiramisuAddToChat", function( handler, id, encoded, decoded )
 	if !decoded.font then
 		decoded.font = "TiramisuChatFont"
 	end
+	if decoded.font == "TiramisuChatFont" then
+		outline = "TiramisuChatFontOutline"
+	elseif decoded.font == "TiramisuYellFont" then
+		outline = "TiramisuYellFontOutline"
+	elseif decoded.font == "TiramisuWhisperFont" then
+		outline = "TiramisuWhisperFontOutline"
+	elseif decoded.font == "TiramisuEmoteFont" then
+		outline = "TiramisuEmoteFontOutline"
+	end
 	if decoded.channel == "IC" then
-		CAKE.Chatbox:AddLine(  "<color=135,209,255,255><font=" .. decoded.font .. ">" .. text .. "</font></color>", decoded.channel, decoded.handler or "" )
+		CAKE.Chatbox:AddLine(  "<color=135,209,255,255><font=" .. decoded.font .. ">" .. text .. "</font></color>", decoded.channel, decoded.handler or "", outline )
 	else
-		CAKE.Chatbox:AddLine( "<font=" .. decoded.font .. ">" .. text .. "</font>", decoded.channel, decoded.handler or "" )
+		CAKE.Chatbox:AddLine( "<font=" .. decoded.font .. ">" .. text .. "</font>", decoded.channel, decoded.handler or "", outline )
 	end
 
 	for i = 0, text:len() / 255 do
@@ -31,7 +41,7 @@ datastream.Hook( "TiramisuAddToOOC", function( handler, id, encoded, decoded )
 	text = text:gsub("</font>", "")
 	text = text:gsub("<%s*%w*%s*=%s*%w*%s*,%s*%w*%s*,%s*%w*%s*,%s*%w*%s*>", "")
 	text = text:gsub("</color>", "")
-	CAKE.Chatbox:AddLine(  "<font=" .. "TiramisuOOCFont" .. "><color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>:" .. text .. "</color></font>", "OOC" )
+	CAKE.Chatbox:AddLine(  "<font=TiramisuOOCFont><color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>:" .. text .. "</color></font>", "OOC", "TiramisuOOCFontOutline" )
 
 	text = "[OOC]" .. playername .. ": " .. text
 
@@ -58,7 +68,7 @@ function PANEL:Init()
 		self.Height = math.Round(( ScrH() / 3 ) / 10 ) * 10
 		self.Width = self.Height * 2
 		self.Alpha = 0
-		self.Lines = {}
+		self.Lines = 0
 		self:SetSize( self.Width, self.Height )
 		self:SetPos( 20, ScrH() - self.Height - 60 )
 		self.Open = false
@@ -82,27 +92,27 @@ function PANEL:Init()
 		self.TextEntry:SetPos( 5, self.Height - 30 )
 		self.TextEntry:SetAllowNonAsciiCharacters(true)
 		self.TextEntry.Paint = function()
-			
 			if self.Open then
 				draw.RoundedBox( 2, 2, 2, self.TextEntry:GetWide(), self.TextEntry:GetTall(), Color( 50, 50, 50, self.Alpha ) )
 				self.TextEntry:DrawTextEntryText( Color( 200, 200, 200, 240 ), self.TextEntry.m_colHighlight, self.TextEntry.m_colCursor )
 			end
-
 		end
+		self.TextEntry.PaintOver = function() end
 		self.TextEntry.OnEnter = function()
-			if self.TextEntry:GetValue() != "" then
-				if ( string.sub(self.TextEntry:GetValue(), 1, 1 ) == "@" ) then
-					local exp = string.Explode( " ", self.TextEntry:GetValue()) or {}
-					local command = exp[1] or self.TextEntry:GetValue()
+			local text = string.Trim(self.TextEntry:GetValue())
+			if text != "" then
+				if ( string.sub(text, 1, 1 ) == "@" ) then
+					local exp = string.Explode( " ", text) or {}
+					local command = exp[1] or text
 					table.remove( exp, 1 )
 					RunConsoleCommand(string.sub( command, 2, string.len(command) ), unpack(exp) )
-				elseif ( string.sub( self.TextEntry:GetValue(), 1, 1 ) == "!" ) then
-					local exp = string.Explode( " ", self.TextEntry:GetValue()) or {}
-					local command = exp[1] or self.TextEntry:GetValue()
+				elseif ( string.sub( text, 1, 1 ) == "!" ) then
+					local exp = string.Explode( " ", text) or {}
+					local command = exp[1] or text
 					table.remove( exp, 1 )
 					RunConsoleCommand("rp_" .. string.sub( command, 2, string.len(command) ), unpack(exp) )
 				else
-				datastream.StreamToServer( "TiramisuChatHandling", { ["text"] = (self.PropertySheet:GetActiveTab().handler or "") .. string.sub(string.Replace(self.TextEntry:GetValue(), "\"", "'"), 1, math.Clamp(self.TextEntry:GetValue():len(),1,600)) } )
+				datastream.StreamToServer( "TiramisuChatHandling", { ["text"] = (self.PropertySheet:GetActiveTab().handler or "") .. string.sub(string.Replace(text, "\"", "'"), 1, math.Clamp(text:len(),1,600)) } )
 				end
 			end
 			self.TextEntry:Clear()
@@ -142,6 +152,9 @@ function PANEL:AddChannel( name, description, handler, cantclose )
 							pnl.StrOutline:Draw(x+(_x)+2, y+(_y), pnl.Align, pnl.VerticalAlign, pnl.Alpha)
 						end
 					end
+				end
+				if pnl.StrOutlineCheap then
+					pnl.StrOutlineCheap:Draw(x+2, y, pnl.Align, pnl.VerticalAlign, pnl.Alpha )		
 				end
 				if pnl.Str then
 					pnl.Str:Draw(x+2, y, pnl.Align, pnl.VerticalAlign, pnl.Alpha )
@@ -205,48 +218,67 @@ function PANEL:AddChannel( name, description, handler, cantclose )
 end
 
 --Adds a line to a particular channel. If no channel is specified it simply becomes global.
-function PANEL:AddLine( text, channel, handler )
+function PANEL:AddLine( text, channel, handler, outline )
 
-	local label = MarkupLabelOutline( text, self.Width - 30, 1, Color( 0,0,0, 100) )
-	local number = #self.Lines + 1
+	local label
+	if outline then
+		label = MarkupLabelOutlineCheap( text, self.Width - 30, outline, Color( 0,0,0, 255) )
+	else
+		label = MarkupLabel( text, self.Width - 30)
+	end
+	local number = self.Lines + 1
+	if !self.Channels[ "All" ].Lines then
+		self.Channels[ "All" ].Lines = 0
+	end
+	self.Channels[ "All" ].Lines = self.Channels[ "All" ].Lines + 1
 	label.Paint = function() end
-	label.numberid = number 
-	self.Lines[ number ] = {}
-	self.Lines[ number ][ "panel" ] = label
-	self.Lines[ number ][ "timestamp" ] = CurTime()
+	label.channelid = self.Channels[ "All" ].Lines
+	label.numberid = number
+	label.timestamp = CurTime()
 	self.Channels[ "All" ]:AddItem( label )
 	local tbl = self.Channels[ "All" ]:GetItems()
 	local low = 999999999999
 	local lowest
+	local tblcount = #tbl
 	if #tbl > CAKE.ConVars[ "MaxChatLines" ] then
-		for k, v in pairs( tbl ) do
-			if v and v.numberid < low then
-				low = v.numberid
-				lowest = k 
+		for k, v in pairs(tbl) do
+			v = v or NULL
+			if v:Valid() and v.channelid <= self.Channels[ "All" ].Lines - CAKE.ConVars[ "MaxChatLines" ] then
+				self.Channels[ "All" ]:RemoveItem(v)
+				break
 			end
 		end
-		self.Channels[ "All" ]:RemoveItem( tbl[lowest] )
 	end
+	print(tblcount)
 
 	if channel then
 		self:AddChannel( channel, channel, handler )
-		label = MarkupLabelOutline( text, self.Width - 30, 1, Color( 0,0,0, 100) )
+		if !self.Channels[ channel ].Lines then
+			self.Channels[ channel ].Lines = 0
+		end
+		self.Channels[ channel ].Lines = self.Channels[ channel ].Lines + 1
+		if outline then
+			label = MarkupLabelOutlineCheap( text, self.Width - 30, outline, Color( 0,0,0, 255) )
+		else
+			label = MarkupLabel( text, self.Width - 30)
+		end
+		label.channelid = self.Channels[ channel ].Lines
 		label.numberid = number
+		label.timestamp = CurTime()
 		label.Paint = function() end
 		self.Channels[ channel ]:AddItem( label )
 
 		tbl = self.Channels[ channel ]:GetItems()
 		low = 999999999999
+		local tblcount = #tbl
 		if #tbl > CAKE.ConVars[ "MaxChatLines" ] then
-			for k, v in pairs( tbl ) do
-				if v and v.numberid < low then
-					low = v.numberid
-					lowest = k 
+			for k, v in pairs(tbl) do
+				v = v or NULL
+				if v:Valid() and v.channelid <= self.Channels[ channel ].Lines - CAKE.ConVars[ "MaxChatLines" ] then
+					self.Channels[ channel ]:RemoveItem(v)
+					break
 				end
 			end
-			--We purge it from existance, as this line will necessarily be purged or has already been purged from the All channel. (The All channel will have either the same or more items)
-			self.Channels[ channel ]:RemoveItem( tbl[lowest] )
-			self.Lines[ low ] = nil
 		end
 	end
 
@@ -308,19 +340,21 @@ end
 --Calculations to determine which lines fade out.
 local linetbl = {}
 function PANEL:Think()
-	if self.Lines and !self.Open then
-		for k, v in pairs( self.Lines ) do
-			if v[ "panel" ] and v[ "timestamp" ] + 10 < CurTime() and v[ "panel" ].SetAlpha then
-				v[ "panel" ]:SetAlpha( Lerp( 0.05, v[ "panel" ]:GetAlpha() , 0 ) )
-			end
-		end
-	else
-		for k, v in pairs( self.Lines ) do
-			if v[ "panel" ] and v[ "panel" ].SetAlpha then
-				v[ "panel" ]:SetAlpha( 255 )
+	for k, v in pairs(self.Channels) do
+		if v and v:Valid() and v:GetItems() then
+			for _, pnl in pairs(v:GetItems()) do
+				pnl = pnl or NULL
+				if pnl:Valid() and pnl.timestamp + 10 < CurTime() then
+					if !self.Open then
+						pnl:SetAlpha( Lerp( 0.05, pnl:GetAlpha() , 0 ) )
+					else
+						pnl:SetAlpha( 255 )
+					end
+				end
 			end
 		end
 	end
+
 	if self.Open and input.IsKeyDown(KEY_ESCAPE) then
 		self:Close()
 	end

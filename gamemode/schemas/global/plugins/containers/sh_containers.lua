@@ -55,7 +55,7 @@ function meta:SetNonRecursive(bool)
 end
 
 function meta:GetNonRecursive()
-	return self.NonRecursive
+	return meta:GetInfinite() or self.NonRecursive
 end
 
 function meta:IsSlotEmpty( x, y )
@@ -193,10 +193,11 @@ if SERVER then
 	end
 
 	function meta:AddItem( class, id )
-		if self:GetInfinite() and self.ItemCount >= self.Width * self.Height then
+		if self:GetInfinite() and self:GetItemCount() >= self.Width * self.Height then
 			self.Height = self.Height + 1
+			self.Items[self.Height] = {}
 			for i=1, self.Width do
-				self.Items[i][self.Height] = {}
+				self.Items[self.Height][i] = {}
 			end
 			umsg.Start("c_Expand", CAKE.GetPlyTrackingContainer( self.UniqueID ))
 				umsg.String(self.UniqueID)

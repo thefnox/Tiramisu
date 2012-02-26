@@ -109,7 +109,7 @@ function EditGear()
 	PlayerMenu:SetSize( ScrW(), ScrH() )
 	PlayerMenu:Center()
 	PlayerMenu:SetDraggable( false )
-	PlayerMenu:ShowCloseButton( true )
+	PlayerMenu:ShowCloseButton( false )
 	PlayerMenu:SetTitle( "" )
 	PlayerMenu.Paint = function()
 

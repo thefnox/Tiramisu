@@ -719,6 +719,20 @@ function SKIN:CharacterCreationStep1()
 		end
 		panel:AddItem( numberwang )
 
+		local facev
+		if CAKE.ConVars[ "UseEnhancedCitizens" ] then
+			facev = vgui.Create( "DNumSlider", DermaPanel )
+			facev:SetValue(0)
+			facev:SetText( "Face Variation" )
+			facev:SetMin( 0 ) -- Minimum number of the slider
+			facev:SetMax( 12 ) -- Maximum number of the slider
+			facev:SetDecimals( 0 ) -- Sets a decimal. Zero means it's a whole number
+			facev.ValueChanged = function(self, value)
+				RunConsoleCommand("rp_testskin", value)
+			end
+			panel:AddItem(facev)			
+		end
+
 		gobacklabel = vgui.Create( "DButton", CharacterMenu )
 		gobacklabel:SetSize( 80, 26 )
 		gobacklabel:SetText( "" )
@@ -781,7 +795,9 @@ function SKIN:CharacterCreationStep1()
 			RunConsoleCommand("rp_title", Title1 )
 			RunConsoleCommand("rp_setage", Age )
 			RunConsoleCommand("rp_setgender", Gender )
-			RunConsoleCommand("rp_setcid")
+			if CAKE.ConVars[ "UseEnhancedCitizens" ] then
+				RunConsoleCommand("rp_facevariation", facev:GetValue() )
+			end
 			RunConsoleCommand( "rp_finishcreate" )
 			panel.SlideOut = true
 			gobacklabel.SlideOut = true

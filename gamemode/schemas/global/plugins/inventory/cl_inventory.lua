@@ -404,7 +404,11 @@ function CAKE.CreateInventory()
 	if CAKE.MinimalHUD:GetBool() then
 		CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, ScrH() )
 	else
-		CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, ScrH() - 79 )
+		if CAKE.InventoryFrame.PropertySheet then
+			CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, ScrH() - 100 )
+		else
+			CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, ScrH() - 79 )
+		end
 	end
 	CAKE.InventoryFrame.Display = false
 	CAKE.InventoryFrame:SetDeleteOnClose( false )
@@ -422,13 +426,23 @@ function CAKE.CreateInventory()
 	CAKE.InventoryFrame.Paint = function()
 		if CAKE.InventoryFrame.Display then
 			x,y = CAKE.InventoryFrame:GetPos()
-			if y != ScrH() - 250 then
-				CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 250 ))
+			if !CAKE.InventoryFrame.PropertySheet then
+				if y != ScrH() - 250 then
+					CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 250 ))
+				end
+			else
+				if y != ScrH() - 270 then
+					CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 270 ))
+				end
 			end
 			alpha = Lerp( 0.1, alpha, 1 )
 
 			surface.SetDrawColor( color.r, color.g, color.b, alpha * 80 )
-			surface.DrawRect( 0, 23 , CAKE.InventoryFrame:GetWide(), CAKE.InventoryFrame:GetTall() )
+			if !CAKE.InventoryFrame.PropertySheet then
+				surface.DrawRect( 0, 23 , CAKE.InventoryFrame:GetWide(), CAKE.InventoryFrame:GetTall() )
+			else
+				surface.DrawRect( 0, 43 , CAKE.InventoryFrame:GetWide(), CAKE.InventoryFrame:GetTall() )
+			end
 
 		else
 			alpha = 0
@@ -438,8 +452,14 @@ function CAKE.CreateInventory()
 					CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() ))
 				end
 			else
-				if y != ScrH() - 79 then
-					CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 79 ))
+				if !CAKE.InventoryFrame.PropertySheet then
+					if y != ScrH() - 79 then
+						CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 79 ))
+					end
+				else
+					if y != ScrH() - 106 then
+						CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 106 ))
+					end
 				end
 			end
 		end
@@ -467,7 +487,7 @@ function CAKE.CreateInventory()
 	CAKE.InventoryFrame.CloseButton:SetDrawBorder( false )
 	CAKE.InventoryFrame.CloseButton:SetDrawBackground( false )
 
-	if CAKE.ConVars[ "PlayerInventoryRows" ] <= 4 then
+	if CAKE.Containers[CAKE.Inventory].Height <= 4 or CAKE.Containers[CAKE.Inventory].Height == 0 then
 		local grid = vgui.Create( "DGrid", CAKE.InventoryFrame )
 		grid:Dock(FILL)
 		grid:SetCols( 10 )
@@ -488,12 +508,68 @@ function CAKE.CreateInventory()
 
 	else
 		CAKE.InventoryFrame.PropertySheet = vgui.Create( "DPropertySheet", CAKE.InventoryFrame )
-		CAKE.InventoryFrame.PropertySheet:SetSize( CAKE.InventoryFrame.Width - 5 , CAKE.InventoryFrame.Height - 30 )
-		CAKE.InventoryFrame.PropertySheet:SetPos( 3, 3 )
+		CAKE.InventoryFrame.PropertySheet:Dock(FILL)
 		CAKE.InventoryFrame.PropertySheet:SetShowIcons( false )
 		CAKE.InventoryFrame.PropertySheet.Paint = function()
 		end
+		local count = CAKE.Containers[CAKE.Inventory].Height
+		local it = 0
+		while count > 4 do
+			count = count - 4
+			local grid = vgui.Create( "DGrid" )
+			grid:Dock(FILL)
+			grid:SetCols( 10 )
+			grid:SetColWide( 56 )
+			grid:SetRowHeight( 56 )
 
+			for i=1 + (it * 4), (it + 1) * 4 do
+				CAKE.InventorySlot[i] = {}
+				for j=1, container.Width do
+					local slot = vgui.Create( "InventorySlot" )
+					slot:SetIconSize( 48 )
+					slot:SetPosition( j, i )
+					slot:SetContainer(CAKE.Inventory)
+					grid:AddItem(slot)
+					CAKE.InventorySlot[i][j] = slot
+				end 
+			end
+			local tab = CAKE.InventoryFrame.PropertySheet:AddSheet( "Page " .. it + 1, grid, "", false, false, "Page " .. it + 1 )
+			tab.Tab.Image:SetVisible(false)
+			it = it + 1
+		end
+		if count > 0 then
+			local grid = vgui.Create( "DGrid" )
+			grid:Dock(FILL)
+			grid:SetCols( 10 )
+			grid:SetColWide( 56 )
+			grid:SetRowHeight( 56 )
+
+			for i=container.Height - count + 1, container.Height do
+				CAKE.InventorySlot[i] = {}
+				for j=1, container.Width do
+					local slot = vgui.Create( "InventorySlot" )
+					slot:SetIconSize( 48 )
+					slot:SetPosition( j, i )
+					slot:SetContainer(CAKE.Inventory)
+					grid:AddItem(slot)
+					CAKE.InventorySlot[i][j] = slot
+				end 
+			end
+			local tab = CAKE.InventoryFrame.PropertySheet:AddSheet( "Page " .. it + 1, grid, "", false, false, "Page " .. it + 1 )
+			tab.Tab.Image:SetVisible(false)
+		end
+		for _,item in pairs( CAKE.InventoryFrame.PropertySheet.Items ) do
+			item.Tab.Paint = function()
+				if item.Tab:GetPropertySheet():GetActiveTab() == item.Tab then
+					draw.RoundedBox( 2, 0, 0, item.Tab:GetWide() - 8, item.Tab:GetTall(), Color( color.r, color.g, color.b, 80 ) )
+					item.Tab:SetTextColor( Color( 225, 225, 225, 255 ) )
+				else
+					draw.RoundedBox( 2, 1, 1, item.Tab:GetWide() - 9, item.Tab:GetTall() - 1, Color( color.r, color.g, color.b, 80 ))
+					item.Tab:SetTextColor( Color( 225, 225, 225, 255 ) )
+				end
+			end
+		end
+		CAKE.InventoryFrame:SetSize(576, 70 + 4 * 56)
 	end
 	CAKE.InventoryFrame.OldThink = CAKE.InventoryFrame.Think
 	CAKE.InventoryFrame.Think = function()

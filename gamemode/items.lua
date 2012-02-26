@@ -206,7 +206,12 @@ function ccUseOnInventoryID( ply, cmd, args )
 			else
 				item:UseItem( ply )
 			end
-			item:Remove()
+			if item then
+				item:Remove()
+			end
+			if !CAKE.ItemData[class].Unusable then
+				ply:TakeItemID( id )
+			end
 		end
 	end
 

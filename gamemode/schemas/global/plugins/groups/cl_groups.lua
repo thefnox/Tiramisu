@@ -19,7 +19,7 @@ datastream.Hook( "TiramisuAddToGroupChat", function( handler, id, encoded, decod
 	text = text:gsub("</font>", "")
 	text = text:gsub("<%s*%w*%s*=%s*%w*%s*,%s*%w*%s*,%s*%w*%s*,%s*%w*%s*>", "")
 	text = text:gsub("</color>", "")
-	CAKE.Chatbox:AddLine(  "<font=TiramisuOOCFont><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>:" .. text .. "</color></font>", channel, handler or "/g " )
+	CAKE.Chatbox:AddLine(  "<font=TiramisuOOCFont><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>:" .. text .. "</color></font>", channel, handler or "/g ", "TiramisuOOCFontOutline" )
 
 	text = "[" .. channel .. "]" .. playername .. ": " .. text
 

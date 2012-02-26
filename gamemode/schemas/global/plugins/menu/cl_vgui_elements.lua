@@ -319,6 +319,13 @@ function PANEL:Paint( )
 				end
 			end
 		end
+		if self.StrOutlineCheap then
+			if self.BWidth and self.Align == TEXT_ALIGN_CENTER then
+				self.StrOutlineCheap:Draw((self.BWidth/2)-(self.Str:GetWidth()/2), 0, TEXT_ALIGN_LEFT, self.VerticalAlign, self.Alpha)
+			else
+				self.StrOutlineCheap:Draw(0, 0, self.Align, self.VerticalAlign, self.Alpha )
+			end			
+		end
 		if self.BWidth and self.Align == TEXT_ALIGN_CENTER then
 			self.Str:Draw((self.BWidth/2)-(self.Str:GetWidth()/2), 0, TEXT_ALIGN_LEFT, self.VerticalAlign, self.Alpha)
 		else
@@ -366,6 +373,17 @@ function PANEL:SetOutline( size, color )
 	text = text:gsub("</color>", "")
 	self.StrOutline = markup.Parse("<color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">" .. text .. "</color>", self.MaxWidth or self:GetSize() )
 	self.StrOutline.OutlineSize = size
+end
+
+function PANEL:SetOutlineCheap( font, color )
+	local text = self.Text
+	text = text:gsub("<color=%s*%w*%s*,%s*%w*%s*,%s*%w*%s*,%s*%w*%s*>", "")
+	text = text:gsub("<color=%s*%w*%s*,%s*%w*%s*,%s*%w*%s*>", "")
+	text = text:gsub("<color=%s*%w*%s*>", "")
+	text = text:gsub("</color>", "")
+	text = text:gsub("<font=%s*%w*%s*>", "")
+	text = text:gsub("</font>", "")
+	self.StrOutlineCheap = markup.Parse("<font=" .. font .. "><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">" .. text .. "</color></font>", self.MaxWidth or self:GetSize() )
 end
 
 function PANEL:SetAlign( align )
@@ -426,6 +444,17 @@ function MarkupLabelOutline( strText, width, thickness, color, parent )
 	end
 	return lbl
  
+end
+
+function MarkupLabelOutlineCheap( strText, width, outlinefont, color, parent )
+	local lbl = vgui.Create( "MarkupLabel" )
+	if parent then
+		lbl:SetParent( parent )
+	end
+	lbl:SetWidth( width )
+	lbl:SetText( strText )
+	lbl:SetOutlineCheap( outlinefont, color )
+	return lbl
 end
 
 function MarkupLabelBook(strText, width, containerwidth)

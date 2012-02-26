@@ -29,6 +29,7 @@ if CAKE.ConVars[ "UseEnhancedCitizens" ] then
 			"models/bloo_ltcom/citizens/male_02.mdl",
 			"models/bloo_ltcom/citizens/male_03.mdl",
 			"models/bloo_ltcom/citizens/male_04.mdl",
+			"models/bloo_ltcom/citizens/male_05.mdl",
 			"models/bloo_ltcom/citizens/male_06.mdl",
 			"models/bloo_ltcom/citizens/male_07.mdl",
 			"models/bloo_ltcom/citizens/male_08.mdl",
@@ -107,7 +108,7 @@ CAKE.ConVars[ "FadeTitles"] = 1 --Should titles fade away after some time?
 CAKE.ConVars[ "FadeNames"] = 0 --Should names fade away after some time?
 
 
---Stats for the fighting system, plus stamina
+--Stats for the fighting system, plus stamina. Currently it's just health and stamina.
 CAKE.Stats = {}
 
 CAKE.Stats.Stamina = {}
@@ -134,7 +135,7 @@ CAKE.ConVars[ "NoteFont" ] = CAKE.ConVars[ "ChatFont" ]
 CAKE.ConVars[ "NamesFont"] = CAKE.ConVars[ "ChatFont" ]
 CAKE.ConVars[ "TitlesFont"] = CAKE.ConVars[ "ChatFont" ]
 CAKE.BaseColor = Color( 50, 50, 50, 150 ) --The schema's default color. Can be set in game
-CAKE.ConVars[ "MaxChatLines" ] = 200 --The maximum amount of chatlines the chatbox can hold. Reducing this number may increase FPS in clients.
+CAKE.ConVars[ "MaxChatLines" ] = 100 --The maximum amount of chatlines the chatbox can hold. Reducing this number may increase FPS in clients.
 
 --Groups
 CAKE.ConVars[ "DoorsPurchaseable" ] = true --Set this to false to make everyone able to lock/unlock ungrouped doors.
