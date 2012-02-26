@@ -20,7 +20,7 @@ function meta:CanTraceTo( ent, filter ) -- Can the player and the entity "see" e
 	
 	local tr = util.TraceLine( trace )
 	
-	if !tr.HitWorld and !tr.HitSky and tr.Entity == ent then return true end
+	if !tr.Hit or tr.Entity == ent then return true end
 	
 	return false
 
