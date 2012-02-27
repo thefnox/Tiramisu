@@ -42,8 +42,8 @@ function GM:PlayerDeathThink(ply)
 				if !CAKE.ConVars[ "ReturnToSpawnOnDeath" ] then
 					if ValidEntity( ply.rag ) then
 						ply:SetPos(ply.rag:GetPos() + Vector( 0, 0, 30 ))
+						ply.rag:Remove()
 					end
-					ply.rag:Remove()
 					ply.rag = nil
 				else
 					if CAKE.ConVars[ "DeathRagdoll_Linger" ] > 0 then
@@ -138,18 +138,53 @@ function CAKE.DeathMode( ply, noragdoll )
 
 	ply.deathtime = 0
 	ply.nextsecond = CurTime( ) + 1
-	
-	timer.Simple( CAKE.ConVars[ "Respawn_Timer" ], function()
-		if ValidEntity( ply ) then
-			if CAKE.ConVars[ "Instant_Respawn" ] then
-				ply:SetNWInt( "deathmode", 0 )
-				ply:SetViewEntity( ply )
-			else
-				umsg.Start( "Tiramisu.DisplayRespawnButton", ply )
-					umsg.Bool( true )
-				umsg.End()
+
+	if !ply.ReviveCooldown then
+		ply.ReviveCooldown = -99999
+	end
+
+	local willrevive = false
+	if ply:HasItem("firstaidkit") and (ply.ReviveCooldown + 120) < os.time() then
+		print("the big man hass the rock")
+		local container = ply:GetInventory()
+		for i, tbl in pairs( container.Items ) do
+			for j, v in pairs(tbl) do
+				if !container:IsSlotEmpty(j,i) then
+					if v.class == "firstaidkit" and ((CAKE.GetUData(v.itemid , "lastrevive") or 0) + 120) < os.time() then
+						willrevive = true
+						timer.Simple(math.max(CAKE.ConVars[ "Respawn_Timer" ]-5,0), function()
+							local item = CAKE.CreateItem( v.class, ply:CalcDrop( ), Angle( 0,0,0 ), v.itemid )
+							item:UseItem( ply )
+							item:Remove()
+							ply.deathtime = nil
+							ply.nextsecond = nil
+							ply:SetNWInt("deathmoderemaining", 0)
+						end)
+					end
+				end
+				if willrevive then
+					break
+				end
+			end
+			if willrevive then
+				break
 			end
 		end
-	end)
+	end
+	
+	if !willrevive then
+		timer.Simple( CAKE.ConVars[ "Respawn_Timer" ], function()
+			if ValidEntity( ply ) then
+				if CAKE.ConVars[ "Instant_Respawn" ] then
+					ply:SetNWInt( "deathmode", 0 )
+					ply:SetViewEntity( ply )
+				else
+					umsg.Start( "Tiramisu.DisplayRespawnButton", ply )
+						umsg.Bool( true )
+					umsg.End()
+				end
+			end
+		end)
+	end
 	
 end

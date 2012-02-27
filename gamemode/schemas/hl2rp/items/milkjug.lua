@@ -18,7 +18,7 @@ end
 
 function ITEM:UseItem(ply)
 
-	ply:SetHealth(math.Clamp(ply:Health() + 10, 0, ply:MaxHealth()))
+	ply:SetHealth(math.Clamp(ply:Health() + 10, 0, ply:GetMaxHealth()))
 	self:Remove()
 
 end

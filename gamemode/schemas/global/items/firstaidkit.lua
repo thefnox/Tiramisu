@@ -5,6 +5,11 @@ ITEM.Model = "models/Items/healthkit.mdl"
 ITEM.Purchaseable = true
 ITEM.Price = 25
 ITEM.ItemGroup = 3
+ITEM.Unusable = true
+ITEM.RightClick = {
+	["Revive"] = "UseItem"
+}
+
 
 function ITEM:Drop(ply)
 
@@ -18,45 +23,60 @@ end
 
 function ITEM:UseItem(ply)
 	
-	local possible = {}
-	
-	-- Find the target
-	for k, v in pairs(ents.FindInSphere(self:GetPos(), 10)) do
-	
-		if(v != nil and v:IsValid() and v:IsTiraPlayer() and v != ply) then
-		
-			table.insert(possible, v)
-			
-		elseif(v != nil and v:IsValid() and v:GetClass() == "prop_ragdoll" and v.ply:GetNWInt("deathmode") > 0 and v.ply != ply) then
-		
-			-- This is what makes 'revival' possible, and makes deathmode have a purpose.
-			
-			v.ply:Spawn()
-			v.ply:SetHealth(15)
-			v.ply:SetPos(v:GetPos())
-			CAKE.SendChat(ply, "*beep* Anabolic Steroids Injected")
-			CAKE.SendChat(v.ply, "*beep* Anabolic Steroids Injected")
-			self:Remove()
-			v:Remove()
-			return
-			
+
+	local id = self:GetNWString("id")
+
+	if !CAKE.GetUData(id , "lastrevive") then
+		CAKE.SetUData(id , "lastrevive", -99999) 
+	end
+
+	if !ply.ReviveCooldown then
+		ply.ReviveCooldown = -99999
+	end
+
+	if (ply.ReviveCooldown + 120) > os.time() then
+		CAKE.SendChat(ply, "Please wait " .. math.floor(ply.ReviveCooldown + 120 - os.time()) .. " seconds until you can revive again." )
+		return
+	end
+
+	if (CAKE.GetUData(id , "lastrevive") + 120) > os.time() then
+		CAKE.SendChat(ply, "Please wait " .. math.floor(CAKE.GetUData(id , "lastrevive")+ 120 - os.time())  .. " seconds for this unit to be usable again." )
+		return
+	end
+
+	if ply:GetNWInt("deathmode",0) > 0 then
+		CAKE.SendChat(ply, "*beep* Anabolic Steroids Injected")
+		ply:Spawn()
+		if ValidEntity(ply.rag) then
+			ply:SetPos(ply.rag:GetPos() + Vector( 0, 0, 30 ))
+			ply.rag:Remove()
+			ply.rag = nil
+		else
+			ply:SetPos(self:GetPos() + Vector( 0, 0, 30 ))
 		end
-		
-	end
-	
-	if(#possible > 1) then
-	
-		CAKE.SendChat(ply, "*beep* Multiple targets found")
+		ply:SetHealth(15)
+		ply.ReviveCooldown = os.time()
+		CAKE.SetUData(id, "lastrevive", os.time()) 
 		return
-		
-	elseif(#possible == 0) then
-	
-		CAKE.SendChat(ply, "*beep* No target found")
-		return
-		
+	else
+		for _, pl in pairs(ents.FindInSphere(self:GetPos(), 100)) do
+			if ValidEntity(pl) and pl:IsTiraPlayer() and pl:GetNWInt("deathmode",0) > 0 then
+				pl:Spawn()
+				pl:SetHealth()
+				pl:SetPos(ply:CalcDrop() + Vector( 0, 0, 6 ))
+				CAKE.SendChat(ply, "*beep* Anabolic Steroids Injected")
+				CAKE.SendChat(pl, "*beep* Anabolic Steroids Injected")
+				if ValidEntity( pl.rag ) then
+					pl.rag:Remove()
+				end
+				pl.rag = nil
+				ply.ReviveCooldown = os.time()
+				CAKE.SetUData(id, "lastrevive", os.time()) 
+				return
+			end
+		end
 	end
-	
-	possible[1]:SetHealth(math.Clamp(possible[1]:Health() + 100, 0, possible[1]:MaxHealth()))
-	self:Remove()
+
+	CAKE.SendChat(ply, "*beep* No target found")
 
 end
