@@ -194,7 +194,7 @@ function CAKE.OpenFactionInfo( tbl )
 	FindPlayer:SetTall( 30 )
 	FindPlayer.DoClick = function()
 		CAKE.StringRequest( "Find A Player", 
-			"Enter the name, rank, or SteamID of the player you want to find:", 
+			"Enter the name, rank, or SteamID of the player you want to find:\nLeave empty to fetch the whole roster", 
 			LocalPlayer():Nick(), 
 			function( str ) RunConsoleCommand("rp_rostersearch", tbl.uid, str) end,
 			function()end,

@@ -170,10 +170,7 @@ function ccPickupItem( ply, cmd, args )
 		return
 	end
 
-	if( item != nil and item:IsValid( ) and item:GetClass( ) == "item_prop" and item:GetPos( ):Distance( ply:GetShootPos( ) ) < 200 ) then
-		if string.match( item.Class, "zipties" ) then
-			ply:Give( item.Class )
-		end
+	if( item != nil and item:IsValid( ) and item:GetClass( ) == "item_prop" and item:GetPos( ):Distance( ply:GetShootPos( ) ) <= 200 ) then
 		item:Pickup( ply )
 		ply:GiveItem( item.Class, item:GetNWString("id") )
 	end
@@ -183,10 +180,19 @@ concommand.Add( "rp_pickup", ccPickupItem )
 
 function ccUseItem( ply, cmd, args )
 	
-	local item = ents.GetByIndex( tonumber( args[ 1 ] ) )
+	local item = ents.GetByIndex(tonumber( args[ 1 ] ))
+	local funcrun = args [ 2 ]
 	
-	if( item != nil and item:IsValid( ) and item:GetClass( ) == "item_prop" and item:GetPos( ):Distance( ply:GetShootPos( ) ) < 100 ) then
-		item:UseItem( ply )
+	if item and ValidEntity(item) and item:GetClass( ) == "item_prop" and item:GetPos():Distance(ply:GetShootPos()) <= 200 then
+		local class = item:GetNWString("Class", "")
+		if class != "" then
+			if funcrun and CAKE.ItemData[ class ][funcrun] then
+				funcrun = CAKE.ItemData[ class ][funcrun]
+				funcrun(item, ply )
+			else
+				item:UseItem( ply )
+			end
+		end
 	end
 
 end
@@ -279,7 +285,7 @@ function meta:TakeItemID( id )
 
 	local count = false
 
-	for _, tbl in pairs( ply:GetInventory().Items ) do
+	for _, tbl in pairs( self:GetInventory().Items ) do
 		for k, v in pairs(tbl) do
 			if CAKE.GetUData( v.itemid, "weaponclass" ) == CAKE.GetUData(id, "weaponclass") then
 				count = true

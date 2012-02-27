@@ -1,17 +1,15 @@
-ITEM.Name = "Zipties"
-ITEM.Class = "weapon_zipties"
-ITEM.Description = "Good for boundin'."
-ITEM.Model = "models/Items/combine_rifle_ammo01.mdl"
+ITEM.Name = "Stunstick"
+ITEM.Class = "weapon_stunstick"
+ITEM.Description = "Good for stunnin'."
+ITEM.Model = "models/weapons/w_stunbaton.mdl"
 ITEM.Unusable = true
-ITEM.Purchaseable = true
-ITEM.Price = 500
+ITEM.Purchaseable = false
+ITEM.Price = 200
 ITEM.ItemGroup = 2
 ITEM.Offset = Vector( 1,-5,3 )
 ITEM.OffsetAngle = Angle( 0,0,0 )
-ITEM.Scale = Vector( 0, 0, 0 )
 ITEM.Bone = "left thigh"
 ITEM.WeaponType = "small3"
-ITEM.Weight = 0
 ITEM.Wearable = true
 
 

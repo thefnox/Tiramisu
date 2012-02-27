@@ -85,14 +85,18 @@ function meta:RefreshInventory( )
 	for i=1, container.Height do
 		for j=1, container.Width do
 			if !container:IsSlotEmpty( j, i ) then
-				if container.Items[i][j] and container.Items[i][j].itemid then
-					local tbl = {}
-					tbl.Name = CAKE.GetUData( container.Items[i][j].itemid, "name" )
-					tbl.Model = CAKE.GetUData( container.Items[i][j].itemid, "model" )
-					tbl.Wearable = CAKE.ItemData[ container.Items[i][j].class ].Wearable or CAKE.GetUData( container.Items[i][j].itemid, "wearable" )
-					tbl.Container = CAKE.GetUData( container.Items[i][j].itemid, "container" )
-					udata[container.Items[i][j].itemid] = tbl
-				end 
+				if !CAKE.ItemData[ container.Items[i][j].class ] then
+					container:ClearSlot( j, i )
+				else
+					if container.Items[i][j] and container.Items[i][j].itemid then
+						local tbl = {}
+						tbl.Name = CAKE.GetUData( container.Items[i][j].itemid, "name" )
+						tbl.Model = CAKE.GetUData( container.Items[i][j].itemid, "model" )
+						tbl.Wearable = CAKE.ItemData[ container.Items[i][j].class ].Wearable or CAKE.GetUData( container.Items[i][j].itemid, "wearable" )
+						tbl.Container = CAKE.GetUData( container.Items[i][j].itemid, "container" )
+						udata[container.Items[i][j].itemid] = tbl
+					end
+				end
 			end
 		end
 	end

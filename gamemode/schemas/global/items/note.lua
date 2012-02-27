@@ -24,16 +24,16 @@ end
 
 function ITEM:UseItem(ply)
 
-	myid = self:GetNWString("id")
+	local myid = self:GetNWString("id")
 	datastream.StreamToClients( ply, "Tiramisu.ReadNote", {["title"] = CAKE.GetUData(myid, "name"), ["text"] = CAKE.GetUData(myid, "text")})
 
 end
 
 function ITEM:Copy(ply)
-	paper = ply:HasItem("paper")
+	local paper = ply:HasItem("paper")
 	
 	if paper then
-		uses = CAKE.GetUData(paper, "uses")
+		local uses = CAKE.GetUData(paper, "uses")
 		if uses > 0 then
 			uses = uses - 1
 			if uses < 1 then
@@ -42,16 +42,14 @@ function ITEM:Copy(ply)
 				CAKE.SetUData(paper, "uses", uses)
 				CAKE.SetUData(paper, "name", "Paper " ..uses)
 			end
-			myid = self:GetNWString("id")
-			name = CAKE.GetUData(myid, "name")
-			text = CAKE.GetUData(myid, "text")
-			note = CAKE.CreateItem("note", ply:CalcDrop(), Angle(0, 0, 0))
+			local myid = self:GetNWString("id")
+			local name = CAKE.GetUData(myid, "name")
+			local text = CAKE.GetUData(myid, "text")
+			local note = CAKE.CreateItem("note", ply:CalcDrop(), Angle(0, 0, 0))
 			CAKE.SetUData( note:GetNWString("id"), "name", name )
 			CAKE.SetUData( note:GetNWString("id"), "text", text )
 			ply:GiveItem("note", myid)
 			self:Remove()
 		end
-	else
-		ply:GiveItem("note", self:GetNWString("id"))
 	end
 end

@@ -275,6 +275,9 @@ local function Admin_JoinFaction( ply, cmd, args )
 				CAKE.SetCharField( pl, "activegroup", group.UniqueID)
 				CAKE.SendGroupToClient( pl )
 				CAKE.SendError( pl, "You have been placed into the faction " .. group:Name() .. " by an admin.")
+			elseif group and group:CharInGroup( pl ) and rank and group:IsRank( rank ) then
+				group:GetCharInfo( pl ).Rank = rank
+				CAKE.SendError( pl, "You have been placed on the rank " .. rank .. " by an admin.")
 			end
 		elseif CAKE.GroupNameExists( faction ) then
 			local group = CAKE.FindGroupByName( faction )
@@ -292,6 +295,9 @@ local function Admin_JoinFaction( ply, cmd, args )
 				CAKE.SetCharField( pl, "activegroup", group.UniqueID)
 				CAKE.SendGroupToClient( pl )
 				CAKE.SendError( pl, "You have been placed into the faction " .. group:Name() .. " by an admin.")
+			elseif group and group:CharInGroup( pl ) and rank and group:IsRank( rank ) then
+				group:GetCharInfo( pl ).Rank = rank
+				CAKE.SendError( pl, "You have been placed on the rank " .. rank .. " by an admin.")
 			end
 		else
 			CAKE.SendChat( ply, "Can't find faction!" )

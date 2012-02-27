@@ -18,10 +18,9 @@ end
 
 function ITEM:UseItem(ply)
 
-	ply:RemoveClothing()
+	CAKE.RemoveClothing( ply )
 	CAKE.RemoveAllGear( ply )
 	ply:SetSpecialModel( "models/vortigaunt.mdl" )
-	ply:GiveItem( "vortigaunt_pill" )
 	self:Remove()
 
 end

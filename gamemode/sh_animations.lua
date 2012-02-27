@@ -176,6 +176,7 @@ if SERVER then
 	function meta:SetSpecialModel( model )
 		self:SetNWBool( "specialmodel", true )
 		self:SetNWString( "model", model )
+		self:SetMaterial("")
    		self:SetModel( model )
 	end
 	

@@ -225,6 +225,7 @@ concommand.Add( "rp_getcharinfo", function( ply, cmd, args )
 			["groupid"] = group.UniqueID,
 			["uid"] = roster[args[2]].UID,
 			["rank"] = roster[args[2]].Rank,
+			["rankname"] = group:GetRankField(roster[args[2]].Rank, "name"),
 			["name"] = roster[args[2]].Name,
 			["SteamID"] = roster[args[2]].SteamID,
 			["permissions"] = {
@@ -254,13 +255,23 @@ concommand.Add( "rp_rostersearch", function( ply, cmd, args )
 	local roster = group:GetRoster()
 	local searchresults = {}
 	local tbl = {}
-	for k, v in pairs( roster ) do
-		if string.match( string.lower(v.Name), searchstr ) or string.match( string.lower(v.SteamID), searchstr ) or string.match( string.lower(v.UID), searchstr ) or string.match( string.lower(v.Rank), searchstr ) then
+	if searchstr == "" then
+		for k, v in pairs( roster ) do
 			tbl = {}
 			tbl.Name = v.Name
 			tbl.SteamID = v.SteamID
 			tbl.uid = v.UID
 			table.insert( searchresults, tbl )
+		end
+	else
+		for k, v in pairs( roster ) do
+			if string.match( string.lower(v.Name), searchstr ) or string.match( string.lower(v.SteamID), searchstr ) or string.match( string.lower(v.UID), searchstr ) or string.match( string.lower(v.Rank), searchstr ) then
+				tbl = {}
+				tbl.Name = v.Name
+				tbl.SteamID = v.SteamID
+				tbl.uid = v.UID
+				table.insert( searchresults, tbl )
+			end
 		end
 	end
 	datastream.StreamToClients( ply, "Tiramisu.GetSearchResults", {

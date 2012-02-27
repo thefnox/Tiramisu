@@ -6,7 +6,7 @@ CAKE.ConVars[ "LinuxHotfix" ] = false -- TURN THIS ON ONLY IF YOUR SERVER USES L
 CAKE.ConVars[ "ForceJigglebones" ] = true --Forces jigglebones on all clients. Turns this off if you know it causes performance problems. 
 
 CAKE.ConVars[ "Tiramisu" ] = "2"
-CAKE.ConVars[ "Schema" ] = "hl2rp" -- What folder is schema data being loaded from?
+CAKE.ConVars[ "Schema" ] = "freeform" -- What folder is schema data being loaded from?
 
 --General config
 CAKE.ConVars[ "AllowVoices" ] = true --Set this to false to disable rp_voice. This is HL2 chatter, not actual microphone speech.

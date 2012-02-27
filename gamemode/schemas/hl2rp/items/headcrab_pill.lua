@@ -18,7 +18,7 @@ end
 
 function ITEM:UseItem(ply)
 
-	ply:RemoveClothing()
+	CAKE.RemoveClothing( ply )
 	CAKE.RemoveAllGear( ply )
 	ply:SetSpecialModel( "models/headcrabclassic.mdl" )
 	self:Remove()

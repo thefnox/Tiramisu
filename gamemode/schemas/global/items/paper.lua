@@ -32,10 +32,8 @@ function ITEM:Write(ply)
 			CAKE.SetUData(myid, "name", "Paper " .. 50)
 		end
 	end
-	id = self:GetNWString("id")
-	ply:GiveItem("paper", id)
-	self:Remove()
 	ply:ConCommand("rp_write")
+	self:Remove()
 end
 
 function ITEM:UseItem(ply)

@@ -6,6 +6,7 @@ ITEM.Purchaseable = false
 ITEM.Unusable = true
 ITEM.Price = 100
 ITEM.ItemGroup = 2
+ITEM.IsCombine = true
 ITEM.Flags = {
 	"overlay1",
 	"headprotection0.8"

@@ -18,11 +18,10 @@ end
 
 function ITEM:UseItem(ply)
 
-	ply:RemoveClothing()
+	CAKE.RemoveClothing( ply )
 	CAKE.RemoveAllGear( ply )
 	ply:SetSpecialModel( "models/Combine_Scanner.mdl" )
 	ply:SetMoveType( MOVETYPE_FLY )
-	ply:GiveItem( "antlion_pill" )
 	self:Remove()
 
 end

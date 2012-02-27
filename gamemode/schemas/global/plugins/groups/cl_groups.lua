@@ -147,6 +147,12 @@ function CAKE.EditCharacterInfo( tbl )
 		frame:SetWide( subtitle:GetWide() + 20 )
 	end
 
+	local rank = Label( "Rank: " .. tbl.rankname, frame)
+	rank:SetPos( 10, 95 )
+	rank:SetFont( "Tiramisu18Font")
+	rank:SizeToContents()
+
+	frame:SetTall( frame:GetTall() + rank:GetTall() )
 	frame:Center()
 
 	if permissions["canpromote"] or permissions["cankick"] then
@@ -746,7 +752,7 @@ function CAKE.OpenGroupInfo( tbl )
 	FindPlayer:SetTall( 30 )
 	FindPlayer.DoClick = function()
 		CAKE.StringRequest( "Find A Player", 
-			"Enter the name, rank, or SteamID of the player you want to find:", 
+			"Enter the name, rank, or SteamID of the player you want to find:\nLeave empty to fetch the whole roster", 
 			LocalPlayer():Nick(), 
 			function( str ) RunConsoleCommand("rp_rostersearch", tbl.uid, str) end,
 			function()end,
