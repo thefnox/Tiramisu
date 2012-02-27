@@ -873,10 +873,7 @@ Anims.Female[ "relaxed" ] = {
 		["explosion"] = "ACT_GESTURE_FLINCH_BLAST"
 	},
 	[ "crouch" ] = {
-		[ "idle" ] = {
-			["type"] = "sequence",
-			["act"] = "roofidle2"
-		},
+		[ "idle" ] = "ACT_COVER_LOW",
 		[ "walk" ] = "ACT_WALK_CROUCH",
 		[ "aimidle" ] = "ACT_RANGE_AIM_SMG1_LOW",
 		[ "aimwalk" ] = "ACT_WALK_CROUCH_AIM_RIFLE"
@@ -963,10 +960,7 @@ Anims.Female[ "frustrated" ] = {
 		["explosion"] = "ACT_GESTURE_FLINCH_BLAST"
 	},
 	[ "crouch" ] = {
-		[ "idle" ] = {
-			["type"] = "sequence",
-			["act"] = "roofidle2"
-		},
+		[ "idle" ] = "ACT_COVER_LOW",
 		[ "walk" ] = "ACT_WALK_CROUCH",
 		[ "aimidle" ] = "ACT_RANGE_AIM_SMG1_LOW",
 		[ "aimwalk" ] = "ACT_WALK_CROUCH_AIM_RIFLE"

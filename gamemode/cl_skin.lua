@@ -1044,7 +1044,7 @@ function SKIN:PaintDoorTitles()
 	LocalPlayer().CurDoor = door
 	if ValidEntity( door ) and CAKE.IsDoor( door ) and CAKE.GetDoorTitle( door ) != "" then
 		doordata = CAKE.CalculateDoorTextPosition( door )
-		if !doordata.HitWorld then
+		if doordata and !doordata.HitWorld then
 			viewpos = LocalPlayer():GetShootPos()
 			alpha = math.Clamp( LocalPlayer():EyePos():Distance( door:GetPos() ) * - 1 + 300, 0, 255 )
 			cam.Start3D2D(doordata.position, doordata.angles, 0.12 )
@@ -1064,7 +1064,7 @@ function SKIN:PaintDoorTitles()
 			LocalPlayer().PrevDoor.DoorAlpha = -Lerp( RealFrameTime() * 5, -LocalPlayer().PrevDoor.DoorAlpha, 0 )
 		end
 		doordata = CAKE.CalculateDoorTextPosition( LocalPlayer().PrevDoor )
-		if !doordata.HitWorld then
+		if doordata and !doordata.HitWorld then
 			viewpos = LocalPlayer():GetShootPos()
 			alpha = LocalPlayer().PrevDoor.DoorAlpha
 			cam.Start3D2D(doordata.position, doordata.angles, 0.12 )

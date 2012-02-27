@@ -348,6 +348,7 @@ end
 
 --This function was made by Nori, not me, as many other parts of the gamemode. This one's special though, since it's from Cakescript G3 lol.
 function CAKE.CalculateDoorTextPosition(door, reversed)
+	if !ValidEntity(door) then return false end
 	local traceData = {}
 	local obbCenter = door:OBBCenter()
 	local obbMaxs = door:OBBMaxs()
