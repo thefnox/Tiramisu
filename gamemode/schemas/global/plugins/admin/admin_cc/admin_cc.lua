@@ -302,7 +302,10 @@ end
 local function Admin_SetMoney( ply, cmd, args )
 
 	local target = CAKE.FindPlayer(args[1])
-	CAKE.SetCharField( target, "money", tonumber( args[2] ) )
+	if ValidEntity(target) then
+		CAKE.SetCharField( target, "money", tonumber( args[2] ) )
+		ply:SetNWInt( "money", tonumber( args[2] ) )
+	end
 		
 end
 
