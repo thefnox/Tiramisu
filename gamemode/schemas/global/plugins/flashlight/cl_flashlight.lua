@@ -5,7 +5,7 @@ function CAKE.FlashLightBindPress(ply, bind, pressed)
 		return true
 	end
 end
-hook.Add("PlayerBindPress", "FlashBind", CAKE.FlashLightBindPress)*/
+hook.Add("PlayerBindPress", "FlashBind", CAKE.FlashLightBindPress)
 
 function CAKE.FlashLightOn(um)
 	local ply = um:ReadEntity()
@@ -24,4 +24,4 @@ function CAKE.FlashlightThink()
 		end
 	end
 end
-hook.Add("PreDrawOpaqueRenderables", "FlashlightThink", CAKE.FlashlightThink)
+hook.Add("Think", "FlashlightThink", CAKE.FlashlightThink)*/
