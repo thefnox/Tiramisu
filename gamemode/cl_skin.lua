@@ -993,7 +993,7 @@ end
 function SKIN:PaintPlayerTitles()
 	for _, ply in pairs( CAKE.NearbyPlayers ) do
 		if !LocalPlayer() then return end
-		if ValidEntity( ply ) and ply:IsTiraPlayer() and ply:IsTiraPlayer() != LocalPlayer() and LocalPlayer():CanTraceTo(ply) and !ply:GetNWBool("unconciousmode") then
+		if ValidEntity( ply ) and ply:IsTiraPlayer() and LocalPlayer():CanTraceTo(ply) and !ply:GetNWBool("unconciousmode") then
 			local angleto = (ply:GetPos() - LocalPlayer():GetPos()):Angle()
 			local yawdif = math.abs(math.AngleDifference(angleto.y, (LocalPlayer():GetAngles()).y + LocalPlayer().CurrentLookAt.y))
 			local dist = ply:GetPos():Distance(LocalPlayer():GetPos())
@@ -1016,7 +1016,7 @@ function SKIN:PaintPlayerTitles()
 					local line = 0
 					local lines = {}
 					while curleft > 52 do
-						draw.SimpleTextOutlined( plyt:Title():sub(line*52+1, line*52+52+1), "TiramisuTitlesFont", pos.x, pos.y - 45 + line*10, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
+						draw.SimpleTextOutlined( plyt:Title():sub(line*52+1, line*52+52), "TiramisuTitlesFont", pos.x, pos.y - 45 + line*10, Color(255,255,255,ply.Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,100))
 						curleft = curleft - 52
 						line = line + 1
 					end
