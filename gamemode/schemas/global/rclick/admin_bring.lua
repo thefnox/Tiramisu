@@ -19,7 +19,7 @@ function RCLICK.Click(target,ply)
 	CAKE.ChoiceRequest( "Bring a player", "Choose what player to bring", tbl,
 	function( text )
 		if CAKE.FindPlayer(text) then
-			ply:ConCommand("rp_admin bring \""  .. CAKE.FormatText(CAKE.FindPlayer(text):SteamID()) .. "\"" )
+			ply:ConCommand("rp_admin bring \""  .. text .. "\"" )
 		end
 	end,
 	function() end, "Accept", "Cancel")

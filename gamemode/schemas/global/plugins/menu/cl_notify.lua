@@ -384,7 +384,7 @@ function CAKE.ChoiceRequest( strTitle, strText, tbl, fnEnter, fnCancel, strButto
 		Button:SetTall( 20 )
 		Button:SetWide( Button:GetWide() + 20 )
 		Button:SetPos( 5, 5 )
-		Button.DoClick = function() Window:Close() fnEnter( MultiChoice:GetValue() ) end
+		Button.DoClick = function() Window:Close() fnEnter( choice ) end
 		
 	local ButtonCancel = vgui.Create( "DButton", ButtonPanel )
 		ButtonCancel:SetText( strButtonCancelText or "Cancel" )
