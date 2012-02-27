@@ -18,6 +18,8 @@ datastream.Hook( "TiramisuAddToChat", function( handler, id, encoded, decoded )
 		outline = "TiramisuWhisperFontOutline"
 	elseif decoded.font == "TiramisuEmoteFont" then
 		outline = "TiramisuEmoteFontOutline"
+	elseif decoded.font == "TiramisuOOCFont" then
+		outline = "TiramisuOOCFontOutline"
 	end
 	if decoded.channel == "IC" then
 		CAKE.Chatbox:AddLine(  "<color=135,209,255,255><font=" .. decoded.font .. ">" .. text .. "</font></color>", decoded.channel, decoded.handler or "", outline )

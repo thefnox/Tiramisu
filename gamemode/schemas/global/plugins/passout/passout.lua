@@ -92,7 +92,7 @@ function CAKE.UnconciousMode( ply, wait, delay )
 				umsg.Bool( true )
 			umsg.End()
 		end)
-		ply:Lock()
+		ply:Freeze(true)
 			
 	end
 end
@@ -101,7 +101,7 @@ function CAKE.WakeUp(ply, dontdestroyragdoll)
 	if !(ply:GetNWBool( "unconciousmode", false )) then return end
 	ply:SetNWBool( "unconciousmode", false )
 	ply:SetPos( ply.rag:GetPos() + Vector( 0, 0, 10 ))
-	ply:UnLock()
+	ply:Freeze(false)
 	ply:GodDisable()
 	ply:SetNoDraw( false )
 	ply:SetNotSolid( false )
