@@ -993,7 +993,7 @@ end
 function SKIN:PaintPlayerTitles()
 	for _, ply in pairs( CAKE.NearbyPlayers ) do
 		if !LocalPlayer() then return end
-		if ValidEntity( ply ) and ply:IsTiraPlayer() and LocalPlayer():CanTraceTo(ply) and !ply:GetNWBool("unconciousmode") then
+		if ValidEntity( ply ) and ply:IsTiraPlayer() and ply:IsTiraPlayer() != LocalPlayer() and LocalPlayer():CanTraceTo(ply) and !ply:GetNWBool("unconciousmode") then
 			local angleto = (ply:GetPos() - LocalPlayer():GetPos()):Angle()
 			local yawdif = math.abs(math.AngleDifference(angleto.y, (LocalPlayer():GetAngles()).y + LocalPlayer().CurrentLookAt.y))
 			local dist = ply:GetPos():Distance(LocalPlayer():GetPos())
