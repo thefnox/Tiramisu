@@ -3,14 +3,14 @@ SCHEMA.Author = "FNox"
 SCHEMA.Description = "Pretend you have a life!"
 SCHEMA.Base = "global"
 
-function SCHEMA.SetUp( )
-
 	CAKE.ConVars["RationMoney"] = 15 -- How much money you get out of a ration
 	CAKE.MaxRations = 60 -- The maximum amount of rations available
 	CAKE.RationTimer = 10 --In minutes. The time it takes for rations to be resupplied
 
 	SetGlobalInt( "rations", CAKE.MaxRations )
 
+
+function SCHEMA.SetUp( )
 	--CCA
 	CAKE.CreateFaction( "Combine Civil Authority", "cca", [[
 	Part of the Combine Overwatch,[1] CPs are ordinary human volunteers who have "willingly" joined the Combine,[5] either for more privileges, such as additional food, better living conditions, an increase in authority and status over others, or out of genuine sympathy and identification with the Combine's aims. As such, they are not bio-mechanically modified in any way, unlike the two other Overwatch units.]] )

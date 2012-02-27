@@ -1,4 +1,4 @@
-RCLICK.Name = "Clothing out of ragdoll"
+RCLICK.Name = "Make Container"
 RCLICK.SubMenu = "Create"
 
 function RCLICK.Condition(target)

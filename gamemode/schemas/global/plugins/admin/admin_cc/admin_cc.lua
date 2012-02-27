@@ -299,12 +299,12 @@ local function Admin_Help( ply, cmd, args )
 end
 
 --rp_admin setmoney name money. This sets, not adds the money.
---[[ local function Admin_SetMoney( ply, cmd, args )
+local function Admin_SetMoney( ply, cmd, args )
 
 	local target = CAKE.FindPlayer(args[1])
 	CAKE.SetCharField( target, "money", tonumber( args[2] ) )
 		
-end ]]--
+end
 
 --rp_admin createitem item_class
 local function Admin_CreateItem( ply, cmd, args ) -- Why the fuck wasn't this here on the first place...
@@ -580,7 +580,7 @@ function PLUGIN.Init( )
 	CAKE.AdminCommand( "setconvar", Admin_SetConVar, "Set a Convar", true, true, 4 )
 	CAKE.AdminCommand( "listvars", Admin_ListVars, "List convars", true, true, 4 )
 	CAKE.AdminCommand( "createitem", Admin_CreateItem, "Creates an item", true, true, 4 )
-	-- CAKE.AdminCommand( "setmoney", Admin_SetMoney, "Set the money of another player", true, true, 4 )
+	CAKE.AdminCommand( "setmoney", Admin_SetMoney, "Set the money of another player", true, true, 4 )
 	CAKE.AdminCommand( "bring", Admin_Bring, "Brings a player to you", true, true, 3)
 	CAKE.AdminCommand( "goto", Admin_GoTo, "Takes you to a player", true, true, 3 )
 	CAKE.AdminCommand( "slay", Admin_Slay, "Kills a player", true, true, 3 )
