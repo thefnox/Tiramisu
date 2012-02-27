@@ -3,14 +3,14 @@ hook.Add( "KeyPress", "TiramisuHandleDoors", function( ply, key )
 		local entity = ply:GetEyeTrace( ).Entity
 		if ValidEntity( entity ) then
 			if(CAKE.IsDoor(entity)) then
-				local doorgroup = CAKE.GetDoorGroup(entity) or {}
+				local doorgroup = CAKE.GetDoorGroup(entity) or 0
 				local group = CAKE.GetGroup( CAKE.GetCharField( ply, "activegroup" ))
 				local groupdoor = 0
 				if group and group:CharInGroup(ply) then
 					groupdoor = tonumber(group:GetField( "doorgroup" )) or 0
 				end
 				if doorgroup == groupdoor then --lol
-					entity:Fire( "IN_USE", "", 0 )
+					entity:Fire( "open", "", 0 )
 				end
 			end
 			if( entity:GetClass() == "item_prop" ) then
@@ -62,7 +62,7 @@ function Admin_AddDoor(ply, cmd, args)
 	
 end
 
-function Admin_AddDoorGroup(ply, cmd, args)
+function Admin_SetDoorGroup(ply, cmd, args)
 	
 	local ent = ents.GetByIndex( args[1] )
 
@@ -71,7 +71,7 @@ function Admin_AddDoorGroup(ply, cmd, args)
 	ent.doorgroup = tonumber(args[2])
 
 	for k, v in pairs( CAKE.Doors ) do
-		if(v["class"] == trent:GetClass() and v["pos"] == trent:GetPos() and v["doorgroup"] != 0 ) then
+		if(v["class"] == ent:GetClass() and v["pos"] == ent:GetPos() and v["doorgroup"] != 0 ) then
 			table.insert( v["doorgroup"], tonumber(args[1]) )
 			CAKE.SendChat(ply, "Door group set to " .. args[2])
 			CAKE.SaveDoors()

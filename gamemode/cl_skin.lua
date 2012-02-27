@@ -394,7 +394,7 @@ end
 
 function SKIN:LayoutCharacterList()
 	if CharacterMenu then
-		if !CharacterListPanel then
+		if !CharacterListPanel or !CharacterListPanel:Valid() then
 			CharacterListPanel = vgui.Create( "DPanelList", CharacterMenu )
 			CharacterListPanel:SetSize( ScrW() - ScrH() - 100, ScrH() - 270 )
 			CharacterListPanel:SetPos( 100, 170 )
@@ -404,7 +404,7 @@ function SKIN:LayoutCharacterList()
 			CharacterMenu.AddChild( CharacterListPanel )
 			CharacterListPanel.Paint = function()
 			end
-		else
+		elseif CharacterListPanel and CharacterListPanel:Valid() then
 			CharacterListPanel:Clear()
 		end
 

@@ -93,13 +93,17 @@ function ccLockDoor( ply, cmd, args )
 	local entity = ents.GetByIndex( tonumber( args[ 1 ] ) )
 	local door = ents.GetByIndex( tonumber( args[ 1 ] ) )
 	local doorgroup = CAKE.GetDoorGroup(entity) or 0
-	local groupdoor = CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or {}
+	local group = CAKE.GetGroup( CAKE.GetCharField( ply, "activegroup" ))
+	local groupdoor = 0
+	if group then
+		groupdoor = group:GetField("doorgroup")
+	end
 	if( CAKE.IsDoor( door ) ) then
 		if (door.owner and door.owner == ply) or ply:IsSuperAdmin() or ply:IsAdmin() or !CAKE.ConVars[ "DoorsPurchaseable" ] then
 			door:Fire( "lock", "", 0 )
 			CAKE.SendChat( ply, "Door locked!" )
 		else
-			if (type( groupdoor ) == "table" and table.HasValue(groupdoor, doorgroup)) or doorgroup == groupdoor then
+			if doorgroup == groupdoor then
 				door:Fire( "lock", "", 0 )
 				CAKE.SendChat( ply, "Door locked!" )
 			else
@@ -116,13 +120,17 @@ function ccUnLockDoor( ply, cmd, args )
 	local entity = ents.GetByIndex( tonumber( args[ 1 ] ) )
 	local door = ents.GetByIndex( tonumber( args[ 1 ] ) )
 	local doorgroup = CAKE.GetDoorGroup(entity) or 0
-	local groupdoor = CAKE.GetGroupFlag( CAKE.GetCharField( ply, "group" ), "doorgroups" ) or 0
+	local group = CAKE.GetGroup( CAKE.GetCharField( ply, "activegroup" ))
+	local groupdoor = 0
+	if group then
+		groupdoor = group:GetField("doorgroup")
+	end
 	if( CAKE.IsDoor( door ) ) then
-		if ( door.owner and door.owner == ply ) or ply:IsSuperAdmin() or ply:IsAdmin() or !CAKE.ConVars[ "DoorsPurchaseable" ] then
+		if (door.owner and door.owner == ply) or ply:IsSuperAdmin() or ply:IsAdmin() or !CAKE.ConVars[ "DoorsPurchaseable" ] then
 			door:Fire( "unlock", "", 0 )
 			CAKE.SendChat( ply, "Door unlocked!" )
 		else
-			if (type( groupdoor ) == "table" and table.HasValue(groupdoor, doorgroup)) or doorgroup == groupdoor then
+			if doorgroup == groupdoor then
 				door:Fire( "unlock", "", 0 )
 				CAKE.SendChat( ply, "Door unlocked!" )
 			else

@@ -8,13 +8,20 @@ local function OpenForums()
 	PlayerMenu:SetDraggable( true )
 	PlayerMenu:ShowCloseButton( true )
 	PlayerMenu:SetDeleteOnClose( true )
+	PlayerMenu:SetSizable( true )
 	PlayerMenu:Center()
 	PlayerMenu:SetBackgroundBlur( true )
 	
+	local controls = vgui.Create( "DHTMLControls", PlayerMenu )
+	controls:Dock( TOP )
+
 	local html = vgui.Create( "HTML" , PlayerMenu )
-	html:SetSize( 690, 487 )
-	html:SetPos( 5, 28 )
-	html:OpenURL( CAKE.ConVars[ "Webpage" ] )
+	html:Dock(FILL)
+	html:OpenURL( "http://www.google.com/" )
+
+	controls:SetHTML( html )
+
+	PlayerMenu:MakePopup()
 
 end
 

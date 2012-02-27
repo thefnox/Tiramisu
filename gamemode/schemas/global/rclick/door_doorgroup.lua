@@ -10,7 +10,7 @@ end
 function RCLICK.Click(target,ply)
 
 	CAKE.StringRequest( "Set Door Group", "Enter which doorgroup to assign to this door", "0", function( text )
-		RunConsoleCommand( "rp_admin", "setdoorgroup", target:EntIndex(), text )
+		ply:ConCommand("rp_admin setdoorgroup " .. target:EntIndex() .. " " .. text)
 	end,
 	function() end, "Accept", "Cancel")
 

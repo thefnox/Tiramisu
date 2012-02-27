@@ -149,6 +149,6 @@ CAKE.ConVars[ "IntroText" ] = "Welcome to Tiramisu 2" -- Character menu and intr
 CAKE.ConVars[ "IntroSubtitle" ] = "A new era in roleplay" -- Character menu and intro subtitle. If you want this gone just set it to ""
 
 --General
-CAKE.ConVars[ "Webpage" ] = "http://www.facepunch.com/" --Set this to whatever you want to, it'll be accessible on the "Forums" tab
+CAKE.ConVars[ "Webpage" ] = "http://www.google.com/" --Set this to whatever you want to, it'll be accessible on the "Forums" tab
 
 CAKE.ConVars[ "MenuTitle" ] = "Tiramisu" --Title for the main menu

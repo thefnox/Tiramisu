@@ -10,7 +10,7 @@ end
 function RCLICK.Click(target,ply)
 
 	CAKE.StringRequest( "Set Door's Default Title", "Enter which title should this door have by default", "Title", function( text )
-		RunConsoleCommand( "rp_admin", "setdoortitle", target:EntIndex(), text )
+		ply:ConCommand("rp_admin setdoortitle " .. target:EntIndex() .. " " .. text)
 	end,
 	function() end, "Accept", "Cancel")
 

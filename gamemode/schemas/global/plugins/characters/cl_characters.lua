@@ -58,7 +58,7 @@ end)
 usermessage.Hook( "SelectThisCharacter", function( data )
 	CAKE.SelectedChar = data:ReadLong( )
 	if CharacterMenu and ExistingChars[CAKE.SelectedChar] then
-		if !CharTitleLabel then
+		if !CharTitleLabel or !CharTitleLabel:Valid() then
 			CharTitleLabel = Label( ExistingChars[CAKE.SelectedChar]["name"] or "Loading...", CharacterMenu)
 			CharTitleLabel:SetFont( "Tiramisu24Font")
 			CharTitleLabel:SizeToContents()
