@@ -25,21 +25,13 @@ function ITEM:Pickup(ply)
 end
 
 function ITEM:Write(ply)
-	if !ply:HasItem("paper") then
-		myid = self:GetNWString("id")
-		if !CAKE.GetUData(myid, "uses") then
-			CAKE.SetUData(myid, "uses", 50)
-			CAKE.SetUData(myid, "name", "Paper " .. 50)
-		end
+	myid = self:GetNWString("id")
+	if !CAKE.GetUData(myid, "uses") then
+		CAKE.SetUData(myid, "uses", 50)
+		CAKE.SetUData(myid, "name", "Paper " .. 50)
 	end
-	ply:ConCommand("rp_write")
-	self:Remove()
+	CAKE.StartWrite( ply, myid )
 end
 
 function ITEM:UseItem(ply)
-
-	myid = self:GetNWString("id")
-	ply:GiveItem("paper", myid)
-	self:Remove()
-
 end

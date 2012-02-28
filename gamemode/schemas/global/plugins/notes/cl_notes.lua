@@ -1,6 +1,6 @@
-concommand.Add( "rp_write", function(ply, cmd, args)
+usermessage.Hook("Tiramisu.StartWrite", function()
 	CAKE.WriteNote()
-end )
+end)
 
 function CAKE.WriteNote()
 	WriteMenu = vgui.Create( "DFrame" )

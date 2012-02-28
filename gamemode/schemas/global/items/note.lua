@@ -40,7 +40,8 @@ function ITEM:Copy(ply)
 				ply:TakeItemID(paper)
 			else 
 				CAKE.SetUData(paper, "uses", uses)
-				CAKE.SetUData(paper, "name", "Paper " ..uses)
+				CAKE.SetUData(paper, "name", "Paper (" .. uses .. " uses left)")
+				CAKE.SendUData( ply, paper )
 			end
 			local myid = self:GetNWString("id")
 			local name = CAKE.GetUData(myid, "name")
@@ -48,8 +49,10 @@ function ITEM:Copy(ply)
 			local note = CAKE.CreateItem("note", ply:CalcDrop(), Angle(0, 0, 0))
 			CAKE.SetUData( note:GetNWString("id"), "name", name )
 			CAKE.SetUData( note:GetNWString("id"), "text", text )
+			note:Remove()
 			ply:GiveItem("note", myid)
-			self:Remove()
 		end
+	else
+		CAKE.SendChat(ply, "You don't have any paper to copy this to!")
 	end
 end

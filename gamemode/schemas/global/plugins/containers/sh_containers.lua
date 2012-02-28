@@ -118,7 +118,7 @@ function meta:HasItem( class )
 	for i=1, self.Height do
 		for j=1, self.Width do
 			if !self:IsSlotEmpty(j,i) and self.Items[i][j].class == class then 
-				return true
+				return self.Items[i][j].itemid
 			end
 		end
 	end
