@@ -46,19 +46,14 @@ function CAKE.GetDoorGroup( entity )
 		if entity.doorgroup then
 			return entity.doorgroup
 		end
-
 		for k, v in pairs(CAKE.Doors) do
-			
-			if(v["class"] == entity:GetClass() and v["pos"] == entity:GetPos() and v["doorgroup"] != 0 ) then
-				
-				return v["doorgroup"] or {}
-					
+			if(v["class"] == entity:GetClass() and v["pos"] == entity:GetPos() and v["doorgroup"]) then
+				return v["doorgroup"]
 			end
-				
 		end
 	end
 
-	return false
+	return 0
 
 end
 
@@ -70,16 +65,12 @@ function CAKE.GetDoorBuilding(entity)
 	end
 
 	for k, v in pairs(CAKE.Doors) do
-		
-		if(v["class"] == entity:GetClass() and v["pos"] == entity:GetPos() and v["building"] != 0 ) then
-			
+		if v["class"] == entity:GetClass() and v["pos"] == entity:GetPos() then
 			return v["building"]
-				
 		end
-			
 	end
 
-	return false
+	return 0
 
 end
 
@@ -156,7 +147,7 @@ function ccPurchaseDoor( ply, cmd, args )
 	end
 	
 		
-	if( CAKE.GetDoorGroup( door ) and !door.purchaseable ) then
+	if( CAKE.GetDoorGroup( door ) != 0 or !door.purchaseable ) then
 		
 		CAKE.SendChat( ply, "This is not a purchaseable door!" )
 		return
@@ -168,7 +159,7 @@ function ccPurchaseDoor( ply, cmd, args )
 
 		if( door.owner == nil ) then
 
-			if CAKE.GetDoorBuilding(door) then
+			if CAKE.GetDoorBuilding(door) != 0 then
 				local building = CAKE.GetDoorBuilding(door)
 				local doors
 				for _, targetdoor in pairs( CAKE.Doors ) do
@@ -185,12 +176,10 @@ function ccPurchaseDoor( ply, cmd, args )
 				CAKE.SendChat( ply, "Building Owned" )
 			else
 				if( tonumber( CAKE.GetCharField( ply, "money" ) ) >= 50 ) then
-					
 					-- Enough money to start off, let's start the rental.
 					CAKE.ChangeMoney( ply, -50 )
 					door.owner = ply
 					CAKE.SendChat( ply, "Door Owned" )
-
 				end
 			end
 			
@@ -199,6 +188,13 @@ function ccPurchaseDoor( ply, cmd, args )
 			door.owner = nil
 			CAKE.ChangeMoney( ply, 50 )
 			CAKE.SetDoorTitle( door, "" )
+			for _, Door in pairs( CAKE.Doors ) do
+				if Door[ "pos" ] == door:GetPos() then
+					CAKE.SetDoorTitle( door, Door["title"] )
+					break
+				end
+			end
+
 			CAKE.SendChat( ply, "Door Unowned" )
 			
 		else
@@ -215,6 +211,12 @@ concommand.Add( "rp_purchasedoor", ccPurchaseDoor )
 local function ccDoorTitle( ply, cmd, args )
 
 	local door = ply:GetEyeTrace( ).Entity
+
+	if door.owner and door.owner != ply then
+		CAKE.SendChat( ply, "You don't own this door!" )
+		return
+	end
+
 	if (ValidEntity( door ) and CAKE.IsDoor( door ) and (door.owner and door.owner == ply)) or !CAKE.ConVars[ "DoorsPurchaseable" ] then
 		local title = table.concat( args, " " )
 		CAKE.SetDoorTitle( door, title )

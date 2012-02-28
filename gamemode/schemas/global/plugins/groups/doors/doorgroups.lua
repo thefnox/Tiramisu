@@ -31,24 +31,16 @@ function Admin_AddDoor(ply, cmd, args)
 
 	if(table.getn(args) < 1) then ply:PrintMessage(3, "Specify a doorgroup!") return end
 
-	if CAKE.GetDoorGroup(trent) then
-		local pos = trent:GetPos()
-		local Door = {}
-		Door["pos"] = trent:GetPos()
-		Door["class"] = trent:GetClass()
-		Door["title"] = args[2] or ""
-		Door["doorgroup"] = {tonumber(args[1])}
-		Door["building"] = tonumber(args[3])
-		Door["purchaseable"] = util.tobool( args[4] )
+	local pos = trent:GetPos()
+	local Door = {}
+	Door["pos"] = trent:GetPos()
+	Door["class"] = trent:GetClass()
+	Door["title"] = args[2] or ""
+	Door["doorgroup"] = tonumber(args[1])
+	Door["building"] = tonumber(args[3])
+	Door["purchaseable"] = util.tobool( args[4] )
 
-		table.insert(CAKE.Doors, Door)
-	else
-		for k, v in pairs(CAKE.Doors) do
-			if(v["class"] == trent:GetClass() and v["pos"] == trent:GetPos() and v["doorgroup"] != 0 ) then
-				table.insert( v["doorgroup"], tonumber(args[1]) )
-			end
-		end
-	end
+	table.insert(CAKE.Doors, Door)
 	
 	CAKE.SendChat(ply, "Door group added to door")
 
@@ -71,8 +63,8 @@ function Admin_SetDoorGroup(ply, cmd, args)
 	ent.doorgroup = tonumber(args[2])
 
 	for k, v in pairs( CAKE.Doors ) do
-		if(v["class"] == ent:GetClass() and v["pos"] == ent:GetPos() and v["doorgroup"] != 0 ) then
-			table.insert( v["doorgroup"], tonumber(args[1]) )
+		if v["class"] == ent:GetClass() and v["pos"] == ent:GetPos() then
+			v["doorgroup"] = tonumber(args[2])
 			CAKE.SendChat(ply, "Door group set to " .. args[2])
 			CAKE.SaveDoors()
 			return --The whole function ends here.
@@ -83,7 +75,7 @@ function Admin_SetDoorGroup(ply, cmd, args)
 	Door["pos"] = ent:GetPos()
 	Door["class"] = ent:GetClass()
 	Door["title"] = ""
-	Door["doorgroup"] = {tonumber(args[2])}
+	Door["doorgroup"] = tonumber(args[2])
 	Door["building"] = 0
 	Door["purchaseable"] = false
 
@@ -115,7 +107,7 @@ function Admin_SetDoorBuilding(ply, cmd, args)
 	Door["pos"] = ent:GetPos()
 	Door["class"] = ent:GetClass()
 	Door["title"] = ""
-	Door["doorgroup"] = {0}
+	Door["doorgroup"] = 0
 	Door["building"] = tonumber(args[2])
 	Door["purchaseable"] = false
 
@@ -130,15 +122,16 @@ function Admin_SetDoorTitle(ply, cmd, args)
 	
 	local ent = ents.GetByIndex( args[1] )
 
-	if(table.getn(args) < 2) then ply:PrintMessage(3, "Specify a title!") return end
+	if(#args < 2) then ply:PrintMessage(3, "Specify a title!") return end
 
-	ent.title = args[2]
-	CAKE.SetDoorTitle( ent, args[2] )
+	table.remove(args, 1)
+	ent.title = table.concat( args, " " )
+	CAKE.SetDoorTitle( ent, ent.title )
 
 	for _, Door in pairs( CAKE.Doors ) do
 		if Door[ "pos" ] == ent:GetPos() then
-			Door["title"] = args[2]
-			CAKE.SendChat(ply, "Door title set to " .. args[2])
+			Door["title"] = ent.title
+			CAKE.SendChat(ply, "Door title set to " .. ent.title)
 			CAKE.SaveDoors()
 			return --The whole function ends here.
 		end
@@ -147,14 +140,14 @@ function Admin_SetDoorTitle(ply, cmd, args)
 	local Door = {}
 	Door["pos"] = ent:GetPos()
 	Door["class"] = ent:GetClass()
-	Door["title"] = args[2]
-	Door["doorgroup"] = {0}
+	Door["title"] = ent.title
+	Door["doorgroup"] = 0
 	Door["building"] = 0
 	Door["purchaseable"] = false
 
 	table.insert(CAKE.Doors, Door)
 	
-	CAKE.SendChat(ply, "Door title set to " .. args[2])
+	CAKE.SendChat(ply, "Door title set to " .. ent.title)
 	CAKE.SaveDoors()
 	
 end
@@ -168,7 +161,7 @@ function Admin_SetDoorPurchaseable(ply, cmd, args)
 	ent.purchaseable = tonumber(args[2])
 
 	for _, Door in pairs( CAKE.Doors ) do
-		if Door[ "pos" ] == ent:GetPos() and Door[ "class" ] then
+		if Door[ "pos" ] == ent:GetPos() then
 			Door["purchaseable"] = util.tobool( args[2] )
 			CAKE.SendChat(ply, "Door purchaseable status set to " .. args[2] )
 			CAKE.SaveDoors()
@@ -180,7 +173,7 @@ function Admin_SetDoorPurchaseable(ply, cmd, args)
 	Door["pos"] = ent:GetPos()
 	Door["class"] = ent:GetClass()
 	Door["title"] = ""
-	Door["doorgroup"] = {0}
+	Door["doorgroup"] = 0
 	Door["building"] = 0
 	Door["purchaseable"] = util.tobool( args[2] )
 
