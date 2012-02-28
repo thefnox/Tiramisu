@@ -8,5 +8,5 @@ function RCLICK.Condition(target)
 end
 
 function RCLICK.Click(target,ply)
-	RunConsoleCommand( "rp_write" )
+	CAKE.WriteNote()
 end

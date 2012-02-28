@@ -116,10 +116,9 @@ function ccDropItem( ply, cmd, args )
 	
 	if !args[ 1 ] then return end
 
-	local inv =	ply:GetInventory()
-
-	if inv:HasItemID( args[ 1 ] ) then
-		CAKE.CreateItem( inv:TakeItemID( args[ 1 ] ), ply:CalcDrop( ), Angle( 0,0,0 ), args[ 1 ] )
+	if ply:HasItemID( args[ 1 ] ) then
+		local class = ply:TakeItemID( args[ 1 ] )
+		CAKE.CreateItem( class, ply:CalcDrop( ), Angle( 0,0,0 ), args[ 1 ] )
 	end
 
 end
@@ -259,14 +258,45 @@ function meta:TakeItem( class )
 	for i=1, inv.Height do
 		for j=1, inv.Width do
 			if !inv:IsSlotEmpty(j,i) and inv.Items[i][j].class == class then 
-				if SERVER then
-					umsg.Start("c_Take", CAKE.GetPlyTrackingContainer( inv.UniqueID ))
-						umsg.String(inv.UniqueID)
-						umsg.String(inv.Items[i][j].itemid)
-					umsg.End()
-					inv:Save()
-				end
+				umsg.Start("c_Take", CAKE.GetPlyTrackingContainer( inv.UniqueID ))
+					umsg.String(inv.UniqueID)
+					umsg.String(inv.Items[i][j].itemid)
+				umsg.End()
+				inv:Save()
 				inv:ClearSlot( j, i )
+				if CAKE.GetUData( inv.Items[i][j].itemid, "weaponclass" ) then
+					for _, tbl in pairs( inv.Items ) do
+						for k, v in pairs(tbl) do
+							if CAKE.GetUData( inv.Items[i][j].itemid, "weaponclass" ) == CAKE.GetUData(v.itemid, "weaponclass") then
+								count = true
+								break
+							end
+						end
+						if count then
+							break
+						end
+					end
+
+					if !count then
+						self:StripWeapon(CAKE.GetUData(id, "weaponclass") or "nothing")
+					end
+				elseif string.match(class, "weapon_") and class != "weapon_base" then
+					for _, tbl in pairs( inv.Items ) do
+						for k, v in pairs(tbl) do
+							if v.class == class then
+								count = true
+								break
+							end
+						end
+						if count then
+							break
+						end
+					end
+
+					if !count then
+						self:StripWeapon(class)
+					end
+				end
 				inv:Save()
 				return
 			end
@@ -280,31 +310,51 @@ function meta:TakeItemID( id )
 	CAKE.RemoveClothingID( self, id )
 	CAKE.RemoveGearItemID( self, id )
 
-	inv:TakeItemID( id )
+	local class = inv:TakeItemID( id )
 	CAKE.DayLog( "economy.txt", "Removing item '" .. id .. "' from " .. CAKE.FormatCharString( self ) .. " inventory" )
 
 	local count = false
 
-	for _, tbl in pairs( self:GetInventory().Items ) do
-		for k, v in pairs(tbl) do
-			if CAKE.GetUData( v.itemid, "weaponclass" ) == CAKE.GetUData(id, "weaponclass") then
-				count = true
+	if CAKE.GetUData( id, "weaponclass" ) then
+		for _, tbl in pairs( self:GetInventory().Items ) do
+			for k, v in pairs(tbl) do
+				if CAKE.GetUData( v.itemid, "weaponclass" ) == CAKE.GetUData(id, "weaponclass") then
+					count = true
+					break
+				end
+			end
+			if count then
 				break
 			end
 		end
-		if count then
-			break
+
+		if !count then
+			self:StripWeapon(CAKE.GetUData(id, "weaponclass") or "nothing")
+		end
+	elseif string.match(class, "weapon_") and class != "weapon_base" then
+		for _, tbl in pairs( self:GetInventory().Items ) do
+			for k, v in pairs(tbl) do
+				if v.class == class then
+					count = true
+					break
+				end
+			end
+			if count then
+				break
+			end
+		end
+
+		if !count then
+			self:StripWeapon(class)
 		end
 	end
 
-	if !count then
-		self:StripWeapon(CAKE.GetUData(id, "weaponclass") or "nothing")
-	end
 	CAKE.SendClothingToClient( self )
 	CAKE.SaveGear( self )
 	CAKE.SendGearToClient( self )
 
 	inv:Save()
+	return class
 	
 end
 
