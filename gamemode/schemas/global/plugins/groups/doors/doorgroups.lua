@@ -158,11 +158,17 @@ function Admin_SetDoorPurchaseable(ply, cmd, args)
 
 	if(table.getn(args) < 2) then ply:PrintMessage(3, "Specify if purchaseable!") return end
 
-	ent.purchaseable = tonumber(args[2])
+	if args[2] == "true" then
+		args[2] = true
+	else
+		args[2] = false
+	end
+	
+	ent.purchaseable = args[2]
 
 	for _, Door in pairs( CAKE.Doors ) do
 		if Door[ "pos" ] == ent:GetPos() then
-			Door["purchaseable"] = util.tobool( args[2] )
+			Door["purchaseable"] = args[2]
 			CAKE.SendChat(ply, "Door purchaseable status set to " .. args[2] )
 			CAKE.SaveDoors()
 			return --The whole function ends here.
@@ -175,11 +181,11 @@ function Admin_SetDoorPurchaseable(ply, cmd, args)
 	Door["title"] = ""
 	Door["doorgroup"] = 0
 	Door["building"] = 0
-	Door["purchaseable"] = util.tobool( args[2] )
+	Door["purchaseable"] = args[2]
 
 	table.insert(CAKE.Doors, Door)
 	
-	CAKE.SendChat(ply, "Door purchaseable status set to " .. args[2] )
+	CAKE.SendChat(ply, "Door purchaseable status set to " .. tostring(args[2]) )
 	CAKE.SaveDoors()
 	
 end

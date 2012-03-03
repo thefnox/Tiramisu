@@ -1,4 +1,5 @@
 RCLICK.Name = "Set Door Title"
+RCLICK.SubMenu = "Door"
 
 function RCLICK.Condition(target)
 
