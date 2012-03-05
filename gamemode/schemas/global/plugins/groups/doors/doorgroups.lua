@@ -9,7 +9,7 @@ hook.Add( "KeyPress", "TiramisuHandleDoors", function( ply, key )
 				if group and group:CharInGroup(ply) then
 					groupdoor = tonumber(group:GetField( "doorgroup" )) or 0
 				end
-				if doorgroup == groupdoor then --lol
+				if entity:GetClass() == "func_door" and doorgroup == groupdoor then --lol
 					entity:Fire( "open", "", 0 )
 				end
 			end
