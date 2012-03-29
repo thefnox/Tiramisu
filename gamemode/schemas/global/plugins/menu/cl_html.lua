@@ -17,7 +17,8 @@ local function OpenForums()
 
 	local html = vgui.Create( "HTML" , PlayerMenu )
 	html:Dock(FILL)
-	html:OpenURL( "http://www.google.com/" )
+	html:OpenURL( CAKE.ConVars[ "Webpage" ]
+ )
 
 	controls:SetHTML( html )
 
