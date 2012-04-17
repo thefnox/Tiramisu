@@ -206,7 +206,7 @@ end
 
 function PANEL:GetWearable()
 	if self.Item then
-		if string.match(self.Item, "clothing_") or string.match(self.Item, "helmet_") then
+		if string.match(self.Item, "clothing_") or string.match(self.Item, "helmet_") or CAKE.ItemData[self:GetItem()].Wearable then
 			return true
 		elseif CAKE.ItemData[self.Item] and CAKE.ItemData[self.Item].Wearable then
 			return true
