@@ -61,7 +61,7 @@ hook.Add("ShouldDrawLocalPlayer","TiramisuDrawLocalPlayerCamera", function()
 	if (CAKE.Thirdperson:GetBool() and CAKE.ThirdpersonDistance:GetInt() != 0 ) or CAKE.FreeScroll then
 		return true
 	else
-		if CAKE.FirstpersonBody:GetBool() then
+		if CAKE.FirstpersonBody:GetBool() and !LocalPlayer():GetNWBool("specialmodel") then
 			return true
 		end
 	end
@@ -95,6 +95,41 @@ local mYaw = GetConVar( "m_yaw" )
 local middleDown = false
 
 hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
+
+	if LocalPlayer():GetNWBool("specialmodel") then
+		CAKE.UseHeadRotation = false
+		if CAKE.Thirdperson:GetBool() then
+			CAKE.WasOTS = false
+			if CAKE.SwitchFromFirstPerson and CAKE.LastViewAng then
+				CAKE.RealAng = CAKE.LastViewAng
+				CAKE.CurAng = CAKE.RealAng
+				CAKE.LastAng = CAKE.LastViewAng
+				CAKE.OldAngles = CAKE.LastAng
+				CAKE.CurAng = CAKE.LastAng
+				--CAKE.RealAng = CAKE.CurAng
+				CAKE.SwitchFromFirstPerson = false
+				CAKE.UseHeadRotation = false
+			elseif !CAKE.RealAng then
+				CAKE.RealAng = cmd:GetViewAngles()
+			end
+
+			CAKE.LastAng = CAKE.RealAng
+			CAKE.RealAng = CAKE.RealAng + Angle( cmd:GetMouseY() * (mPitch:GetFloat()), cmd:GetMouseX() * (-mYaw:GetFloat()), 0 )
+			CAKE.RealAng.p = Clamp( NormalizeAngle( CAKE.RealAng.p ), -89, 89 )
+			CAKE.RealAng.y = NormalizeAngle( CAKE.RealAng.y )
+		else
+			CAKE.WasOTS = false
+			if CAKE.UseHeadRotation then
+				cmd:SetViewAngles(CAKE.RealAng)
+			end
+			CAKE.OTSAng = false
+			CAKE.UseHeadRotation = false
+			CAKE.SwitchFromFirstPerson = true
+			CAKE.DiffReal = Angle( 0, 0, 0 )
+			CAKE.LastViewAng = cmd:GetViewAngles()
+		end
+		return
+	end
 	
 	if !IronsightsOn() and !LocalPlayer():InVehicle() and cmd:GetButtons() & IN_USE == 0 then
 		if input.IsMouseDown(MOUSE_MIDDLE) then
@@ -142,11 +177,16 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 					CAKE.UseHeadRotation = true
 					cmd:SetViewAngles(CAKE.LastViewAng)
 				end
-				if abs(AngleDifference(CAKE.RealAng.y, CAKE.LastViewAng.y)) > 170 then
+				if AngleDifference(CAKE.RealAng.y, CAKE.LastViewAng.y) > 170 then
 					cmd:SetViewAngles( CAKE.RealAng )
 					CAKE.LastViewAng = CAKE.RealAng
 					CAKE.LastAng = CAKE.RealAng
-					LocalPlayer():AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_TURN_RIGHT180 )
+					LocalPlayer():AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_TURN_RIGHT90 )
+				elseif AngleDifference(CAKE.RealAng.y, CAKE.LastViewAng.y) < -170 then
+					cmd:SetViewAngles( CAKE.RealAng )
+					CAKE.LastViewAng = CAKE.RealAng
+					CAKE.LastAng = CAKE.RealAng
+					LocalPlayer():AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_TURN_LEFT90 )					
 				end
 			elseif CAKE.Thirdperson:GetBool() and LocalPlayer():GetNWBool( "aiming", false ) then --OVER THE SHOULDER
 			
@@ -259,6 +299,14 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 		return GAMEMODE:CalcView(ply, pos, (targetent:LocalToWorld(targetent:OBBCenter())-pos):Angle(), fov)
 	end
 
+	if LocalPlayer():GetNWBool("specialmodel") then
+		if CAKE.Thirdperson:GetBool() then 
+			
+		else
+
+		end
+	end
+
 	if CAKE.Thirdperson:GetBool() then --All thirdperson code goes here.
 
 		if !CAKE.OldAngles then
@@ -338,54 +386,52 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 end)
 
 hook.Add( "UpdateAnimation", "TiramisuAnimateRotate", function( ply, velocity, maxseqgroundspeed )
-	if ply == LocalPlayer() and !CAKE.ForceDraw then
-		--ply:SetPoseParameter("aim_yaw", 0 )
-		ply:SetPoseParameter("head_yaw", 0 )
-		ply:SetPoseParameter("body_yaw", 0 )
-		ply:SetPoseParameter("spine_yaw", 0 )
-		if CAKE.UseHeadRotation then
-			lookattarget = CAKE.RealAng - CAKE.LastViewAng
-			lookattarget = Angle( lookattarget.p, NormalizeAngle( lookattarget.y ), 0 )
-			if !ply.CurrentLookAt then
-				ply.CurrentLookAt = lookattarget
-			end
-			ang = LerpAngle( 0.1, ply.CurrentLookAt, lookattarget)
-			--ang.p = math.NormalizeAngle( ang.p )
-			ply.CurrentLookAt = ang
-			ply:SetPoseParameter("head_pitch", ang.p + 10)
-			ply:SetPoseParameter("aim_pitch", ang.p)
-			ply:SetPoseParameter("aim_yaw", ang.y)
-			if ang.y > 0 then
-				if ang.y < 60 then
-					ply:SetPoseParameter("head_yaw", ang.y)
-					ply:SetPoseParameter("body_yaw", 0)
-					ply:SetPoseParameter("spine_yaw", 0)
-				elseif ang.y >= 60 and ang.y <= 90 then
-					ply:SetPoseParameter("head_yaw", ang.y)
-					ply:SetPoseParameter("body_yaw", (ang.y - 60))
-					ply:SetPoseParameter("spine_yaw", 0)
-				elseif ang.y > 90 then
-					ply:SetPoseParameter("head_yaw", ang.y)
-					ply:SetPoseParameter("body_yaw", (ang.y - 60))
-					ply:SetPoseParameter("spine_yaw", (ang.y - 90))
+	ply.CurrentLookAt = Angle( 0, 0, 0 )
+	if !ply:GetNWBool("specialmodel") then
+		if ply == LocalPlayer() and !CAKE.ForceDraw then
+			--ply:SetPoseParameter("aim_yaw", 0 )
+			ply:SetPoseParameter("head_yaw", 0 )
+			ply:SetPoseParameter("body_yaw", 0 )
+			ply:SetPoseParameter("spine_yaw", 0 )
+			if CAKE.UseHeadRotation then
+				lookattarget = CAKE.RealAng - CAKE.LastViewAng
+				lookattarget = Angle( lookattarget.p, NormalizeAngle( lookattarget.y ), 0 )
+				ang = LerpAngle( 0.1, ply.CurrentLookAt, lookattarget)
+				--ang.p = math.NormalizeAngle( ang.p )
+				ply.CurrentLookAt = ang
+				ply:SetPoseParameter("head_pitch", ang.p + 10)
+				ply:SetPoseParameter("aim_pitch", ang.p)
+				ply:SetPoseParameter("aim_yaw", ang.y)
+				if ang.y > 0 then
+					if ang.y < 60 then
+						ply:SetPoseParameter("head_yaw", ang.y)
+						ply:SetPoseParameter("body_yaw", 0)
+						ply:SetPoseParameter("spine_yaw", 0)
+					elseif ang.y >= 60 and ang.y <= 90 then
+						ply:SetPoseParameter("head_yaw", ang.y)
+						ply:SetPoseParameter("body_yaw", (ang.y - 60))
+						ply:SetPoseParameter("spine_yaw", 0)
+					elseif ang.y > 90 then
+						ply:SetPoseParameter("head_yaw", ang.y)
+						ply:SetPoseParameter("body_yaw", (ang.y - 60))
+						ply:SetPoseParameter("spine_yaw", (ang.y - 90))
+					end
+				else
+					if ang.y > -60 then
+						ply:SetPoseParameter("head_yaw", ang.y)
+						ply:SetPoseParameter("body_yaw", 0)
+						ply:SetPoseParameter("spine_yaw", 0)
+					elseif ang.y <= -60 and ang.y >= -90 then
+						ply:SetPoseParameter("head_yaw", ang.y)
+						ply:SetPoseParameter("body_yaw", (ang.y + 60))
+						ply:SetPoseParameter("spine_yaw", 0)
+					elseif ang.y < -90 then
+						ply:SetPoseParameter("head_yaw", ang.y)
+						ply:SetPoseParameter("body_yaw", (ang.y + 60))
+						ply:SetPoseParameter("spine_yaw", (ang.y + 90))
+					end
 				end
-			else
-				if ang.y > -60 then
-					ply:SetPoseParameter("head_yaw", ang.y)
-					ply:SetPoseParameter("body_yaw", 0)
-					ply:SetPoseParameter("spine_yaw", 0)
-				elseif ang.y <= -60 and ang.y >= -90 then
-					ply:SetPoseParameter("head_yaw", ang.y)
-					ply:SetPoseParameter("body_yaw", (ang.y + 60))
-					ply:SetPoseParameter("spine_yaw", 0)
-				elseif ang.y < -90 then
-					ply:SetPoseParameter("head_yaw", ang.y)
-					ply:SetPoseParameter("body_yaw", (ang.y + 60))
-					ply:SetPoseParameter("spine_yaw", (ang.y + 90))
-				end
 			end
-		else
-			ply.CurrentLookAt = Angle( 0, 0, 0 )
 		end
 	end
 end)
