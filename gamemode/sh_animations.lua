@@ -337,7 +337,7 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 	rate = math.min( movement * 0.8, 2 )
 
 	// if we're under water we want to constantly be swimming..
-	if (!ply:IsOnGround() and len >= 1000) or ply:WaterLevel() >= 2 then 
+	if ( (!ply:IsOnGround() and len >= 1000) or ply:WaterLevel() >= 2 ) then 
 		rate = 0.1
 	end
 
@@ -347,7 +347,7 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 	
 	ply:SetPlaybackRate( rate )
 
-	if ply:InVehicle() then
+	if ( ply:InVehicle() ) then
 		local Vehicle =  ply:GetVehicle()
 		
 		// We only need to do this clientside..
@@ -365,7 +365,7 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 		end
 		
 	end
-
+		
 	local estyaw = math.Clamp( math.atan2(velocity.y, velocity.x) * 180 / 3.141592, -180, 180 )
 	local myaw = math.NormalizeAngle(math.NormalizeAngle(eye.y) - estyaw)
 
@@ -374,9 +374,6 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 	else
 		ply:SetPoseParameter("move_yaw", 0 )
 	end
-
-	if ply:GetNWBool("specialmodel") then return end
-		
 
 	if ply:GetNWAngle( "tiramisulookat", Angle( 0, 0, 0 )) != Angle( 0, 0, 0 ) and ( SERVER or ply != LocalPlayer()) then
 		if !ply.CurrentLookAt then
