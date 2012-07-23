@@ -169,22 +169,40 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 				CAKE.RealAng.p = Clamp( NormalizeAngle( CAKE.RealAng.p ), -89, 89 )
 				CAKE.RealAng.y = NormalizeAngle( CAKE.RealAng.y )
 				if cmd:GetButtons() & IN_FORWARD > 0 or cmd:GetButtons() & IN_BACK > 0 then
-					cmd:SetViewAngles(CAKE.RealAng)
-					CAKE.LastViewAng = CAKE.CurAng
-					CAKE.UseHeadRotation = false
+					if input.IsKeyDown(KEY_LALT) and CAKE.UseHeadRotation then
+						if not CAKE.UseHeadRotation == 2 then
+							ply.CurrentLookAt = Angle(0,0,0)
+						end
+						CAKE.UseHeadRotation = 2
+						cmd:SetViewAngles(CAKE.WasWalkingAng)
+					else
+						if CAKE.UseHeadRotation == 2 then
+							CAKE.RealAng = CAKE.WasWalkingAng
+							CAKE.CurrentLookAt = Angle(0, 0, 0)
+						end
+						CAKE.WasWalkingAng = CAKE.RealAng
+						cmd:SetViewAngles(CAKE.RealAng)
+						CAKE.UseHeadRotation = 1
+					end
 				else
 					timer.UnPause("TiramisuLookAtTimer")
+					if CAKE.UseHeadRotation == 1 then
+						CAKE.LastViewAng.y = CAKE.RealAng.y
+					elseif CAKE.UseHeadRotation == 2 then
+						ply.CurrentLookAt = Angle(0,0,0)
+						CAKE.RealAng.p = CAKE.WasWalkingAng.p
+					end
 					CAKE.UseHeadRotation = true
 					cmd:SetViewAngles(CAKE.LastViewAng)
 				end
-				if AngleDifference(CAKE.RealAng.y, CAKE.LastViewAng.y) > 170 then
+				if AngleDifference(CAKE.RealAng.y, CAKE.LastViewAng.y) > 170  and not CAKE.UseHeadRotation == 2 then
 					cmd:SetViewAngles( CAKE.RealAng )
-					CAKE.LastViewAng = CAKE.RealAng
+					CAKE.LastViewAng.y = CAKE.RealAng.y
 					CAKE.LastAng = CAKE.RealAng
 					LocalPlayer():AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_TURN_RIGHT90 )
-				elseif AngleDifference(CAKE.RealAng.y, CAKE.LastViewAng.y) < -170 then
+				elseif AngleDifference(CAKE.RealAng.y, CAKE.LastViewAng.y) < -170 and not CAKE.UseHeadRotation == 2 then
 					cmd:SetViewAngles( CAKE.RealAng )
-					CAKE.LastViewAng = CAKE.RealAng
+					CAKE.LastViewAng.y = CAKE.RealAng.y
 					CAKE.LastAng = CAKE.RealAng
 					LocalPlayer():AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_TURN_LEFT90 )					
 				end
@@ -205,29 +223,36 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 				CAKE.OTSAng = CAKE.OTSAng + Angle( cmd:GetMouseY() * (mPitch:GetFloat()), cmd:GetMouseX() * (-mYaw:GetFloat()), 0 )
 				CAKE.OTSAng.p = Clamp( NormalizeAngle( CAKE.OTSAng.p ), -89, 89 )
 			
-				trace = util.TraceHull( {
-					start = EyePos(),
-					endpos = EyePos() + ( gui.ScreenToVector( ScrW()/2, ScrH()/2 ) * 30000 ),
+				--[[trace = util.TraceHull( {
+					start = CAKE.CameraPos,
+					endpos = CAKE.CameraPos + ( CAKE.OldAngles * 3000 ),
 					filter = LocalPlayer(),
 					mask = MASK_SHOT,
 					mins = Vector(-12,-12,-12),
 					maxs = Vector( 12, 12, 12),
-				} )
+				} )]]--
+
+				local tracedata = {}
+				tracedata.start = CAKE.CameraPos
+				tracedata.endpos = CAKE.CameraPos + (CAKE.OldAngles:Forward() * 3000)
+				local trace = util.TraceLine(tracedata)
 
 				--Hit Correction
-				if ValidEntity(trace.Entity) and !trace.HitWorld and !trace.HitSky then
-					local head = trace.Entity:LookupBone("ValveBiped.Bip01_Head1")
-					if head then
-						hitpos = Lerp( 0.3, trace.HitPos, trace.Entity:GetBonePosition(head) )
-					else
-						hitpos = Lerp( 0.3, trace.HitPos, trace.Entity:LocalToWorld(trace.Entity:OBBCenter()))
-					end
-				else
-					hitpos = trace.HitPos
-				end
+				--if ValidEntity(trace.Entity) and !trace.HitWorld and !trace.HitSky then
+					--local head = trace.Entity:LookupBone("ValveBiped.Bip01_Head1")
+					--if head then
+					--	hitpos = Lerp( 0.3, trace.HitPos, trace.Entity:GetBonePosition(head) )
+					--else
+					--	hitpos = Lerp( 0.3, trace.HitPos, trace.Entity:LocalToWorld(trace.Entity:OBBCenter()))
+					--end
+				--else
+				--	hitpos = trace.HitPos
+				--end
 
-				hitpos = hitpos - trace.HitNormal
+				--hitpos = hitpos - trace.HitNormal
 				
+				chitpos = trace.HitPos
+								
 				vecMove.x = cmd:GetForwardMove()
 				vecMove.y = cmd:GetSideMove()
 				vecMove.z = cmd:GetUpMove()
@@ -241,18 +266,17 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 				cmd:SetUpMove( vecMove.z )
 				
 				LocalPlayer():LagCompensation( true )
-				CAKE.DiffReal = ( hitpos - EyePos() ):Angle() + LocalPlayer():GetPunchAngle()
+				CAKE.DiffReal = (chitpos - LocalPlayer():EyePos()):Angle()
 				CAKE.DiffReal.r = 0
 				LocalPlayer():LagCompensation( false )
 
-				CAKE.DiffReal.p = math.NormalizeAngle( CAKE.DiffReal.p )
+				CAKE.DiffReal.p = Clamp( NormalizeAngle( CAKE.DiffReal.p ), -89, 89 )
 				
-				cmd:SetViewAngles( CAKE.DiffReal )
-
+				print(CAKE.DiffReal.y, CAKE.DiffReal.p)
 				CAKE.LastViewAng = cmd:GetViewAngles()
+				cmd:SetViewAngles( CAKE.DiffReal )
 				CAKE.UseHeadRotation = false
 				CAKE.SwitchFromFirstPerson = true
-				CAKE.DiffReal = Angle( 0, 0, 0 )
 			else
 				CAKE.WasOTS = false
 				if CAKE.UseHeadRotation then
@@ -386,22 +410,37 @@ hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 end)
 
 hook.Add( "UpdateAnimation", "TiramisuAnimateRotate", function( ply, velocity, maxseqgroundspeed )
-	ply.CurrentLookAt = Angle( 0, 0, 0 )
+	if not ply.CurrentLookAt then ply.CurrentLookAt = Angle( 0, 0, 0 ) end
 	if !ply:GetNWBool("specialmodel") then
 		if ply == LocalPlayer() and !CAKE.ForceDraw then
-			--ply:SetPoseParameter("aim_yaw", 0 )
+			if CAKE.UseHeadRotation == 2 then
+				CAKE.wasMoveLook = true
+			elseif CAKE.UseHeadRotation != 2 and CAKE.wasMoveLook then
+				CAKE.RealAng = CAKE.WasWalkingAng
+				CAKE.CurrentLookAt = Angle(0, 0, 0)
+				CAKE.wasMoveLook = false
+			end
+			--pl:SetPoseParameter("aim_yaw", 0 )
 			ply:SetPoseParameter("head_yaw", 0 )
 			ply:SetPoseParameter("body_yaw", 0 )
 			ply:SetPoseParameter("spine_yaw", 0 )
 			if CAKE.UseHeadRotation then
-				lookattarget = CAKE.RealAng - CAKE.LastViewAng
-				lookattarget = Angle( lookattarget.p, NormalizeAngle( lookattarget.y ), 0 )
+				if not (CAKE.UseHeadRotation == 2) then
+					lookattarget = CAKE.RealAng - CAKE.LastViewAng
+					lookattarget = Angle( lookattarget.p, NormalizeAngle( lookattarget.y ), 0 )
+				elseif CAKE.UseHeadRotation == 2 then
+					lookattarget = CAKE.RealAng - CAKE.WasWalkingAng
+					lookattarget = Angle( lookattarget.p, NormalizeAngle( lookattarget.y ), 0 )
+				end
 				ang = LerpAngle( 0.1, ply.CurrentLookAt, lookattarget)
-				--ang.p = math.NormalizeAngle( ang.p )
+				if CAKE.UseHeadRotation == 1 then
+					ang.y = 0
+				end
 				ply.CurrentLookAt = ang
 				ply:SetPoseParameter("head_pitch", ang.p + 10)
 				ply:SetPoseParameter("aim_pitch", ang.p)
 				ply:SetPoseParameter("aim_yaw", ang.y)
+				ply:SetPoseParameter("spine_roll", 90)
 				if ang.y > 0 then
 					if ang.y < 60 then
 						ply:SetPoseParameter("head_yaw", ang.y)

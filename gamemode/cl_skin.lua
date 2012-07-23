@@ -1190,17 +1190,12 @@ end
 ---------------------------------------------------------*/
 local trace, pos
 function SKIN:PaintTiramisuCrosshair()
-	trace = LocalPlayer():GetEyeTrace()
-	pos = trace.HitPos:ToScreen()
-	if pos.visible then
-		if !trace.HitWorld then
-			surface.SetDrawColor( 200, 50, 50, 220 )
-		else
-			surface.SetDrawColor( 220, 220, 220, 220 )
-		end
-		surface.DrawLine( pos.x - 5, pos.y, pos.x + 5, pos.y )
-		surface.DrawLine( pos.x, pos.y - 5, pos.x, pos.y + 5 )
-	end
+		surface.SetDrawColor( 220, 220, 220, 220 )
+		nv = chitpos:ToScreen()
+		scrw = ScrW()/2
+		scrh = ScrH()/2
+		surface.DrawLine( scrw - 5, scrh, scrw + 5, scrh )
+		surface.DrawLine( scrw, scrh - 5, scrw, scrh + 5 )
 end
 
 derma.DefineSkin( "Tiramisu", "Made to look like some good stuff", SKIN )
