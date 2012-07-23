@@ -272,7 +272,7 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 
 				CAKE.DiffReal.p = Clamp( NormalizeAngle( CAKE.DiffReal.p ), -89, 89 )
 				
-				print(CAKE.DiffReal.y, CAKE.DiffReal.p)
+				--print(CAKE.DiffReal.y, CAKE.DiffReal.p)
 				CAKE.LastViewAng = cmd:GetViewAngles()
 				cmd:SetViewAngles( CAKE.DiffReal )
 				CAKE.UseHeadRotation = false
