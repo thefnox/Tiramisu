@@ -39,6 +39,7 @@ hook.Add( "Initialize", "TiramisuAddContent", function()
 end)
 
 -- LUA Files
+AddResource( "lua", "von.lua" ) --Tiramisu's configuration file.
 AddResource( "lua", "configuration.lua" ) --Tiramisu's configuration file.
 AddResource( "lua", "shared.lua" ) -- Shared Functions
 AddResource( "lua", "cl_binds.lua" ) -- Binds

@@ -15,12 +15,12 @@ function CAKE.LoadItem( schema, filename )
 end
 
 function CAKE.SaveUData( id )
-	local savetable = glon.encode(CAKE.UData[id])
+	local savetable = von.serialize(CAKE.UData[id])
 	file.Write( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. id .. ".txt" , savetable)
 end
 
 function CAKE.LoadUData( id )
-	CAKE.UData[id] = glon.decode(file.Read( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. id .. ".txt"))
+	CAKE.UData[id] = von.deserialize(file.Read( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. id .. ".txt"))
 end
 
 function CAKE.SetUData( id, key, value )

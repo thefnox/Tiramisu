@@ -266,13 +266,12 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 				cmd:SetUpMove( vecMove.z )
 				
 				LocalPlayer():LagCompensation( true )
-				CAKE.DiffReal = (chitpos - LocalPlayer():EyePos()):Angle()
+				CAKE.DiffReal = (chitpos - LocalPlayer():EyePos()):Angle() + LocalPlayer():GetPunchAngle()
 				CAKE.DiffReal.r = 0
 				LocalPlayer():LagCompensation( false )
 
 				CAKE.DiffReal.p = Clamp( NormalizeAngle( CAKE.DiffReal.p ), -89, 89 )
 				
-				--print(CAKE.DiffReal.y, CAKE.DiffReal.p)
 				CAKE.LastViewAng = cmd:GetViewAngles()
 				cmd:SetViewAngles( CAKE.DiffReal )
 				CAKE.UseHeadRotation = false

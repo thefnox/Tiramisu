@@ -66,7 +66,7 @@ function CAKE.LoadPlayerDataFile( ply )
 		local Data_Raw = file.Read( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" )
 		
 		-- Convert the data into a table
-		local Data_Table = CAKE.NilFix(glon.decode( Data_Raw ), { })
+		local Data_Table = CAKE.NilFix(von.deserialize( Data_Raw ), { })
 		
 		-- Insert the table into the data table
 		CAKE.PlayerData[ SteamID ] = Data_Table
@@ -247,7 +247,7 @@ end
 
 function CAKE.SavePlayerData( ply )
 	if ValidEntity( ply ) then
-		local keys = glon.encode(CAKE.PlayerData[CAKE.FormatText( ply:SteamID() )])
+		local keys = von.serialize(CAKE.PlayerData[CAKE.FormatText( ply:SteamID() )])
 		file.Write( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" , keys)
 	end
 end
