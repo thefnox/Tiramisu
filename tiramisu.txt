@@ -1,0 +1,7 @@
+"sandbox"
+{
+	"base"		"sandbox"
+	"title"		"Tiramisu"
+	"maps"		"^rp_"
+	"menusystem"	"1"
+}

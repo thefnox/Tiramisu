@@ -7,10 +7,7 @@ CAKE.Running = false
 CAKE.Loaded = false
 
 -- Server Includes
-require( "glon" )
-if not(datastream) then  
-    require("datastream")  
-end  
+include( "von.lua" )
 
 include( "shared.lua" ) -- Shared Functions
 include( "log.lua" ) -- Logging functions

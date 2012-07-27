@@ -2,6 +2,7 @@
 CAKE = {  }
 DeriveGamemode( "sandbox" )
 require( "datastream" )
+include( "von.lua" )
 
 --Load up the configuration file
 include( "configuration.lua" )

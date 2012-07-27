@@ -57,7 +57,7 @@ end
 --Saves Spawnpoints to MapInfo
 
 function CAKE.SaveSpawns()
-	file.Write( CAKE.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt" , glon.encode(CAKE.SpawnPoints))
+	file.Write( CAKE.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt" , von.serialize(CAKE.SpawnPoints))
 end
 
 --Internal function used to determine where shall a player spawn
@@ -84,7 +84,7 @@ end
 
 function CAKE.InitSpawns()
 	if(file.Exists(CAKE.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt")) then
-		CAKE.SpawnPoints = glon.decode(file.Read(CAKE.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt"))
+		CAKE.SpawnPoints = von.deserialize(file.Read(CAKE.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt"))
 	end
 end
 

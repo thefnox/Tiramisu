@@ -28,7 +28,7 @@ end
 
 --Saves all data to file.
 function meta:Save()
-	file.Write(CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/" .. self.UniqueID.. ".txt", glon.encode(self))
+	file.Write(CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/" .. self.UniqueID.. ".txt", von.serialize(self))
 end
 
 --Obtains the information of all the players in the group.
@@ -301,7 +301,7 @@ function CAKE.CreateGroupObject( filename )
 	local group = FindMetaTable("Group"):New()
 
 	if filename and file.Exists( filename ) then
-		local tbl = glon.decode( file.Read(filename) )
+		local tbl = von.deserialize( file.Read(filename) )
 		for k, v in pairs(tbl) do
 			group:SetField( k, v, true )
 		end

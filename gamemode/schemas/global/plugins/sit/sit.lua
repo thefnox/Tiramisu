@@ -39,14 +39,14 @@ end
 
 --Saves all chairs to file
 function CAKE.SaveChairs()
-	local keys = glon.encode(CAKE.Chairs)
+	local keys = von.serialize(CAKE.Chairs)
 	file.Write( CAKE.Name .. "/chairs.txt", keys )
 end
 
 --Fetches all chairs from file
 function CAKE.LoadChairs()
 	if file.Exists( CAKE.Name .. "/chairs.txt" ) then
-		CAKE.Chairs = glon.decode(file.Read( CAKE.Name .. "/chairs.txt" ))
+		CAKE.Chairs = von.deserialize(file.Read( CAKE.Name .. "/chairs.txt" ))
 	end
 end
 

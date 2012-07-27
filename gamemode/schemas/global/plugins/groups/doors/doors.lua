@@ -10,7 +10,7 @@ function CAKE.LoadDoors()
 	if(file.Exists(CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt")) then
 
 		local rawdata = file.Read( CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt")
-		local tabledata = glon.decode( rawdata )
+		local tabledata = von.deserialize( rawdata )
 		
 		CAKE.Doors = tabledata
 		local entities
@@ -34,7 +34,7 @@ end
 
 function CAKE.SaveDoors()
 
-	local keys = glon.encode(CAKE.Doors)
+	local keys = von.serialize(CAKE.Doors)
 	file.Write(CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt", keys)
 
 end

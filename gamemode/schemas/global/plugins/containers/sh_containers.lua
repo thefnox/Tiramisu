@@ -158,7 +158,7 @@ end
 if SERVER then
 	function meta:Save()
 		if self.UniqueID then
-			file.Write(CAKE.Name .. "/containers/" .. CAKE.ConVars[ "Schema" ] .. "/" .. self.UniqueID.. ".txt", glon.encode(self))
+			file.Write(CAKE.Name .. "/containers/" .. CAKE.ConVars[ "Schema" ] .. "/" .. self.UniqueID.. ".txt", von.serialize(self))
 		end
 	end
 
@@ -231,7 +231,7 @@ if SERVER then
 		local container = FindMetaTable("Container"):New()
 
 		if filename and file.Exists( filename ) then
-			local tbl = glon.decode( file.Read(filename) )
+			local tbl = von.deserialize( file.Read(filename) )
 			container.UniqueID = tbl.UniqueID
 			container:Save()
 		else

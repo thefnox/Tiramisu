@@ -1,6 +1,6 @@
 hook.Add( "InitPostEntity", "TiramisuLoadSchemeColor", function()
 	if file.Exists( CAKE.Name .. "/personaldata/schemecolor.txt" ) then
-		local tbl = glon.decode( file.Read( CAKE.Name .. "/personaldata/schemecolor.txt" ))
+		local tbl = von.deserialize( file.Read( CAKE.Name .. "/personaldata/schemecolor.txt" ))
 		CAKE.BaseColor = tbl.color
 	end
 end)
@@ -178,7 +178,7 @@ local function OpenOptions()
 		local color = SchemeColor:GetColor()
 		CAKE.BaseColor = color
 		local tbl = { ["color"] = CAKE.BaseColor }
-		file.Write( CAKE.Name .. "/personaldata/schemecolor.txt", glon.encode( tbl ) )
+		file.Write( CAKE.Name .. "/personaldata/schemecolor.txt", von.serialize( tbl ) )
 	end
 	Schema:AddItem( SchemeColor )
 	Schema:AddItem( schemecolormixer )
