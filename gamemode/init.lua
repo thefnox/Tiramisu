@@ -7,7 +7,6 @@ CAKE.Running = false
 CAKE.Loaded = false
 
 -- Server Includes
-require( "glon" )
 if not(datastream) then  
     require("datastream")  
 end  
@@ -15,6 +14,7 @@ end
 include( "shared.lua" ) -- Shared Functions
 include( "log.lua" ) -- Logging functions
 include( "configuration.lua" ) -- Configuration data
+include( "mysql.lua" ) --MySQL
 include( "player_data.lua" ) -- Player data functions
 include( "player_util.lua" ) -- Player functions
 include( "admin.lua" ) -- Admin functions

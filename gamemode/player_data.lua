@@ -76,12 +76,12 @@ function CAKE.LoadPlayerDataFile( ply )
 		local CharTable = CAKE.PlayerData[ SteamID ][ "characters" ]
 
 		-- If any values were loaded and they aren't in the DataFields table, delete them from the player.
-		for _, v in pairs( PlayerTable ) do
+		for field, v in pairs( PlayerTable ) do
 			
-			if( CAKE.PlayerDataFields[ _ ] == nil ) then
+			if !CAKE.PlayerDataFields[ field ] then
 			
-				CAKE.DayLog( "script.txt", "Invalid player data field '" .. tostring( _ ) .. "' in " .. ply:SteamID( ) .. ", removing." )
-				CAKE.PlayerData[ SteamID ][ _ ] = nil
+				CAKE.DayLog( "script.txt", "Invalid player data field '" .. tostring( field ) .. "' in " .. ply:SteamID( ) .. ", removing." )
+				CAKE.PlayerData[ SteamID ][ field ] = nil
 				
 			end
 			
@@ -100,22 +100,22 @@ function CAKE.LoadPlayerDataFile( ply )
 		end
 		
 		-- If any values were loaded and they aren't in the DataFields table, delete them from the character.
-		for _, char in pairs( CharTable ) do
+		for field, char in pairs( CharTable ) do
 
 			for k, v in pairs( char ) do
 				
 				if( CAKE.CharacterDataFields[ k ] == nil ) then
-					CAKE.DayLog( "script.txt", "Invalid character data field '" .. tostring( _ ) .. "' in character " .. ply:SteamID( ) .. "-" .. _ .. ", removing." )
-					if CAKE.PlayerData[ SteamID ][ "characters" ][ _ ][ k ] then
-						CAKE.PlayerData[ SteamID ][ "characters" ][ _ ][ k ] = nil
+					CAKE.DayLog( "script.txt", "Invalid character data field '" .. tostring( field ) .. "' in character " .. ply:SteamID( ) .. "-" .. field .. ", removing." )
+					if CAKE.PlayerData[ SteamID ][ "characters" ][ field ][ k ] then
+						CAKE.PlayerData[ SteamID ][ "characters" ][ field ][ k ] = nil
 					end
 				end
 				
 			end
 
 			if !char["inventory"] then
-				char["inventory"] = CAKE.CreatePlayerInventory( ply, _ )
-				CAKE.DayLog( "script.txt", "Character " .. ply:SteamID( ) .. "-" .. _ .. " does not have a valid inventory" )
+				char["inventory"] = CAKE.CreatePlayerInventory( ply, field )
+				CAKE.DayLog( "script.txt", "Character " .. ply:SteamID( ) .. "-" .. field .. " does not have a valid inventory" )
 			end
 			
 		end

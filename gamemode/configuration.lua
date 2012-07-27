@@ -2,6 +2,19 @@
 
 CAKE.ConVars = {  }
 
+--MySQL
+--The SQL engine option allows you to change which SQL module to use within the script, for convenience.
+--It defaults to SQLite, which is included within GMod.
+--If you don't know what this is, don't change it, leave it as it is, and head to the end of the MySQL section
+CAKE.ConVars["SQLEngine"] = "sqlite"
+--Only change the following fields if you're using a MySQL module other than SQLite (Default)
+CAKE.ConVars["SQLHostname"] = "localhost" --IP you're connecting from
+CAKE.ConVars["SQLUsername"] = "root" --MySQL username to use for connecting
+CAKE.ConVars["SQLPassword"] = "" --Password for this username
+CAKE.ConVars["SQLDatabase"] = "tiramisu" --Database to work on. (Must already exist)
+CAKE.ConVars["SQLPort"] = 3308 --Port on which to connect on
+--End of the MySQL section
+
 CAKE.ConVars[ "LinuxHotfix" ] = false -- TURN THIS ON ONLY IF YOUR SERVER USES LINUX. This is to turn off model swapping therefore disabling some animations. It's the only solution to a current bug in the SRCDS.
 CAKE.ConVars[ "ForceJigglebones" ] = true --Forces jigglebones on all clients. Turns this off if you know it causes performance problems. 
 
