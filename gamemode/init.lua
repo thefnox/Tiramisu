@@ -7,6 +7,7 @@ CAKE.Running = false
 CAKE.Loaded = false
 
 -- Server Includes
+include( "von.lua" ) --New serializing module
 if not(datastream) then  
     require("datastream")  
 end  
@@ -42,6 +43,9 @@ function GM:Initialize( ) -- Initialize the gamemode
 	-- My reasoning for this certain order is due to the fact that plugins are meant to modify the gamemode sometimes.
 	-- Plugins need to be initialized before gamemode and schema so it can modify the way that the plugins and schema actually work.
 	-- AKA, hooks.
+
+	--Initializing MySQL first
+	CAKE.InitializeSQLDatabase()
 	
 	CAKE.DayLog( "script.txt", "Plugins Initializing" )
 	CAKE.InitPlugins( )

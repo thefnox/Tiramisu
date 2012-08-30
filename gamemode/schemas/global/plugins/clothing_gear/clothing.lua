@@ -410,7 +410,7 @@ function PLUGIN.Init()
 	CAKE.AddDataField( 2, "bodygroup1", 0 ) --Bodygroup 1
 	CAKE.AddDataField( 2, "bodygroup2", 0 ) --Bodygroup 2
 	CAKE.AddDataField( 2, "bodygroup3", 0 ) --Bodygroup 3
-	CAKE.AddDataField( 2, "skin", 0 )
+	CAKE.AddDataField( 2, "skin", 0, "INT" )
 	CAKE.AddDataField( 2, "specialmodel", "none" )
 	
 end

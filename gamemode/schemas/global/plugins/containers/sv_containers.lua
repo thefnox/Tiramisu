@@ -1,5 +1,15 @@
 CAKE.Containers = {}
 
+hook.Add("Tiramisu.CreateSQLTables", "Tiramisu.CreateContainerTable", function()
+	if CAKE.ConVars["SQLEngine"] == "sqlite" then
+		if !sql.TableExists("tiramisu_containers") then
+			CAKE.Query("CREATE TABLE tiramisu_containers ( id int NOT NULL PRIMARY KEY, udata text )")
+		end
+	else
+		CAKE.Query("CREATE TABLE IF NOT EXISTS tiramisu_items ( id INT, udata TEXT, PRIMARY KEY (`id`) )")
+	end
+end)
+
 function CAKE.CreateContainerID()
 	local repnum = 0
 	local uidfile = file.Exists( CAKE.Name .. "/containers/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )

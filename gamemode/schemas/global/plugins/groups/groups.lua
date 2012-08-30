@@ -430,50 +430,87 @@ function CAKE.SendGroupToClient( ply )
 	datastream.StreamToClients( ply, "Tiramisu.ReceiveGroups", tbl)
 end
 
-function PLUGIN.Init()
-	CAKE.AddGroupField( "roster", {} )
-	CAKE.AddGroupField( "ranks", {
-		["founder"] = {
-			["canedit"] = true,
-			["cankick"] = true,
-			["caninvite"] = true,
-			["canpromote"] = true,
-			["cannotice"] = true,
-			["cantakeinventory"] = true,
-			["canplaceinventory"] = true,
-			["level"] = 100,
-			["name"] = "Group Founder",
-			["handler"] = "founder",
-			["description"] = "The one who founded the group"
-		}
-	} )
-	CAKE.AddGroupField( "doorgroup", 0 )
-	CAKE.AddGroupField( "notices", {} )
-	CAKE.AddGroupField( "inventory", "none" )
-	CAKE.AddGroupField( "defaultrank", "none" )
-	CAKE.AddGroupField( "name", "New Group" )
-	CAKE.AddGroupField( "description", "None available." )
-	CAKE.AddGroupField( "founder", "none" )
-	CAKE.AddGroupField( "type", "public" )
+CAKE.AddGroupField( "roster", {} )
+CAKE.AddGroupField( "ranks", {
+	["founder"] = {
+		["canedit"] = true,
+		["cankick"] = true,
+		["caninvite"] = true,
+		["canpromote"] = true,
+		["cannotice"] = true,
+		["cantakeinventory"] = true,
+		["canplaceinventory"] = true,
+		["level"] = 100,
+		["name"] = "Group Founder",
+		["handler"] = "founder",
+		["description"] = "The one who founded the group"
+	}
+} )
+CAKE.AddGroupField( "doorgroup", 0 )
+CAKE.AddGroupField( "notices", {} )
+CAKE.AddGroupField( "inventory", "none" )
+CAKE.AddGroupField( "defaultrank", "none" )
+CAKE.AddGroupField( "name", "New Group" )
+CAKE.AddGroupField( "description", "None available." )
+CAKE.AddGroupField( "founder", "none" )
+CAKE.AddGroupField( "type", "public" )
 
-	--Rank Fields
-	CAKE.AddRankField( "canedit", false )
-	CAKE.AddRankField( "cankick", false )
-	CAKE.AddRankField( "caninvite", false )
-	CAKE.AddRankField( "canpromote", false )
-	CAKE.AddRankField( "cannotice", false )
-	CAKE.AddRankField( "cantakeinventory", false )
-	CAKE.AddRankField( "canplaceinventory", false )
-	CAKE.AddRankField( "level", 0 )
-	CAKE.AddRankField( "name", "none" )
-	CAKE.AddRankField( "handler", "none" )
-	CAKE.AddRankField( "description", "none" )
-	CAKE.AddRankField( "loadout", {} )
-	CAKE.AddRankField( "weapons", {} )
+--Rank Fields
+CAKE.AddRankField( "canedit", false )
+CAKE.AddRankField( "cankick", false )
+CAKE.AddRankField( "caninvite", false )
+CAKE.AddRankField( "canpromote", false )
+CAKE.AddRankField( "cannotice", false )
+CAKE.AddRankField( "cantakeinventory", false )
+CAKE.AddRankField( "canplaceinventory", false )
+CAKE.AddRankField( "level", 0 )
+CAKE.AddRankField( "name", "none" )
+CAKE.AddRankField( "handler", "none" )
+CAKE.AddRankField( "description", "none" )
+CAKE.AddRankField( "loadout", {} )
+CAKE.AddRankField( "weapons", {} )
 
-	--Player Fields
-	CAKE.AddDataField( 2, "groups", {} )
-	CAKE.AddDataField( 2, "activegroup", "none" )
-	CAKE.AddDataField( 2, "lastonline", 0 )
+--Player Fields
+CAKE.AddDataField( 2, "groups", {} )
+CAKE.AddDataField( 2, "activegroup", "none" )
+CAKE.AddDataField( 2, "lastonline", 0 )
 
-end
+hook.Add("Tiramisu.CreateSQLTables", "Tiramisu.CreateGroupTable", function()
+	if CAKE.ConVars["SQLEngine"] == "sqlite" then
+		if !sql.TableExists("tiramisu_groups") then
+			local datastr = "id int NOT NULL PRIMARY KEY,"
+			for k, v in pairs(CAKE.GroupFields) do
+				datastr = datastr .. k .. " "
+				if type(v) == "table" then
+					datastr = datastr .. "text"
+				elseif type(v) == "string" then
+					datastr = datastr .. "text"
+				elseif type(v) == "number" then
+					datastr = datastr .. "float"
+				else --default to bool
+					datastr = datastr .. "bit"
+				end
+				datastr = datastr .. "," 
+			end
+			datastr = string.sub(datastr, 1, string.len(datastr) - 1 ) --Removing the last comma
+			CAKE.Query("CREATE TABLE tiramisu_groups ( " .. datastr .. " )")
+		end
+	else
+		local datastr = "id INT,"
+		for k, v in pairs(CAKE.GroupFields) do
+			datastr = datastr .. k .. " "
+			if type(v) == "table" then
+				datastr = datastr .. "MEDIUMTEXT"
+			elseif type(v) == "string" then
+				datastr = datastr .. "TEXT"
+			elseif type(v) == "number" then
+				datastr = datastr .. "FLOAT"
+			else --default to bool
+				datastr = datastr .. "TINYINT"
+			end
+			datastr = datastr .. "," 
+		end
+		datastr = datastr .. "PRIMARY KEY (`id`)"
+		CAKE.Query("CREATE TABLE IF NOT EXISTS tiramisu_groups ( " .. datastr .. " )")
+	end
+end)

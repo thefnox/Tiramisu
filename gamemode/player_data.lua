@@ -3,9 +3,11 @@ CAKE.PlayerData = {  }
 
 -- This is to be used only by the main player table.
 CAKE.PlayerDataFields = {  }
+CAKE.PlayerDataFieldTypes = {  }
 
 -- This is to be used only by the characters table.
 CAKE.CharacterDataFields = {  }
+CAKE.CharacterDataFieldTypes = {  }
 
 local meta = FindMetaTable( "Player" )
 
@@ -17,26 +19,20 @@ end
 
 -- When fieldtype is 1, it adds it to the player table.
 -- When it is 2, it adds it to the character table.function CAKE.AddDataField( fieldtype, fieldname, default )
-function CAKE.AddDataField( fieldtype, fieldname, default )
+function CAKE.AddDataField( fieldtype, fieldname, default, mysqltype )
 	
 	if( fieldtype == 1 ) then
 	
 		CAKE.DayLog( "script.txt", "Adding player data field " .. fieldname .. " with default value of " .. tostring( default ) )
-		CAKE.PlayerDataFields[ fieldname ] = CAKE.ReferenceFix(default)
-		
+		CAKE.PlayerDataFields[ fieldname ] = default
+		if mysqltype then CAKE.PlayerDataFieldTypes[ fieldname ] = mysqltype end
+
 	elseif( fieldtype == 2 ) then
 	
 		CAKE.DayLog( "script.txt", "Adding character data field " .. fieldname .. " with default value of " .. tostring( default ) )
-		CAKE.CharacterDataFields[ fieldname ] = CAKE.ReferenceFix(default)
-		
-		if( type( default ) == "table" ) then
-			default = table.concat( default, "," )
-		end
-		
-		if( type( default ) == "string" ) then
-			default = "'" .. default .. "'"
-		end
-		
+		CAKE.CharacterDataFields[ fieldname ] = default
+		if mysqltype then CAKE.CharacterDataFieldTypes[ fieldname ] = mysqltype end
+
 	end
 
 end
@@ -151,7 +147,7 @@ function CAKE.LoadPlayerDataFile( ply )
 			
 			if( CAKE.PlayerData[ fieldname ] == nil ) then
 			
-				CAKE.PlayerData[ SteamID ][ fieldname ] = CAKE.ReferenceFix(default)
+				CAKE.PlayerData[ SteamID ][ fieldname ] = default
 				
 			end
 			
