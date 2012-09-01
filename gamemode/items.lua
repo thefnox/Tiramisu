@@ -47,6 +47,8 @@ end
 local lastostime = 0
 local genned = {}
 function CAKE.CreateItemID()
+	return CAKE.GetTableNextID("tiramisu_items") or 1
+	/*
 	if lastostime != os.time() then
 		genned = {} 
 		lastostime = os.time()
@@ -58,7 +60,7 @@ function CAKE.CreateItemID()
 		f = os.time() .. repnum
 	end
 	genned[f] = true
-	return f
+	return f*/
 end
 
 function CAKE.SendUData( ply, uid )

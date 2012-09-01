@@ -207,7 +207,7 @@ local CrouchToggle = false
 local StayCrouch = false
 function GM:PlayerBindPress( ply, bind, pressed )
 
-	if( LocalPlayer( ):GetNWInt( "charactercreate" ) == 1 ) then
+	if( LocalPlayer( ):GetNWBool( "charactercreate" ) ) then
 	
 		if( bind == "+forward" or bind == "+back" or bind == "+moveleft" or bind == "+moveright" or bind == "+jump" or bind == "+duck" ) then return true end -- Disable ALL movement keys.
 	

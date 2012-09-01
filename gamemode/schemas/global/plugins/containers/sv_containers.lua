@@ -6,24 +6,34 @@ hook.Add("Tiramisu.CreateSQLTables", "Tiramisu.CreateContainerTable", function()
 			CAKE.Query("CREATE TABLE tiramisu_containers ( id int NOT NULL PRIMARY KEY, udata text )")
 		end
 	else
-		CAKE.Query("CREATE TABLE IF NOT EXISTS tiramisu_items ( id INT, udata TEXT, PRIMARY KEY (`id`) )")
+		CAKE.Query("CREATE TABLE IF NOT EXISTS tiramisu_containers ( id int NOT NULL PRIMARY KEY, udata text )")
 	end
 end)
 
+function CAKE.ContainerExists(uid)
+	if CAKE.Query("SELECT * FROM tiramisu_containers WHERE id = "..uid ) then
+		return true
+	end
+		
+	return false
+end
+
 function CAKE.CreateContainerID()
+	return CAKE.GetTableNextID("tiramisu_containers") or 1
+	/*
 	local repnum = 0
 	local uidfile = file.Exists( CAKE.Name .. "/containers/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
 	while uidfile do
 		repnum = repnum + 1
 		uidfile = file.Exists( CAKE.Name .. "/containers/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
 	end
-	return os.time() .. repnum
+	return os.time() .. repnum*/
 end
 
-function CAKE.CreateContainerObject( filename )
+function CAKE.CreateContainerObject( uid )
 	local container = FindMetaTable("Container"):New()
 
-	if filename and file.Exists( filename ) then
+	if uid and CAKE.ContainerExists(uid) then
 		local tbl = von.deserialize( file.Read(filename) )
 		container.UniqueID = tbl.UniqueID
 		container:SetSize(tbl.Width, tbl.Height)
@@ -54,19 +64,13 @@ function CAKE.GetContainer( uid )
 	return false
 end
 
---Does this container currently exist in the container list? Second argument, does the file for this container exist?
-function CAKE.ContainerExists( uid )
-	if !uid then return false end
-	return CAKE.Containers[uid] or false, file.Exists(CAKE.Name .. "/containers/" .. CAKE.ConVars[ "Schema" ] .. "/" .. uid.. ".txt")
-end
-
 function CAKE.IsContainer( uid )
 	return CAKE.ContainerExists( uid ) --Just an alias. 
 end
 
 --Loads a container from file.
 function CAKE.LoadContainer( uid )
-	local container = CAKE.CreateContainerObject( CAKE.Name .. "/containers/" .. CAKE.ConVars[ "Schema" ] .. "/" .. uid.. ".txt" )
+	local container = CAKE.CreateContainerObject( uid )
 	CAKE.Containers[container.UniqueID] = container
 end
 

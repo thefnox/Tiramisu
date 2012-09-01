@@ -3,15 +3,16 @@ local meta = FindMetaTable("Player")
 hook.Add( "TiramisuPostPlayerLoaded", "TiramisuLoadGroups", function( ply, firsttime )
 	local SteamID = CAKE.FormatText(ply:SteamID())
 	if !firsttime then
-		for uid, char in pairs( CAKE.PlayerData[ SteamID ][ "characters" ] ) do
-			if char["inventory"] and (type(char["inventory"]) == "table" or char["inventory"] == "none") then
-				char["inventory"] = CAKE.CreatePlayerInventory( ply, uid )
-			elseif char["inventory"] and type(char["inventory"]) == "string" then
-				if !file.Exists(CAKE.Name .. "/containers/" .. CAKE.ConVars[ "Schema" ] .. "/" .. char["inventory"] .. ".txt") then
-					char["inventory"] = CAKE.CreatePlayerInventory( ply, uid )
+		for uid, char in pairs( CAKE.GetPlayerField( ply, "characters" ) ) do
+			local invent = CAKE.GetCharField(ply, "inventory", char)
+			if invent and (type(invent) == "table" or invent == "none") then
+				invent = CAKE.CreatePlayerInventory( ply, char )
+			elseif invent and type(invent) == "string" then
+				if !CAKE.ContainerExists(invent) then
+					CAKE.SetCharField( ply, "inventory", CAKE.CreatePlayerInventory( ply, char ))
 				else
-					CAKE.LoadContainer( char["inventory"] )
-					local container = CAKE.GetContainer(char["inventory"])
+					CAKE.LoadContainer( invent )
+					local container = CAKE.GetContainer(invent)
 					if CAKE.ConVars[ "PlayerInventoryRows" ] < 1 and !container:GetInfinite() then
 						container:SetInfinite( true )
 					else

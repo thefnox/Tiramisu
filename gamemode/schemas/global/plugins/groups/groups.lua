@@ -229,13 +229,15 @@ CAKE.RankFields = {}
 
 --Creates an unique ID for the currently active group.
 function CAKE.CreateGroupID()
+	return CAKE.GetTableNextID("tiramisu_groups") or 1
+	/*
 	local repnum = 0
 	local uidfile = file.Exists( CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
 	while uidfile do
 		repnum = repnum + 1
 		uidfile = file.Exists( CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
 	end
-	return os.time() .. repnum
+	return os.time() .. repnum*/
 end
 
 --Loads a group from file.

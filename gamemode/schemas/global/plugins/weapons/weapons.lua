@@ -103,7 +103,7 @@ end)
 
 hook.Add( "PlayerLoadout", "TiramisuWeaponsLoadout", function( ply )
 	if ply:IsCharLoaded() then
-		if(ply:GetNWInt("charactercreate", 0 ) != 1) then
+		if(!ply:GetNWBool("charactercreate")) then
 			for _, tbl in pairs( ply:GetInventory().Items ) do
 				for k, v in pairs(tbl) do
 					if v and v.itemid and v.class then

@@ -4,6 +4,18 @@ if CAKE.ConVars["SQLEngine"] == "tmysql" then require("tmysql") end
 
 CAKE.Database = nil --This is for MySQLOO, don't touch this
 
+function CAKE.GetTableMaxID( tbl )
+	local query = CAKE.Query("SELECT MAX(id) FROM ".. tbl )
+	if query and type(query) == "number" then return query[1] end
+	return 0
+end
+
+function CAKE.GetTableNextID( tbl )
+	local query = CAKE.Query("SELECT MAX(id) FROM ".. tbl )
+	if query and type(query == number) then return query[1] + 1 end
+	return 1
+end
+
 
 function CAKE.DefaultSQLDatabase()
 	CAKE.ConVars["SQLEngine"] = "sqlite"

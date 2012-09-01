@@ -36,9 +36,9 @@ hook.Add( "TiramisuPostPlayerLoaded", "TiramisuLoadGroups", function( ply, first
 	local groupexists, fileexists
 	local SteamID = CAKE.FormatText(ply:SteamID())
 	if !firsttime then
-		for _, char in pairs( CAKE.PlayerData[ SteamID ][ "characters" ] ) do
-			if char[ "groups" ] then
-				for k, group in pairs(char[ "groups" ]) do
+		for _, char in pairs( CAKE.GetPlayerField( ply, "characters" ) ) do
+			if CAKE.GetCharField( ply, "groups", uid) then
+				for k, group in pairs(CAKE.GetCharField( ply, "groups", uid)) do
 					if group and group != "none" then
 						groupexists, fileexists = CAKE.GroupExists( group )
 						if !groupexists and fileexists then
