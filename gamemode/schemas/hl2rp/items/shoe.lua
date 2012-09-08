@@ -20,6 +20,6 @@ end
 
 function ITEM:UseItem(ply)
 
-	CAKE.SendChat(ply, "It doesn't fit your feet..")
+	TIRA.SendChat(ply, "It doesn't fit your feet..")
 
 end

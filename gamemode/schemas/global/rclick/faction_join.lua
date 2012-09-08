@@ -3,7 +3,7 @@ RCLICK.SubMenu = "Faction"
 
 function RCLICK.Condition(target)
 
-if ValidEntity(target) and target:IsTiraPlayer() and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 3 and table.Count(CAKE.Factions) > 0 then return true end
+if ValidEntity(target) and target:IsTiraPlayer() and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 3 and table.Count(TIRA.Factions) > 0 then return true end
 
 end
 
@@ -13,14 +13,14 @@ function RCLICK.Click(target,ply)
 		local dmenu = DermaMenu()
 		local main = dmenu:AddSubMenu( "Join" )
 
-		for faction, uid in pairs( CAKE.Factions ) do
+		for faction, uid in pairs( TIRA.Factions ) do
 			main:AddOption(faction, function()
-				CAKE.StringRequest( "Join a faction", "Enter which rank should " .. target:Nick() .. " have in the faction (Leave blank for default)", "",
+				TIRA.StringRequest( "Join a faction", "Enter which rank should " .. target:Nick() .. " have in the faction (Leave blank for default)", "",
 				function( entry )
 					if entry == "" then
-						ply:ConCommand( "rp_admin forcejoin \"" .. faction .. "\" " .. CAKE.FormatText(target:SteamID())) 
+						ply:ConCommand( "rp_admin forcejoin \"" .. faction .. "\" " .. TIRA.FormatText(target:SteamID())) 
 					else
-						ply:ConCommand( "rp_admin forcejoin \"" .. faction .. "\" " .. CAKE.FormatText(target:SteamID()) .. " \"" .. entry .. "\"" ) 
+						ply:ConCommand( "rp_admin forcejoin \"" .. faction .. "\" " .. TIRA.FormatText(target:SteamID()) .. " \"" .. entry .. "\"" ) 
 					end
 				end,
 				function() end, "Accept", "Cancel" )

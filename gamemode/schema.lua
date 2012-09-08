@@ -1,63 +1,63 @@
-CAKE.Schemas = {  }
-CAKE.Schemafile = {  }
+TIRA.Schemas = {  }
+TIRA.Schemafile = {  }
 
-function CAKE.LoadSchema( schema )
+function TIRA.LoadSchema( schema )
 
 	local path = "schemas/" .. schema .. ".lua"
 	
 	SCHEMA = {  }
 	
 	include( path )
-	table.insert( CAKE.Schemas, SCHEMA )
+	table.insert( TIRA.Schemas, SCHEMA )
 
 	-- Load the base, first.
 
 	if( SCHEMA.Base ) then
 	
-		CAKE.LoadSchema( SCHEMA.Base )
+		TIRA.LoadSchema( SCHEMA.Base )
 		
 	end
 	
-	table.insert( CAKE.Schemafile, schema )
-	CAKE.DayLog( "script.txt", "Loading schema " .. SCHEMA.Name .. " by " .. SCHEMA.Author .. " ( " .. SCHEMA.Description .. " )" )
+	table.insert( TIRA.Schemafile, schema )
+	TIRA.DayLog( "script.txt", "Loading schema " .. SCHEMA.Name .. " by " .. SCHEMA.Author .. " ( " .. SCHEMA.Description .. " )" )
 
 
 	-- Use the new plugin system
 
-	CAKE.LoadPlugin( schema )
+	TIRA.LoadPlugin( schema )
 
 	-- Load the items
-	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/items/*.lua" )
+	local list = file.FindInLua( TIRA.Name .. "/gamemode/schemas/" .. schema .. "/items/*.lua" )
 	
 	for k, v in pairs( list ) do 
 	
-		CAKE.LoadItem( schema, v )
+		TIRA.LoadItem( schema, v )
 		
 	end
 
 	-- Use the new plugin system
 
-	CAKE.LoadPlugin( schema )
+	TIRA.LoadPlugin( schema )
 	
 	-- Load right click files.
 	
-	local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua" ) or {}
+	local list = file.FindInLua( TIRA.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua" ) or {}
 	
 	for k, v in pairs( list ) do
 	
-		CAKE.LoadRClick( schema, v )
+		TIRA.LoadRClick( schema, v )
 		
 	end
 	
 end
 
 --Makes schemas run their SetUp function
-function CAKE.InitSchemas( )
+function TIRA.InitSchemas( )
 
-	for _, SCHEMA in ipairs( CAKE.Schemas ) do
-		if !file.Exists( CAKE.Name .. "/" .. SCHEMA.Name .. ".txt" ) then
+	for _, SCHEMA in ipairs( TIRA.Schemas ) do
+		if !file.Exists( TIRA.Name .. "/" .. SCHEMA.Name .. ".txt" ) then
 			print( "Initializing " .. SCHEMA.Name )
-			file.Write( CAKE.Name .. "/" .. SCHEMA.Name .. ".txt", "" )
+			file.Write( TIRA.Name .. "/" .. SCHEMA.Name .. ".txt", "" )
 			SCHEMA.SetUp( )
 		end
 	end

@@ -2,7 +2,7 @@
 function Admin_GlobalSound( ply, cmd, args )
 
 	if !args[1] or args[1] == "" then
-		CAKE.SendError(ply, "Must specify a sound file!")
+		TIRA.SendError(ply, "Must specify a sound file!")
 		return
 	end
 
@@ -14,6 +14,6 @@ end
 	
 function PLUGIN.Init()
 
-	CAKE.AdminCommand( "globalsound", Admin_GlobalSound, "Play a sound globally, to all players.", true, true, 1 )
+	TIRA.AdminCommand( "globalsound", Admin_GlobalSound, "Play a sound globally, to all players.", true, true, 1 )
 	
 end

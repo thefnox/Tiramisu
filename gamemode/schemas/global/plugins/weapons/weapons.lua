@@ -2,7 +2,7 @@ PLUGIN.Name = "Weapon Systems" -- What is the plugin name
 PLUGIN.Author = "Big Bang" -- Author of the plugin
 PLUGIN.Description = "Handles weapon saving, modification and such" -- The description or purpose of the plugin
 
-CAKE.Undroppable = {
+TIRA.Undroppable = {
 	"hands",
 	"weapon_physcannon",
 	"gmod_tool",
@@ -11,16 +11,16 @@ CAKE.Undroppable = {
 
 local meta = FindMetaTable( "Player" )
 
-function CAKE.CreateWeaponItem( ply, weapon )
+function TIRA.CreateWeaponItem( ply, weapon )
 
-	if ValidEntity( weapon ) and weapon:IsWeapon() and !table.HasValue( CAKE.Undroppable, weapon:GetClass()) then
-		local id = CAKE.CreateItemID()
-		CAKE.SetUData( id, "model", weapon.WorldModel )
-		CAKE.SetUData( id, "name", weapon:GetClass() )
-		CAKE.SetUData( id, "description", "Custom Weapon" )
-		CAKE.SetUData( id, "weaponclass", weapon:GetClass() )
-		CAKE.SetUData( id, "holdtype", weapon:GetHoldType() )
-		CAKE.SetUData( id, "creator", ply:Nick() .. ":" .. ply:Name() .. " (" .. ply:SteamID() .. ")" )
+	if ValidEntity( weapon ) and weapon:IsWeapon() and !table.HasValue( TIRA.Undroppable, weapon:GetClass()) then
+		local id = TIRA.CreateItemID()
+		TIRA.SetUData( id, "model", weapon.WorldModel )
+		TIRA.SetUData( id, "name", weapon:GetClass() )
+		TIRA.SetUData( id, "description", "Custom Weapon" )
+		TIRA.SetUData( id, "weaponclass", weapon:GetClass() )
+		TIRA.SetUData( id, "holdtype", weapon:GetHoldType() )
+		TIRA.SetUData( id, "creator", ply:Nick() .. ":" .. ply:Name() .. " (" .. ply:SteamID() .. ")" )
 		ply:GiveItem( "weapon_base", id )
 		return id
 	end
@@ -55,7 +55,7 @@ function meta:SaveAmmo()
 	tbl[ "HelicopterGun" ] = 120
 	tbl[ "AR2AltFire" ] = 120
 	tbl[ "slam" ] = self:GetAmmoCount( "slam" )
-	CAKE.SetCharField( self, "ammo", tbl )
+	TIRA.SetCharField( self, "ammo", tbl )
 	end
 	
 end
@@ -63,7 +63,7 @@ end
 --Gives the player all of his stored ammo.
 function meta:RestoreAmmo()
 
-	for k, v in pairs( CAKE.GetCharField( self, "ammo" ) ) do
+	for k, v in pairs( TIRA.GetCharField( self, "ammo" ) ) do
 		self:GiveAmmo( v, k, false )
 	end
 
@@ -74,7 +74,7 @@ hook.Add( "WeaponEquip", "Tiramisu.GetWeaponAsItem", function(wep)
 	timer.Simple(0, function() 
  		local class = wep:GetClass()
 		local ply = wep:GetOwner() -- no longer a null entity.
-		if CAKE.ItemData[ class ] then
+		if TIRA.ItemData[ class ] then
 			if !ply:HasItem( class ) then
 				ply:GiveItem( class )
 			end
@@ -83,7 +83,7 @@ hook.Add( "WeaponEquip", "Tiramisu.GetWeaponAsItem", function(wep)
 			for _, tbl in pairs( ply:GetInventory().Items ) do
 				for k, v in pairs(tbl) do
 					if v and v.itemid and v.class then
-						if CAKE.GetUData( v.itemid, "weaponclass" ) == wep:GetClass() then
+						if TIRA.GetUData( v.itemid, "weaponclass" ) == wep:GetClass() then
 							haveit = true
 							break
 						end
@@ -94,7 +94,7 @@ hook.Add( "WeaponEquip", "Tiramisu.GetWeaponAsItem", function(wep)
 				end
 			end
 			if !haveit then
-				CAKE.CreateWeaponItem( ply, wep )
+				TIRA.CreateWeaponItem( ply, wep )
 			end
 		end
 		ply:SaveAmmo()
@@ -107,8 +107,8 @@ hook.Add( "PlayerLoadout", "TiramisuWeaponsLoadout", function( ply )
 			for _, tbl in pairs( ply:GetInventory().Items ) do
 				for k, v in pairs(tbl) do
 					if v and v.itemid and v.class then
-						if CAKE.GetUData( v.itemid, "weaponclass" ) then
-							ply:Give( CAKE.GetUData(v.itemid, "weaponclass") or v.class )
+						if TIRA.GetUData( v.itemid, "weaponclass" ) then
+							ply:Give( TIRA.GetUData(v.itemid, "weaponclass") or v.class )
 						elseif string.match( v.class, "weapon_" ) then
 							ply:Give( v.class )
 						end
@@ -123,6 +123,6 @@ end )
 
 function PLUGIN.Init()
 
-	CAKE.AddDataField( 2, "ammo", CAKE.ConVars[ "DefaultAmmo" ] )
+	TIRA.AddDataField( 2, "ammo", TIRA.ConVars[ "DefaultAmmo" ] )
 	
 end

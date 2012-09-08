@@ -1,19 +1,19 @@
 /*
-function CAKE.FlashLightBindPress(ply, bind, pressed)
+function TIRA.FlashLightBindPress(ply, bind, pressed)
 	if string.find(bind, "impulse 100") then
 		RunConsoleCommand("rp_flashlight")
 		return true
 	end
 end
-hook.Add("PlayerBindPress", "FlashBind", CAKE.FlashLightBindPress)
+hook.Add("PlayerBindPress", "FlashBind", TIRA.FlashLightBindPress)
 
-function CAKE.FlashLightOn(um)
+function TIRA.FlashLightOn(um)
 	local ply = um:ReadEntity()
 	ply.flashlight = um:ReadEntity()
 end
-usermessage.Hook( "flashlighton", CAKE.FlashLightOn )
+usermessage.Hook( "flashlighton", TIRA.FlashLightOn )
 
-function CAKE.FlashlightThink()
+function TIRA.FlashlightThink()
 	for k,v in pairs(player.GetAll()) do
 		if v.flashlight and v.flashlight:IsValid() then
 			local headpos = v:EyePos()
@@ -24,4 +24,4 @@ function CAKE.FlashlightThink()
 		end
 	end
 end
-hook.Add("Think", "FlashlightThink", CAKE.FlashlightThink)*/
+hook.Add("Think", "FlashlightThink", TIRA.FlashlightThink)*/

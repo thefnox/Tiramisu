@@ -18,8 +18,8 @@ end
 
 function ITEM:UseItem(ply)
 
-	CAKE.RemoveClothing( ply )
-	CAKE.RemoveAllGear( ply )
+	TIRA.RemoveClothing( ply )
+	TIRA.RemoveAllGear( ply )
 	ply:SetSpecialModel( "models/headcrabclassic.mdl" )
 	self:Remove()
 

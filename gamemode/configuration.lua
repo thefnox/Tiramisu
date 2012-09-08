@@ -1,43 +1,43 @@
 -- You can change these in the schema definition file as well.
 
-CAKE.ConVars = {  }
+TIRA.ConVars = {  }
 
 --MySQL
 --The SQL engine option allows you to change which SQL module to use within the script, for convenience.
 --It defaults to SQLite, which is included within GMod.
 --If you don't know what this is, don't change it, leave it as it is, and head to the end of the MySQL section
-CAKE.ConVars["SQLEngine"] = "sqlite"
+TIRA.ConVars["SQLEngine"] = "sqlite"
 --Only change the following fields if you're using a MySQL module other than SQLite (Default)
-CAKE.ConVars["SQLHostname"] = "localhost" --IP you're connecting from
-CAKE.ConVars["SQLUsername"] = "root" --MySQL username to use for connecting
-CAKE.ConVars["SQLPassword"] = "" --Password for this username
-CAKE.ConVars["SQLDatabase"] = "tiramisu" --Database to work on. (Must already exist)
-CAKE.ConVars["SQLPort"] = 3308 --Port on which to connect on
+TIRA.ConVars["SQLHostname"] = "localhost" --IP you're connecting from
+TIRA.ConVars["SQLUsername"] = "root" --MySQL username to use for connecting
+TIRA.ConVars["SQLPassword"] = "" --Password for this username
+TIRA.ConVars["SQLDatabase"] = "tiramisu" --Database to work on. (Must already exist)
+TIRA.ConVars["SQLPort"] = 3308 --Port on which to connect on
 --End of the MySQL section
 
-CAKE.ConVars[ "LinuxHotfix" ] = false -- TURN THIS ON ONLY IF YOUR SERVER USES LINUX. This is to turn off model swapping therefore disabling some animations. It's the only solution to a current bug in the SRCDS.
-CAKE.ConVars[ "ForceJigglebones" ] = true --Forces jigglebones on all clients. Turns this off if you know it causes performance problems. 
+TIRA.ConVars[ "LinuxHotfix" ] = false -- TURN THIS ON ONLY IF YOUR SERVER USES LINUX. This is to turn off model swapping therefore disabling some animations. It's the only solution to a current bug in the SRCDS.
+TIRA.ConVars[ "ForceJigglebones" ] = true --Forces jigglebones on all clients. Turns this off if you know it causes performance problems. 
 
-CAKE.ConVars[ "Tiramisu" ] = "2"
-CAKE.ConVars[ "Schema" ] = "freeform" -- What folder is schema data being loaded from?
+TIRA.ConVars[ "Tiramisu" ] = "2"
+TIRA.ConVars[ "Schema" ] = "freeform" -- What folder is schema data being loaded from?
 
 --General config
-CAKE.ConVars[ "AllowVoices" ] = true --Set this to false to disable rp_voice. This is HL2 chatter, not actual microphone speech.
-CAKE.ConVars[ "PlayerInventoryRows" ] = 4 --Set to 0 for infinite. Each row holds 10 items
-CAKE.ConVars[ "StaticInventory" ] = false --Set this to false to make the inventory expandable with containers
-CAKE.ConVars[ "SpawnWithBlackScreen" ] = true --Set this to true if you want people to be welomed with a black screen.
-CAKE.ConVars[ "WalkSpeed" ] = 80 -- How fast do they walk
-CAKE.ConVars[ "RunSpeed" ] = 420 -- How fast do they run
-CAKE.ConVars[ "TalkRange" ] = 300 -- This is the range of talking.
-CAKE.ConVars[ "SuicideEnabled" ] = false -- Can players compulsively suicide by using kill
-CAKE.ConVars[ "UnconciousTimer" ] = 5 --Time that must be spent unconcious before being able to wake up. Set to 0 to disable (not recommended)
-CAKE.ConVars[ "DisplayClock" ] = false --Use the clock system?
-CAKE.ConVars[ "DefaultTime" ] = "1 1 2012 1" --The initial time of the script's clock.
-CAKE.ConVars[ "DefaultAmmo" ] = {  } --The default ammo table your character will have on spawn.
-CAKE.ConVars[ "DefaultClothing" ] = { }--Clothing you can choose on startup
-CAKE.ConVars[ "UseEnhancedCitizens" ] = false --Set this to false if you want to use the default models instead of Enhanced Citizens by Bloocobalt and Lt_Commander.
-if CAKE.ConVars[ "UseEnhancedCitizens" ] then
-	CAKE.ConVars[ "DefaultModels" ] = {
+TIRA.ConVars[ "AllowVoices" ] = true --Set this to false to disable rp_voice. This is HL2 chatter, not actual microphone speech.
+TIRA.ConVars[ "PlayerInventoryRows" ] = 4 --Set to 0 for infinite. Each row holds 10 items
+TIRA.ConVars[ "StaticInventory" ] = false --Set this to false to make the inventory expandable with containers
+TIRA.ConVars[ "SpawnWithBlackScreen" ] = true --Set this to true if you want people to be welomed with a black screen.
+TIRA.ConVars[ "WalkSpeed" ] = 80 -- How fast do they walk
+TIRA.ConVars[ "RunSpeed" ] = 420 -- How fast do they run
+TIRA.ConVars[ "TalkRange" ] = 300 -- This is the range of talking.
+TIRA.ConVars[ "SuicideEnabled" ] = false -- Can players compulsively suicide by using kill
+TIRA.ConVars[ "UnconciousTimer" ] = 5 --Time that must be spent unconcious before being able to wake up. Set to 0 to disable (not recommended)
+TIRA.ConVars[ "DisplayClock" ] = false --Use the clock system?
+TIRA.ConVars[ "DefaultTime" ] = "1 1 2012 1" --The initial time of the script's clock.
+TIRA.ConVars[ "DefaultAmmo" ] = {  } --The default ammo table your character will have on spawn.
+TIRA.ConVars[ "DefaultClothing" ] = { }--Clothing you can choose on startup
+TIRA.ConVars[ "UseEnhancedCitizens" ] = false --Set this to false if you want to use the default models instead of Enhanced Citizens by Bloocobalt and Lt_Commander.
+if TIRA.ConVars[ "UseEnhancedCitizens" ] then
+	TIRA.ConVars[ "DefaultModels" ] = {
 		Male = {
 			"models/bloo_ltcom/citizens/male_01.mdl",
 			"models/bloo_ltcom/citizens/male_02.mdl",
@@ -61,7 +61,7 @@ if CAKE.ConVars[ "UseEnhancedCitizens" ] then
 		}
 	}
 else
-	CAKE.ConVars[ "DefaultModels" ] = {
+	TIRA.ConVars[ "DefaultModels" ] = {
 		Male = {
 			"models/humans/group01/male_01.mdl",
 			"models/humans/group01/male_02.mdl",
@@ -84,84 +84,84 @@ else
 	}
 end 
 --DEATH
-CAKE.ConVars[ "NPCCanAttackRagdoll" ] = true --Can NPC's attack player ragdolls?
-CAKE.ConVars[ "DamageWhileUnconcious" ] = true --Can players be damaged while unconcious?
-CAKE.ConVars[ "Prop_Damage" ] = false --Set this to true if you want props to damage people.
-CAKE.ConVars[ "LoseWeaponsOnDeath" ] = false --Set this to true if you want people to lose their guns once they die.
-CAKE.ConVars[ "LoseItemsOnDeath" ] = false --Set this to true if you want people to lose their items once they die. LoseWeaponsOnDeath must be set to true for this to work
-CAKE.ConVars[ "ReturnToSpawnOnDeath" ] = true --Set this to true if you want people to return to the spawn point every time they are killed.
-CAKE.ConVars[ "FadeToBlackOnDeath" ] = true --Set this to false if you want to disable the fade to black that occurs 5 seconds before death.
-CAKE.ConVars[ "Respawn_Timer" ] = 10 --Time in seconds that it takes for people to be allowed to respawn.
-CAKE.ConVars[ "Instant_Respawn" ] = false --Respawn instantly or allow people to lay dead for a while.
-CAKE.ConVars[ "DeathRagdoll_Linger" ] = 30 --Time in seconds that it takes for ragdolls to dissapear, set to 0 if you want corpses to stay forever
-CAKE.ConVars[ "AllowRescaling" ] = true --Allows you to change the size of your current clothes.
-CAKE.ConVars[ "AllowBodygroups" ] = true --Allows you to change the body group of your current clothes.
+TIRA.ConVars[ "NPCCanAttackRagdoll" ] = true --Can NPC's attack player ragdolls?
+TIRA.ConVars[ "DamageWhileUnconcious" ] = true --Can players be damaged while unconcious?
+TIRA.ConVars[ "Prop_Damage" ] = false --Set this to true if you want props to damage people.
+TIRA.ConVars[ "LoseWeaponsOnDeath" ] = false --Set this to true if you want people to lose their guns once they die.
+TIRA.ConVars[ "LoseItemsOnDeath" ] = false --Set this to true if you want people to lose their items once they die. LoseWeaponsOnDeath must be set to true for this to work
+TIRA.ConVars[ "ReturnToSpawnOnDeath" ] = true --Set this to true if you want people to return to the spawn point every time they are killed.
+TIRA.ConVars[ "FadeToBlackOnDeath" ] = true --Set this to false if you want to disable the fade to black that occurs 5 seconds before death.
+TIRA.ConVars[ "Respawn_Timer" ] = 10 --Time in seconds that it takes for people to be allowed to respawn.
+TIRA.ConVars[ "Instant_Respawn" ] = false --Respawn instantly or allow people to lay dead for a while.
+TIRA.ConVars[ "DeathRagdoll_Linger" ] = 30 --Time in seconds that it takes for ragdolls to dissapear, set to 0 if you want corpses to stay forever
+TIRA.ConVars[ "AllowRescaling" ] = true --Allows you to change the size of your current clothes.
+TIRA.ConVars[ "AllowBodygroups" ] = true --Allows you to change the body group of your current clothes.
 
 --Tooltrust
-CAKE.ConVars[ "DefaultPhysgun" ] = false -- Are players banned from the physics gun when they first start.
-CAKE.ConVars[ "DefaultGravgun" ] = false -- Are players banned from the gravity gun when they first start.
-CAKE.ConVars[ "DefaultPropTrust" ] = true --Are players allowed to spawn props when they first start.
-CAKE.ConVars[ "DefaultVehicles" ] = false --Are players allowed to spawn vehicles when they first start.
-CAKE.ConVars[ "PropLimit" ] = 20
-CAKE.ConVars[ "RagdollLimit" ] = 1
-CAKE.ConVars[ "VehicleLimit" ] = 0
-CAKE.ConVars[ "EffectLimit" ] = 1
-CAKE.ConVars[ "DefaultToolTrust" ] = 0 -- Do players start with tooltrust on? Set to 1 for true
+TIRA.ConVars[ "DefaultPhysgun" ] = false -- Are players banned from the physics gun when they first start.
+TIRA.ConVars[ "DefaultGravgun" ] = false -- Are players banned from the gravity gun when they first start.
+TIRA.ConVars[ "DefaultPropTrust" ] = true --Are players allowed to spawn props when they first start.
+TIRA.ConVars[ "DefaultVehicles" ] = false --Are players allowed to spawn vehicles when they first start.
+TIRA.ConVars[ "PropLimit" ] = 20
+TIRA.ConVars[ "RagdollLimit" ] = 1
+TIRA.ConVars[ "VehicleLimit" ] = 0
+TIRA.ConVars[ "EffectLimit" ] = 1
+TIRA.ConVars[ "DefaultToolTrust" ] = 0 -- Do players start with tooltrust on? Set to 1 for true
 
 --Money
-CAKE.ConVars[ "CurrencyName" ] = "Credit" --The formal name for your currency
-CAKE.ConVars[ "CurrencySlang" ] = "credit" --A slang way of mentioning it (I.E: 'bucks', 'simoleons')
-CAKE.ConVars[ "CurrencyAbr" ] = "$" --An abbreviated form of mentioning your currency, could be a symbol.
-CAKE.ConVars[ "DefaultMoney" ] = 800 -- How much money do the characters start out with.
+TIRA.ConVars[ "CurrencyName" ] = "Credit" --The formal name for your currency
+TIRA.ConVars[ "CurrencySlang" ] = "credit" --A slang way of mentioning it (I.E: 'bucks', 'simoleons')
+TIRA.ConVars[ "CurrencyAbr" ] = "$" --An abbreviated form of mentioning your currency, could be a symbol.
+TIRA.ConVars[ "DefaultMoney" ] = 800 -- How much money do the characters start out with.
 
 --Titles
-CAKE.ConVars[ "DefaultTitle" ] = "Citizen" -- The default title when characters are created.
-CAKE.ConVars[ "TitleFadeTime"] = 10 --If titles are to fade when someone has been around a player for too long, how long will that take?
-CAKE.ConVars[ "TitleDrawDistance"] = CAKE.ConVars[ "TalkRange" ] --How far away from the local player should titles draw?
-CAKE.ConVars[ "FadeTitles"] = 1 --Should titles fade away after some time?
-CAKE.ConVars[ "FadeNames"] = 0 --Should names fade away after some time?
+TIRA.ConVars[ "DefaultTitle" ] = "Citizen" -- The default title when characters are created.
+TIRA.ConVars[ "TitleFadeTime"] = 10 --If titles are to fade when someone has been around a player for too long, how long will that take?
+TIRA.ConVars[ "TitleDrawDistance"] = TIRA.ConVars[ "TalkRange" ] --How far away from the local player should titles draw?
+TIRA.ConVars[ "FadeTitles"] = 1 --Should titles fade away after some time?
+TIRA.ConVars[ "FadeNames"] = 0 --Should names fade away after some time?
 
 
 --Stats for the fighting system, plus stamina. Currently it's just health and stamina.
-CAKE.Stats = {}
+TIRA.Stats = {}
 
-CAKE.Stats.Stamina = {}
-CAKE.Stats.Stamina.BaseRegenRate = 2 --This is the percentage recovered per second.
-CAKE.Stats.Stamina.BaseRunCost = 2 --The amount of stamina consumed per second of running. Set this to 0 to disable it.
+TIRA.Stats.Stamina = {}
+TIRA.Stats.Stamina.BaseRegenRate = 2 --This is the percentage recovered per second.
+TIRA.Stats.Stamina.BaseRunCost = 2 --The amount of stamina consumed per second of running. Set this to 0 to disable it.
 
-CAKE.Stats.Health = {}
-CAKE.Stats.Health.BaseRegenRate = 1 --This is the amount of health recovered per second. Sit this to 0 to disable health regeneration.
-CAKE.Stats.Health.MaxRegenPerc = 60 --Percentage of health that can be regenerated. Set this to a lower amount if you wish for health to not fully regenerate
-CAKE.Stats.Health.Max = 10000 --Maximum possible health amount.
-CAKE.Stats.Health.Base = 100 --The base amount of health a player begins with.
+TIRA.Stats.Health = {}
+TIRA.Stats.Health.BaseRegenRate = 1 --This is the amount of health recovered per second. Sit this to 0 to disable health regeneration.
+TIRA.Stats.Health.MaxRegenPerc = 60 --Percentage of health that can be regenerated. Set this to a lower amount if you wish for health to not fully regenerate
+TIRA.Stats.Health.Max = 10000 --Maximum possible health amount.
+TIRA.Stats.Health.Base = 100 --The base amount of health a player begins with.
 
 --And finally, some clientside stuff.
 
 --VGUI
-CAKE.ConVars[ "MenuFont" ] = "Yanone Kaffeesatz Regular" -- The default font for the whole schema
-CAKE.ConVars[ "MenuFont2" ] = "Yanone Kaffeesatz Bold" -- In case you want a different font for the bigger labels, change this to whatever you want.
-CAKE.ConVars[ "ChatFont" ] = "Sansation Bold" -- Main font used in chatting
-CAKE.ConVars[ "EmoteFont" ] = "Sansation Italic" -- Change this to use a different font for "/me's" and such
-CAKE.ConVars[ "OOCFont" ] = CAKE.ConVars[ "ChatFont" ] --Change this to change the OOC font.
-CAKE.ConVars[ "WhisperFont" ] = CAKE.ConVars[ "ChatFont" ] --Font used in whispering.
-CAKE.ConVars[ "YellFont" ] = CAKE.ConVars[ "ChatFont" ] --Font used when yelling.
-CAKE.ConVars[ "NoteFont" ] = CAKE.ConVars[ "ChatFont" ]
-CAKE.ConVars[ "NamesFont"] = CAKE.ConVars[ "ChatFont" ]
-CAKE.ConVars[ "TitlesFont"] = CAKE.ConVars[ "ChatFont" ]
-CAKE.BaseColor = Color( 50, 50, 50, 150 ) --The schema's default color. Can be set in game
-CAKE.ConVars[ "MaxChatLines" ] = 100 --The maximum amount of chatlines the chatbox can hold. Reducing this number may increase FPS in clients.
+TIRA.ConVars[ "MenuFont" ] = "Yanone Kaffeesatz Regular" -- The default font for the whole schema
+TIRA.ConVars[ "MenuFont2" ] = "Yanone Kaffeesatz Bold" -- In case you want a different font for the bigger labels, change this to whatever you want.
+TIRA.ConVars[ "ChatFont" ] = "Sansation Bold" -- Main font used in chatting
+TIRA.ConVars[ "EmoteFont" ] = "Sansation Italic" -- Change this to use a different font for "/me's" and such
+TIRA.ConVars[ "OOCFont" ] = TIRA.ConVars[ "ChatFont" ] --Change this to change the OOC font.
+TIRA.ConVars[ "WhisperFont" ] = TIRA.ConVars[ "ChatFont" ] --Font used in whispering.
+TIRA.ConVars[ "YellFont" ] = TIRA.ConVars[ "ChatFont" ] --Font used when yelling.
+TIRA.ConVars[ "NoteFont" ] = TIRA.ConVars[ "ChatFont" ]
+TIRA.ConVars[ "NamesFont"] = TIRA.ConVars[ "ChatFont" ]
+TIRA.ConVars[ "TitlesFont"] = TIRA.ConVars[ "ChatFont" ]
+TIRA.BaseColor = Color( 50, 50, 50, 150 ) --The schema's default color. Can be set in game
+TIRA.ConVars[ "MaxChatLines" ] = 100 --The maximum amount of chatlines the chatbox can hold. Reducing this number may increase FPS in clients.
 
 --Groups
-CAKE.ConVars[ "DoorsPurchaseable" ] = true --Set this to false to make everyone able to lock/unlock ungrouped doors.
-CAKE.ConVars[ "InviteTimer" ] = 60 --Time that must pass before another invite can be sent. Stops invite harassment.
-CAKE.ConVars[ "AllowGroupChat" ] = true --Disable this to turn off all OOC group chat.
+TIRA.ConVars[ "DoorsPurchaseable" ] = true --Set this to false to make everyone able to lock/unlock ungrouped doors.
+TIRA.ConVars[ "InviteTimer" ] = 60 --Time that must pass before another invite can be sent. Stops invite harassment.
+TIRA.ConVars[ "AllowGroupChat" ] = true --Disable this to turn off all OOC group chat.
 
 --Intro
-CAKE.ConVars[ "UseIntro" ] = true --Set this to false if you want the player to go directly into the character menu when they join
-CAKE.ConVars[ "IntroText" ] = "Welcome to Tiramisu 2" -- Character menu and intro text. NOTE, the HL2RP scheme changes this
-CAKE.ConVars[ "IntroSubtitle" ] = "A new era in roleplay" -- Character menu and intro subtitle. If you want this gone just set it to ""
+TIRA.ConVars[ "UseIntro" ] = true --Set this to false if you want the player to go directly into the character menu when they join
+TIRA.ConVars[ "IntroText" ] = "Welcome to Tiramisu 2" -- Character menu and intro text. NOTE, the HL2RP scheme changes this
+TIRA.ConVars[ "IntroSubtitle" ] = "A new era in roleplay" -- Character menu and intro subtitle. If you want this gone just set it to ""
 
 --General
-CAKE.ConVars[ "Webpage" ] = "http://www.google.com/" --Set this to whatever you want to, it'll be accessible on the "Forums" tab
+TIRA.ConVars[ "Webpage" ] = "http://www.google.com/" --Set this to whatever you want to, it'll be accessible on the "Forums" tab
 
-CAKE.ConVars[ "MenuTitle" ] = "Tiramisu" --Title for the main menu
+TIRA.ConVars[ "MenuTitle" ] = "Tiramisu" --Title for the main menu

@@ -3,7 +3,7 @@ RCLICK.SubMenu = "Door"
 
 function RCLICK.Condition(target)
 
-if CAKE.IsDoor(target) then return true end
+if TIRA.IsDoor(target) then return true end
 
 end
 

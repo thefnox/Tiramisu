@@ -3,7 +3,7 @@ RCLICK.SubMenu = "Admin"
 
 function RCLICK.Condition(target)
 
-	if target == LocalPlayer() and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 3 and table.Count( CAKE.SpawnPoints ) > 0 then return true end
+	if target == LocalPlayer() and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 3 and table.Count( TIRA.SpawnPoints ) > 0 then return true end
 
 end
 
@@ -14,7 +14,7 @@ function RCLICK.Click(target,ply)
 		local main = dmenu:AddSubMenu( "Remove Spawnpoint" )
 		local spawngroups = {} 
 
-		for spawngroup, tbl in pairs( CAKE.SpawnPoints ) do
+		for spawngroup, tbl in pairs( TIRA.SpawnPoints ) do
 			if !spawngroups[spawngroup] then
 				spawngroups[spawngroup] = main:AddSubMenu( "Spawngroup " .. spawngroup )
 			end

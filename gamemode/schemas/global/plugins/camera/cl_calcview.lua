@@ -1,18 +1,18 @@
 local targetent, lookattarget, ang, sa, ca, hitpos
 local tracedata = {}
-CAKE.CameraPos = Vector(0, 0, 0)
-CAKE.CameraAngle = Angle(0, 0, 0)
-CAKE.LastViewAng = Angle(0, 0, 0)
-CAKE.DiffReal = Angle(0, 0, 0)
-CAKE.OldAngles = Angle(0, 0, 0)
-CAKE.LastAng = Angle(0, 0, 0)
-CAKE.CurAng = Angle(0, 0, 0)
-CAKE.FreeScrollAng = Angle( 0, 0, 0 )
-CAKE.OTSAng = false
-CAKE.UseHeadRotation = false
-CAKE.SwitchFromFirstPerson = false
-CAKE.FlipAround = false
-CAKE.UseFlash = true
+TIRA.CameraPos = Vector(0, 0, 0)
+TIRA.CameraAngle = Angle(0, 0, 0)
+TIRA.LastViewAng = Angle(0, 0, 0)
+TIRA.DiffReal = Angle(0, 0, 0)
+TIRA.OldAngles = Angle(0, 0, 0)
+TIRA.LastAng = Angle(0, 0, 0)
+TIRA.CurAng = Angle(0, 0, 0)
+TIRA.FreeScrollAng = Angle( 0, 0, 0 )
+TIRA.OTSAng = false
+TIRA.UseHeadRotation = false
+TIRA.SwitchFromFirstPerson = false
+TIRA.FlipAround = false
+TIRA.UseFlash = true
 
 local NormalizeAngle, Clamp, rad, cos, sin, abs, AngleDifference = math.NormalizeAngle, math.Clamp, math.rad, math.cos, math.sin, math.abs, math.AngleDifference
 
@@ -29,20 +29,20 @@ end
 
 usermessage.Hook( "Tiramisu.ReceiveRagdoll", function( um )
 	
-	CAKE.ViewRagdoll = ents.GetByIndex( um:ReadShort() )
-	if ValidEntity(CAKE.ViewRagdoll) and CAKE.ViewRagdoll != LocalPlayer() then
-		CAKE.ForceFreeScroll = true
+	TIRA.ViewRagdoll = ents.GetByIndex( um:ReadShort() )
+	if ValidEntity(TIRA.ViewRagdoll) and TIRA.ViewRagdoll != LocalPlayer() then
+		TIRA.ForceFreeScroll = true
 	else
-		CAKE.ForceFreeScroll = false
-		CAKE.FreeScroll = false
+		TIRA.ForceFreeScroll = false
+		TIRA.FreeScroll = false
 	end
 
 end)
 
 --Sends the current player look at position.
 timer.Create( "TiramisuLookAtTimer", 0.2, 0, function()
-	if CAKE.UseHeadRotation then
-		local angle = CAKE.RealAng - CAKE.LastViewAng
+	if TIRA.UseHeadRotation then
+		local angle = TIRA.RealAng - TIRA.LastViewAng
 		angle.p = math.NormalizeAngle( angle.p )
 		RunConsoleCommand("t_sla", angle.p, NormalizeAngle( angle.y ))
 	else
@@ -55,13 +55,13 @@ hook.Add("ShouldDrawLocalPlayer","TiramisuDrawLocalPlayerCamera", function()
 	if IronsightsOn() then
 		return false
 	end
-	if CAKE.ForceDraw then
+	if TIRA.ForceDraw then
 		return true
 	end
-	if (CAKE.Thirdperson:GetBool() and CAKE.ThirdpersonDistance:GetInt() != 0 ) or CAKE.FreeScroll then
+	if (TIRA.Thirdperson:GetBool() and TIRA.ThirdpersonDistance:GetInt() != 0 ) or TIRA.FreeScroll then
 		return true
 	else
-		if CAKE.FirstpersonBody:GetBool() and !LocalPlayer():GetNWBool("specialmodel") then
+		if TIRA.FirstpersonBody:GetBool() and !LocalPlayer():GetNWBool("specialmodel") then
 			return true
 		end
 	end
@@ -73,13 +73,13 @@ local amount = 5
 hook.Add( "PlayerBindPress", "TiramisuPlayerBindPressCamera", function( ply, bind, down )
 	if ValidEntity(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() != "weapon_physgun" then
 		if string.find(bind, "invprev") then
-			RunConsoleCommand( "rp_thirdpersondistance",  tostring(Clamp( CAKE.ThirdpersonDistance:GetInt() - amount, 0, 150)))
+			RunConsoleCommand( "rp_thirdpersondistance",  tostring(Clamp( TIRA.ThirdpersonDistance:GetInt() - amount, 0, 150)))
 		elseif string.find(bind, "invnext") then
-			RunConsoleCommand( "rp_thirdpersondistance",  tostring(Clamp( CAKE.ThirdpersonDistance:GetInt() + amount, 0, 150)))
+			RunConsoleCommand( "rp_thirdpersondistance",  tostring(Clamp( TIRA.ThirdpersonDistance:GetInt() + amount, 0, 150)))
 		end
 
 		if string.find(bind, "invprev") or string.find(bind, "invnext") then
-			if CAKE.ThirdpersonDistance:GetInt() <= 5 then
+			if TIRA.ThirdpersonDistance:GetInt() <= 5 then
 				RunConsoleCommand("rp_thirdperson","0")
 			else
 				RunConsoleCommand("rp_thirdperson","1")
@@ -97,135 +97,135 @@ local middleDown = false
 hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 
 	if LocalPlayer():GetNWBool("specialmodel") then
-		CAKE.UseHeadRotation = false
-		if CAKE.Thirdperson:GetBool() then
-			CAKE.WasOTS = false
-			if CAKE.SwitchFromFirstPerson and CAKE.LastViewAng then
-				CAKE.RealAng = CAKE.LastViewAng
-				CAKE.CurAng = CAKE.RealAng
-				CAKE.LastAng = CAKE.LastViewAng
-				CAKE.OldAngles = CAKE.LastAng
-				CAKE.CurAng = CAKE.LastAng
-				--CAKE.RealAng = CAKE.CurAng
-				CAKE.SwitchFromFirstPerson = false
-				CAKE.UseHeadRotation = false
-			elseif !CAKE.RealAng then
-				CAKE.RealAng = cmd:GetViewAngles()
+		TIRA.UseHeadRotation = false
+		if TIRA.Thirdperson:GetBool() then
+			TIRA.WasOTS = false
+			if TIRA.SwitchFromFirstPerson and TIRA.LastViewAng then
+				TIRA.RealAng = TIRA.LastViewAng
+				TIRA.CurAng = TIRA.RealAng
+				TIRA.LastAng = TIRA.LastViewAng
+				TIRA.OldAngles = TIRA.LastAng
+				TIRA.CurAng = TIRA.LastAng
+				--TIRA.RealAng = TIRA.CurAng
+				TIRA.SwitchFromFirstPerson = false
+				TIRA.UseHeadRotation = false
+			elseif !TIRA.RealAng then
+				TIRA.RealAng = cmd:GetViewAngles()
 			end
 
-			CAKE.LastAng = CAKE.RealAng
-			CAKE.RealAng = CAKE.RealAng + Angle( cmd:GetMouseY() * (mPitch:GetFloat()), cmd:GetMouseX() * (-mYaw:GetFloat()), 0 )
-			CAKE.RealAng.p = Clamp( NormalizeAngle( CAKE.RealAng.p ), -89, 89 )
-			CAKE.RealAng.y = NormalizeAngle( CAKE.RealAng.y )
+			TIRA.LastAng = TIRA.RealAng
+			TIRA.RealAng = TIRA.RealAng + Angle( cmd:GetMouseY() * (mPitch:GetFloat()), cmd:GetMouseX() * (-mYaw:GetFloat()), 0 )
+			TIRA.RealAng.p = Clamp( NormalizeAngle( TIRA.RealAng.p ), -89, 89 )
+			TIRA.RealAng.y = NormalizeAngle( TIRA.RealAng.y )
 		else
-			CAKE.WasOTS = false
-			if CAKE.UseHeadRotation then
-				cmd:SetViewAngles(CAKE.RealAng)
+			TIRA.WasOTS = false
+			if TIRA.UseHeadRotation then
+				cmd:SetViewAngles(TIRA.RealAng)
 			end
-			CAKE.OTSAng = false
-			CAKE.UseHeadRotation = false
-			CAKE.SwitchFromFirstPerson = true
-			CAKE.DiffReal = Angle( 0, 0, 0 )
-			CAKE.LastViewAng = cmd:GetViewAngles()
+			TIRA.OTSAng = false
+			TIRA.UseHeadRotation = false
+			TIRA.SwitchFromFirstPerson = true
+			TIRA.DiffReal = Angle( 0, 0, 0 )
+			TIRA.LastViewAng = cmd:GetViewAngles()
 		end
 		return
 	end
 	
 	if !IronsightsOn() and !LocalPlayer():InVehicle() and cmd:GetButtons() & IN_USE == 0 then
 		if input.IsMouseDown(MOUSE_MIDDLE) then
-			CAKE.FreeScroll = true
+			TIRA.FreeScroll = true
 		else
-			CAKE.FreeScroll = false		
+			TIRA.FreeScroll = false		
 		end
 
-		if CAKE.ForceFreeScroll then
-			CAKE.FreeScroll = true
+		if TIRA.ForceFreeScroll then
+			TIRA.FreeScroll = true
 		end
 
-		if CAKE.FreeScroll then
-			CAKE.WasOTS = false
-			cmd:SetViewAngles(CAKE.RealAng or cmd:GetViewAngles())
-			CAKE.FreeScrollAng = CAKE.FreeScrollAng + Angle( cmd:GetMouseY() * (mPitch:GetFloat()), cmd:GetMouseX() * (-mYaw:GetFloat()), 0 )
-			CAKE.FreeScrollAng.p = Clamp( NormalizeAngle( CAKE.FreeScrollAng.p ), -89, 89 )
+		if TIRA.FreeScroll then
+			TIRA.WasOTS = false
+			cmd:SetViewAngles(TIRA.RealAng or cmd:GetViewAngles())
+			TIRA.FreeScrollAng = TIRA.FreeScrollAng + Angle( cmd:GetMouseY() * (mPitch:GetFloat()), cmd:GetMouseX() * (-mYaw:GetFloat()), 0 )
+			TIRA.FreeScrollAng.p = Clamp( NormalizeAngle( TIRA.FreeScrollAng.p ), -89, 89 )
 		else
-			CAKE.FreeScrollAng = Angle( 0, 0, 0 )
-			CAKE.FreeScroll = false
-			if CAKE.Thirdperson:GetBool() and !LocalPlayer():GetNWBool( "aiming", false ) then --NON AIMING THIRDPERSON
-				CAKE.WasOTS = false
-				if CAKE.SwitchFromFirstPerson and CAKE.LastViewAng then
-					CAKE.RealAng = CAKE.LastViewAng
-					CAKE.CurAng = CAKE.RealAng
-					CAKE.LastAng = CAKE.LastViewAng
-					CAKE.OldAngles = CAKE.LastAng
-					CAKE.CurAng = CAKE.LastAng
-					--CAKE.RealAng = CAKE.CurAng
-					CAKE.SwitchFromFirstPerson = false
-					CAKE.UseHeadRotation = false
-				elseif !CAKE.RealAng then
-					CAKE.RealAng = cmd:GetViewAngles()
+			TIRA.FreeScrollAng = Angle( 0, 0, 0 )
+			TIRA.FreeScroll = false
+			if TIRA.Thirdperson:GetBool() and !LocalPlayer():GetNWBool( "aiming", false ) then --NON AIMING THIRDPERSON
+				TIRA.WasOTS = false
+				if TIRA.SwitchFromFirstPerson and TIRA.LastViewAng then
+					TIRA.RealAng = TIRA.LastViewAng
+					TIRA.CurAng = TIRA.RealAng
+					TIRA.LastAng = TIRA.LastViewAng
+					TIRA.OldAngles = TIRA.LastAng
+					TIRA.CurAng = TIRA.LastAng
+					--TIRA.RealAng = TIRA.CurAng
+					TIRA.SwitchFromFirstPerson = false
+					TIRA.UseHeadRotation = false
+				elseif !TIRA.RealAng then
+					TIRA.RealAng = cmd:GetViewAngles()
 				end
-				CAKE.LastAng = CAKE.RealAng
-				CAKE.RealAng = CAKE.RealAng + Angle( cmd:GetMouseY() * (mPitch:GetFloat()), cmd:GetMouseX() * (-mYaw:GetFloat()), 0 )
-				CAKE.RealAng.p = Clamp( NormalizeAngle( CAKE.RealAng.p ), -89, 89 )
-				CAKE.RealAng.y = NormalizeAngle( CAKE.RealAng.y )
+				TIRA.LastAng = TIRA.RealAng
+				TIRA.RealAng = TIRA.RealAng + Angle( cmd:GetMouseY() * (mPitch:GetFloat()), cmd:GetMouseX() * (-mYaw:GetFloat()), 0 )
+				TIRA.RealAng.p = Clamp( NormalizeAngle( TIRA.RealAng.p ), -89, 89 )
+				TIRA.RealAng.y = NormalizeAngle( TIRA.RealAng.y )
 				if cmd:GetButtons() & IN_FORWARD > 0 or cmd:GetButtons() & IN_BACK > 0 then
-					if input.IsKeyDown(KEY_LALT) and CAKE.UseHeadRotation then
-						if not CAKE.UseHeadRotation == 2 then
+					if input.IsKeyDown(KEY_LALT) and TIRA.UseHeadRotation then
+						if not TIRA.UseHeadRotation == 2 then
 							ply.CurrentLookAt = Angle(0,0,0)
 						end
-						CAKE.UseHeadRotation = 2
-						cmd:SetViewAngles(CAKE.WasWalkingAng)
+						TIRA.UseHeadRotation = 2
+						cmd:SetViewAngles(TIRA.WasWalkingAng)
 					else
-						if CAKE.UseHeadRotation == 2 then
-							CAKE.RealAng = CAKE.WasWalkingAng
-							CAKE.CurrentLookAt = Angle(0, 0, 0)
+						if TIRA.UseHeadRotation == 2 then
+							TIRA.RealAng = TIRA.WasWalkingAng
+							TIRA.CurrentLookAt = Angle(0, 0, 0)
 						end
-						CAKE.WasWalkingAng = CAKE.RealAng
-						cmd:SetViewAngles(CAKE.RealAng)
-						CAKE.UseHeadRotation = 1
+						TIRA.WasWalkingAng = TIRA.RealAng
+						cmd:SetViewAngles(TIRA.RealAng)
+						TIRA.UseHeadRotation = 1
 					end
 				else
 					timer.UnPause("TiramisuLookAtTimer")
-					if CAKE.UseHeadRotation == 1 then
-						CAKE.LastViewAng.y = CAKE.RealAng.y
-					elseif CAKE.UseHeadRotation == 2 then
+					if TIRA.UseHeadRotation == 1 then
+						TIRA.LastViewAng.y = TIRA.RealAng.y
+					elseif TIRA.UseHeadRotation == 2 then
 						ply.CurrentLookAt = Angle(0,0,0)
-						CAKE.RealAng.p = CAKE.WasWalkingAng.p
+						TIRA.RealAng.p = TIRA.WasWalkingAng.p
 					end
-					CAKE.UseHeadRotation = true
-					cmd:SetViewAngles(CAKE.LastViewAng)
+					TIRA.UseHeadRotation = true
+					cmd:SetViewAngles(TIRA.LastViewAng)
 				end
-				if AngleDifference(CAKE.RealAng.y, CAKE.LastViewAng.y) > 170  and not CAKE.UseHeadRotation == 2 then
-					cmd:SetViewAngles( CAKE.RealAng )
-					CAKE.LastViewAng.y = CAKE.RealAng.y
-					CAKE.LastAng = CAKE.RealAng
+				if AngleDifference(TIRA.RealAng.y, TIRA.LastViewAng.y) > 170  and not TIRA.UseHeadRotation == 2 then
+					cmd:SetViewAngles( TIRA.RealAng )
+					TIRA.LastViewAng.y = TIRA.RealAng.y
+					TIRA.LastAng = TIRA.RealAng
 					LocalPlayer():AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_TURN_RIGHT90 )
-				elseif AngleDifference(CAKE.RealAng.y, CAKE.LastViewAng.y) < -170 and not CAKE.UseHeadRotation == 2 then
-					cmd:SetViewAngles( CAKE.RealAng )
-					CAKE.LastViewAng.y = CAKE.RealAng.y
-					CAKE.LastAng = CAKE.RealAng
+				elseif AngleDifference(TIRA.RealAng.y, TIRA.LastViewAng.y) < -170 and not TIRA.UseHeadRotation == 2 then
+					cmd:SetViewAngles( TIRA.RealAng )
+					TIRA.LastViewAng.y = TIRA.RealAng.y
+					TIRA.LastAng = TIRA.RealAng
 					LocalPlayer():AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_TURN_LEFT90 )					
 				end
-			elseif CAKE.Thirdperson:GetBool() and LocalPlayer():GetNWBool( "aiming", false ) then --OVER THE SHOULDER
+			elseif TIRA.Thirdperson:GetBool() and LocalPlayer():GetNWBool( "aiming", false ) then --OVER THE SHOULDER
 			
-				if !CAKE.WasOTS then
-					CAKE.OTSAng = cmd:GetViewAngles()
+				if !TIRA.WasOTS then
+					TIRA.OTSAng = cmd:GetViewAngles()
 				end
 				
-				CAKE.WasOTS = true
+				TIRA.WasOTS = true
 				
-				if CAKE.UseHeadRotation then
-					cmd:SetViewAngles(CAKE.RealAng)
+				if TIRA.UseHeadRotation then
+					cmd:SetViewAngles(TIRA.RealAng)
 				end
-				if !CAKE.OTSAng then
-					CAKE.OTSAng = cmd:GetViewAngles()
+				if !TIRA.OTSAng then
+					TIRA.OTSAng = cmd:GetViewAngles()
 				end
-				CAKE.OTSAng = CAKE.OTSAng + Angle( cmd:GetMouseY() * (mPitch:GetFloat()), cmd:GetMouseX() * (-mYaw:GetFloat()), 0 )
-				CAKE.OTSAng.p = Clamp( NormalizeAngle( CAKE.OTSAng.p ), -89, 89 )
+				TIRA.OTSAng = TIRA.OTSAng + Angle( cmd:GetMouseY() * (mPitch:GetFloat()), cmd:GetMouseX() * (-mYaw:GetFloat()), 0 )
+				TIRA.OTSAng.p = Clamp( NormalizeAngle( TIRA.OTSAng.p ), -89, 89 )
 			
 				--[[trace = util.TraceHull( {
-					start = CAKE.CameraPos,
-					endpos = CAKE.CameraPos + ( CAKE.OldAngles * 3000 ),
+					start = TIRA.CameraPos,
+					endpos = TIRA.CameraPos + ( TIRA.OldAngles * 3000 ),
 					filter = LocalPlayer(),
 					mask = MASK_SHOT,
 					mins = Vector(-12,-12,-12),
@@ -233,8 +233,8 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 				} )]]--
 
 				local tracedata = {}
-				tracedata.start = CAKE.CameraPos
-				tracedata.endpos = CAKE.CameraPos + (CAKE.OldAngles:Forward() * 3000)
+				tracedata.start = TIRA.CameraPos
+				tracedata.endpos = TIRA.CameraPos + (TIRA.OldAngles:Forward() * 3000)
 				local trace = util.TraceLine(tracedata)
 
 				--Hit Correction
@@ -257,7 +257,7 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 				vecMove.y = cmd:GetSideMove()
 				vecMove.z = cmd:GetUpMove()
 				
-				ang = rad( cmd:GetViewAngles().y - CAKE.OTSAng.y )
+				ang = rad( cmd:GetViewAngles().y - TIRA.OTSAng.y )
 				ca = cos( ang )
 				sa = sin( ang )
 				
@@ -266,31 +266,31 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 				cmd:SetUpMove( vecMove.z )
 				
 				LocalPlayer():LagCompensation( true )
-				CAKE.DiffReal = (chitpos - LocalPlayer():EyePos()):Angle() + LocalPlayer():GetPunchAngle()
-				CAKE.DiffReal.r = 0
+				TIRA.DiffReal = (chitpos - LocalPlayer():EyePos()):Angle() + LocalPlayer():GetPunchAngle()
+				TIRA.DiffReal.r = 0
 				LocalPlayer():LagCompensation( false )
 
-				CAKE.DiffReal.p = Clamp( NormalizeAngle( CAKE.DiffReal.p ), -89, 89 )
+				TIRA.DiffReal.p = Clamp( NormalizeAngle( TIRA.DiffReal.p ), -89, 89 )
 				
-				CAKE.LastViewAng = cmd:GetViewAngles()
-				cmd:SetViewAngles( CAKE.DiffReal )
-				CAKE.UseHeadRotation = false
-				CAKE.SwitchFromFirstPerson = true
+				TIRA.LastViewAng = cmd:GetViewAngles()
+				cmd:SetViewAngles( TIRA.DiffReal )
+				TIRA.UseHeadRotation = false
+				TIRA.SwitchFromFirstPerson = true
 			else
-				CAKE.WasOTS = false
-				if CAKE.UseHeadRotation then
-					cmd:SetViewAngles(CAKE.RealAng)
+				TIRA.WasOTS = false
+				if TIRA.UseHeadRotation then
+					cmd:SetViewAngles(TIRA.RealAng)
 				end
-				CAKE.OTSAng = false
-				CAKE.UseHeadRotation = false
-				CAKE.SwitchFromFirstPerson = true
-				CAKE.DiffReal = Angle( 0, 0, 0 )
-				CAKE.LastViewAng = cmd:GetViewAngles()
+				TIRA.OTSAng = false
+				TIRA.UseHeadRotation = false
+				TIRA.SwitchFromFirstPerson = true
+				TIRA.DiffReal = Angle( 0, 0, 0 )
+				TIRA.LastViewAng = cmd:GetViewAngles()
 			end
 		end
 	else
-		CAKE.SwitchFromFirstPerson = false
-		CAKE.UseHeadRotation = false
+		TIRA.SwitchFromFirstPerson = false
+		TIRA.UseHeadRotation = false
 	end
 end )
 
@@ -298,111 +298,111 @@ local head, headang
 hook.Add("CalcView", "TiramisuThirdperson", function(ply, pos , angles ,fov)
 
 	if IronsightsOn() or ply:InVehicle() then
-		CAKE.CameraPos = pos
+		TIRA.CameraPos = pos
 		return GAMEMODE:CalcView(ply, pos , angles ,fov)
 	end
 
-	if CAKE.FreeScroll then --Rotate around the player/objective
+	if TIRA.FreeScroll then --Rotate around the player/objective
 
-		if ValidEntity( CAKE.ViewRagdoll ) then
-			targetent = CAKE.ViewRagdoll
+		if ValidEntity( TIRA.ViewRagdoll ) then
+			targetent = TIRA.ViewRagdoll
 		else
 			targetent = ply
 		end
 
 		tracedata.start = targetent:LocalToWorld(targetent:OBBCenter())
-		tracedata.endpos = targetent:LocalToWorld(targetent:OBBCenter()) + CAKE.FreeScrollAng:Forward()*targetent:BoundingRadius()*3
+		tracedata.endpos = targetent:LocalToWorld(targetent:OBBCenter()) + TIRA.FreeScrollAng:Forward()*targetent:BoundingRadius()*3
 		tracedata.filter = targetent
 		trace = util.TraceLine(tracedata)
 
-		pos = LerpVector( RealFrameTime() * CAKE.CameraSmoothFactor:GetFloat(), (CAKE.CameraPos or pos), trace.HitPos + trace.HitNormal * 4 )
+		pos = LerpVector( RealFrameTime() * TIRA.CameraSmoothFactor:GetFloat(), (TIRA.CameraPos or pos), trace.HitPos + trace.HitNormal * 4 )
 
-		CAKE.CameraPos = pos
-		CAKE.CameraAngle = angles
+		TIRA.CameraPos = pos
+		TIRA.CameraAngle = angles
 		return GAMEMODE:CalcView(ply, pos, (targetent:LocalToWorld(targetent:OBBCenter())-pos):Angle(), fov)
 	end
 
 	if LocalPlayer():GetNWBool("specialmodel") then
-		if CAKE.Thirdperson:GetBool() then 
+		if TIRA.Thirdperson:GetBool() then 
 			
 		else
 
 		end
 	end
 
-	if CAKE.Thirdperson:GetBool() then --All thirdperson code goes here.
+	if TIRA.Thirdperson:GetBool() then --All thirdperson code goes here.
 
-		if !CAKE.OldAngles then
-			CAKE.OldAngles = Angle( angles.p, angles.y, 0 )
+		if !TIRA.OldAngles then
+			TIRA.OldAngles = Angle( angles.p, angles.y, 0 )
 		end
 
-		if( ply:GetNWBool( "aiming", false ) and CAKE.OTSAng ) then--Over the shoulder view.
+		if( ply:GetNWBool( "aiming", false ) and TIRA.OTSAng ) then--Over the shoulder view.
 
 			trace = util.TraceLine( {
 				start = ply:EyePos(),
-				endpos = ply:EyePos() - CAKE.OTSAng:Forward() * CAKE.ThirdpersonDistance:GetInt() + CAKE.OTSAng:Right() * 15 + CAKE.OTSAng:Up() * 7.5,
+				endpos = ply:EyePos() - TIRA.OTSAng:Forward() * TIRA.ThirdpersonDistance:GetInt() + TIRA.OTSAng:Right() * 15 + TIRA.OTSAng:Up() * 7.5,
 				filter = ply,
 				mask = MASK_SOLID_BRUSHONLY,
 			} )
 			
-			if !CAKE.CameraPos then
-				CAKE.CameraPos = trace.HitPos + trace.HitNormal*2
+			if !TIRA.CameraPos then
+				TIRA.CameraPos = trace.HitPos + trace.HitNormal*2
 			else
-				CAKE.CameraPos = LerpVector( RealFrameTime() * CAKE.CameraSmoothFactor:GetFloat(), CAKE.CameraPos, trace.HitPos + trace.HitNormal*2 )
+				TIRA.CameraPos = LerpVector( RealFrameTime() * TIRA.CameraSmoothFactor:GetFloat(), TIRA.CameraPos, trace.HitPos + trace.HitNormal*2 )
 			end
 			
-			if !CAKE.OldAngles then
-				CAKE.OldAngles = CAKE.OTSAng
+			if !TIRA.OldAngles then
+				TIRA.OldAngles = TIRA.OTSAng
 			else
-				CAKE.OldAngles = LerpAngle( RealFrameTime() * CAKE.CameraSmoothFactor:GetFloat(), CAKE.OldAngles, CAKE.OTSAng )  
+				TIRA.OldAngles = LerpAngle( RealFrameTime() * TIRA.CameraSmoothFactor:GetFloat(), TIRA.OldAngles, TIRA.OTSAng )  
 			end
 			
-			CAKE.OldAngles.r = 0
+			TIRA.OldAngles.r = 0
 			
-			return GAMEMODE:CalcView( ply, CAKE.CameraPos, CAKE.OldAngles, fov )
+			return GAMEMODE:CalcView( ply, TIRA.CameraPos, TIRA.OldAngles, fov )
 	
 		else -- Regular view.
 
-			CAKE.DiffAng = CAKE.RealAng - CAKE.LastAng
-			CAKE.DiffAng = Angle( Clamp(CAKE.DiffAng.p, -89, 89), NormalizeAngle(CAKE.DiffAng.y),0 )
-			CAKE.CurAng = CAKE.LastAng + CAKE.DiffAng
-			--angles = CAKE.CurAng
-			CAKE.LastAng = CAKE.CurAng 
-			CAKE.LastAng.y = NormalizeAngle( CAKE.LastAng.y )
+			TIRA.DiffAng = TIRA.RealAng - TIRA.LastAng
+			TIRA.DiffAng = Angle( Clamp(TIRA.DiffAng.p, -89, 89), NormalizeAngle(TIRA.DiffAng.y),0 )
+			TIRA.CurAng = TIRA.LastAng + TIRA.DiffAng
+			--angles = TIRA.CurAng
+			TIRA.LastAng = TIRA.CurAng 
+			TIRA.LastAng.y = NormalizeAngle( TIRA.LastAng.y )
 
 			if !ply:InVehicle() then
 				tracedata.start = pos
-				tracedata.endpos = pos - ( CAKE.CurAng:Forward() * CAKE.ThirdpersonDistance:GetInt() * 2 ) + ( angles:Up()* 10 )
+				tracedata.endpos = pos - ( TIRA.CurAng:Forward() * TIRA.ThirdpersonDistance:GetInt() * 2 ) + ( angles:Up()* 10 )
 				tracedata.filter = ply
 				trace = util.TraceLine(tracedata)
-				pos = LerpVector( RealFrameTime() * CAKE.CameraSmoothFactor:GetFloat(), (CAKE.CameraPos or pos), trace.HitPos + trace.HitNormal*2 )
+				pos = LerpVector( RealFrameTime() * TIRA.CameraSmoothFactor:GetFloat(), (TIRA.CameraPos or pos), trace.HitPos + trace.HitNormal*2 )
 			else
 				pos = ply:EyePos()
 			end
-			CAKE.CurAng = LerpAngle( RealFrameTime() * CAKE.CameraSmoothFactor:GetFloat(), CAKE.OldAngles, Angle( CAKE.CurAng.p, CAKE.CurAng.y, 0 ) )
-			CAKE.OldAngles = CAKE.CurAng
-			CAKE.CameraPos = pos
-			return GAMEMODE:CalcView(ply, pos , Angle( CAKE.CurAng.p, CAKE.CurAng.y, 0) ,fov)
+			TIRA.CurAng = LerpAngle( RealFrameTime() * TIRA.CameraSmoothFactor:GetFloat(), TIRA.OldAngles, Angle( TIRA.CurAng.p, TIRA.CurAng.y, 0 ) )
+			TIRA.OldAngles = TIRA.CurAng
+			TIRA.CameraPos = pos
+			return GAMEMODE:CalcView(ply, pos , Angle( TIRA.CurAng.p, TIRA.CurAng.y, 0) ,fov)
 	
 		end
 
 	end
 
-	CAKE.CameraPos = pos
-	if CAKE.FirstpersonBody:GetBool() then
+	TIRA.CameraPos = pos
+	if TIRA.FirstpersonBody:GetBool() then
 		head = ply:LookupBone( "ValveBiped.Bip01_Head1" )
 		headang = Angle(0, angles.y, 0)
 		if head and !ply:GetNWBool( "observe" ) then
 			pos = ply:GetBonePosition( head )
 			if pos == Vector( 0, 0, 0 ) then
-				pos = ply:EyePos() + CAKE.FirstpersonForward:GetFloat() * headang:Forward() + CAKE.FirstpersonUp:GetFloat() * headang:Up()
+				pos = ply:EyePos() + TIRA.FirstpersonForward:GetFloat() * headang:Forward() + TIRA.FirstpersonUp:GetFloat() * headang:Up()
 			else
-				pos = ply:GetBonePosition( head ) + CAKE.FirstpersonForward:GetFloat() * headang:Forward() + CAKE.FirstpersonUp:GetFloat() * headang:Up()
+				pos = ply:GetBonePosition( head ) + TIRA.FirstpersonForward:GetFloat() * headang:Forward() + TIRA.FirstpersonUp:GetFloat() * headang:Up()
 			end
 		else
-			pos = ply:EyePos() + CAKE.FirstpersonForward:GetFloat() * headang:Forward() + CAKE.FirstpersonUp:GetFloat() * headang:Up()
+			pos = ply:EyePos() + TIRA.FirstpersonForward:GetFloat() * headang:Forward() + TIRA.FirstpersonUp:GetFloat() * headang:Up()
 		end
-	elseif CAKE.Headbob:GetBool() then
+	elseif TIRA.Headbob:GetBool() then
 		--Todo
 	end
 	return GAMEMODE:CalcView(ply, pos , angles ,fov)
@@ -411,28 +411,28 @@ end)
 hook.Add( "UpdateAnimation", "TiramisuAnimateRotate", function( ply, velocity, maxseqgroundspeed )
 	if not ply.CurrentLookAt then ply.CurrentLookAt = Angle( 0, 0, 0 ) end
 	if !ply:GetNWBool("specialmodel") then
-		if ply == LocalPlayer() and !CAKE.ForceDraw then
-			if CAKE.UseHeadRotation == 2 then
-				CAKE.wasMoveLook = true
-			elseif CAKE.UseHeadRotation != 2 and CAKE.wasMoveLook then
-				CAKE.RealAng = CAKE.WasWalkingAng
-				CAKE.CurrentLookAt = Angle(0, 0, 0)
-				CAKE.wasMoveLook = false
+		if ply == LocalPlayer() and !TIRA.ForceDraw then
+			if TIRA.UseHeadRotation == 2 then
+				TIRA.wasMoveLook = true
+			elseif TIRA.UseHeadRotation != 2 and TIRA.wasMoveLook then
+				TIRA.RealAng = TIRA.WasWalkingAng
+				TIRA.CurrentLookAt = Angle(0, 0, 0)
+				TIRA.wasMoveLook = false
 			end
 			--pl:SetPoseParameter("aim_yaw", 0 )
 			ply:SetPoseParameter("head_yaw", 0 )
 			ply:SetPoseParameter("body_yaw", 0 )
 			ply:SetPoseParameter("spine_yaw", 0 )
-			if CAKE.UseHeadRotation then
-				if not (CAKE.UseHeadRotation == 2) then
-					lookattarget = CAKE.RealAng - CAKE.LastViewAng
+			if TIRA.UseHeadRotation then
+				if not (TIRA.UseHeadRotation == 2) then
+					lookattarget = TIRA.RealAng - TIRA.LastViewAng
 					lookattarget = Angle( lookattarget.p, NormalizeAngle( lookattarget.y ), 0 )
-				elseif CAKE.UseHeadRotation == 2 then
-					lookattarget = CAKE.RealAng - CAKE.WasWalkingAng
+				elseif TIRA.UseHeadRotation == 2 then
+					lookattarget = TIRA.RealAng - TIRA.WasWalkingAng
 					lookattarget = Angle( lookattarget.p, NormalizeAngle( lookattarget.y ), 0 )
 				end
 				ang = LerpAngle( 0.1, ply.CurrentLookAt, lookattarget)
-				if CAKE.UseHeadRotation == 1 then
+				if TIRA.UseHeadRotation == 1 then
 					ang.y = 0
 				end
 				ply.CurrentLookAt = ang

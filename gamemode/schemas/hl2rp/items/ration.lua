@@ -20,7 +20,7 @@ end
 
 function ITEM:UseItem(ply)
 
-	CAKE.ChangeMoney(ply, CAKE.ConVars["RationMoney"])
+	TIRA.ChangeMoney(ply, TIRA.ConVars["RationMoney"])
 	self:Remove()
 
 end

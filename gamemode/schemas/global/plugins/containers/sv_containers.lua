@@ -1,101 +1,94 @@
-CAKE.Containers = {}
+TIRA.Containers = {}
 
 hook.Add("Tiramisu.CreateSQLTables", "Tiramisu.CreateContainerTable", function()
-	if CAKE.ConVars["SQLEngine"] == "sqlite" then
+	if TIRA.ConVars["SQLEngine"] == "sqlite" then
 		if !sql.TableExists("tiramisu_containers") then
-			CAKE.Query("CREATE TABLE tiramisu_containers ( id int NOT NULL PRIMARY KEY, udata text )")
+			TIRA.Query("CREATE TABLE tiramisu_containers ( id int NOT NULL PRIMARY KEY, udata text )")
 		end
 	else
-		CAKE.Query("CREATE TABLE IF NOT EXISTS tiramisu_containers ( id int NOT NULL PRIMARY KEY, udata text )")
+		TIRA.Query("CREATE TABLE IF NOT EXISTS tiramisu_containers ( id int NOT NULL PRIMARY KEY, udata text )")
 	end
 end)
 
-function CAKE.ContainerExists(uid)
-	if CAKE.Query("SELECT * FROM tiramisu_containers WHERE id = "..uid ) then
+function TIRA.ContainerExists(uid)
+	if TIRA.Query("SELECT * FROM tiramisu_containers WHERE id = "..uid ) then
 		return true
 	end
 		
 	return false
 end
 
-function CAKE.CreateContainerID()
-	return CAKE.GetTableNextID("tiramisu_containers") or 1
-	/*
-	local repnum = 0
-	local uidfile = file.Exists( CAKE.Name .. "/containers/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
-	while uidfile do
-		repnum = repnum + 1
-		uidfile = file.Exists( CAKE.Name .. "/containers/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
-	end
-	return os.time() .. repnum*/
+function TIRA.CreateContainerID()
+	return TIRA.GetTableNextID("tiramisu_containers") or 1
 end
 
-function CAKE.CreateContainerObject( uid )
+function TIRA.CreateContainerObject( uid )
 	local container = FindMetaTable("Container"):New()
 
-	if uid and CAKE.ContainerExists(uid) then
-		local tbl = von.deserialize( file.Read(filename) )
-		container.UniqueID = tbl.UniqueID
+	if uid and TIRA.ContainerExists(uid) then
+		local query = TIRA.Query("SELECT udata FROM tiramisu_chars WHERE id = ".. uid )
+		local tbl = von.deserialize( query[1] )
+		container.UniqueID = uid
 		container:SetSize(tbl.Width, tbl.Height)
 		container.Items = tbl.Items
 		container:Save()
 	else
-		container.UniqueID = CAKE.CreateContainerID()
+		container.UniqueID = TIRA.CreateContainerID()
 		container:Save()
 	end
 	return container
 end
 
-function CAKE.CreateContainer()
-	local container = CAKE.CreateContainerObject()
-	CAKE.Containers[container.UniqueID] = container
+function TIRA.CreateContainer()
+	local container = TIRA.CreateContainerObject()
+	TIRA.Containers[container.UniqueID] = container
 	return container
 end
 
 --Fetches a container, if it exists.
-function CAKE.GetContainer( uid )
-	local containerexist, fileexist = CAKE.ContainerExists( uid )
+function TIRA.GetContainer( uid )
+	local containerexist, fileexist = TIRA.ContainerExists( uid )
 	if !containerexist and fileexist then
-		CAKE.LoadContainer( uid )
+		TIRA.LoadContainer( uid )
 	end
-	if CAKE.ContainerExists( uid ) then
-		return CAKE.Containers[uid]
+	if TIRA.ContainerExists( uid ) then
+		return TIRA.Containers[uid]
 	end
 	return false
 end
 
-function CAKE.IsContainer( uid )
-	return CAKE.ContainerExists( uid ) --Just an alias. 
+function TIRA.IsContainer( uid )
+	return TIRA.ContainerExists( uid ) --Just an alias. 
 end
 
 --Loads a container from file.
-function CAKE.LoadContainer( uid )
-	local container = CAKE.CreateContainerObject( uid )
-	CAKE.Containers[container.UniqueID] = container
+function TIRA.LoadContainer( uid )
+	local container = TIRA.CreateContainerObject( uid )
+	TIRA.Containers[container.UniqueID] = container
 end
 
 --Makes a container accessible by a group only
-function CAKE.SetGroup( uid, groupid )
-	if CAKE.IsContainer(uid) then
-		CAKE.GetContainer(uid).Group = groupid
+function TIRA.SetGroup( uid, groupid )
+	if TIRA.IsContainer(uid) then
+		TIRA.GetContainer(uid).Group = groupid
 	end
 end
 
 --Makes a container accessible by a player only
-function CAKE.SetPlayer( uid, ply )
-	if CAKE.IsContainer(uid) then
-		CAKE.GetContainer(uid).Player = CAKE.FormatText( ply:SteamID() )
+function TIRA.SetPlayer( uid, ply )
+	if TIRA.IsContainer(uid) then
+		TIRA.GetContainer(uid).Player = TIRA.FormatText( ply:SteamID() )
 	end
 end
 
 --Makes a container accessible by a character only
-function CAKE.SetCharacter( uid, ply )
-	if CAKE.IsContainer(uid) then
-		CAKE.GetContainer(uid).Char = CAKE.FormatText(ply:SteamID()) .. ";" .. ply:GetNWString( "uid" )
+function TIRA.SetCharacter( uid, ply )
+	if TIRA.IsContainer(uid) then
+		TIRA.GetContainer(uid).Char = TIRA.FormatText(ply:SteamID()) .. ";" .. ply:GetNWString( "uid" )
 	end
 end
 
-function CAKE.GetPlyTrackingContainer( uid )
+function TIRA.GetPlyTrackingContainer( uid )
 	local rf = RecipientFilter()
 	for _, ply in pairs( player.GetAll() ) do
 		if !ply.TrackingContainers then
@@ -108,23 +101,23 @@ function CAKE.GetPlyTrackingContainer( uid )
 	return rf
 end
 
-function CAKE.CanOpenContainer( ply, uid )
-	if CAKE.IsContainer(uid) then
-		local container = CAKE.GetContainer(uid)
+function TIRA.CanOpenContainer( ply, uid )
+	if TIRA.IsContainer(uid) then
+		local container = TIRA.GetContainer(uid)
 		if container.Group then
-			if table.HasValue(CAKE.GetCharField( ply, "groups"), container.Group) then
+			if table.HasValue(TIRA.GetCharField( ply, "groups"), container.Group) then
 				return true
 			else
 				return false
 			end
 		elseif container.Player then
-			if container.Player == CAKE.FormatText(ply:SteamID()) then
+			if container.Player == TIRA.FormatText(ply:SteamID()) then
 				return true
 			else
 				return false
 			end
 		elseif container.Char then
-			if container.Char == CAKE.FormatText(ply:SteamID()) .. ";" .. ply:GetNWString( "uid" ) then
+			if container.Char == TIRA.FormatText(ply:SteamID()) .. ";" .. ply:GetNWString( "uid" ) then
 				return true
 			else
 				return false
@@ -136,30 +129,30 @@ function CAKE.CanOpenContainer( ply, uid )
 	return false
 end
 
-function CAKE.OpenContainer( ply, uid )
-	local containerexist, fileexist = CAKE.ContainerExists( uid )
+function TIRA.OpenContainer( ply, uid )
+	local containerexist, fileexist = TIRA.ContainerExists( uid )
 	if !containerexist and fileexist then
-		CAKE.LoadContainer( uid )
+		TIRA.LoadContainer( uid )
 	end
-	if CAKE.IsContainer(uid) then
-		local container = CAKE.GetContainer(uid)
+	if TIRA.IsContainer(uid) then
+		local container = TIRA.GetContainer(uid)
 		local udata = {}
 		for i=1, container.Height do
 			for j=1, container.Width do
 				if !container:IsSlotEmpty( j, i ) then
 					if container.Items[i][j] and container.Items[i][j].itemid then
 						local tbl = {}
-						tbl.Name = CAKE.GetUData( container.Items[i][j].itemid, "name" )
-						tbl.Model = CAKE.GetUData( container.Items[i][j].itemid, "model" )
-						tbl.Wearable = CAKE.ItemData[ container.Items[i][j].class ].Wearable or CAKE.GetUData( container.Items[i][j].itemid, "wearable" )
-						tbl.Container = CAKE.GetUData( container.Items[i][j].itemid, "container" )
+						tbl.Name = TIRA.GetUData( container.Items[i][j].itemid, "name" )
+						tbl.Model = TIRA.GetUData( container.Items[i][j].itemid, "model" )
+						tbl.Wearable = TIRA.ItemData[ container.Items[i][j].class ].Wearable or TIRA.GetUData( container.Items[i][j].itemid, "wearable" )
+						tbl.Container = TIRA.GetUData( container.Items[i][j].itemid, "container" )
 						udata[container.Items[i][j].itemid] = tbl
 					end 
 				end
 			end
 		end
 
-		if CAKE.CanOpenContainer( ply, uid ) then
+		if TIRA.CanOpenContainer( ply, uid ) then
 			datastream.StreamToClients( ply, "Tiramisu.OpenContainer", {
 				["items"] = container.Items,
 				["uid"] = container.UniqueID,
@@ -177,9 +170,9 @@ function CAKE.OpenContainer( ply, uid )
 	end
 end
 
-function CAKE.CloseContainer( ply, uid )
-	if CAKE.IsContainer(uid) then
-		CAKE.GetContainer(uid):Save()
+function TIRA.CloseContainer( ply, uid )
+	if TIRA.IsContainer(uid) then
+		TIRA.GetContainer(uid):Save()
 		if !ply.TrackingContainers then
 			ply.TrackingContainers = {}
 		end
@@ -194,14 +187,14 @@ end
 concommand.Add( "rp_opencontainer", function(ply, cmd, args)
 	local uid = args[1]
 	if uid then
-		CAKE.OpenContainer( ply, uid )
+		TIRA.OpenContainer( ply, uid )
 	end
 end)
 
 concommand.Add( "rp_closecontainer", function(ply, cmd, args)
 	local uid = args[1]
 	if uid then
-		CAKE.CloseContainer( ply, uid )
+		TIRA.CloseContainer( ply, uid )
 	end
 end)
 
@@ -209,10 +202,10 @@ concommand.Add( "rp_containerremove", function(ply, cmd, args)
 	local uid = args[1]
 	local itemid = args[2]
 	if uid and itemid then
-		local container = CAKE.GetContainer(uid)
-		if CAKE.CanOpenContainer( ply, uid ) then
+		local container = TIRA.GetContainer(uid)
+		if TIRA.CanOpenContainer( ply, uid ) then
 			if container.Group then
-				local group = CAKE.GetGroup( container.Group )
+				local group = TIRA.GetGroup( container.Group )
 				if group:CharInGroup( ply ) and !group:GetRankField(group:GetCharInfo( ply ).Rank, "cantakeinventory") then
 					ply:SendError(ply, "You don't have permission to remove from this container!")
 					return
@@ -231,8 +224,8 @@ concommand.Add( "rp_containerswap", function(ply, cmd, args)
 	local y1 = args[3]
 	local x2 = args[4]
 	local y2 = args[5]
-	if x1 and x2 and y1 and y2 and uid and CAKE.IsContainer(uid) then
-		local container = CAKE.GetContainer(uid)
+	if x1 and x2 and y1 and y2 and uid and TIRA.IsContainer(uid) then
+		local container = TIRA.GetContainer(uid)
 		x1 = tonumber(x1)
 		y1 = tonumber(y1)
 		x2 = tonumber(x2)
@@ -254,18 +247,18 @@ concommand.Add( "rp_transfertocontainer", function(ply, cmd, args)
 	local itemid = args[4]
 	local x = args[5]
 	local y = args[6]
-	if from and to and itemid and class and CAKE.IsContainer( from ) and CAKE.IsContainer( to ) and CAKE.CanOpenContainer( ply, from ) and CAKE.CanOpenContainer( ply, to ) then
-		from = CAKE.GetContainer( from )
-		to = CAKE.GetContainer( to )
+	if from and to and itemid and class and TIRA.IsContainer( from ) and TIRA.IsContainer( to ) and TIRA.CanOpenContainer( ply, from ) and TIRA.CanOpenContainer( ply, to ) then
+		from = TIRA.GetContainer( from )
+		to = TIRA.GetContainer( to )
 		if to.Group then
-			local group = CAKE.GetGroup( to.Group )
+			local group = TIRA.GetGroup( to.Group )
 			if group:CharInGroup( ply ) and !group:GetRankField(group:GetCharInfo( ply ).Rank, "canplaceinventory") then
 				ply:SendError(ply, "You don't have permission to take from this container!")
 				return
 			end
 		end
 		if from.Group then
-			local group = CAKE.GetGroup( from.Group )
+			local group = TIRA.GetGroup( from.Group )
 			if group:CharInGroup( ply ) and !group:GetRankField(group:GetCharInfo( ply ).Rank, "cantakeinventory") then
 				ply:SendError(ply, "You don't have permission to place on this container!")
 				return
@@ -299,32 +292,32 @@ concommand.Add( "rp_transfertocontainer", function(ply, cmd, args)
 end)
 
 local function Admin_MakeContainer( ply, cmd, args )
-	if !(args[1] and args[2] and args[3]) then CAKE.SendChat(ply, "Invalid number of arguments! ( rp_admin makecontainer \"entity\" \"width\" \"height\" \"pickable\" )") return end
+	if !(args[1] and args[2] and args[3]) then TIRA.SendChat(ply, "Invalid number of arguments! ( rp_admin makecontainer \"entity\" \"width\" \"height\" \"pickable\" )") return end
 	local ent = ents.GetByIndex( tonumber( args[ 1 ] ))
 	local width = tonumber(args[2])
 	local height = tonumber(args[3])
 	local pickable = util.tobool(args[4])
 	local permanent = !pickable
-	local container = CAKE.CreateContainerObject()
+	local container = TIRA.CreateContainerObject()
 	container:SetSize(width, height)
 
 	if pickable then
-		local id = CAKE.CreateItemID()
-		CAKE.SetUData(id, "container", container.UniqueID)
-		CAKE.SetUData(id, "creator", ply:Nick() .. ":" .. ply:Name() .. " (" .. ply:SteamID() .. ")")
-		CAKE.SetUData(id, "model", ent:GetModel())
-		CAKE.CreateItem( "container_base", ent:GetPos(), ent:GetAngles(), id )
+		local id = TIRA.CreateItemID()
+		TIRA.SetUData(id, "container", container.UniqueID)
+		TIRA.SetUData(id, "creator", ply:Nick() .. ":" .. ply:Name() .. " (" .. ply:SteamID() .. ")")
+		TIRA.SetUData(id, "model", ent:GetModel())
+		TIRA.CreateItem( "container_base", ent:GetPos(), ent:GetAngles(), id )
 		ent:Remove()
 	else
 		ent:SetNWBool("permaprop", true)
 		ent:SetNWString("container", container.UniqueID)
 		ent:SetUnFreezable( false )
 		ent:SetMoveType( MOVETYPE_NONE )
-		CAKE.AddPermaProp( ent:GetModel(), ent:GetPos(), ent:GetAngles(), container.UniqueID )
+		TIRA.AddPermaProp( ent:GetModel(), ent:GetPos(), ent:GetAngles(), container.UniqueID )
 	end
 	container:Save()
 end
 
 function PLUGIN.Init()
-	CAKE.AdminCommand( "makecontainer", Admin_MakeContainer, "Makes a container out of a prop", true, true, 4 )
+	TIRA.AdminCommand( "makecontainer", Admin_MakeContainer, "Makes a container out of a prop", true, true, 4 )
 end

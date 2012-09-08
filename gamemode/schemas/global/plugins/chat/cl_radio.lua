@@ -1,5 +1,5 @@
 --Creates an invisible panel to put radio messages on.
-function CAKE.CreateRadioMenu()
+function TIRA.CreateRadioMenu()
 	if !RadioPanel then
 		RadioPanel = vgui.Create( "DFrame" ) -- Creates the frame itself
 		RadioPanel:SetPos( ScrW() - 510,0 ) -- Position on the players screen
@@ -23,7 +23,7 @@ function CAKE.CreateRadioMenu()
 end
 
 --Internal for adding new lines to the invisible panel.
-function CAKE.AddRadioLine( text )
+function TIRA.AddRadioLine( text )
 	if RadioList then
 		local label= vgui.Create("MarkupLabel" )
 		label:SetText( text )
@@ -38,7 +38,7 @@ end
 
 
 datastream.Hook( "TiramisuAddToRadio", function( handler, id, encoded, decoded )
-	CAKE.CreateRadioMenu()
-	CAKE.Chatbox:AddLine( "<font=BudgetLabel>" .. decoded.text .. "</font>", "Radio" )
-	CAKE.AddRadioLine( "<font=BudgetLabel>" .. decoded.text .. "</font>" )
+	TIRA.CreateRadioMenu()
+	TIRA.Chatbox:AddLine( "<font=BudgetLabel>" .. decoded.text .. "</font>", "Radio" )
+	TIRA.AddRadioLine( "<font=BudgetLabel>" .. decoded.text .. "</font>" )
 end)

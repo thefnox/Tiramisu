@@ -95,7 +95,7 @@ datastream.Hook("refreshbusiness", function(handler, id, encoded, decoded )
 	if BusinessTable and table.Count(BusinessTable) != 0 then
 		OpenBusinessMenu()
 	else
-		CAKE.Message( "You do not have access to this tab!", "Error: No Business data", "OK" )
+		TIRA.Message( "You do not have access to this tab!", "Error: No Business data", "OK" )
 		if BusinessFrame then
 			BusinessFrame:Remove()
 			BusinessFrame = nil
@@ -105,4 +105,4 @@ datastream.Hook("refreshbusiness", function(handler, id, encoded, decoded )
 end )
 
 
-CAKE.RegisterMenuTab( "Business", OpenBusiness, CloseBusiness )
+TIRA.RegisterMenuTab( "Business", OpenBusiness, CloseBusiness )

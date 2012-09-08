@@ -1,2 +1,2 @@
-CAKE.ConVars[ "DefaultMoney" ] = 0
-CAKE.ConVars[ "IntroSubtitle" ] = "Freeform"
+TIRA.ConVars[ "DefaultMoney" ] = 0
+TIRA.ConVars[ "IntroSubtitle" ] = "Freeform"

@@ -18,8 +18,8 @@ end
 
 function ITEM:UseItem(ply)
 
-	CAKE.RemoveClothing( ply )
-	CAKE.RemoveAllGear( ply )
+	TIRA.RemoveClothing( ply )
+	TIRA.RemoveAllGear( ply )
 	ply:SetSpecialModel( "models/Combine_Scanner.mdl" )
 	ply:SetMoveType( MOVETYPE_FLY )
 	self:Remove()

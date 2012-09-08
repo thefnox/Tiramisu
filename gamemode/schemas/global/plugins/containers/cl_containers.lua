@@ -1,4 +1,4 @@
-CAKE.Containers = {}
+TIRA.Containers = {}
 
 datastream.Hook( "Tiramisu.OpenContainer", function( handler, id, encoded, decoded )
 	local items = decoded.items
@@ -6,14 +6,14 @@ datastream.Hook( "Tiramisu.OpenContainer", function( handler, id, encoded, decod
 	local width = decoded.width
 	local height = decoded.height
 	local udata = decoded.udata
-	table.Merge(CAKE.UData, decoded.udata)
-	if !CAKE.Containers[uid] then
-		CAKE.Containers[uid] = CAKE.CreateContainerObject( uid )
+	table.Merge(TIRA.UData, decoded.udata)
+	if !TIRA.Containers[uid] then
+		TIRA.Containers[uid] = TIRA.CreateContainerObject( uid )
 	end
-	CAKE.Containers[uid]:SetSize( width, height )
-	CAKE.Containers[uid].Items = items
-	CAKE.CreateContainer( width, height, uid )
-	if CAKE.InventoryFrame and !CAKE.InventoryFrame.Display then
+	TIRA.Containers[uid]:SetSize( width, height )
+	TIRA.Containers[uid].Items = items
+	TIRA.CreateContainer( width, height, uid )
+	if TIRA.InventoryFrame and !TIRA.InventoryFrame.Display then
 		OpenInventory()
 	end
 end)
@@ -24,16 +24,16 @@ usermessage.Hook("c_AddTo", function(um)
 	local class = um:ReadString()
 	local x = um:ReadShort()
 	local y = um:ReadShort()
-	if CAKE.Containers[uid] then
-		CAKE.Containers[uid]:FillSlot( x, y, class, itemid )
+	if TIRA.Containers[uid] then
+		TIRA.Containers[uid]:FillSlot( x, y, class, itemid )
 	end
 end)
 
 usermessage.Hook("c_Take", function(um)
 	local uid = um:ReadString()
 	local itemid = um:ReadString()
-	if CAKE.Containers[uid] then
-		CAKE.Containers[uid]:TakeItemID( itemid )
+	if TIRA.Containers[uid] then
+		TIRA.Containers[uid]:TakeItemID( itemid )
 	end
 end)
 
@@ -41,20 +41,20 @@ usermessage.Hook("c_ClearS", function(um)
 	local uid = um:ReadString()
 	local x = um:ReadShort()
 	local y = um:ReadShort()
-	if CAKE.Containers[uid] then
-		CAKE.Containers[uid]:ClearSlot( x, y )
+	if TIRA.Containers[uid] then
+		TIRA.Containers[uid]:ClearSlot( x, y )
 	end
 end)
 
 usermessage.Hook("c_Expand", function(um)
 	local uid = um:ReadString()
 	local height = um:ReadShort()
-	if CAKE.Containers[uid] then
-		CAKE.Containers[uid].Height = height
-		CAKE.Containers[uid].Resized = true
-		CAKE.Containers[uid].Items[CAKE.Containers[uid].Height] = {}
-		for i=1, CAKE.Containers[uid].Width do
-			CAKE.Containers[uid].Items[CAKE.Containers[uid].Height][i] = {}
+	if TIRA.Containers[uid] then
+		TIRA.Containers[uid].Height = height
+		TIRA.Containers[uid].Resized = true
+		TIRA.Containers[uid].Items[TIRA.Containers[uid].Height] = {}
+		for i=1, TIRA.Containers[uid].Width do
+			TIRA.Containers[uid].Items[TIRA.Containers[uid].Height][i] = {}
 		end
 	end
 end)
@@ -78,7 +78,7 @@ hook.Add("PostRenderVGUI", "Tiramisu.DrawDragIcon", function()
 	end
 end)
 
-function CAKE.CreateContainer( width, height, uid )
+function TIRA.CreateContainer( width, height, uid )
 	local frame = vgui.Create( "DFrame" )
 	frame:SetTitle( "Container" )
 	frame.ContainerID = uid
@@ -111,14 +111,14 @@ function CAKE.CreateContainer( width, height, uid )
 	frame.OldThink = frame.Think
 	frame.Think = function()
 		frame:OldThink()
-		if CAKE.Containers[frame.ContainerID] then
+		if TIRA.Containers[frame.ContainerID] then
 			for i, tbl in pairs(frame.Items) do
 				for j, v in pairs(tbl) do
 					if v then
-						if CAKE.Containers[frame.ContainerID]:IsSlotEmpty(j,i) then
+						if TIRA.Containers[frame.ContainerID]:IsSlotEmpty(j,i) then
 							v:ClearItem()
-						elseif CAKE.Containers[frame.ContainerID].Items[i][j] then
-							v:SetItem( CAKE.Containers[frame.ContainerID].Items[i][j].class, CAKE.Containers[frame.ContainerID].Items[i][j].itemid )
+						elseif TIRA.Containers[frame.ContainerID].Items[i][j] then
+							v:SetItem( TIRA.Containers[frame.ContainerID].Items[i][j].class, TIRA.Containers[frame.ContainerID].Items[i][j].itemid )
 						end
 					end
 				end
@@ -336,17 +336,17 @@ end
 
 function PANEL:GetName()
 	if self.Item then
-		if self.ItemID and CAKE.UData[self.ItemID] and CAKE.UData[self.ItemID].Name then
-			return CAKE.UData[self.ItemID].Name
+		if self.ItemID and TIRA.UData[self.ItemID] and TIRA.UData[self.ItemID].Name then
+			return TIRA.UData[self.ItemID].Name
 		else
-			return CAKE.ItemData[self.Item].Name
+			return TIRA.ItemData[self.Item].Name
 		end
 	end
 end
 
 --Sets an item to be used on the inventory slot. The item thing is a table, not a string. Amount defaults to 1.
 function PANEL:SetItem( item, itemid )
-	local itemtable = CAKE.ItemData[item]
+	local itemtable = TIRA.ItemData[item]
 	if itemtable then
 		self.Item = itemtable.Class
 		self.ItemID = itemid
@@ -356,8 +356,8 @@ function PANEL:SetItem( item, itemid )
 		end
 		if itemtable.Description != "" then self:SetToolTip( self:GetName() .. "\n" .. itemtable.Description )
 		else self:SetToolTip( self:GetName() ) end
-		if CAKE.UData[itemid] then
-			self.Model = CAKE.UData[itemid].Model or itemtable.Model
+		if TIRA.UData[itemid] then
+			self.Model = TIRA.UData[itemid].Model or itemtable.Model
 		else
 			self.Model = itemtable.Model
 		end
@@ -467,8 +467,8 @@ function PANEL:EndDrag()
 		LocalPlayer().DragIcon = nil
 		if LocalPlayer().DragTarget then
 			if LocalPlayer().DragTarget:GetContainer() == LocalPlayer().DragContainer then
-				if LocalPlayer().DragTarget.ItemID and CAKE.UData[LocalPlayer().DragTarget.ItemID] and CAKE.UData[LocalPlayer().DragTarget.ItemID].Container then
-					RunConsoleCommand("rp_transfertocontainer", LocalPlayer().DragContainer, CAKE.UData[LocalPlayer().DragTarget.ItemID].Container, LocalPlayer().DragItemClass, LocalPlayer().DragItemID)
+				if LocalPlayer().DragTarget.ItemID and TIRA.UData[LocalPlayer().DragTarget.ItemID] and TIRA.UData[LocalPlayer().DragTarget.ItemID].Container then
+					RunConsoleCommand("rp_transfertocontainer", LocalPlayer().DragContainer, TIRA.UData[LocalPlayer().DragTarget.ItemID].Container, LocalPlayer().DragItemClass, LocalPlayer().DragItemID)
 				elseif LocalPlayer().DragTarget:GetX() != LocalPlayer().DragOriginX or LocalPlayer().DragTarget:GetY() != LocalPlayer().DragOriginY then
 					RunConsoleCommand("rp_containerswap", LocalPlayer().DragContainer, LocalPlayer().DragOriginX, LocalPlayer().DragOriginY, LocalPlayer().DragTarget:GetX(), LocalPlayer().DragTarget:GetY() )
 				end
@@ -485,9 +485,9 @@ end
    Name: OpenMenu
 ---------------------------------------------------------*/
 function PANEL:OpenMenu()
-	if self:GetItem() and CAKE.ItemData[self.Item] and self.ItemID and CAKE.UData[self.ItemID] and CAKE.UData[self.ItemID].Container then
+	if self:GetItem() and TIRA.ItemData[self.Item] and self.ItemID and TIRA.UData[self.ItemID] and TIRA.UData[self.ItemID].Container then
 		local ContextMenu = DermaMenu()
-		ContextMenu:AddOption("Open", function() RunConsoleCommand("rp_opencontainer", CAKE.UData[self.ItemID].Container) end)
+		ContextMenu:AddOption("Open", function() RunConsoleCommand("rp_opencontainer", TIRA.UData[self.ItemID].Container) end)
 		ContextMenu:Open()
 	end
 end
@@ -519,7 +519,7 @@ function PANEL:Paint()
 	x, y = self:ScreenToLocal( 0, 0 )
 	surface.SetDrawColor(50,50,50,255)
 	surface.DrawOutlinedRect( 0, 0, self:GetWide(), self:GetTall() )
-	if self.ItemID and CAKE.UData[self.ItemID] and CAKE.UData[self.ItemID].Container then
+	if self.ItemID and TIRA.UData[self.ItemID] and TIRA.UData[self.ItemID].Container then
 		surface.SetDrawColor(0,0,255,255)
 		surface.DrawOutlinedRect( 1, 1, self:GetWide()-1, self:GetTall()-1 )
 		surface.DrawOutlinedRect( 2, 2, self:GetWide()-2, self:GetTall()-2 )	

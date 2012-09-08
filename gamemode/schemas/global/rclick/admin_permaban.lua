@@ -10,8 +10,8 @@ end
 function RCLICK.Click(target,ply)
 
 	target = target:IsTiraPlayer()
-	CAKE.StringRequest( "Permanently Ban A Player", "Give a reason to permaban " .. target:Nick(), "Bye.", function( text )
-		ply:ConCommand("rp_admin ban " .. CAKE.FormatText(target:SteamID()) .. " \"" .. reason .. "\" 0" )
+	TIRA.StringRequest( "Permanently Ban A Player", "Give a reason to permaban " .. target:Nick(), "Bye.", function( text )
+		ply:ConCommand("rp_admin ban " .. TIRA.FormatText(target:SteamID()) .. " \"" .. reason .. "\" 0" )
 	end,
 	function() end, "Accept", "Cancel")
 

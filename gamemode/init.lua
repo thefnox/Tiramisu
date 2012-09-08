@@ -2,9 +2,10 @@
 DeriveGamemode( "sandbox" )
 
 -- Define global variables
-CAKE = {  }
-CAKE.Running = false
-CAKE.Loaded = false
+TIRA = {  } //As of Tiramisu 3, we're setting the namespace for all our globals to TIRA.
+CAKE = TIRA //Luckily, we can just make the TIRA table point to TIRA, so there's no need to change anything in your code.
+TIRA.Running = false
+TIRA.Loaded = false
 
 -- Server Includes
 include( "von.lua" ) --New serializing module
@@ -33,10 +34,10 @@ resource.AddFile( "resource/fonts/YanoneKaffeesatz-Regular.ttf")
 resource.AddFile( "materials/models/null.vmt" )
 resource.AddFile( "materials/models/null.vtf" )
 
-GM.Name = "Tiramisu " .. CAKE.ConVars[ "Tiramisu" ]
-CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ) -- Load the schema and plugins, this is NOT initializing.
+GM.Name = "Tiramisu " .. TIRA.ConVars[ "Tiramisu" ]
+TIRA.LoadSchema( TIRA.ConVars[ "Schema" ] ) -- Load the schema and plugins, this is NOT initializing.
 
-CAKE.Loaded = true -- Tell the server that we're loaded up
+TIRA.Loaded = true -- Tell the server that we're loaded up
 
 function GM:Initialize( ) -- Initialize the gamemode
 	
@@ -45,23 +46,23 @@ function GM:Initialize( ) -- Initialize the gamemode
 	-- AKA, hooks.
 
 	--Initializing MySQL first
-	CAKE.InitializeSQLDatabase()
+	TIRA.InitializeSQLDatabase()
 	
-	CAKE.DayLog( "script.txt", "Plugins Initializing" )
-	CAKE.InitPlugins( )
+	TIRA.DayLog( "script.txt", "Plugins Initializing" )
+	TIRA.InitPlugins( )
 
-	CAKE.DayLog( "script.txt", "Schemas Initializing" )
-	CAKE.InitSchemas( )
+	TIRA.DayLog( "script.txt", "Schemas Initializing" )
+	TIRA.InitSchemas( )
 	
-	CAKE.DayLog( "script.txt", "Gamemode Initializing" )
+	TIRA.DayLog( "script.txt", "Gamemode Initializing" )
 	
 	--Timer to save the current gamemode time
-	timer.Create( "timesave", 120, 0, CAKE.SaveTime )
+	timer.Create( "timesave", 120, 0, TIRA.SaveTime )
 
 	--Timer to send the time to the player
-	timer.Create( "sendtime", 1, 0, CAKE.SendTime )
+	timer.Create( "sendtime", 1, 0, TIRA.SendTime )
 	
-	CAKE.Running = true
+	TIRA.Running = true
 	
 end
 
@@ -70,7 +71,7 @@ function GM:PlayerInitialSpawn( ply )
 	
 	ply.LastOOC = -100000 -- This is so people can talk for the first time without having to wait.
 	
-	for k, v in ipairs( CAKE.Schemafile ) do
+	for k, v in ipairs( TIRA.Schemafile ) do
 		umsg.Start( "Tiramisu.AddSchema", ply )
 			umsg.String( v )
 		umsg.End( )
@@ -84,7 +85,7 @@ function GM:PlayerInitialSpawn( ply )
 	ply:SetModel( "models/kleiner.mdl" )
 
 	-- Load their data, or create a new datafile for them.
-	CAKE.LoadPlayerDataFile( ply )
+	TIRA.LoadPlayerDataFile( ply )
 	
 	self.BaseClass:PlayerInitialSpawn( ply )
 
@@ -99,7 +100,7 @@ function GM:PlayerSpawn( ply )
 		return -- Player data isn't loaded. This is an initial spawn.
 	end
 	
-	CAKE.SavePlayerData( ply )
+	TIRA.SavePlayerData( ply )
 	
 	umsg.Start( "Tiramisu.ReceiveRagdoll", ply )
 		umsg.Short( nil )
@@ -124,35 +125,35 @@ function GM:PlayerSpawn( ply )
 	
 	timer.Create( ply:SteamID() .. "savetimer", 30, 0, function()
 		if ValidEntity( ply ) then
-			CAKE.SavePlayerData( ply )
+			TIRA.SavePlayerData( ply )
 		end
 	end)
 
 	ply:RefreshInventory( )
 
-	ply:SetNWInt( "TiramisuAdminLevel", CAKE.PlayerRank(ply) )
+	ply:SetNWInt( "TiramisuAdminLevel", TIRA.PlayerRank(ply) )
 	ply:Give("hands")
 	ply:SelectWeapon("hands")
 
-	ply:SetNWString( "model", CAKE.GetCharField( ply, "model" ))
+	ply:SetNWString( "model", TIRA.GetCharField( ply, "model" ))
 	
 	self.BaseClass:PlayerSpawn( ply )
-	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] )
+	GAMEMODE:SetPlayerSpeed( ply, TIRA.ConVars[ "WalkSpeed" ], TIRA.ConVars[ "RunSpeed" ] )
 	
 end
 
 
 function GM:PlayerSetModel(ply)
-	if ply:IsCharLoaded() and !(CAKE.GetCharField( "specialmodel") == "none" or CAKE.GetCharField( "specialmodel") == "") then
-		local m = CAKE.GetCharField( ply, "gender" )
+	if ply:IsCharLoaded() and !(TIRA.GetCharField( "specialmodel") == "none" or TIRA.GetCharField( "specialmodel") == "") then
+		local m = TIRA.GetCharField( ply, "gender" )
 		ply:SetNWBool( "specialmodel", false )
 		ply:SetModel( Anims[m][ "models" ][1] )
 		ply:SetNWString( "gender", m )
 		ply:SetMaterial("models/null")
 		ply:AddEffects( EF_NOSHADOW )
-		ply:SetPersonality( CAKE.GetCharField( ply, "personality" ))
-	elseif ply:IsCharLoaded() and (CAKE.GetCharField( "specialmodel") == "none" or CAKE.GetCharField( "specialmodel") == "") then
-		ply:SetSpecialModel( CAKE.GetCharField( "specialmodel") )
+		ply:SetPersonality( TIRA.GetCharField( ply, "personality" ))
+	elseif ply:IsCharLoaded() and (TIRA.GetCharField( "specialmodel") == "none" or TIRA.GetCharField( "specialmodel") == "") then
+		ply:SetSpecialModel( TIRA.GetCharField( "specialmodel") )
 		ply:SetNWString( "gender", "Male" )
 	else
 		ply:SetSpecialModel( "models/kleiner.mdl" )
@@ -160,20 +161,20 @@ function GM:PlayerSetModel(ply)
 end
 
 function GM:PlayerDisconnected( ply )
-	CAKE.SavePlayerData( ply )
+	TIRA.SavePlayerData( ply )
 end
 
 
 function GM:PlayerSpawnSWEP( ply, class )
 
-	if( CAKE.PlayerRank( ply ) > 0 ) then return true end
+	if( TIRA.PlayerRank( ply ) > 0 ) then return true end
 	return false
 	
 end
 
 function GM:PlayerGiveSWEP( ply )
 
-	if( CAKE.PlayerRank( ply ) > 0 ) then return true end
+	if( TIRA.PlayerRank( ply ) > 0 ) then return true end
 	return false 
 	
 end
@@ -209,7 +210,7 @@ end
 -- NO SENT FOR YOU. Unless you're an admin
 function GM:PlayerSpawnSENT( ply, class )
 	
-	if( CAKE.PlayerRank( ply ) > 0 ) then return true end
+	if( TIRA.PlayerRank( ply ) > 0 ) then return true end
 	return false
 	
 end

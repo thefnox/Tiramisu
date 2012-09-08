@@ -1,7 +1,7 @@
-CAKE.ItemData = {  }
-CAKE.UData = {  }
+TIRA.ItemData = {  }
+TIRA.UData = {  }
 
-function CAKE.LoadItem( schema, filename )
+function TIRA.LoadItem( schema, filename )
 
 	local path = "schemas/" .. schema .. "/items/" .. filename
 	AddResource("lua", path)
@@ -10,82 +10,73 @@ function CAKE.LoadItem( schema, filename )
 	
 	include( path )
 	
-	CAKE.ItemData[ ITEM.Class ] = ITEM
+	TIRA.ItemData[ ITEM.Class ] = ITEM
 	
 end
 
-function CAKE.SaveUData( id )
-	local savetable = von.serialize(CAKE.UData[id])
-	file.Write( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. id .. ".txt" , savetable)
+function TIRA.SaveUData( id )
+	local savetable = von.serialize(TIRA.UData[id])
+	TIRA.Query("UPDATE tiramisu_items SET udata='" .. savetable .. "'' WHERE id = " .. id )
 end
 
-function CAKE.LoadUData( id )
-	CAKE.UData[id] = von.deserialize(file.Read( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. id .. ".txt"))
+function TIRA.LoadUData( id )
+	local query = TIRA.Query("SELECT udata FROM tiramisu_items WHERE id = ".. id )
+	if query then TIRA.UData[id] = von.deserialize(query[1]) else TIRA.UData[id] = {} end
 end
 
-function CAKE.SetUData( id, key, value )
+function TIRA.SetUData( id, key, value )
 	if !id then return nil end
 
-	if !CAKE.UData[id] then
-		CAKE.UData[id] = {}
+	if !TIRA.UData[id] then
+		TIRA.UData[id] = {}
 	end
-	CAKE.UData[id][key] = value
-	CAKE.SaveUData(id)
+	TIRA.UData[id][key] = value
+	TIRA.SaveUData(id)
 end
 
-function CAKE.GetUData(id, key)
+function TIRA.GetUData(id, key)
 	if !id or id == "none" then return nil end
 
-	if !CAKE.UData[id] then
-		CAKE.LoadUData( id )
+	if !TIRA.UData[id] then
+		TIRA.LoadUData( id )
 	end
 	
-	if !CAKE.UData[id] or !CAKE.UData[id][key] then return nil end
-	return CAKE.UData[id][key]
+	if !TIRA.UData[id] or !TIRA.UData[id][key] then return nil end
+	return TIRA.UData[id][key]
 end
 
 local lastostime = 0
 local genned = {}
-function CAKE.CreateItemID()
-	return CAKE.GetTableNextID("tiramisu_items") or 1
-	/*
-	if lastostime != os.time() then
-		genned = {} 
-		lastostime = os.time()
-	end
-	local repnum = 0
-	local f = os.time() .. repnum
-	while genned[f] do
-		repnum = repnum + 1
-		f = os.time() .. repnum
-	end
-	genned[f] = true
-	return f*/
+function TIRA.CreateItemID()
+
+	TIRA.Query("INSERT INTO tiramisu_items (udata) VALUES ('" .. von.serialize({}) .. "')")
+	return TIRA.GetTableNextID("tiramisu_items") or 1
+
 end
 
-function CAKE.SendUData( ply, uid )
-	if CAKE.UData[uid] then
+function TIRA.SendUData( ply, uid )
+	if TIRA.UData[uid] then
 		datastream.StreamToClients( ply, "Tiramisu.ReceiveUData",{
 			["uid"] = uid,
-			["wearable"] = CAKE.GetUData( uid, "wearable"),
-			["container"] = CAKE.GetUData( uid, "container"),
-			["name"] = CAKE.GetUData( uid, "name"),
-			["model"] = CAKE.GetUData( uid, "model")
+			["wearable"] = TIRA.GetUData( uid, "wearable"),
+			["container"] = TIRA.GetUData( uid, "container"),
+			["name"] = TIRA.GetUData( uid, "name"),
+			["model"] = TIRA.GetUData( uid, "model")
 		})
 	end
 end
 
-function CAKE.SendItemData( ply )
-	datastream.StreamToClients( ply, "NetworkItemData", CAKE.ItemData )
+function TIRA.SendItemData( ply )
+	datastream.StreamToClients( ply, "NetworkItemData", TIRA.ItemData )
 end
 
-function CAKE.CreateItem( class, pos, ang, id )
+function TIRA.CreateItem( class, pos, ang, id )
 
-	if !id then id = CAKE.CreateItemID() end
+	if !id then id = TIRA.CreateItemID() end
 	
-	if( CAKE.ItemData[ class ] == nil ) then return end
+	if( TIRA.ItemData[ class ] == nil ) then return end
 	
-	local itemtable = CAKE.ItemData[ class ]
+	local itemtable = TIRA.ItemData[ class ]
 	
 	local item = ents.Create( "item_prop" )
 	item.uiid = id
@@ -93,7 +84,7 @@ function CAKE.CreateItem( class, pos, ang, id )
 	if string.match( class, "clothing" ) or string.match( class, "helmet" ) then
 		item:SetModel( "models/props_c17/suitcase_passenger_physics.mdl" )
 	else
-		item:SetModel( CAKE.GetUData(id, "model") or itemtable.Model )
+		item:SetModel( TIRA.GetUData(id, "model") or itemtable.Model )
 	end
 
 	for k, v in pairs( itemtable ) do
@@ -103,8 +94,8 @@ function CAKE.CreateItem( class, pos, ang, id )
 	item:SetAngles( ang )
 	item:SetPos( pos )
 	
-	item:SetNWString("Name", CAKE.GetUData(id, "name") or itemtable.Name)
-	item:SetNWString("Description", CAKE.GetUData(id, "description") or itemtable.Description)
+	item:SetNWString("Name", TIRA.GetUData(id, "name") or itemtable.Name)
+	item:SetNWString("Description", TIRA.GetUData(id, "description") or itemtable.Description)
 	item:SetNWString("Class", itemtable.Class)
 	item:SetNWString("id", id)
 	
@@ -120,7 +111,7 @@ function ccDropItem( ply, cmd, args )
 
 	if ply:HasItemID( args[ 1 ] ) then
 		local class = ply:TakeItemID( args[ 1 ] )
-		CAKE.CreateItem( class, ply:CalcDrop( ), Angle( 0,0,0 ), args[ 1 ] )
+		TIRA.CreateItem( class, ply:CalcDrop( ), Angle( 0,0,0 ), args[ 1 ] )
 	end
 
 end
@@ -135,7 +126,7 @@ function ccDropItemUnspecific( ply, cmd, args )
 	if inv:HasItem( args[ 1 ] ) then
 		for _, tbl in pairs( inv.Items ) do
 			for k, v in pairs(tbl) do
-				CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ), v.itemid )
+				TIRA.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ), v.itemid )
 				ply:TakeItem( args[ 1 ] )
 				return
 			end
@@ -152,7 +143,7 @@ function ccDropAllItem( ply, cmd, args )
 	for _, tbl in pairs( inv.Items ) do
 		for k, v in pairs(tbl) do
 			if v.class == args[1]then
-				CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ), v.itemid )
+				TIRA.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ), v.itemid )
 				ply:TakeItem( args[ 1 ] )
 			end
 		end
@@ -167,7 +158,7 @@ function ccPickupItem( ply, cmd, args )
 	local inv = ply:GetInventory()
 	
 	if inv:IsFull() then
-		CAKE.SendError( ply, "Your inventory is full!" )
+		TIRA.SendError( ply, "Your inventory is full!" )
 		return
 	end
 
@@ -187,8 +178,8 @@ function ccUseItem( ply, cmd, args )
 	if item and ValidEntity(item) and item:GetClass( ) == "item_prop" and item:GetPos():Distance(ply:GetShootPos()) <= 200 then
 		local class = item:GetNWString("Class", "")
 		if class != "" then
-			if funcrun and CAKE.ItemData[ class ][funcrun] then
-				funcrun = CAKE.ItemData[ class ][funcrun]
+			if funcrun and TIRA.ItemData[ class ][funcrun] then
+				funcrun = TIRA.ItemData[ class ][funcrun]
 				funcrun(item, ply )
 			else
 				item:UseItem( ply )
@@ -205,10 +196,10 @@ function ccUseOnInventoryID( ply, cmd, args )
 	local funcrun = args [ 2 ]
 	
 	if class then
-		local item = CAKE.CreateItem( class, ply:CalcDrop( ), Angle( 0,0,0 ), id )
+		local item = TIRA.CreateItem( class, ply:CalcDrop( ), Angle( 0,0,0 ), id )
 		if ValidEntity(item) and item:GetClass( ) == "item_prop" then
-			if funcrun and CAKE.ItemData[ class ][funcrun] then
-				funcrun = CAKE.ItemData[ class ][funcrun]
+			if funcrun and TIRA.ItemData[ class ][funcrun] then
+				funcrun = TIRA.ItemData[ class ][funcrun]
 				funcrun(item, ply )
 			else
 				item:UseItem( ply )
@@ -216,7 +207,7 @@ function ccUseOnInventoryID( ply, cmd, args )
 			if item then
 				item:Remove()
 			end
-			if !CAKE.ItemData[class].Unusable then
+			if !TIRA.ItemData[class].Unusable then
 				ply:TakeItemID( id )
 			end
 		end
@@ -229,8 +220,8 @@ local meta = FindMetaTable( "Player" )
 
 function meta:GiveItem( class, id )
 
-	if !id then id = CAKE.CreateItemID() end
-	CAKE.DayLog( "economy.txt", "Adding item '" .. class .. "' to " .. CAKE.FormatCharString( self ) .. " inventory" )
+	if !id then id = TIRA.CreateItemID() end
+	TIRA.DayLog( "economy.txt", "Adding item '" .. class .. "' to " .. TIRA.FormatCharString( self ) .. " inventory" )
 	local inv = self:GetInventory()
 
 	if inv:IsFull() then
@@ -240,11 +231,11 @@ function meta:GiveItem( class, id )
 	inv:AddItem(class, id)
 	
 	if string.match( class, "weapon" ) then
-		if !self:HasWeapon(CAKE.GetUData(id, "weaponclass") or class) then
-			self:Give( CAKE.GetUData(id, "weaponclass") or class )
+		if !self:HasWeapon(TIRA.GetUData(id, "weaponclass") or class) then
+			self:Give( TIRA.GetUData(id, "weaponclass") or class )
 		end
 	end
-	CAKE.SendUData( self, id )
+	TIRA.SendUData( self, id )
 
 	inv:Save()
 
@@ -260,16 +251,16 @@ function meta:TakeItem( class )
 	for i=1, inv.Height do
 		for j=1, inv.Width do
 			if !inv:IsSlotEmpty(j,i) and inv.Items[i][j].class == class then 
-				umsg.Start("c_Take", CAKE.GetPlyTrackingContainer( inv.UniqueID ))
+				umsg.Start("c_Take", TIRA.GetPlyTrackingContainer( inv.UniqueID ))
 					umsg.String(inv.UniqueID)
 					umsg.String(inv.Items[i][j].itemid)
 				umsg.End()
 				inv:Save()
 				inv:ClearSlot( j, i )
-				if CAKE.GetUData( inv.Items[i][j].itemid, "weaponclass" ) then
+				if TIRA.GetUData( inv.Items[i][j].itemid, "weaponclass" ) then
 					for _, tbl in pairs( inv.Items ) do
 						for k, v in pairs(tbl) do
-							if CAKE.GetUData( inv.Items[i][j].itemid, "weaponclass" ) == CAKE.GetUData(v.itemid, "weaponclass") then
+							if TIRA.GetUData( inv.Items[i][j].itemid, "weaponclass" ) == TIRA.GetUData(v.itemid, "weaponclass") then
 								count = true
 								break
 							end
@@ -280,7 +271,7 @@ function meta:TakeItem( class )
 					end
 
 					if !count then
-						self:StripWeapon(CAKE.GetUData(id, "weaponclass") or "nothing")
+						self:StripWeapon(TIRA.GetUData(id, "weaponclass") or "nothing")
 					end
 				elseif string.match(class, "weapon_") and class != "weapon_base" then
 					for _, tbl in pairs( inv.Items ) do
@@ -309,18 +300,18 @@ end
 
 function meta:TakeItemID( id )
 	local inv = self:GetInventory()
-	CAKE.RemoveClothingID( self, id )
-	CAKE.RemoveGearItemID( self, id )
+	TIRA.RemoveClothingID( self, id )
+	TIRA.RemoveGearItemID( self, id )
 
 	local class = inv:TakeItemID( id )
-	CAKE.DayLog( "economy.txt", "Removing item '" .. id .. "' from " .. CAKE.FormatCharString( self ) .. " inventory" )
+	TIRA.DayLog( "economy.txt", "Removing item '" .. id .. "' from " .. TIRA.FormatCharString( self ) .. " inventory" )
 
 	local count = false
 
-	if CAKE.GetUData( id, "weaponclass" ) then
+	if TIRA.GetUData( id, "weaponclass" ) then
 		for _, tbl in pairs( self:GetInventory().Items ) do
 			for k, v in pairs(tbl) do
-				if CAKE.GetUData( v.itemid, "weaponclass" ) == CAKE.GetUData(id, "weaponclass") then
+				if TIRA.GetUData( v.itemid, "weaponclass" ) == TIRA.GetUData(id, "weaponclass") then
 					count = true
 					break
 				end
@@ -331,7 +322,7 @@ function meta:TakeItemID( id )
 		end
 
 		if !count then
-			self:StripWeapon(CAKE.GetUData(id, "weaponclass") or "nothing")
+			self:StripWeapon(TIRA.GetUData(id, "weaponclass") or "nothing")
 		end
 	elseif string.match(class, "weapon_") and class != "weapon_base" then
 		for _, tbl in pairs( self:GetInventory().Items ) do
@@ -351,9 +342,9 @@ function meta:TakeItemID( id )
 		end
 	end
 
-	CAKE.SendClothingToClient( self )
-	CAKE.SaveGear( self )
-	CAKE.SendGearToClient( self )
+	TIRA.SendClothingToClient( self )
+	TIRA.SaveGear( self )
+	TIRA.SendGearToClient( self )
 
 	inv:Save()
 	return class
@@ -362,16 +353,16 @@ end
 
 function meta:ItemHasFlag( item, flag )
 	
-	if !CAKE.ItemData[ item ] then
+	if !TIRA.ItemData[ item ] then
 		return false
 	end
 
-	if !CAKE.ItemData[ item ].Flags then
-		CAKE.ItemData[ item ].Flags = {}
+	if !TIRA.ItemData[ item ].Flags then
+		TIRA.ItemData[ item ].Flags = {}
 		return false
 	end
 	
-	for k, v in pairs( CAKE.ItemData[ item ].Flags ) do
+	for k, v in pairs( TIRA.ItemData[ item ].Flags ) do
 		if type( v ) == "table" then
 			for k2, v2 in pairs( v ) do
 				if string.match( v2, flag ) then
@@ -390,12 +381,12 @@ end
 
 function meta:GetFlagValue( item, flag )
 
-	if !CAKE.ItemData[ item ].Flags then
-		CAKE.ItemData[ item ].Flags = {}
+	if !TIRA.ItemData[ item ].Flags then
+		TIRA.ItemData[ item ].Flags = {}
 		return false
 	end
 	
-	for k, v in pairs( CAKE.ItemData[ item ].Flags ) do
+	for k, v in pairs( TIRA.ItemData[ item ].Flags ) do
 		if type( v ) == "table" then
 			for k2, v2 in pairs( v ) do
 				if string.match( v2, flag ) then
@@ -427,10 +418,10 @@ end
 
 function meta:SetUData( item, key, value )
 	id = item:GetNWString("id")
-	CAKE.SetUData( id, key, value )
+	TIRA.SetUData( id, key, value )
 end
 
 function meta:GetUData( item, key )
 	id = item:GetNWString("id")
-	return CAKE.GetUData( id, key )
+	return TIRA.GetUData( id, key )
 end

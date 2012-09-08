@@ -1,9 +1,9 @@
-CAKE.Gear = {}
-CAKE.WornItems = {}
-CAKE.Clothing = "none"
-CAKE.Helmet = "none"
-CAKE.ClothingID = "none"
-CAKE.HelmetID = "none"
+TIRA.Gear = {}
+TIRA.WornItems = {}
+TIRA.Clothing = "none"
+TIRA.Helmet = "none"
+TIRA.ClothingID = "none"
+TIRA.HelmetID = "none"
 
 local BoneList = {
 	"Pelvis",
@@ -58,20 +58,20 @@ local RealBoneList = {
 }
 
 local function FetchWornItems()
-	CAKE.WornItems = {}
+	TIRA.WornItems = {}
 
-	for _, bone in pairs(CAKE.Gear) do
+	for _, bone in pairs(TIRA.Gear) do
 		for k, v in pairs( bone ) do
 			if v.itemid and v.itemid != "none" then
-				table.insert( CAKE.WornItems, v.itemid )
+				table.insert( TIRA.WornItems, v.itemid )
 			end
 		end
 	end
 
-	for _, ent in pairs(CAKE.ClothingTbl) do
+	for _, ent in pairs(TIRA.ClothingTbl) do
 		if ent then
 			if ent.itemid and ent.itemid != "none" then
-				table.insert( CAKE.WornItems, ent.itemid )
+				table.insert( TIRA.WornItems, ent.itemid )
 			end
 		end
 	end
@@ -87,11 +87,11 @@ function RefreshGearTree()
 		local node2
 		local amount
 		for _, bone in pairs( BoneList ) do
-			amount = table.Count( CAKE.Gear[ string.lower( bone ) ] or {} )
+			amount = table.Count( TIRA.Gear[ string.lower( bone ) ] or {} )
 			if amount > 0 then
 				node = bones:AddNode( bone .. " (" .. amount .. " items)"  )
-				if CAKE.Gear and CAKE.Gear[ string.lower( bone ) ] then
-					for __, tbl in pairs( CAKE.Gear[ string.lower( bone ) ] ) do
+				if TIRA.Gear and TIRA.Gear[ string.lower( bone ) ] then
+					for __, tbl in pairs( TIRA.Gear[ string.lower( bone ) ] ) do
 						node2 = node:AddNode( tbl.name or tbl.item )
 						node2.DoClick = function()
 							StartGearEditor( tbl.entity, tbl.item, bone, tbl.entity:GetDTVector( 1 ), tbl.entity:GetDTAngle( 1 ), tbl.entity:GetDTVector( 2 ), tbl.entity:GetSkin(), tbl.name )
@@ -106,7 +106,7 @@ end
 
 function EditGear()
 
-	CAKE.EnableBlackScreen( true )
+	TIRA.EnableBlackScreen( true )
 
 	PlayerMenu = vgui.Create( "DFrame" )
 	PlayerMenu:SetSize( ScrW(), ScrH() )
@@ -116,7 +116,7 @@ function EditGear()
 	PlayerMenu:SetTitle( "" )
 	PlayerMenu.Paint = function()
 
-		CAKE.DrawBlurScreen()
+		TIRA.DrawBlurScreen()
 
 	end
 	PlayerMenu:MakePopup()
@@ -165,18 +165,18 @@ function EditGear()
 	ClothesCategory:SetContents( clist )
 
 	local button
-	if CAKE.Containers[CAKE.Inventory] then
-		for _, tbl in pairs( CAKE.Containers[CAKE.Inventory].Items ) do
+	if TIRA.Containers[TIRA.Inventory] then
+		for _, tbl in pairs( TIRA.Containers[TIRA.Inventory].Items ) do
 			for k, v in pairs(tbl) do
 				if( v.class and string.match( v.class, "clothing" ) ) then
 					button = vgui.Create( "SpawnIcon" )
 					button:SetIconSize( 64 )
-					button:SetModel( CAKE.ItemData[v.class].Model )
-					button:SetToolTip(CAKE.ItemData[v.class].Description)
+					button:SetModel( TIRA.ItemData[v.class].Model )
+					button:SetToolTip(TIRA.ItemData[v.class].Description)
 					button.DoClick = function()
-						CAKE.Clothing = v.class
-						CAKE.ClothingID = v.itemid
-						RunConsoleCommand("rp_setclothing", CAKE.Clothing, CAKE.Helmet, CAKE.ClothingID, CAKE.HelmetID)
+						TIRA.Clothing = v.class
+						TIRA.ClothingID = v.itemid
+						RunConsoleCommand("rp_setclothing", TIRA.Clothing, TIRA.Helmet, TIRA.ClothingID, TIRA.HelmetID)
 					end
 					clist:AddItem( button )
 				end
@@ -189,9 +189,9 @@ function EditGear()
 	button:SetModel( LocalPlayer():GetNWString("model","models/kleiner.mdl") )
 	button:SetToolTip( "Your default clothes" )
 	button.DoClick = function()
-		CAKE.Clothing = "none"
-		CAKE.ClothingID = "none"
-		RunConsoleCommand("rp_setclothing", CAKE.Clothing, CAKE.Helmet, CAKE.ClothingID, CAKE.HelmetID)
+		TIRA.Clothing = "none"
+		TIRA.ClothingID = "none"
+		RunConsoleCommand("rp_setclothing", TIRA.Clothing, TIRA.Helmet, TIRA.ClothingID, TIRA.HelmetID)
 	end
 	clist:AddItem( button )
 
@@ -208,17 +208,17 @@ function EditGear()
 	hlist:EnableVerticalScrollbar( true )
 	HelmetCategory:SetContents( hlist )
 
-	for _, tbl in pairs( CAKE.Containers[CAKE.Inventory].Items ) do
+	for _, tbl in pairs( TIRA.Containers[TIRA.Inventory].Items ) do
 		for k, v in pairs(tbl) do
 			if( v.class and string.match( v.class, "helmet" ) ) then
 				button = vgui.Create( "SpawnIcon" )
 				button:SetIconSize( 64 )
-				button:SetModel( CAKE.ItemData[v.class].Model )
-				button:SetToolTip(CAKE.ItemData[v.class].Description)
+				button:SetModel( TIRA.ItemData[v.class].Model )
+				button:SetToolTip(TIRA.ItemData[v.class].Description)
 				button.DoClick = function()
-					CAKE.Helmet = v.class
-					CAKE.HelmetID = v.itemid
-					RunConsoleCommand("rp_setclothing", CAKE.Clothing, CAKE.Helmet, CAKE.ClothingID, CAKE.HelmetID)
+					TIRA.Helmet = v.class
+					TIRA.HelmetID = v.itemid
+					RunConsoleCommand("rp_setclothing", TIRA.Clothing, TIRA.Helmet, TIRA.ClothingID, TIRA.HelmetID)
 				end
 				hlist:AddItem( button )
 			end
@@ -229,20 +229,20 @@ function EditGear()
 	button:SetModel( LocalPlayer():GetNWString("model","models/kleiner.mdl") )
 	button:SetToolTip( "Your default head" )
 	button.DoClick = function()
-		CAKE.Helmet = "none"
-		CAKE.HelmetID = "none"
-		RunConsoleCommand("rp_setclothing", CAKE.Clothing, CAKE.Helmet, CAKE.ClothingID, CAKE.HelmetID)
+		TIRA.Helmet = "none"
+		TIRA.HelmetID = "none"
+		RunConsoleCommand("rp_setclothing", TIRA.Clothing, TIRA.Helmet, TIRA.ClothingID, TIRA.HelmetID)
 	end
 	hlist:AddItem( button )
 
-	local entity = CAKE.ClothingTbl
+	local entity = TIRA.ClothingTbl
 
 	local headslider, bodyslider, handslider
-	if CAKE.ConVars[ "AllowRescaling" ] then
+	if TIRA.ConVars[ "AllowRescaling" ] then
 		headslider = vgui.Create( "DNumSlider" )
 		headslider:SetText( "Head Scale" )
-		if CAKE.ClothingTbl then
-			for _,entity in pairs( CAKE.ClothingTbl ) do
+		if TIRA.ClothingTbl then
+			for _,entity in pairs( TIRA.ClothingTbl ) do
 				if ValidEntity( entity ) then
 					headslider:SetValue( entity:GetDTFloat( 1 ))
 					break
@@ -254,8 +254,8 @@ function EditGear()
 		headslider:SetMinMax( 0.5, 1.2 )
 		headslider:SetDecimals( 2 )
 		headslider.ValueChanged = function(self, value)
-			if CAKE.ClothingTbl then
-				for _,entity in pairs( CAKE.ClothingTbl ) do
+			if TIRA.ClothingTbl then
+				for _,entity in pairs( TIRA.ClothingTbl ) do
 					if ValidEntity( entity ) then
 						entity:SetDTFloat( 1, value )
 					end
@@ -266,8 +266,8 @@ function EditGear()
 
 		bodyslider = vgui.Create( "DNumSlider" )
 		bodyslider:SetText( "Body Scale" )
-		if CAKE.ClothingTbl then
-			for _,entity in pairs( CAKE.ClothingTbl ) do
+		if TIRA.ClothingTbl then
+			for _,entity in pairs( TIRA.ClothingTbl ) do
 				if ValidEntity( entity ) then
 					bodyslider:SetValue( entity:GetDTFloat( 2 ))
 					break
@@ -279,8 +279,8 @@ function EditGear()
 		bodyslider:SetMinMax( 0.5, 1.2 )
 		bodyslider:SetDecimals( 2 )
 		bodyslider.ValueChanged = function(self, value)
-			if CAKE.ClothingTbl then
-				for _,entity in pairs( CAKE.ClothingTbl ) do
+			if TIRA.ClothingTbl then
+				for _,entity in pairs( TIRA.ClothingTbl ) do
 					if ValidEntity( entity ) then
 						entity:SetDTFloat( 2, value )
 					end
@@ -291,8 +291,8 @@ function EditGear()
 
 		handslider = vgui.Create( "DNumSlider" )
 		handslider:SetText( "Hands Scale" )
-		if CAKE.ClothingTbl then
-			for _,entity in pairs( CAKE.ClothingTbl ) do
+		if TIRA.ClothingTbl then
+			for _,entity in pairs( TIRA.ClothingTbl ) do
 				if ValidEntity( entity ) then
 					handslider:SetValue( entity:GetDTFloat( 3 ))
 					break
@@ -304,8 +304,8 @@ function EditGear()
 		handslider:SetMinMax( 0.5, 1.2 )
 		handslider:SetDecimals( 2 )
 		handslider.ValueChanged = function(self, value)
-			if CAKE.ClothingTbl then
-				for _,entity in pairs( CAKE.ClothingTbl ) do
+			if TIRA.ClothingTbl then
+				for _,entity in pairs( TIRA.ClothingTbl ) do
 					if ValidEntity( entity ) then
 						entity:SetDTFloat( 3, value )
 					end
@@ -316,11 +316,11 @@ function EditGear()
 	end
 
 	local bodygroup1, bodygroup2, bodygroup3, plyskin
-	if CAKE.ConVars[ "AllowBodygroups" ] then
+	if TIRA.ConVars[ "AllowBodygroups" ] then
 
 		local ent = false
-		if CAKE.ClothingTbl then
-			for _,entity in pairs( CAKE.ClothingTbl ) do
+		if TIRA.ClothingTbl then
+			for _,entity in pairs( TIRA.ClothingTbl ) do
 				if ValidEntity( entity ) and entity:GetModel() == LocalPlayer():GetNWString("model","models/kleiner.mdl") then
 					ent = entity
 				end
@@ -335,8 +335,8 @@ function EditGear()
 		bodygroup1:SetMinMax( 0, 10 )
 		bodygroup1:SetDecimals( 0 )
 		bodygroup1.ValueChanged = function(self, value)
-			if CAKE.ClothingTbl then
-				for _,entity in pairs( CAKE.ClothingTbl ) do
+			if TIRA.ClothingTbl then
+				for _,entity in pairs( TIRA.ClothingTbl ) do
 					if ValidEntity( entity ) and entity:GetModel() == LocalPlayer():GetNWString("model","models/kleiner.mdl") then
 						entity:SetBodygroup( 1, value )
 					end
@@ -353,8 +353,8 @@ function EditGear()
 		end
 		bodygroup2:SetDecimals( 0 )
 		bodygroup2.ValueChanged = function(self, value)
-			if CAKE.ClothingTbl then
-				for _,entity in pairs( CAKE.ClothingTbl ) do
+			if TIRA.ClothingTbl then
+				for _,entity in pairs( TIRA.ClothingTbl ) do
 					if ValidEntity( entity ) and entity:GetModel() == LocalPlayer():GetNWString("model","models/kleiner.mdl") then
 						entity:SetBodygroup( 2, value )
 					end
@@ -371,8 +371,8 @@ function EditGear()
 		end
 		bodygroup3:SetDecimals( 0 )
 		bodygroup3.ValueChanged = function(self, value)
-			if CAKE.ClothingTbl then
-				for _,entity in pairs( CAKE.ClothingTbl ) do
+			if TIRA.ClothingTbl then
+				for _,entity in pairs( TIRA.ClothingTbl ) do
 					if ValidEntity( entity ) and entity:GetModel() == LocalPlayer():GetNWString("model","models/kleiner.mdl") then
 						entity:SetBodygroup( 3, value )
 					end
@@ -388,8 +388,8 @@ function EditGear()
 			plyskin:SetMinMax( 0, ent:SkinCount() )
 			plyskin:SetDecimals( 0 )
 			plyskin.ValueChanged = function(self, value)
-				if CAKE.ClothingTbl then
-					for _,entity in pairs( CAKE.ClothingTbl ) do
+				if TIRA.ClothingTbl then
+					for _,entity in pairs( TIRA.ClothingTbl ) do
 						if ValidEntity( entity ) and entity:GetModel() == LocalPlayer():GetNWString("model","models/kleiner.mdl") then
 							entity:SetSkin( value )
 						end
@@ -420,10 +420,10 @@ function EditGear()
 	end
 	closelabel.DoClick = function()
 		PlayerModel:Close()
-		if CAKE.ConVars[ "AllowRescaling" ] then
+		if TIRA.ConVars[ "AllowRescaling" ] then
 			RunConsoleCommand( "rp_scaleclothing", tostring(headslider:GetValue()), tostring(bodyslider:GetValue()), tostring(handslider:GetValue()))
 		end
-		if CAKE.ConVars[ "AllowBodygroups" ] then
+		if TIRA.ConVars[ "AllowBodygroups" ] then
 			if plyskin then
 				RunConsoleCommand( "rp_setplayerskin", tostring(plyskin:GetValue()))
 			end
@@ -691,7 +691,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 		PropertySheet:AddSheet( "Scale", ScaleList, "gui/silkicons/magnifier", false, false, "Edit gear's scale")
 
 		EditorFrame.Close = function()
-			CAKE.Query( "Save Changes for " .. itemname:GetValue(), "Save",
+			TIRA.Query( "Save Changes for " .. itemname:GetValue(), "Save",
 			"Yes", function()
 				datastream.StreamToServer( "Tiramisu.GetEditGear", {
 					["entity"] = entity,
@@ -727,7 +727,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 end
 
 function CloseGear()
-	CAKE.EnableBlackScreen( false )
+	TIRA.EnableBlackScreen( false )
 	if PlayerMenu then
 		PlayerMenu:Remove()
 		PlayerMenu = nil
@@ -738,16 +738,16 @@ function CloseGear()
 	end
 	LocalPlayer():SetNoDraw( false )
 
-	if CAKE.ClothingTbl then
-		for k, v in pairs( CAKE.ClothingTbl ) do
+	if TIRA.ClothingTbl then
+		for k, v in pairs( TIRA.ClothingTbl ) do
 			if ValidEntity( v ) then
 				v:SetNoDraw( false )
 			end
 		end
 	end
 
-	if CAKE.Gear then
-		for _, bone in pairs( CAKE.Gear ) do
+	if TIRA.Gear then
+		for _, bone in pairs( TIRA.Gear ) do
 			if bone then
 				for k, v in pairs( bone ) do
 					if ValidEntity( v.entity ) then
@@ -758,17 +758,17 @@ function CloseGear()
 		end
 	end
 end
-CAKE.RegisterMenuTab( "Character Editor", EditGear, CloseGear )
+TIRA.RegisterMenuTab( "Character Editor", EditGear, CloseGear )
 
 usermessage.Hook( "cleargear", function( um )
-	CAKE.Gear = {}
+	TIRA.Gear = {}
 	FetchWornItems()
 end)
 
 usermessage.Hook( "clearclothing", function( um )
-	CAKE.ClothingTbl = {}
-	CAKE.Helmet = "none"
-	CAKE.Clothing = "none"
+	TIRA.ClothingTbl = {}
+	TIRA.Helmet = "none"
+	TIRA.Clothing = "none"
 end)
 
 
@@ -780,8 +780,8 @@ usermessage.Hook( "addgear", function( um )
 	local name = um:ReadString()
 	local itemid = um:ReadString()
 
-	if CAKE.Gear and !CAKE.Gear[ bone ] then
-		CAKE.Gear[ bone ] = {}
+	if TIRA.Gear and !TIRA.Gear[ bone ] then
+		TIRA.Gear[ bone ] = {}
 	end
 
 	local tbl = {}
@@ -790,7 +790,7 @@ usermessage.Hook( "addgear", function( um )
 	tbl.name = name
 	tbl.itemid = itemid
 
-	table.insert( CAKE.Gear[ bone ], tbl )
+	table.insert( TIRA.Gear[ bone ], tbl )
 	FetchWornItems()
 
 end)
@@ -805,13 +805,13 @@ usermessage.Hook( "addclothing", function( um )
 	entity.itemid = itemid
 
 	if string.match(item, "helmet_") then
-		CAKE.Helmet = item
+		TIRA.Helmet = item
 	end
 	if string.match(item, "clothing_") then
-		CAKE.Clothing = item
+		TIRA.Clothing = item
 	end
 
-	table.insert( CAKE.ClothingTbl, entity )
+	table.insert( TIRA.ClothingTbl, entity )
 	FetchWornItems()
 
 end)

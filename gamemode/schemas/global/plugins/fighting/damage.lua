@@ -4,7 +4,7 @@ hook.Add("PlayerShouldTakeDamage", "Tiramisu.PlayerShouldTakeDamage", function( 
 	end
 	if ValidEntity( attacker ) then 
 		if attacker:GetClass() == "prop_physics" then
-			return CAKE.ConVars[ "Prop_Damage" ]
+			return TIRA.ConVars[ "Prop_Damage" ]
 		end
 	end
 end)

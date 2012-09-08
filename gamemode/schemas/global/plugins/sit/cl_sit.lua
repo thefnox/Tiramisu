@@ -5,8 +5,8 @@ usermessage.Hook( "Tiramisu.Freescroll", function( um )
 
 	local bool = um:ReadBool()
 
-	CAKE.ForceFreeScroll = bool
-	CAKE.FreeScroll = bool
+	TIRA.ForceFreeScroll = bool
+	TIRA.FreeScroll = bool
 	
 end)
 

@@ -1,39 +1,39 @@
-CAKE.WeaponTable = {}
-CAKE.DefaultWepTranslation = {}
-CAKE.DefaultWepTranslation["#GMOD_Physgun"] = "Physics Gun"
-CAKE.DefaultWepTranslation["#HL2_GravityGun"] = "Gravity Gun"
-CAKE.DefaultWepSlot = {}
-CAKE.DefaultWepSlot["#GMOD_Physgun"] = 0
-CAKE.DefaultWepSlot["#HL2_GravityGun"] = 0
-CAKE.DefaultWepSlot["#HL2_Crossbow"] = 4
-CAKE.DefaultWepSlot["#HL2_RPG"] = 4
-CAKE.DefaultWepSlot["#HL2_Crowbar"] = 0
-CAKE.DefaultWepSlot["#HL2_Shotgun"] = 3
-CAKE.DefaultWepSlot["#HL2_SMG1"] = 2
-CAKE.DefaultWepSlot["#HL2_Pulse_Rifle"] = 3
-CAKE.DefaultWepSlot["#HL2_Pistol"] = 1
-CAKE.ActiveWepPos = -1
-CAKE.ActiveSlot = -1
+TIRA.WeaponTable = {}
+TIRA.DefaultWepTranslation = {}
+TIRA.DefaultWepTranslation["#GMOD_Physgun"] = "Physics Gun"
+TIRA.DefaultWepTranslation["#HL2_GravityGun"] = "Gravity Gun"
+TIRA.DefaultWepSlot = {}
+TIRA.DefaultWepSlot["#GMOD_Physgun"] = 0
+TIRA.DefaultWepSlot["#HL2_GravityGun"] = 0
+TIRA.DefaultWepSlot["#HL2_Crossbow"] = 4
+TIRA.DefaultWepSlot["#HL2_RPG"] = 4
+TIRA.DefaultWepSlot["#HL2_Crowbar"] = 0
+TIRA.DefaultWepSlot["#HL2_Shotgun"] = 3
+TIRA.DefaultWepSlot["#HL2_SMG1"] = 2
+TIRA.DefaultWepSlot["#HL2_Pulse_Rifle"] = 3
+TIRA.DefaultWepSlot["#HL2_Pistol"] = 1
+TIRA.ActiveWepPos = -1
+TIRA.ActiveSlot = -1
 
-function CAKE.BuildWeaponTable()
-	CAKE.WeaponTable = {}
+function TIRA.BuildWeaponTable()
+	TIRA.WeaponTable = {}
 	local slot = 0
 	local name = ""
 	for _, wep in pairs( LocalPlayer():GetWeapons() ) do
 		if ValidEntity( wep ) then
 			slot = wep.Slot or 0
 			name = wep:GetPrintName()
-			if CAKE.DefaultWepSlot[name] then
-				slot = CAKE.DefaultWepSlot[name]
+			if TIRA.DefaultWepSlot[name] then
+				slot = TIRA.DefaultWepSlot[name]
 			end
-			if !CAKE.WeaponTable[slot] then
-				CAKE.WeaponTable[slot] = {}
+			if !TIRA.WeaponTable[slot] then
+				TIRA.WeaponTable[slot] = {}
 			end
-			if CAKE.DefaultWepTranslation[name] then
-				name = CAKE.DefaultWepTranslation[name]
+			if TIRA.DefaultWepTranslation[name] then
+				name = TIRA.DefaultWepTranslation[name]
 			end
 
-			table.insert(CAKE.WeaponTable[slot], {name, wep:GetClass()})
+			table.insert(TIRA.WeaponTable[slot], {name, wep:GetClass()})
 		end
 	end
 end
@@ -43,7 +43,7 @@ hook.Add( "HUDPaint", "TiramisuDrawHUD", function()
 	derma.SkinHook( "Paint", "TargetInfo" ) --The labels over items and props.
 	derma.SkinHook( "Paint", "TiramisuWeaponSelection" ) --The weapon selection
 	derma.SkinHook( "Paint", "PlayerTitles") --The labels above players.
-	if !CAKE.FreeScroll and LocalPlayer():Alive() and LocalPlayer():GetAiming() then
+	if !TIRA.FreeScroll and LocalPlayer():Alive() and LocalPlayer():GetAiming() then
 		derma.SkinHook( "Paint", "AmmoDisplay" )
 		if hook.Call("ShouldDrawLocalPlayer", GAMEMODE) then
 			derma.SkinHook( "Paint", "TiramisuCrosshair" ) --The crosshair
@@ -92,53 +92,53 @@ local sort = false
 hook.Add( "PlayerBindPress", "Tiramisu.HandleWeaponSelection", function(ply, bind, pressed)
 
 	if string.match(bind, "attack") then
-		if CAKE.ActiveSlot != -1 and CAKE.WeaponTable[CAKE.ActiveSlot] and CAKE.WeaponTable[CAKE.ActiveSlot][CAKE.ActiveWepPos] then
-			RunConsoleCommand("rp_selectweapon", CAKE.WeaponTable[CAKE.ActiveSlot][CAKE.ActiveWepPos][2])
+		if TIRA.ActiveSlot != -1 and TIRA.WeaponTable[TIRA.ActiveSlot] and TIRA.WeaponTable[TIRA.ActiveSlot][TIRA.ActiveWepPos] then
+			RunConsoleCommand("rp_selectweapon", TIRA.WeaponTable[TIRA.ActiveSlot][TIRA.ActiveWepPos][2])
 			timer.Destroy("TiramisuResetDefaultWep")
-			CAKE.ActiveWepPos = -1
-			CAKE.ActiveSlot = -1
+			TIRA.ActiveWepPos = -1
+			TIRA.ActiveSlot = -1
 			return true
 		end
 	end
 
 	sort = false
 	if string.match(bind, "slot1") and pressed then
-		CAKE.ActiveSlot = 0
+		TIRA.ActiveSlot = 0
 		sort = true
 	elseif string.match(bind, "slot2") and pressed then
-		CAKE.ActiveSlot = 1
+		TIRA.ActiveSlot = 1
 		sort = true
 	elseif string.match(bind, "slot3") and pressed then
-		CAKE.ActiveSlot = 2
+		TIRA.ActiveSlot = 2
 		sort = true
 	elseif string.match(bind, "slot4") and pressed then
-		CAKE.ActiveSlot = 3
+		TIRA.ActiveSlot = 3
 		sort = true
 	elseif string.match(bind, "slot5") and pressed then
-		CAKE.ActiveSlot = 4
+		TIRA.ActiveSlot = 4
 		sort = true
 	elseif string.match(bind, "slot6") and pressed then
-		CAKE.ActiveSlot = 5
+		TIRA.ActiveSlot = 5
 		sort = true
 	elseif string.match(bind, "slot7") and pressed then
-		CAKE.ActiveSlot = 6
+		TIRA.ActiveSlot = 6
 		sort = true
 	end
 
 	if sort then
-		if CAKE.ActiveSlot != -1 then
-			CAKE.BuildWeaponTable()
-			if CAKE.WeaponTable[CAKE.ActiveSlot] then
+		if TIRA.ActiveSlot != -1 then
+			TIRA.BuildWeaponTable()
+			if TIRA.WeaponTable[TIRA.ActiveSlot] then
 				timer.Create( "TiramisuResetDefaultWep", 3, 1, function()
-					CAKE.ActiveWepPos = -1
-					CAKE.ActiveSlot = -1
+					TIRA.ActiveWepPos = -1
+					TIRA.ActiveSlot = -1
 				end)
-				if CAKE.ActiveWepPos == -1 then
-					CAKE.ActiveWepPos = 1
+				if TIRA.ActiveWepPos == -1 then
+					TIRA.ActiveWepPos = 1
 				end
-				CAKE.ActiveWepPos = CAKE.ActiveWepPos + 1
-				if !CAKE.WeaponTable[CAKE.ActiveSlot][CAKE.ActiveWepPos] then
-					CAKE.ActiveWepPos = 1
+				TIRA.ActiveWepPos = TIRA.ActiveWepPos + 1
+				if !TIRA.WeaponTable[TIRA.ActiveSlot][TIRA.ActiveWepPos] then
+					TIRA.ActiveWepPos = 1
 				end 
 				return true
 			end

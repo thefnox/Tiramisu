@@ -1,5 +1,5 @@
 --Sends a player a chat message using the enhanced message system.
-function CAKE.SendChat( ply, msg, font, channel, handler )
+function TIRA.SendChat( ply, msg, font, channel, handler )
 	
 	if ValidEntity( ply ) and ply:IsTiraPlayer() then
 		--ply:PrintMessage( 3, msg )
@@ -14,7 +14,7 @@ function CAKE.SendChat( ply, msg, font, channel, handler )
 			umsg.String( msg )
 			umsg.String( font )
 		umsg.End()*/
-		--CAKE.SendConsole( ply, msg )
+		--TIRA.SendConsole( ply, msg )
 	else
 		for i = 0, msg:len() / 255 do
 			MsgN(string.sub( msg, i * 255 + 1, i * 255 + 255 ) )
@@ -24,7 +24,7 @@ function CAKE.SendChat( ply, msg, font, channel, handler )
 end
 
 --Sends a message to a player's console
-function CAKE.SendConsole( ply, msg )
+function TIRA.SendConsole( ply, msg )
 
 	if ply:IsTiraPlayer() then
 		ply:PrintMessage( 2, msg )
@@ -35,7 +35,7 @@ function CAKE.SendConsole( ply, msg )
 end
 
 --Sends a popup message to a player.
-function CAKE.SendError( ply, msg )
+function TIRA.SendError( ply, msg )
 
 	if ply:IsTiraPlayer() then
 		umsg.Start( "Tiramisu.SendError", ply )
@@ -46,7 +46,7 @@ function CAKE.SendError( ply, msg )
 	end
 end
 
-function CAKE.CreatePlayerRagdoll( ply )
+function TIRA.CreatePlayerRagdoll( ply )
 
 	local speed = ply:GetVelocity()
 
@@ -127,24 +127,24 @@ function meta:ConCommand( cmd ) --Rewriting this due to Garry fucking it up.
 	umsg.End()
 end
 
-function CAKE.ChangeMoney( ply, amount ) -- Modify someone's money amount.
+function TIRA.ChangeMoney( ply, amount ) -- Modify someone's money amount.
 
 	-- Come on, Nori, how didn't you see the error in this?
-	--if( ( CAKE.GetCharField( ply, "money" ) - amount ) < 0 ) then return end 
+	--if( ( TIRA.GetCharField( ply, "money" ) - amount ) < 0 ) then return end 
 	
-	CAKE.DayLog( "economy.txt", "Changing " .. ply:SteamID( ) .. "-" .. ply:GetNWString( "uid" ) .. " money by " .. tostring( amount ) )
+	TIRA.DayLog( "economy.txt", "Changing " .. ply:SteamID( ) .. "-" .. ply:GetNWString( "uid" ) .. " money by " .. tostring( amount ) )
 	
-	CAKE.SetCharField( ply, "money", CAKE.GetCharField( ply, "money" ) + amount )
-	if CAKE.GetCharField( ply, "money" ) < 0 then -- An actual negative number block
-		CAKE.SetCharField( ply, "money", 0 )
+	TIRA.SetCharField( ply, "money", TIRA.GetCharField( ply, "money" ) + amount )
+	if TIRA.GetCharField( ply, "money" ) < 0 then -- An actual negative number block
+		TIRA.SetCharField( ply, "money", 0 )
 		ply:SetNWInt("money", 0 )
 	else
-		ply:SetNWInt("money", tonumber( CAKE.GetCharField( ply, "money" ) ))
+		ply:SetNWInt("money", tonumber( TIRA.GetCharField( ply, "money" ) ))
 	end
 
 end
 
-function CAKE.DrugPlayer( pl, mul ) -- DRUG DAT BITCH
+function TIRA.DrugPlayer( pl, mul ) -- DRUG DAT BITCH
 
 	mul = mul / 10 * 2
 
@@ -158,10 +158,10 @@ function CAKE.DrugPlayer( pl, mul ) -- DRUG DAT BITCH
 
 	local IDSteam = string.gsub(pl:SteamID(), ":", "")
 
-	timer.Create(IDSteam, 40 * mul, 1, CAKE.UnDrugPlayer, pl)
+	timer.Create(IDSteam, 40 * mul, 1, TIRA.UnDrugPlayer, pl)
 end
 
-function CAKE.UnDrugPlayer(pl)
+function TIRA.UnDrugPlayer(pl)
 	pl:ConCommand("pp_motionblur 0")
 	pl:ConCommand("pp_dof 0")
 end

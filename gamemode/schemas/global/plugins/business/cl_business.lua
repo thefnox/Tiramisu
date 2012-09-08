@@ -29,9 +29,9 @@ local function OpenBusinessMenu()
 	title:SetFont( "Tiramisu48Font")
 	title:SetPos( 10, 23 )
 	title:SizeToContents()
-	local subtitle = Label( "Your funds: " .. CAKE.ConVars[ "CurrencyAbr" ] .. LocalPlayer():GetNWInt( "money", 0 ), BusinessFrame)
+	local subtitle = Label( "Your funds: " .. TIRA.ConVars[ "CurrencyAbr" ] .. LocalPlayer():GetNWInt( "money", 0 ), BusinessFrame)
 	subtitle.PaintOver = function()
-		subtitle:SetText("Your funds: " .. CAKE.ConVars[ "CurrencyAbr" ] .. LocalPlayer():GetNWInt( "money", 0 ))
+		subtitle:SetText("Your funds: " .. TIRA.ConVars[ "CurrencyAbr" ] .. LocalPlayer():GetNWInt( "money", 0 ))
 		subtitle:SizeToContents()
 	end
 	subtitle:SetPos( 10, 66 )
@@ -67,7 +67,7 @@ local function OpenBusinessMenu()
 						surface.SetTextColor(Color(55,200,55,255))
 						surface.SetFont("TiramisuDefaultFont")
 						surface.SetTextPos( icontable[cur]:GetWide() - 20, icontable[cur]:GetTall() - 15)
-						surface.DrawText( CAKE.ItemData[icontable[cur]:GetItem()].Price or "0" )
+						surface.DrawText( TIRA.ItemData[icontable[cur]:GetItem()].Price or "0" )
 					end
 				end
 				panel:AddItem( icontable[cur] )
@@ -107,7 +107,7 @@ datastream.Hook("refreshbusiness", function(handler, id, encoded, decoded )
 	if BusinessTable and table.Count(BusinessTable) != 0 then
 		OpenBusinessMenu()
 	else
-		CAKE.Message( "You do not have access to this tab!", "Error: No Business data", "OK" )
+		TIRA.Message( "You do not have access to this tab!", "Error: No Business data", "OK" )
 		if BusinessFrame then
 			BusinessFrame:Remove()
 			BusinessFrame = nil
@@ -117,4 +117,4 @@ datastream.Hook("refreshbusiness", function(handler, id, encoded, decoded )
 end )
 
 
-CAKE.RegisterMenuTab( "Business", OpenBusiness, CloseBusiness )
+TIRA.RegisterMenuTab( "Business", OpenBusiness, CloseBusiness )

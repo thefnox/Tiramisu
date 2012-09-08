@@ -6,22 +6,22 @@ concommand.Add( "rp_wearitem", function( ply, cmd, args )
 
 	if string.match( item, "clothing_" ) then
 
-		CAKE.SetClothing( ply, item, CAKE.GetCharField( ply, "helmet" ), itemid, CAKE.GetCharField( ply, "helmetid" ))
-		CAKE.SetCharField( ply, "clothing", item )
-		CAKE.SetCharField( ply, "clothingid", itemid )
+		TIRA.SetClothing( ply, item, TIRA.GetCharField( ply, "helmet" ), itemid, TIRA.GetCharField( ply, "helmetid" ))
+		TIRA.SetCharField( ply, "clothing", item )
+		TIRA.SetCharField( ply, "clothingid", itemid )
 
 	elseif string.match( item, "helmet_" ) then
 
-		CAKE.SetClothing( ply, CAKE.GetCharField( ply, "clothing" ), item, CAKE.GetCharField( ply, "clothingid" ), itemid )
-		CAKE.SetCharField( ply, "helmet", item )
-		CAKE.SetCharField( ply, "helmetid", itemid )
+		TIRA.SetClothing( ply, TIRA.GetCharField( ply, "clothing" ), item, TIRA.GetCharField( ply, "clothingid" ), itemid )
+		TIRA.SetCharField( ply, "helmet", item )
+		TIRA.SetCharField( ply, "helmetid", itemid )
 
-	elseif CAKE.ItemData[ item ].Wearable or CAKE.GetUData( itemid, "wearable")  then
+	elseif TIRA.ItemData[ item ].Wearable or TIRA.GetUData( itemid, "wearable")  then
 
-		CAKE.RemoveGearItemID( ply, itemid ) 
-		CAKE.HandleGear( ply, item, args[3] or CAKE.ItemData[ item ].Bone or CAKE.GetUData( itemid, "bone") or "head", itemid )
-		CAKE.SaveGear( ply )
-		CAKE.SendGearToClient( ply )
+		TIRA.RemoveGearItemID( ply, itemid ) 
+		TIRA.HandleGear( ply, item, args[3] or TIRA.ItemData[ item ].Bone or TIRA.GetUData( itemid, "bone") or "head", itemid )
+		TIRA.SaveGear( ply )
+		TIRA.SendGearToClient( ply )
 
 	end
 
@@ -34,26 +34,26 @@ concommand.Add( "rp_takeoffitem", function( ply, cmd, args )
 	local itemid = args[2]
 
 	if string.match( item, "clothing_" ) or string.match( item, "helmet_" ) then
-		CAKE.RemoveClothingID( ply, itemid )
-		CAKE.SendClothingToClient( ply )
+		TIRA.RemoveClothingID( ply, itemid )
+		TIRA.SendClothingToClient( ply )
 	else
-		CAKE.RemoveGearItemID( ply, itemid )
-		CAKE.SaveGear( ply )
-		CAKE.SendGearToClient( ply )
+		TIRA.RemoveGearItemID( ply, itemid )
+		TIRA.SaveGear( ply )
+		TIRA.SendGearToClient( ply )
 	end
 
 end)
 
 concommand.Add( "rp_takeoffallgear", function( ply, cmd, args )
-	CAKE.SetCharField( ply, "gear", {} )
-	CAKE.RestoreGear( ply )
+	TIRA.SetCharField( ply, "gear", {} )
+	TIRA.RestoreGear( ply )
 end)
 
 concommand.Add( "rp_takeoffallclothing", function( ply, cmd, args )
-	CAKE.SetCharField( ply, "clothing", "none" )
-	CAKE.SetCharField( ply, "clothingid", "none" )
-	CAKE.SetCharField( ply, "helmet", "none" )
-	CAKE.SetCharField( ply, "helmetid", "none" )
-	CAKE.RestoreClothing( ply )
-	CAKE.SendClothingToClient( ply )
+	TIRA.SetCharField( ply, "clothing", "none" )
+	TIRA.SetCharField( ply, "clothingid", "none" )
+	TIRA.SetCharField( ply, "helmet", "none" )
+	TIRA.SetCharField( ply, "helmetid", "none" )
+	TIRA.RestoreClothing( ply )
+	TIRA.SendClothingToClient( ply )
 end)

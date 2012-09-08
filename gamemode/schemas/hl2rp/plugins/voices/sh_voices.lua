@@ -1,11 +1,11 @@
-CAKE.AddVoiceGroup( "Combine", function( ply )
+TIRA.AddVoiceGroup( "Combine", function( ply )
 	if ValidEntity(ply) and ply:IsPlayer() and ply:IsCharLoaded() then
 		if CLIENT then
-			if CAKE.ItemData[CAKE.Helmet] and CAKE.ItemData[CAKE.Helmet].IsCombine then
+			if TIRA.ItemData[TIRA.Helmet] and TIRA.ItemData[TIRA.Helmet].IsCombine then
 				return true
 			end
 		else
-			if CAKE.ItemData[CAKE.GetCharField(ply, "helmet")] and CAKE.ItemData[CAKE.GetCharField(ply, "helmet")].IsCombine then
+			if TIRA.ItemData[TIRA.GetCharField(ply, "helmet")] and TIRA.ItemData[TIRA.GetCharField(ply, "helmet")].IsCombine then
 				return true
 			end
 		end
@@ -13,7 +13,7 @@ CAKE.AddVoiceGroup( "Combine", function( ply )
 	return false
 end )
 
-CAKE.AddVoiceGroup( "Vortigaunt", function( ply )
+TIRA.AddVoiceGroup( "Vortigaunt", function( ply )
 	if ValidEntity(ply) and ply:IsPlayer() and ply:IsCharLoaded() then
 		if string.lower(ply:GetModel()) == "models/vortigaunt.mdl" then
 			return true

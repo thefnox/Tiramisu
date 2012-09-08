@@ -1,11 +1,11 @@
 CLPLUGIN.Name = "Clientside Group Utilities"
 CLPLUGIN.Author = "FNox"
 
-CAKE.Groups = {}
-CAKE.ActiveGroup = "none"
-CAKE.RankPermissions = {}
-CAKE.Factions = {}
-CAKE.SpawnPoints = {}
+TIRA.Groups = {}
+TIRA.ActiveGroup = "none"
+TIRA.RankPermissions = {}
+TIRA.Factions = {}
+TIRA.SpawnPoints = {}
 
 datastream.Hook( "TiramisuAddToGroupChat", function( handler, id, encoded, decoded )
 	
@@ -19,7 +19,7 @@ datastream.Hook( "TiramisuAddToGroupChat", function( handler, id, encoded, decod
 	text = text:gsub("</font>", "")
 	text = text:gsub("<%s*%w*%s*=%s*%w*%s*,%s*%w*%s*,%s*%w*%s*,%s*%w*%s*>", "")
 	text = text:gsub("</color>", "")
-	CAKE.Chatbox:AddLine(  "<font=TiramisuOOCFont><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>: " .. text .. "</color></font>", channel, handler or "/g ", "TiramisuOOCFontOutline" )
+	TIRA.Chatbox:AddLine(  "<font=TiramisuOOCFont><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>: " .. text .. "</color></font>", channel, handler or "/g ", "TiramisuOOCFontOutline" )
 
 	text = "[" .. channel .. "]" .. playername .. ": " .. text
 
@@ -30,36 +30,36 @@ end)
 
 datastream.Hook( "Tiramisu.ReceiveGroups", function( handler, id, encoded, decoded )
 
-	CAKE.Groups = decoded["groups"]
-	CAKE.ActiveGroup = decoded["activegroup"]
-	CAKE.RankPermissions = decoded["rankpermissions"]
-	CAKE.Factions = decoded["factions"]
+	TIRA.Groups = decoded["groups"]
+	TIRA.ActiveGroup = decoded["activegroup"]
+	TIRA.RankPermissions = decoded["rankpermissions"]
+	TIRA.Factions = decoded["factions"]
 
 end )
 
 datastream.Hook( "Tiramisu.EditGroup", function( handler, id, encoded, decoded )
-	CAKE.EditGroup( decoded )
+	TIRA.EditGroup( decoded )
 end)
 
 datastream.Hook( "Tiramisu.GetGroupInfo", function( handler, id, encoded, decoded )
-	CAKE.OpenGroupInfo( decoded )
+	TIRA.OpenGroupInfo( decoded )
 end)
 
 datastream.Hook( "Tiramisu.EditCharInfo", function( handler, id, encoded, decoded )
 	if decoded then
-		CAKE.EditCharacterInfo( decoded )
+		TIRA.EditCharacterInfo( decoded )
 	end
 end)
 
 datastream.Hook( "Tiramisu.ReceiveSpawnPoints", function( handler, id, encoded, decoded )
-	CAKE.SpawnPoints = decoded
+	TIRA.SpawnPoints = decoded
 end)
 
 datastream.Hook( "Tiramisu.GetSearchResults", function( handler, id, encoded, decoded )
 	local uid = decoded.uid
 	if decoded.results then
 		if table.Count( decoded.results ) == 1 then
-			RunConsoleCommand( "rp_getcharinfo",uid ,CAKE.FormatText(decoded.results[1].SteamID) .. ";" .. decoded.results[1].uid )
+			RunConsoleCommand( "rp_getcharinfo",uid ,TIRA.FormatText(decoded.results[1].SteamID) .. ";" .. decoded.results[1].uid )
 		elseif table.Count( decoded) > 1 then
 			frame = vgui.Create( "DFrame" )
 			frame:SetSize( 300, 200 )
@@ -84,7 +84,7 @@ datastream.Hook( "Tiramisu.GetSearchResults", function( handler, id, encoded, de
 				results:AddLine( v.SteamID, v.Name, v.uid )
 			end
 			results.OnClickLine = function(parent, line, isselected)
-				RunConsoleCommand("rp_getcharinfo",uid, CAKE.FormatText(line:GetValue(1)) .. ";" .. line:GetValue(3))
+				RunConsoleCommand("rp_getcharinfo",uid, TIRA.FormatText(line:GetValue(1)) .. ";" .. line:GetValue(3))
 				frame:Remove()
 				frame = nil
 			end
@@ -97,16 +97,16 @@ usermessage.Hook( "Tiramisu.GetInvite", function( um )
 	local name = um:ReadString()
 	local uid = um:ReadString()
 
-	CAKE.Query( "You have been invited to join group: " .. name .. ", accept?", "Group Invite",
-		"Accept", function() RunConsoleCommand( "rp_joingroup", uid, CAKE.FormatText(ply:SteamID())) end, 
+	TIRA.Query( "You have been invited to join group: " .. name .. ", accept?", "Group Invite",
+		"Accept", function() RunConsoleCommand( "rp_joingroup", uid, TIRA.FormatText(ply:SteamID())) end, 
 		"Deny",	function() end)
 end)
 
 usermessage.Hook( "Tiramisu.GroupCreateQuery", function( um )
-	CAKE.BeginGroupCreation( um:ReadString() )
+	TIRA.BeginGroupCreation( um:ReadString() )
 end)
 
-function CAKE.EditCharacterInfo( tbl )
+function TIRA.EditCharacterInfo( tbl )
 
 	local permissions = tbl.permissions or {}
 	local rank = tbl.rank
@@ -122,8 +122,8 @@ function CAKE.EditCharacterInfo( tbl )
 	frame.Close = function()
 		if permissions["canpromote"] and table.Count( ranks ) > 0 then
 			if rank != "" then
-				CAKE.Query( "Promote this player to " .. rank .. "?", "Promote",
-				"Yes",	function() RunConsoleCommand("rp_promote", CAKE.FormatText(tbl.SteamID) .. ";" .. tbl.uid, rank, tbl.groupid) end, 
+				TIRA.Query( "Promote this player to " .. rank .. "?", "Promote",
+				"Yes",	function() RunConsoleCommand("rp_promote", TIRA.FormatText(tbl.SteamID) .. ";" .. tbl.uid, rank, tbl.groupid) end, 
 				"No",	function() end )
 			end
 		end
@@ -183,8 +183,8 @@ function CAKE.EditCharacterInfo( tbl )
 			local kick = vgui.Create( "DButton" )
 			kick:SetText( "Kick From Group" )
 			kick.DoClick = function()
-				CAKE.Query( "Are you sure you want to kick " .. tbl.name .. "?", "Kicking a player",
-					"Yes",	function() frame:Remove() RunConsoleCommand("rp_kickfromgroup", CAKE.FormatText(tbl.SteamID) .. ";" .. tbl.uid, tbl.groupid) end, 
+				TIRA.Query( "Are you sure you want to kick " .. tbl.name .. "?", "Kicking a player",
+					"Yes",	function() frame:Remove() RunConsoleCommand("rp_kickfromgroup", TIRA.FormatText(tbl.SteamID) .. ";" .. tbl.uid, tbl.groupid) end, 
 					"No",	function() end )
 			end
 			actions:AddItem(kick)
@@ -195,7 +195,7 @@ function CAKE.EditCharacterInfo( tbl )
 	end
 end
 
-function CAKE.AddRank( tbl )
+function TIRA.AddRank( tbl )
 	local rank = {}
 	rank["canedit"] = false
 	rank["caninvite"] = false
@@ -349,13 +349,13 @@ function CAKE.AddRank( tbl )
 	Accept:DockMargin( 20, 2, 5, 2 )
 	Accept.DoClick = function()
 		if tbl["ranks"][rank.handler] then
-			CAKE.Message( "Handler already exists! Please choose a new one.", "Error!", "OK" )
+			TIRA.Message( "Handler already exists! Please choose a new one.", "Error!", "OK" )
 		else
 			if tbl["defaultrank"] == "none" then
 				tbl["defaultrank"] = rank.handler
 			end
 			tbl["ranks"][rank.handler] = rank
-			CAKE.EditGroup( tbl )
+			TIRA.EditGroup( tbl )
 			frame:Remove()
 			frame = nil
 		end
@@ -367,12 +367,12 @@ function CAKE.AddRank( tbl )
 	Cancel:SetTall( 30 )
 	Cancel:DockMargin( 20, 2, 20, 2 )
 	Cancel.DoClick = function()
-		CAKE.EditGroup( tbl )
+		TIRA.EditGroup( tbl )
 		frame:Remove()
 	end
 end
 
-function CAKE.EditRank( tbl, rankname )
+function TIRA.EditRank( tbl, rankname )
 
 	local rank = {}
 	rank["canedit"] = tbl["ranks"][rankname]["canedit"]
@@ -549,7 +549,7 @@ function CAKE.EditRank( tbl, rankname )
 	Accept:DockMargin( 20, 2, 5, 2 )
 	Accept.DoClick = function()
 		tbl["ranks"][rankname] = rank
-		CAKE.EditGroup( tbl )
+		TIRA.EditGroup( tbl )
 		frame:Remove()
 		frame = nil
 	end
@@ -561,12 +561,12 @@ function CAKE.EditRank( tbl, rankname )
 	Cancel:DockMargin( 20, 2, 20, 2 )
 	Cancel.DoClick = function()
 		frame:Remove()
-		CAKE.EditGroup( tbl )
+		TIRA.EditGroup( tbl )
 	end
 
 end
 
-function CAKE.EditGroup( tbl )
+function TIRA.EditGroup( tbl )
 	if EditGroup then
 		EditGroup:Remove()
 	end
@@ -660,7 +660,7 @@ function CAKE.EditGroup( tbl )
 			end
 		end
 		Ranks.OnClickLine = function(parent, line, isselected)
-			CAKE.EditRank( tbl, line:GetValue(1) )
+			TIRA.EditRank( tbl, line:GetValue(1) )
 			EditGroup:Remove()
 			EditGroup = nil
 		end
@@ -671,7 +671,7 @@ function CAKE.EditGroup( tbl )
 	AddRank:SetText( "Add a rank" )
 	AddRank:SetTall( 30 )
 	AddRank.DoClick = function()
-		CAKE.AddRank( tbl )
+		TIRA.AddRank( tbl )
 		EditGroup:Remove()
 		EditGroup = nil
 	end
@@ -700,7 +700,7 @@ function CAKE.EditGroup( tbl )
 	end
 end
 
-function CAKE.OpenGroupInfo( tbl )
+function TIRA.OpenGroupInfo( tbl )
 	PlayerMenu = vgui.Create( "DFrame" )
 	PlayerMenu:SetSize( 500, 340 )
 	PlayerMenu:SetTitle( "Group" )
@@ -751,7 +751,7 @@ function CAKE.OpenGroupInfo( tbl )
 	FindPlayer:SetText( "Find A Player" )
 	FindPlayer:SetTall( 30 )
 	FindPlayer.DoClick = function()
-		CAKE.StringRequest( "Find A Player", 
+		TIRA.StringRequest( "Find A Player", 
 			"Enter the name, rank, or SteamID of the player you want to find:\nLeave empty to fetch the whole roster", 
 			LocalPlayer():Nick(), 
 			function( str ) RunConsoleCommand("rp_rostersearch", tbl.uid, str) end,
@@ -765,8 +765,8 @@ function CAKE.OpenGroupInfo( tbl )
 	OpenChat:SetText( "Open Group Chat" )
 	OpenChat:SetTall( 30 )
 	OpenChat.DoClick = function()
-		if CAKE.Chatbox then
-			CAKE.Chatbox:AddChannel( "[" .. tbl.name .. "]", "Group: " .. tbl.uid, "/g " .. tbl.uid .. " " )
+		if TIRA.Chatbox then
+			TIRA.Chatbox:AddChannel( "[" .. tbl.name .. "]", "Group: " .. tbl.uid, "/g " .. tbl.uid .. " " )
 		end
 	end
 	actions:AddItem(OpenChat)
@@ -797,7 +797,7 @@ function CAKE.OpenGroupInfo( tbl )
 	LeaveGroup:SetText( "Leave Group" )
 	LeaveGroup:SetTall( 30 )
 	LeaveGroup.DoClick = function()
-		CAKE.Query( "Are you sure you want to leave " .. tbl.name .. "?", "Leaving a group",
+		TIRA.Query( "Are you sure you want to leave " .. tbl.name .. "?", "Leaving a group",
 			"Yes",	function() PlayerMenu:Remove() RunConsoleCommand("rp_leavegroup", tbl.uid) end, 
 			"No",	function() end )
 	end
@@ -807,13 +807,13 @@ function CAKE.OpenGroupInfo( tbl )
 	local SetActive = vgui.Create( "DButton" )
 	SetActive:SetText( "Set As Active Group" )
 	SetActive:SetTall( 30 )
-	if CAKE.ActiveGroup == tbl.uid then
+	if TIRA.ActiveGroup == tbl.uid then
 		SetActive:SetText("Currently Active Group")
 		SetActive:SetDisabled( true ) 
 	end
 	SetActive.DoClick = function()
 		if !SetActive:GetDisabled() then
-			CAKE.Query( "Make " .. tbl.name .. " your active group?", "Active Group",
+			TIRA.Query( "Make " .. tbl.name .. " your active group?", "Active Group",
 				"Yes",	function() RunConsoleCommand("rp_setactivegroup", tbl.uid) SetActive:SetText("Currently Active Group") SetActive:SetDisabled( true ) end, 
 				"No",	function() end )
 		end
@@ -822,15 +822,15 @@ function CAKE.OpenGroupInfo( tbl )
 
 end
 
-function CAKE.GetRankPermission( group, name )
-	if CAKE.Groups and CAKE.ActiveGroup != "none" and CAKE.RankPermissions and CAKE.RankPermissions[group] then
-		return CAKE.RankPermissions[group][name]
+function TIRA.GetRankPermission( group, name )
+	if TIRA.Groups and TIRA.ActiveGroup != "none" and TIRA.RankPermissions and TIRA.RankPermissions[group] then
+		return TIRA.RankPermissions[group][name]
 	end
 	return false
 end
 
-function CAKE.BeginGroupCreation( title )
-	CAKE.StringRequest( "Group Creation", "Please enter the name of the group you want to create", title or "New Group",
+function TIRA.BeginGroupCreation( title )
+	TIRA.StringRequest( "Group Creation", "Please enter the name of the group you want to create", title or "New Group",
 	function( entry )
 		RunConsoleCommand( "rp_creategroup", entry )
 	end,
@@ -839,17 +839,17 @@ end
 
 local function OpenGroups()
 
-	if table.Count(CAKE.Groups) < 1 then
-		CAKE.Query( "You do not currently belong to any groups, would you like to create one?", "Groups",
-		"Yes", function() CAKE.BeginGroupCreation() end, 
+	if table.Count(TIRA.Groups) < 1 then
+		TIRA.Query( "You do not currently belong to any groups, would you like to create one?", "Groups",
+		"Yes", function() TIRA.BeginGroupCreation() end, 
 		"No",	function() end)
-	elseif table.Count(CAKE.Groups) == 1 then
-		if table.HasValue(CAKE.Factions, CAKE.ActiveGroup ) then
-			RunConsoleCommand("rp_getfactioninfo", CAKE.ActiveGroup)
+	elseif table.Count(TIRA.Groups) == 1 then
+		if table.HasValue(TIRA.Factions, TIRA.ActiveGroup ) then
+			RunConsoleCommand("rp_getfactioninfo", TIRA.ActiveGroup)
 		else
-			RunConsoleCommand("rp_getgroupinfo", CAKE.ActiveGroup)
+			RunConsoleCommand("rp_getgroupinfo", TIRA.ActiveGroup)
 		end
-	elseif table.Count(CAKE.Groups) > 1 then
+	elseif table.Count(TIRA.Groups) > 1 then
 		PlayerMenu = vgui.Create( "DFrame" )
 		PlayerMenu:SetSize( 300, 200 )
 		PlayerMenu:SetTitle( "Group Selection" )
@@ -868,11 +868,11 @@ local function OpenGroups()
 		Groups:SetMultiSelect( false )
 		Groups:AddColumn("UniqueID")
 		Groups:AddColumn("Name")
-		for k, v in pairs( CAKE.Groups ) do
+		for k, v in pairs( TIRA.Groups ) do
 			Groups:AddLine( k, v )
 		end
 		Groups.OnClickLine = function(parent, line, isselected)
-			if table.HasValue(CAKE.Factions, line:GetValue(1) ) then
+			if table.HasValue(TIRA.Factions, line:GetValue(1) ) then
 				RunConsoleCommand("rp_getfactioninfo", line:GetValue(1))
 			else
 				RunConsoleCommand("rp_getgroupinfo", line:GetValue(1))
@@ -891,5 +891,5 @@ local function CloseGroups()
 	end
 end
 function CLPLUGIN.Init()
-	CAKE.RegisterMenuTab( "Groups", OpenGroups, CloseGroups )
+	TIRA.RegisterMenuTab( "Groups", OpenGroups, CloseGroups )
 end

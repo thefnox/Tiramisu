@@ -71,7 +71,7 @@ function meta:ClearSlot( x, y )
 	if x <= self.Width and y <= self.Height then
 		self.Items[y][x] = {}
 		if SERVER then
-			umsg.Start("c_ClearS", CAKE.GetPlyTrackingContainer( self.UniqueID ))
+			umsg.Start("c_ClearS", TIRA.GetPlyTrackingContainer( self.UniqueID ))
 				umsg.String(self.UniqueID)
 				umsg.Short(x)
 				umsg.Short(y)
@@ -88,7 +88,7 @@ function meta:FillSlot( x, y, class, itemid )
 			["itemid"] = itemid
 		}
 		if SERVER then
-			umsg.Start("c_AddTo", CAKE.GetPlyTrackingContainer( self.UniqueID ))
+			umsg.Start("c_AddTo", TIRA.GetPlyTrackingContainer( self.UniqueID ))
 				umsg.String(self.UniqueID)
 				umsg.String(itemid)
 				umsg.String(class)
@@ -142,7 +142,7 @@ function meta:TakeItemID( id )
 			if !self:IsSlotEmpty(j,i) and self.Items[i][j].itemid == id then
 				local class = self.Items[i][j].class
 				if SERVER then
-					umsg.Start("c_Take", CAKE.GetPlyTrackingContainer( self.UniqueID ))
+					umsg.Start("c_Take", TIRA.GetPlyTrackingContainer( self.UniqueID ))
 						umsg.String(self.UniqueID)
 						umsg.String(id)
 					umsg.End()
@@ -158,7 +158,8 @@ end
 if SERVER then
 	function meta:Save()
 		if self.UniqueID then
-			file.Write(CAKE.Name .. "/containers/" .. CAKE.ConVars[ "Schema" ] .. "/" .. self.UniqueID.. ".txt", von.serialize(self))
+			TIRA.Query("UPDATE tiramisu_containers SET udata='" .. von.serialize(self).. "' WHERE id = " .. self.UniqueID)
+			//file.Write(TIRA.Name .. "/containers/" .. TIRA.ConVars[ "Schema" ] .. "/" .. self.UniqueID.. ".txt", von.serialize(self))
 		end
 	end
 
@@ -169,9 +170,9 @@ if SERVER then
 				if !self:IsSlotEmpty(j,i) then 
 					count = count + 1
 					if !self:GetNonRecursive() then
-						if self.Items[i][j] and self.Items[i][j].itemid and CAKE.GetUData(self.Items[i][j].itemid, "container") then
-							if CAKE.IsContainer(CAKE.GetUData(self.Items[i][j].itemid, "container")) then
-								count = count + CAKE.GetContainer(CAKE.GetUData(self.Items[i][j].itemid, "container")):GetItemCount()
+						if self.Items[i][j] and self.Items[i][j].itemid and TIRA.GetUData(self.Items[i][j].itemid, "container") then
+							if TIRA.IsContainer(TIRA.GetUData(self.Items[i][j].itemid, "container")) then
+								count = count + TIRA.GetContainer(TIRA.GetUData(self.Items[i][j].itemid, "container")):GetItemCount()
 							end
 						end
 					end
@@ -199,7 +200,7 @@ if SERVER then
 			for i=1, self.Width do
 				self.Items[self.Height][i] = {}
 			end
-			umsg.Start("c_Expand", CAKE.GetPlyTrackingContainer( self.UniqueID ))
+			umsg.Start("c_Expand", TIRA.GetPlyTrackingContainer( self.UniqueID ))
 				umsg.String(self.UniqueID)
 				umsg.Short(self.Height)
 			umsg.End()
@@ -217,17 +218,17 @@ if SERVER then
 		end
 	end
 
-	function CAKE.CreateContainerID()
+	function TIRA.CreateContainerID()
 		local repnum = 0
-		local uidfile = file.Exists( CAKE.Name .. "/containers/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
+		local uidfile = file.Exists( TIRA.Name .. "/containers/" .. TIRA.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
 		while uidfile do
 			repnum = repnum + 1
-			uidfile = file.Exists( CAKE.Name .. "/containers/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
+			uidfile = file.Exists( TIRA.Name .. "/containers/" .. TIRA.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
 		end
 		return os.time() .. repnum
 	end
 
-	function CAKE.CreateContainerObject( filename )
+	function TIRA.CreateContainerObject( filename )
 		local container = FindMetaTable("Container"):New()
 
 		if filename and file.Exists( filename ) then
@@ -235,13 +236,13 @@ if SERVER then
 			container.UniqueID = tbl.UniqueID
 			container:Save()
 		else
-			container.UniqueID = CAKE.CreateContainerID()
+			container.UniqueID = TIRA.CreateContainerID()
 			container:Save()
 		end
 		return container
 	end
 else
-	function CAKE.CreateContainerObject( uid )
+	function TIRA.CreateContainerObject( uid )
 		local container = FindMetaTable("Container"):New()
 		container.UniqueID = uid
 		return container

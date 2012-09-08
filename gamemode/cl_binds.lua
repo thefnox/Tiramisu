@@ -1,5 +1,5 @@
 usermessage.Hook( "togglethirdperson", function(um)
-	if CAKE.Thirdperson:GetBool() then
+	if TIRA.Thirdperson:GetBool() then
 		RunConsoleCommand( "rp_thirdperson", "0" )
 	else
 		RunConsoleCommand( "rp_thirdperson", "1" )
@@ -8,10 +8,10 @@ usermessage.Hook( "togglethirdperson", function(um)
 end)
 
 usermessage.Hook( "toggleinventory", function(um)
-	CAKE.SetActiveTab( "Inventory" )
+	TIRA.SetActiveTab( "Inventory" )
 end)
 
-function CAKE.DrawQuickMenu()
+function TIRA.DrawQuickMenu()
 	if QuickMenu then
 		QuickMenu:Remove()
 		Quickmenu = nil
@@ -27,7 +27,7 @@ function CAKE.DrawQuickMenu()
 		derma.SkinHook( "Paint", "QuickMenu", QuickMenu )
 	end
 
-	local titlelabel = Label( CAKE.ConVars["MenuTitle"], QuickMenu )
+	local titlelabel = Label( TIRA.ConVars["MenuTitle"], QuickMenu )
 	titlelabel:SetSize( QuickMenu:GetWide() - 25, 40 )
 	titlelabel:SetFont( "Tiramisu48Font" )
 	titlelabel:SetTextColor(Color(255, 255, 255, 0))
@@ -36,9 +36,9 @@ function CAKE.DrawQuickMenu()
 		titlelabel:SetTextColor(Color(255, 255, 255, QuickMenu.FadeAlpha or 255))
 	end
 
-	local startpos = QuickMenu:GetTall() / 4 - #CAKE.MenuTabs * 40
+	local startpos = QuickMenu:GetTall() / 4 - #TIRA.MenuTabs * 40
 	local lastpos = startpos
-	for k, v in pairs( CAKE.MenuTabs ) do
+	for k, v in pairs( TIRA.MenuTabs ) do
 		lastpos = lastpos + 40
 		local label = vgui.Create( "DButton", QuickMenu )
 		label:SetDrawBorder( false )
@@ -46,11 +46,11 @@ function CAKE.DrawQuickMenu()
 		label.LabelText = k
 		label:SetDrawBackground( false )
 		label.DoClick = function()
-			CAKE.SetActiveTab(k)
+			TIRA.SetActiveTab(k)
 		end
 		label:SetSize( QuickMenu:GetWide()-10, 28 )
 		label:SetTextColor(Color(255, 255, 255, 0))
-		label:SetTextColorHovered(CAKE.BaseColor)
+		label:SetTextColorHovered(TIRA.BaseColor)
 		label:SetPos( 10, lastpos)
 		label.SpecialColor = label:GetTextColor()
 		label.OnCursorEntered = function()
@@ -67,35 +67,35 @@ function CAKE.DrawQuickMenu()
 
 end
 
-function CAKE.HideQuickMenu()
+function TIRA.HideQuickMenu()
 	if QuickMenu then
 		QuickMenu.FadeOut = true
 	end
 end
 
-function CAKE.EntityIsItem(targ)
+function TIRA.EntityIsItem(targ)
 	if target and target:GetClass() == "item_prop" then
-		return CAKE.ItemData[target:GetNWString("Class")]
+		return TIRA.ItemData[target:GetNWString("Class")]
 	end
 end
 
 function GM:ScoreboardShow( )
 
-	CAKE.ContextEnabled = true
-	CAKE.MenuOpen = true
+	TIRA.ContextEnabled = true
+	TIRA.MenuOpen = true
 	gui.EnableScreenClicker( true )
 
-	CAKE.DrawQuickMenu()
+	TIRA.DrawQuickMenu()
 
 end
 
 function GM:ScoreboardHide( )
 
-	CAKE.MenuOpen = false
-	CAKE.ContextEnabled = false
+	TIRA.MenuOpen = false
+	TIRA.ContextEnabled = false
 	gui.EnableScreenClicker( false )
 
-	CAKE.HideQuickMenu()
+	TIRA.HideQuickMenu()
 	
 end
 
@@ -108,21 +108,21 @@ function GM:GUIMousePressed(mc)
 		end
 		local ang = gui.ScreenToVector(gui.MouseX(), gui.MouseY())
 		local tracedata = {}
-		tracedata.start = CAKE.CameraPos
-		tracedata.endpos = CAKE.CameraPos+(ang*2000)
-		if !CAKE.Thirdperson:GetBool() then
+		tracedata.start = TIRA.CameraPos
+		tracedata.endpos = TIRA.CameraPos+(ang*2000)
+		if !TIRA.Thirdperson:GetBool() then
 			tracedata.filter = LocalPlayer()
 		end
 		local trace = util.TraceLine(tracedata)
 		
-		if SinglePlayer() and CAKE.Thirdperson:GetBool() then
+		if SinglePlayer() and TIRA.Thirdperson:GetBool() then
 			if trace.StartPos:Distance( LocalPlayer():EyePos() ) <= distance then
 				local target = trace.Entity
 				local submenus = {}
 				local ContextMenu = DermaMenu()
 				if ValidEntity( target ) or target:IsWorld() then
 					if ValidEntity( target ) and target:GetClass() == "item_prop" then
-						item = CAKE.ItemData[target:GetNWString("Class")]
+						item = TIRA.ItemData[target:GetNWString("Class")]
 						for k,v in pairs(item.RightClick or {}) do
 							ContextMenu:AddOption(k, function()  LocalPlayer():ConCommand("rp_useitem " ..target:EntIndex().. " " .. v) end)
 						end
@@ -152,7 +152,7 @@ function GM:GUIMousePressed(mc)
 				local target = trace.Entity
 				if ValidEntity( target ) or target:IsWorld() then
 					if ValidEntity( target ) and target:GetClass() == "item_prop" then
-						item = CAKE.ItemData[target:GetNWString("Class")]
+						item = TIRA.ItemData[target:GetNWString("Class")]
 						for k,v in pairs(item.RightClick or {}) do
 							ContextMenu:AddOption(k, function()  LocalPlayer():ConCommand("rp_useitem " ..target:EntIndex().. " " .. v) end)
 						end
@@ -193,8 +193,8 @@ function GM:GUIMousePressed(mc)
 	elseif mc == MOUSE_LEFT then
 		local ang = gui.ScreenToVector(gui.MouseX(), gui.MouseY())
 		local tracedata = {}
-		tracedata.start = CAKE.CameraPos
-		tracedata.endpos = CAKE.CameraPos+(ang*2000)
+		tracedata.start = TIRA.CameraPos
+		tracedata.endpos = TIRA.CameraPos+(ang*2000)
 		tracedata.filter = LocalPlayer()
 		local trace = util.TraceLine(tracedata)
 		if trace.StartPos:Distance( LocalPlayer():EyePos() ) <= 200 and ValidEntity(trace.Entity) then
@@ -213,7 +213,7 @@ function GM:PlayerBindPress( ply, bind, pressed )
 	
 	end
 
-	if bind == "+duck" and CAKE.StayCrouched:GetBool() and !ply:InVehicle() then
+	if bind == "+duck" and TIRA.StayCrouched:GetBool() and !ply:InVehicle() then
 
 		if StayCrouch then StayCrouch = !StayCrouch return true end
 

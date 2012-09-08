@@ -1,5 +1,5 @@
 Anims.Male = {}
-if CAKE.ConVars[ "UseEnhancedCitizens" ] then
+if TIRA.ConVars[ "UseEnhancedCitizens" ] then
 	Anims.Male[ "models" ] = {
 		"models/bloo_ltcom/citizens/male_01.mdl",
 		"models/breen.mdl",
@@ -731,7 +731,7 @@ Anims.Male[ "slam" ] = {
 
  
 Anims.Female = {}
-if CAKE.ConVars[ "UseEnhancedCitizens" ] then
+if TIRA.ConVars[ "UseEnhancedCitizens" ] then
 	Anims.Female[ "models" ] = {
 		"models/bloo_ltcom/citizens/female_01.mdl",
 		"models/alyx.mdl",

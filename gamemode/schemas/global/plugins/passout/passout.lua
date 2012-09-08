@@ -1,8 +1,8 @@
 --Makes you fall unconcious.
 concommand.Add( "rp_passout", function( ply, cmd, args )
-	CAKE.UnconciousMode( ply )
+	TIRA.UnconciousMode( ply )
 	if ply:GetNWBool( "unconciousmode", false ) and ply.CanWakeUp then
-		CAKE.WakeUp(ply)
+		TIRA.WakeUp(ply)
 	end
 end)
 
@@ -10,31 +10,31 @@ end)
 concommand.Add( "rp_wakeup", function( ply, cmd, args )
 
 	if ply:GetNWBool( "unconciousmode", false ) and ply.CanWakeUp then
-		CAKE.WakeUp(ply)
+		TIRA.WakeUp(ply)
 	end
 
 end)
 
 --Toggles unconcious status.
-function CAKE.UnconciousMode( ply, wait, delay )
+function TIRA.UnconciousMode( ply, wait, delay )
 
 	if ply:Alive() and !ply:GetNWBool( "unconciousmode", false ) then
 
 		ply.LastUnconcious = ply.LastUnconcious or 0
 
-		if ply:GetNWBool( "sittingchair", false ) or ply:GetNWBool( "sittingground", false ) and CAKE.PlayerRank(ply) < 1 then
+		if ply:GetNWBool( "sittingchair", false ) or ply:GetNWBool( "sittingground", false ) and TIRA.PlayerRank(ply) < 1 then
 			--ADMIN ONLY BUTT RACING FUCK YEAH
-			CAKE.SendError( ply, "You must stand up to go unconcious!")
+			TIRA.SendError( ply, "You must stand up to go unconcious!")
 			return
 		end
 
 		if ply:GetNWBool( "observe" ) then
-			CAKE.SendError( ply, "You can't go unconcious while on observe!")
+			TIRA.SendError( ply, "You can't go unconcious while on observe!")
 			return
 		end
 
 		if ply.LastUnconcious > CurTime() then
-			CAKE.SendError( ply, "You must wait " .. tostring( math.ceil( ply.LastUnconcious - CurTime() )) .. " seconds to go unconcious again!")
+			TIRA.SendError( ply, "You must wait " .. tostring( math.ceil( ply.LastUnconcious - CurTime() )) .. " seconds to go unconcious again!")
 			return
 		end
 
@@ -51,9 +51,9 @@ function CAKE.UnconciousMode( ply, wait, delay )
 			ply.rag = nil
 		end
 		
-		CAKE.DayLog( "script.txt", "Starting unconcious mode for " .. ply:SteamID( ) )
+		TIRA.DayLog( "script.txt", "Starting unconcious mode for " .. ply:SteamID( ) )
 		
-		local rag = CAKE.CreatePlayerRagdoll( ply )
+		local rag = TIRA.CreatePlayerRagdoll( ply )
 		ply.rag = rag
 		ply.unconcioustime = 0
 
@@ -86,7 +86,7 @@ function CAKE.UnconciousMode( ply, wait, delay )
 			umsg.End()
 		end)		
 		 
-		timer.Create(ply:SteamID() .. "unconcioustimer", wait or CAKE.ConVars[ "UnconciousTimer" ], 1, function()
+		timer.Create(ply:SteamID() .. "unconcioustimer", wait or TIRA.ConVars[ "UnconciousTimer" ], 1, function()
 			ply.CanWakeUp = true
 			umsg.Start( "Tiramisu.DisplayWakeUpButton", ply )
 				umsg.Bool( true )
@@ -97,7 +97,7 @@ function CAKE.UnconciousMode( ply, wait, delay )
 	end
 end
 
-function CAKE.WakeUp(ply, dontdestroyragdoll)
+function TIRA.WakeUp(ply, dontdestroyragdoll)
 	if !(ply:GetNWBool( "unconciousmode", false )) then return end
 	ply:SetNWBool( "unconciousmode", false )
 	ply:SetPos( ply.rag:GetPos() + Vector( 0, 0, 10 ))
@@ -113,8 +113,8 @@ function CAKE.WakeUp(ply, dontdestroyragdoll)
 				npc:AddEntityRelationship( ply, D_HT, 99 )
 			end
 		end
-		CAKE.RestoreClothing( ply )
-		CAKE.RestoreGear( ply )
+		TIRA.RestoreClothing( ply )
+		TIRA.RestoreGear( ply )
 		ply:SetViewEntity( ply )
 		if ply.rag then
 			ply.rag:Remove()
@@ -136,13 +136,13 @@ function CAKE.WakeUp(ply, dontdestroyragdoll)
 	ply:SetVelocity( Vector(0,0,0))
 end
 
-function CAKE.RagDamage( ent, inflictor, attacker, amount )
+function TIRA.RagDamage( ent, inflictor, attacker, amount )
  
 	if ValidEntity(ent.ply) and ent.ply:Alive() and ValidEntity(inflictor) and (inflictor:IsPlayer() or inflictor:IsNPC()) then
-		if CAKE.ConVars[ "DamageWhileUnconcious" ] then
+		if TIRA.ConVars[ "DamageWhileUnconcious" ] then
 			ent.ply:SetHealth(ent.ply:Health()-amount)
 			if ent.ply:Health() <= 0 then
-				CAKE.WakeUp(ent.ply, true)
+				TIRA.WakeUp(ent.ply, true)
 				ent.ply.DeadWhileUnconcious = true
 				ent.ply:Kill()
 				ent.ply = nil
@@ -151,4 +151,4 @@ function CAKE.RagDamage( ent, inflictor, attacker, amount )
 	end
  
 end
-hook.Add( "EntityTakeDamage", "Tiramisu.RagdollDamage", CAKE.RagDamage )
+hook.Add( "EntityTakeDamage", "Tiramisu.RagdollDamage", TIRA.RagDamage )

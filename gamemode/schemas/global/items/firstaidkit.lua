@@ -26,8 +26,8 @@ function ITEM:UseItem(ply)
 
 	local id = self:GetNWString("id")
 
-	if !CAKE.GetUData(id , "lastrevive") then
-		CAKE.SetUData(id , "lastrevive", -99999) 
+	if !TIRA.GetUData(id , "lastrevive") then
+		TIRA.SetUData(id , "lastrevive", -99999) 
 	end
 
 	if !ply.ReviveCooldown then
@@ -35,17 +35,17 @@ function ITEM:UseItem(ply)
 	end
 
 	if (ply.ReviveCooldown + 120) > os.time() then
-		CAKE.SendChat(ply, "Please wait " .. math.floor(ply.ReviveCooldown + 120 - os.time()) .. " seconds until you can revive again." )
+		TIRA.SendChat(ply, "Please wait " .. math.floor(ply.ReviveCooldown + 120 - os.time()) .. " seconds until you can revive again." )
 		return
 	end
 
-	if (CAKE.GetUData(id , "lastrevive") + 120) > os.time() then
-		CAKE.SendChat(ply, "Please wait " .. math.floor(CAKE.GetUData(id , "lastrevive")+ 120 - os.time())  .. " seconds for this unit to be usable again." )
+	if (TIRA.GetUData(id , "lastrevive") + 120) > os.time() then
+		TIRA.SendChat(ply, "Please wait " .. math.floor(TIRA.GetUData(id , "lastrevive")+ 120 - os.time())  .. " seconds for this unit to be usable again." )
 		return
 	end
 
 	if ply:GetNWInt("deathmode",0) > 0 then
-		CAKE.SendChat(ply, "*beep* Anabolic Steroids Injected")
+		TIRA.SendChat(ply, "*beep* Anabolic Steroids Injected")
 		ply:Spawn()
 		if ValidEntity(ply.rag) then
 			ply:SetPos(ply.rag:GetPos() + Vector( 0, 0, 30 ))
@@ -56,7 +56,7 @@ function ITEM:UseItem(ply)
 		end
 		ply:SetHealth(15)
 		ply.ReviveCooldown = os.time()
-		CAKE.SetUData(id, "lastrevive", os.time()) 
+		TIRA.SetUData(id, "lastrevive", os.time()) 
 		return
 	else
 		for _, pl in pairs(ents.FindInSphere(self:GetPos(), 100)) do
@@ -64,19 +64,19 @@ function ITEM:UseItem(ply)
 				pl:Spawn()
 				pl:SetHealth()
 				pl:SetPos(ply:CalcDrop() + Vector( 0, 0, 6 ))
-				CAKE.SendChat(ply, "*beep* Anabolic Steroids Injected")
-				CAKE.SendChat(pl, "*beep* Anabolic Steroids Injected")
+				TIRA.SendChat(ply, "*beep* Anabolic Steroids Injected")
+				TIRA.SendChat(pl, "*beep* Anabolic Steroids Injected")
 				if ValidEntity( pl.rag ) then
 					pl.rag:Remove()
 				end
 				pl.rag = nil
 				ply.ReviveCooldown = os.time()
-				CAKE.SetUData(id, "lastrevive", os.time()) 
+				TIRA.SetUData(id, "lastrevive", os.time()) 
 				return
 			end
 		end
 	end
 
-	CAKE.SendChat(ply, "*beep* No target found")
+	TIRA.SendChat(ply, "*beep* No target found")
 
 end

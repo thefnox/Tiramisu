@@ -2,7 +2,7 @@
 function Admin_LocalSound( ply, cmd, args )
 
 	if !args[1] or args[1] == "" then
-		CAKE.SendError(ply, "Must specify a sound file!")
+		TIRA.SendError(ply, "Must specify a sound file!")
 		return
 	end
 
@@ -15,6 +15,6 @@ end
 	
 function PLUGIN.Init()
 
-	CAKE.AdminCommand( "localsound", Admin_LocalSound, "Play a sound locally, from an entity.", true, true, 1 )
+	TIRA.AdminCommand( "localsound", Admin_LocalSound, "Play a sound locally, from an entity.", true, true, 1 )
 	
 end

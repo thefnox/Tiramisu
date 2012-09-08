@@ -1,8 +1,8 @@
 usermessage.Hook("Tiramisu.StartWrite", function()
-	CAKE.WriteNote()
+	TIRA.WriteNote()
 end)
 
-function CAKE.WriteNote()
+function TIRA.WriteNote()
 	WriteMenu = vgui.Create( "DFrame" )
 	WriteMenu:SetSize( 640, 480 )
 	WriteMenu:SetTitle( "Write" )
@@ -33,7 +33,7 @@ function CAKE.WriteNote()
 	WriteMenu:MakePopup()
 end
 
-function CAKE.OpenNote( title, text )
+function TIRA.OpenNote( title, text )
 	ReadMenu = vgui.Create( "DFrame" )
 	ReadMenu:SetSize( 640, 480 )
 	ReadMenu:SetTitle( "Note" )
@@ -77,5 +77,5 @@ function CAKE.OpenNote( title, text )
 	ReadMenu:MakePopup()
 end
 datastream.Hook( "Tiramisu.ReadNote", function( handler, id, encoded, decoded )
-	CAKE.OpenNote( decoded.title, decoded.text )
+	TIRA.OpenNote( decoded.title, decoded.text )
 end )

@@ -17,20 +17,20 @@ end
 
 function ITEM:Pickup(ply)
 	myid = self:GetNWString("id")
-	if !CAKE.GetUData(myid, "uses") then
-		CAKE.SetUData(myid, "uses", 50)
-		CAKE.SetUData(myid, "name", "Paper " .. 50)
+	if !TIRA.GetUData(myid, "uses") then
+		TIRA.SetUData(myid, "uses", 50)
+		TIRA.SetUData(myid, "name", "Paper " .. 50)
 	end
 	self:Remove()
 end
 
 function ITEM:Write(ply)
 	myid = self:GetNWString("id")
-	if !CAKE.GetUData(myid, "uses") then
-		CAKE.SetUData(myid, "uses", 50)
-		CAKE.SetUData(myid, "name", "Paper " .. 50)
+	if !TIRA.GetUData(myid, "uses") then
+		TIRA.SetUData(myid, "uses", 50)
+		TIRA.SetUData(myid, "name", "Paper " .. 50)
 	end
-	CAKE.StartWrite( ply, myid )
+	TIRA.StartWrite( ply, myid )
 end
 
 function ITEM:UseItem(ply)

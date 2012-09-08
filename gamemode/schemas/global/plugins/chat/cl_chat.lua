@@ -22,9 +22,9 @@ datastream.Hook( "TiramisuAddToChat", function( handler, id, encoded, decoded )
 		outline = "TiramisuOOCFontOutline"
 	end
 	if decoded.channel == "IC" then
-		CAKE.Chatbox:AddLine(  "<color=135,209,255,255><font=" .. decoded.font .. ">" .. text .. "</font></color>", decoded.channel, decoded.handler or "", outline )
+		TIRA.Chatbox:AddLine(  "<color=135,209,255,255><font=" .. decoded.font .. ">" .. text .. "</font></color>", decoded.channel, decoded.handler or "", outline )
 	else
-		CAKE.Chatbox:AddLine( "<font=" .. decoded.font .. ">" .. text .. "</font>", decoded.channel, decoded.handler or "", outline )
+		TIRA.Chatbox:AddLine( "<font=" .. decoded.font .. ">" .. text .. "</font>", decoded.channel, decoded.handler or "", outline )
 	end
 
 	for i = 0, text:len() / 255 do
@@ -43,7 +43,7 @@ datastream.Hook( "TiramisuAddToOOC", function( handler, id, encoded, decoded )
 	text = text:gsub("</font>", "")
 	text = text:gsub("<%s*%w*%s*=%s*%w*%s*,%s*%w*%s*,%s*%w*%s*,%s*%w*%s*>", "")
 	text = text:gsub("</color>", "")
-	CAKE.Chatbox:AddLine(  "<font=TiramisuOOCFont><color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>:" .. text .. "</color></font>", "OOC", "" ,"TiramisuOOCFontOutline" )
+	TIRA.Chatbox:AddLine(  "<font=TiramisuOOCFont><color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">".. playername .. "</color><color=white>:" .. text .. "</color></font>", "OOC", "" ,"TiramisuOOCFontOutline" )
 
 	text = "[OOC]" .. playername .. ": " .. text
 
@@ -63,7 +63,7 @@ function PANEL:Init()
 		self:SetFocusTopLevel( true )
 
 		self.Channels = {}
-		self.Color = CAKE.BaseColor
+		self.Color = TIRA.BaseColor
 		self:ShowCloseButton( false )
 		self:SetTitle( "" )
 		
@@ -144,7 +144,7 @@ function PANEL:AddChannel( name, description, handler, cantclose )
 				panel.VBar:SetVisible( self.Open )
 			end
 			render.SetScissorRect( 4, 0, 0, panel:GetWide(), panel:GetTall(), true )
-			for i = math.max(panel.Lines - CAKE.ConVars[ "MaxChatLines" ],1), panel.Lines do
+			for i = math.max(panel.Lines - TIRA.ConVars[ "MaxChatLines" ],1), panel.Lines do
 				local pnl = panel.Items[i]
 				if pnl and pnl:Valid() then
 					if self.Open then
@@ -169,9 +169,9 @@ function PANEL:AddChannel( name, description, handler, cantclose )
 		panel.AddItem = function(pnl, item)
 			panel.Lines = panel.Lines + 1
 
-			if panel.Lines > CAKE.ConVars[ "MaxChatLines" ] then
-				panel.Items[panel.Lines - CAKE.ConVars[ "MaxChatLines" ]]:Remove()
-				panel.Items[panel.Lines - CAKE.ConVars[ "MaxChatLines" ]] = nil
+			if panel.Lines > TIRA.ConVars[ "MaxChatLines" ] then
+				panel.Items[panel.Lines - TIRA.ConVars[ "MaxChatLines" ]]:Remove()
+				panel.Items[panel.Lines - TIRA.ConVars[ "MaxChatLines" ]] = nil
 			end
 
 			if (!item || !item:IsValid()) then return end
@@ -388,7 +388,7 @@ end)
 
 hook.Add("PlayerBindPress", "TiramisuChatOverride", function(ply, bind, pressed)
 	if string.find( bind, "messagemode" ) or string.find( bind, "messagemode2" ) then
-		CAKE.Chatbox:OpenChat()
+		TIRA.Chatbox:OpenChat()
 		return true
 	end
 end)
@@ -396,8 +396,8 @@ end)
 usermessage.Hook( "TiramisuInitChat", function( um )
 	gamemode.Call( "StartChat" )
 	gamemode.Call( "FinishChat" )
-	if !CAKE.ChatBox then
-		CAKE.Chatbox = vgui.Create( "TiramisuChatBox" )
-		CAKE.Chatbox:Init()
+	if !TIRA.ChatBox then
+		TIRA.Chatbox = vgui.Create( "TiramisuChatBox" )
+		TIRA.Chatbox:Init()
 	end
 end)

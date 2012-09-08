@@ -15,9 +15,9 @@ function RCLICK.Click(target,ply)
 		table.insert( tbl, v:Nick() )
 	end
 
-	CAKE.ChoiceRequest( "Go to a player", "Choose what player to go to", tbl,
+	TIRA.ChoiceRequest( "Go to a player", "Choose what player to go to", tbl,
 	function( text )
-		if CAKE.FindPlayer(text) then
+		if TIRA.FindPlayer(text) then
 			ply:ConCommand("rp_admin goto \""  .. text .. "\"" )
 		end
 	end,

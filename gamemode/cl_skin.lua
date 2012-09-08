@@ -101,7 +101,7 @@ SKIN.fontButton					= "TiramisuDefaultFont"
 function SKIN:PaintFrame( panel )
 
 	x, y = panel:ScreenToLocal( 0, 0 ) 
-	color = panel.Color or CAKE.BaseColor or Color( 100, 100, 115, 150 )
+	color = panel.Color or TIRA.BaseColor or Color( 100, 100, 115, 150 )
 	
 	// Background 
 	surface.SetMaterial( matBlurScreen ) 
@@ -153,52 +153,52 @@ end
 ---------------------------------------------------------*/
 
 function SKIN:InitIntro()
-	CAKE.IntroStage1 = true
-	CAKE.IntroStage2 = false
-	CAKE.IntroStage3 = false
-	CAKE.IntroStage4 = false
-	CAKE.IntroStage1Alpha = 0
-	CAKE.IntroStage2Alpha = 0
-	CAKE.IntroStage3Alpha = 0
+	TIRA.IntroStage1 = true
+	TIRA.IntroStage2 = false
+	TIRA.IntroStage3 = false
+	TIRA.IntroStage4 = false
+	TIRA.IntroStage1Alpha = 0
+	TIRA.IntroStage2Alpha = 0
+	TIRA.IntroStage3Alpha = 0
 	timer.Create( "IntroStage1", 1, 1, function()
-		CAKE.IntroSkippable = true
+		TIRA.IntroSkippable = true
 	end)
 	timer.Create( "IntroStage2", 3, 1, function()
-		CAKE.IntroStage2 = true
+		TIRA.IntroStage2 = true
 	end)
 	timer.Create( "IntroStage3", 5, 1, function()
-		CAKE.IntroStage3 = true
+		TIRA.IntroStage3 = true
 	end)
 	timer.Create( "IntroStage4", 9, 1, function()
-		CAKE.IntroStage1 = false
-		CAKE.IntroStage2 = false
-		CAKE.IntroStage3 = false
-		CAKE.IntroStage4 = true
+		TIRA.IntroStage1 = false
+		TIRA.IntroStage2 = false
+		TIRA.IntroStage3 = false
+		TIRA.IntroStage4 = true
 	end)
 	timer.Create( "IntroStage5", 12, 1, function()
-		CAKE.EndIntro()
+		TIRA.EndIntro()
 	end)
 end
 
 function SKIN:PaintIntro()
-	if CAKE.IntroStage1 then
-		CAKE.IntroStage1Alpha = Lerp(1.5 * RealFrameTime(), CAKE.IntroStage1Alpha, 255 )
+	if TIRA.IntroStage1 then
+		TIRA.IntroStage1Alpha = Lerp(1.5 * RealFrameTime(), TIRA.IntroStage1Alpha, 255 )
 	end
-	if CAKE.IntroStage2 then
-		CAKE.IntroStage2Alpha = Lerp(1.5 * RealFrameTime(), CAKE.IntroStage2Alpha, 255 )
+	if TIRA.IntroStage2 then
+		TIRA.IntroStage2Alpha = Lerp(1.5 * RealFrameTime(), TIRA.IntroStage2Alpha, 255 )
 	end
-	if CAKE.IntroStage3 then
-		CAKE.IntroStage3Alpha = Lerp(1.5 * RealFrameTime(), CAKE.IntroStage3Alpha, 255 )
+	if TIRA.IntroStage3 then
+		TIRA.IntroStage3Alpha = Lerp(1.5 * RealFrameTime(), TIRA.IntroStage3Alpha, 255 )
 	end
-	if CAKE.IntroStage4 then
-		CAKE.IntroStage1Alpha = Lerp(2 * RealFrameTime(), CAKE.IntroStage1Alpha, 0 )
-		CAKE.IntroStage2Alpha = Lerp(2 * RealFrameTime(), CAKE.IntroStage2Alpha, 0 )
-		CAKE.IntroStage3Alpha = Lerp(2 * RealFrameTime(), CAKE.IntroStage3Alpha, 0 )
+	if TIRA.IntroStage4 then
+		TIRA.IntroStage1Alpha = Lerp(2 * RealFrameTime(), TIRA.IntroStage1Alpha, 0 )
+		TIRA.IntroStage2Alpha = Lerp(2 * RealFrameTime(), TIRA.IntroStage2Alpha, 0 )
+		TIRA.IntroStage3Alpha = Lerp(2 * RealFrameTime(), TIRA.IntroStage3Alpha, 0 )
 	end
 
-	draw.SimpleTextOutlined( "Tiramisu", "Tiramisu64Font", ScrW()/2-20, ScrH() /2 - 50, Color(255,255,255,CAKE.IntroStage1Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,math.max(CAKE.IntroStage1Alpha, 130)))
-	draw.SimpleTextOutlined( "                       2", "Tiramisu64Font", ScrW()/2, ScrH() /2 - 50, Color(255,0,0,CAKE.IntroStage2Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,math.max(CAKE.IntroStage2Alpha, 130)))
-	draw.SimpleTextOutlined( "A new era in roleplay", "Tiramisu24Font", ScrW()/2, ScrH() / 2 + 10, Color(255,255,255,CAKE.IntroStage3Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,math.max(CAKE.IntroStage3Alpha, 130)))
+	draw.SimpleTextOutlined( "Tiramisu", "Tiramisu64Font", ScrW()/2-20, ScrH() /2 - 50, Color(255,255,255,TIRA.IntroStage1Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,math.max(TIRA.IntroStage1Alpha, 130)))
+	draw.SimpleTextOutlined( "                       2", "Tiramisu64Font", ScrW()/2, ScrH() /2 - 50, Color(255,0,0,TIRA.IntroStage2Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,math.max(TIRA.IntroStage2Alpha, 130)))
+	draw.SimpleTextOutlined( "A new era in roleplay", "Tiramisu24Font", ScrW()/2, ScrH() / 2 + 10, Color(255,255,255,TIRA.IntroStage3Alpha), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT, 1, Color(0,0,0,math.max(TIRA.IntroStage3Alpha, 130)))
 end
 
 function SKIN:ThinkIntro()
@@ -263,7 +263,7 @@ function SKIN:PaintTiramisuChatBox(panel)
 
 	x, y = panel:ScreenToLocal( 0, 0 ) 
 	lastpos = 0
-	color = CAKE.BaseColor or Color( 100, 100, 115, 150 )
+	color = TIRA.BaseColor or Color( 100, 100, 115, 150 )
 	
 	// Background 
 	surface.SetMaterial( matBlurScreen ) 
@@ -308,15 +308,15 @@ end
 	Character Selection
 ---------------------------------------------------------*/
 function SKIN:LayoutCharacterSelection( hideclosebutton )
-	CAKE.EnableBlackScreen( true )
+	TIRA.EnableBlackScreen( true )
 
 	local subtitlelabel
 	local titlelabel
 
 	if hideclosebutton then
-		CAKE.CurrentChar = false
+		TIRA.CurrentChar = false
 	else
-		CAKE.CurrentChar = CAKE.SelectedChar
+		TIRA.CurrentChar = TIRA.SelectedChar
 	end
 
 	if !CharacterMenu then
@@ -327,7 +327,7 @@ function SKIN:LayoutCharacterSelection( hideclosebutton )
 		CharacterMenu:ShowCloseButton( false )
 		CharacterMenu:SetTitle( "" )
 		CharacterMenu.Paint = function()
-			CAKE.DrawBlurScreen()
+			TIRA.DrawBlurScreen()
 		end
 		CharacterMenu.PaintOver = function()
 			if CharacterMenu.Children then
@@ -357,14 +357,14 @@ function SKIN:LayoutCharacterSelection( hideclosebutton )
 		CharacterMenu:MakePopup()
 
 		titlelabel = vgui.Create( "DLabel", CharacterMenu )
-		titlelabel:SetText( CAKE.ConVars[ "IntroText" ] )
+		titlelabel:SetText( TIRA.ConVars[ "IntroText" ] )
 		titlelabel:SetFont( "Tiramisu64Font" )
 		titlelabel:SizeToContents()
 		titlelabel:SetPos( 20, 20 )
 		CharacterMenu.AddChild(titlelabel)
 
 		subtitlelabel = vgui.Create( "DLabel", CharacterMenu )
-		subtitlelabel:SetText( CAKE.ConVars[ "IntroSubtitle" ] )
+		subtitlelabel:SetText( TIRA.ConVars[ "IntroSubtitle" ] )
 		subtitlelabel:SetFont( "Tiramisu32Font" )
 		subtitlelabel:SizeToContents()
 		subtitlelabel:SetPos( 20, 30 + titlelabel:GetTall() )
@@ -462,11 +462,11 @@ function SKIN:LayoutCharacterSelectionButtons( canclose )
 		draw.SimpleText( " Spawn ", "Tiramisu24Font", 0, 0, Color(255,255,255), TEXT_ALIGN_LEFT )
 	end
 	spawnlabel.DoClick = function()
-		if CAKE.SelectedChar then
-			RunConsoleCommand( "rp_spawnchar", tostring( CAKE.SelectedChar ))
+		if TIRA.SelectedChar then
+			RunConsoleCommand( "rp_spawnchar", tostring( TIRA.SelectedChar ))
 			derma.SkinHook( "Close", "CharacterSelection")
 		else
-			CAKE.Message( "You need to select a character first!", "Warning", "OK", Color( 140, 100, 100) )
+			TIRA.Message( "You need to select a character first!", "Warning", "OK", Color( 140, 100, 100) )
 		end
 	end
 	CharacterMenu.AddChild( spawnlabel )
@@ -519,8 +519,8 @@ function SKIN:LayoutCharacterSelectionButtons( canclose )
 		draw.SimpleText( " Play Intro ", "Tiramisu24Font", 0, 0, Color(255,255,255), TEXT_ALIGN_LEFT )
 	end
 	introlabel.DoClick = function()
-		CAKE.EnableBlackScreen( true, true )
-		CAKE.StartIntro( canclose )
+		TIRA.EnableBlackScreen( true, true )
+		TIRA.StartIntro( canclose )
 		if CharacterMenu then
 			PlayerModel:Close()
 			CharacterMenu:Remove()
@@ -543,7 +543,7 @@ function SKIN:LayoutCharacterSelectionButtons( canclose )
 			draw.SimpleText( " Close Menu ", "Tiramisu24Font", 0, 0, Color(255,255,255), TEXT_ALIGN_LEFT )
 		end
 		closelabel.DoClick = function()
-			RunConsoleCommand("rp_selectchar", tostring( CAKE.CurrentChar ))
+			RunConsoleCommand("rp_selectchar", tostring( TIRA.CurrentChar ))
 			derma.SkinHook( "Close", "CharacterSelection")
 		end
 		CharacterMenu.AddChild( closelabel )
@@ -551,7 +551,7 @@ function SKIN:LayoutCharacterSelectionButtons( canclose )
 end
 
 function SKIN:CloseCharacterSelection()
-	CAKE.EnableBlackScreen( false )
+	TIRA.EnableBlackScreen( false )
 	if CharTitleLabel then
 		CharTitleLabel:Remove()
 		CharTitleLabel = nil
@@ -667,7 +667,7 @@ function SKIN:CharacterCreationStep1()
 		panel:AddItem( titletext )
 
 		local modellist = vgui.Create( "DMultiChoice" )
-		for k, v in pairs( CAKE.ConVars[ "DefaultModels" ][ Gender ] ) do
+		for k, v in pairs( TIRA.ConVars[ "DefaultModels" ][ Gender ] ) do
 			modellist:AddChoice( v )
 		end
 		modellist.OnSelect = function( panel,index,value )
@@ -681,13 +681,13 @@ function SKIN:CharacterCreationStep1()
 		genderlist:AddChoice( "Female" )
 		genderlist.OnSelect = function( panel,index,value )
 			Gender = value
-			RunConsoleCommand( "rp_testclothing", value, CAKE.ConVars[ "DefaultModels" ][ value ][1] )
+			RunConsoleCommand( "rp_testclothing", value, TIRA.ConVars[ "DefaultModels" ][ value ][1] )
 			modellist:Clear()
-			for k, v in pairs( CAKE.ConVars[ "DefaultModels" ][ Gender ] ) do
+			for k, v in pairs( TIRA.ConVars[ "DefaultModels" ][ Gender ] ) do
 				modellist:AddChoice( v )
 			end
 			SelectedClothing = "none"
-			SelectedModel = CAKE.ConVars[ "DefaultModels" ][ value ][1]
+			SelectedModel = TIRA.ConVars[ "DefaultModels" ][ value ][1]
 			modellist:ChooseOptionID( 1 )
 		end
 		genderlist:ChooseOptionID( 1 )
@@ -720,7 +720,7 @@ function SKIN:CharacterCreationStep1()
 		panel:AddItem( numberwang )
 
 		local facev
-		if CAKE.ConVars[ "UseEnhancedCitizens" ] then
+		if TIRA.ConVars[ "UseEnhancedCitizens" ] then
 			facev = vgui.Create( "DNumSlider", DermaPanel )
 			facev:SetValue(0)
 			facev:SetText( "Face Variation" )
@@ -755,7 +755,7 @@ function SKIN:CharacterCreationStep1()
 		end
 		gobacklabel.DoClick = function()
 			RunConsoleCommand( "rp_escapecreate" )
-			RunConsoleCommand("rp_selectchar", tostring( CAKE.SelectedChar ))
+			RunConsoleCommand("rp_selectchar", tostring( TIRA.SelectedChar ))
 			panel.SlideOut = true
 			gobacklabel.SlideOut = true
 			createlabel.SlideOut = true
@@ -795,7 +795,7 @@ function SKIN:CharacterCreationStep1()
 			RunConsoleCommand("rp_title", Title1 )
 			RunConsoleCommand("rp_setage", Age )
 			RunConsoleCommand("rp_setgender", Gender )
-			if CAKE.ConVars[ "UseEnhancedCitizens" ] then
+			if TIRA.ConVars[ "UseEnhancedCitizens" ] then
 				RunConsoleCommand("rp_facevariation", facev:GetValue() )
 			end
 			RunConsoleCommand( "rp_finishcreate" )
@@ -824,7 +824,7 @@ end
 local staminaperc, staminaalpha
 staminaalpha = 230
 function SKIN:PaintStaminaBar()
-	if CAKE.MinimalHUD:GetBool() then
+	if TIRA.MinimalHUD:GetBool() then
 		if LocalPlayer().TiramisuStaminaRegen and staminaalpha != 230 then
 			staminaalpha = Lerp( 10 * RealFrameTime(), staminaalpha, 230 )
 		elseif !LocalPlayer().TiramisuStaminaRegen then
@@ -857,10 +857,10 @@ local rot = 0
 function SKIN:PaintHealthBar()
 	if LocalPlayer():Alive() then
 		rot = math.NormalizeAngle( rot + RealFrameTime() )
-		if CAKE.MinimalHUD:GetBool() then
-			if (CAKE.MenuOpen or LocalPlayer().IsDamaged) and healthalpha != 230 then
+		if TIRA.MinimalHUD:GetBool() then
+			if (TIRA.MenuOpen or LocalPlayer().IsDamaged) and healthalpha != 230 then
 				healthalpha = Lerp( 10 * RealFrameTime(), healthalpha, 230 )
-			elseif !(CAKE.MenuOpen or LocalPlayer().IsDamaged) then
+			elseif !(TIRA.MenuOpen or LocalPlayer().IsDamaged) then
 				healthalpha = Lerp( 10 * RealFrameTime(), healthalpha, 0 )
 			end
 		else
@@ -911,7 +911,7 @@ end
 function SKIN:PaintDeathMessage()
 	if LocalPlayer():GetNWInt("deathmode", 0 ) != 0 then
 		if LocalPlayer():GetNWInt( "deathmoderemaining" ) < 5 and LocalPlayer():GetNWInt( "deathmoderemaining" ) != 0 then
-			CAKE.EnableBlackScreen( CAKE.ConVars[ "FadeToBlackOnDeath" ] )
+			TIRA.EnableBlackScreen( TIRA.ConVars[ "FadeToBlackOnDeath" ] )
 		end
 		if LocalPlayer():GetNWInt( "deathmoderemaining" ) > 0 then
 			--Normal death.
@@ -922,7 +922,7 @@ function SKIN:PaintDeathMessage()
 				draw.DrawText( "You have died while unconcious. Wait " .. tostring( LocalPlayer( ):GetNWInt( "deathmoderemaining" ) ) .. " seconds", "Tiramisu18Font", ScrW( ) / 2,60, Color( 255,255,255,255 ), TEXT_ALIGN_CENTER )
 			end
 		else
-			if !CAKE.ConVars[ "Instant_Respawn" ] then
+			if !TIRA.ConVars[ "Instant_Respawn" ] then
 				draw.DrawText( "Press the button to respawn or type rp_acceptdeath in console.", "Tiramisu18Font", ScrW( ) / 2,60, Color( 255,255,255,255 ), TEXT_ALIGN_CENTER )
 			end
 		end
@@ -937,17 +937,17 @@ end
 	TiramisuClock, draws current gamemode time and player title.
 ---------------------------------------------------------*/
 function SKIN:PaintTiramisuClock()
-	if !CAKE.MinimalHUD:GetBool() or CAKE.MenuOpen then 
+	if !TIRA.MinimalHUD:GetBool() or TIRA.MenuOpen then 
 		if GetGlobalString( "time" ) != "Loading.." and GetGlobalString( "time" ) != "" then
-			draw.SimpleTextOutlined( CAKE.FindDayName() .. ", " .. GetGlobalString( "time" ), "TiramisuNamesFont", ScrW() - 10, 10, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
+			draw.SimpleTextOutlined( TIRA.FindDayName() .. ", " .. GetGlobalString( "time" ), "TiramisuNamesFont", ScrW() - 10, 10, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
 		else
 			draw.SimpleTextOutlined( GetGlobalString( "time" ), "TiramisuNamesFont", ScrW() - 10, 10, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
 		end
 	end
-	if CAKE.MenuOpen then
+	if TIRA.MenuOpen then
 		draw.SimpleTextOutlined( LocalPlayer():Nick(), "TiramisuNamesFont", ScrW() - 10, 30, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
 		draw.SimpleTextOutlined( LocalPlayer():Title(), "TiramisuNamesFont", ScrW() - 10, 50, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
-		draw.SimpleTextOutlined( LocalPlayer():GetNWInt( "money", 0 ) .. " " .. CAKE.ConVars[ "CurrencySlang" ] .. "s", "TiramisuNamesFont", ScrW() - 10, 70, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
+		draw.SimpleTextOutlined( LocalPlayer():GetNWInt( "money", 0 ) .. " " .. TIRA.ConVars[ "CurrencySlang" ] .. "s", "TiramisuNamesFont", ScrW() - 10, 70, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_LEFT, 1, Color(0,0,0,180))
 	end
 end
 
@@ -956,8 +956,8 @@ end
 ---------------------------------------------------------*/
 local foundents, ply, tracehull
 function SKIN:ThinkPlayerTitles()
-	foundents = ents.FindInSphere( LocalPlayer():GetPos(), CAKE.TitleDrawDistance:GetInt() )
-	for _, ply in pairs(CAKE.NearbyPlayers) do
+	foundents = ents.FindInSphere( LocalPlayer():GetPos(), TIRA.TitleDrawDistance:GetInt() )
+	for _, ply in pairs(TIRA.NearbyPlayers) do
 		if ValidEntity( ply ) and ply:IsTiraPlayer() then
 			if !table.HasValue( foundents, ply ) then
 				ply.FirstSeen = false
@@ -968,11 +968,11 @@ function SKIN:ThinkPlayerTitles()
 			end
 		end
 	end
-	CAKE.NearbyPlayers = foundents
-	if CAKE.Thirdperson:GetBool() and LocalPlayer().CurrentLookAt then
+	TIRA.NearbyPlayers = foundents
+	if TIRA.Thirdperson:GetBool() and LocalPlayer().CurrentLookAt then
 		tracehull = util.TraceHull({
 			start = LocalPlayer():EyePos(),
-			endpos = LocalPlayer():EyePos() + (LocalPlayer().CurrentLookAt + LocalPlayer():GetAngles()):Forward() * CAKE.TitleDrawDistance:GetInt(),
+			endpos = LocalPlayer():EyePos() + (LocalPlayer().CurrentLookAt + LocalPlayer():GetAngles()):Forward() * TIRA.TitleDrawDistance:GetInt(),
 			filter = LocalPlayer(),
 			mins = LocalPlayer():OBBMins(),
 			maxs = LocalPlayer():OBBMaxs()
@@ -991,7 +991,7 @@ function SKIN:ThinkPlayerTitles()
 end
 
 function SKIN:PaintPlayerTitles()
-	for _, ply in pairs( CAKE.NearbyPlayers ) do
+	for _, ply in pairs( TIRA.NearbyPlayers ) do
 		if !LocalPlayer() then return end
 		if ValidEntity( ply ) and ply:IsTiraPlayer() and ply:IsTiraPlayer() != LocalPlayer() and LocalPlayer():CanTraceTo(ply) and !ply:GetNWBool("unconciousmode") then
 			local angleto = (ply:GetPos() - LocalPlayer():GetPos()):Angle()
@@ -1042,37 +1042,37 @@ function SKIN:PaintDoorTitles()
 		end
 	end
 	LocalPlayer().CurDoor = door
-	if ValidEntity( door ) and CAKE.IsDoor( door ) and CAKE.GetDoorTitle( door ) != "" then
-		doordata = CAKE.CalculateDoorTextPosition( door )
+	if ValidEntity( door ) and TIRA.IsDoor( door ) and TIRA.GetDoorTitle( door ) != "" then
+		doordata = TIRA.CalculateDoorTextPosition( door )
 		if doordata and !doordata.HitWorld then
 			viewpos = LocalPlayer():GetShootPos()
 			alpha = math.Clamp( LocalPlayer():EyePos():Distance( door:GetPos() ) * - 1 + 300, 0, 255 )
 			cam.Start3D2D(doordata.position, doordata.angles, 0.12 )
-				draw.SimpleTextOutlined( CAKE.GetDoorTitle( door ), "Tiramisu48Font", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
+				draw.SimpleTextOutlined( TIRA.GetDoorTitle( door ), "Tiramisu48Font", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
 			cam.End3D2D()
 							
 			cam.Start3D2D(doordata.positionBack, doordata.anglesBack, 0.12)
-				draw.SimpleTextOutlined( CAKE.GetDoorTitle( door ), "Tiramisu48Font", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
+				draw.SimpleTextOutlined( TIRA.GetDoorTitle( door ), "Tiramisu48Font", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
 			cam.End3D2D()
 		end
 	end
-	if LocalPlayer().PrevDoor and ValidEntity( LocalPlayer().PrevDoor ) and CAKE.IsDoor( LocalPlayer().PrevDoor ) and CAKE.GetDoorTitle( LocalPlayer().PrevDoor ) != "" then
+	if LocalPlayer().PrevDoor and ValidEntity( LocalPlayer().PrevDoor ) and TIRA.IsDoor( LocalPlayer().PrevDoor ) and TIRA.GetDoorTitle( LocalPlayer().PrevDoor ) != "" then
 		if LocalPlayer().PrevDoor.DoorAlpha == 0 then
 			LocalPlayer().PrevDoor.DoorAlpha = false
 			LocalPlayer().PrevDoor = false
 		else
 			LocalPlayer().PrevDoor.DoorAlpha = -Lerp( RealFrameTime() * 5, -LocalPlayer().PrevDoor.DoorAlpha, 0 )
 		end
-		doordata = CAKE.CalculateDoorTextPosition( LocalPlayer().PrevDoor )
+		doordata = TIRA.CalculateDoorTextPosition( LocalPlayer().PrevDoor )
 		if doordata and !doordata.HitWorld then
 			viewpos = LocalPlayer():GetShootPos()
 			alpha = LocalPlayer().PrevDoor.DoorAlpha
 			cam.Start3D2D(doordata.position, doordata.angles, 0.12 )
-				draw.SimpleTextOutlined( CAKE.GetDoorTitle( LocalPlayer().PrevDoor ), "Tiramisu48Font", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
+				draw.SimpleTextOutlined( TIRA.GetDoorTitle( LocalPlayer().PrevDoor ), "Tiramisu48Font", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
 			cam.End3D2D()
 							
 			cam.Start3D2D(doordata.positionBack, doordata.anglesBack, 0.12)
-				draw.SimpleTextOutlined( CAKE.GetDoorTitle( LocalPlayer().PrevDoor ), "Tiramisu48Font", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
+				draw.SimpleTextOutlined( TIRA.GetDoorTitle( LocalPlayer().PrevDoor ), "Tiramisu48Font", 0, 0, Color( 255, 255, 255, alpha ),TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 2, Color(10,10,10,alpha) )
 			cam.End3D2D()
 		end
 	end
@@ -1111,7 +1111,7 @@ local x, y, n
 local gradientup = surface.GetTextureID("gui/gradient_up")
 local gradientdown = surface.GetTextureID("gui/gradient_down")
 function SKIN:PaintBlurScreen()
-	color = CAKE.BaseColor or Color( 100, 100, 115, 150 )
+	color = TIRA.BaseColor or Color( 100, 100, 115, 150 )
 
 	// new hip way of doing gradients
 
@@ -1157,24 +1157,24 @@ local curslot
 	TiramisuWeaponSelection, used for selecting weapons
 ---------------------------------------------------------*/
 function SKIN:PaintTiramisuWeaponSelection()
-	if CAKE.ActiveSlot != -1 and CAKE.WeaponTable[CAKE.ActiveSlot] then
+	if TIRA.ActiveSlot != -1 and TIRA.WeaponTable[TIRA.ActiveSlot] then
 		textalpha = 200
-		next = CAKE.ActiveWepPos + 1
-		prev = CAKE.ActiveWepPos - 1
-		if !CAKE.WeaponTable[CAKE.ActiveSlot][next] then
+		next = TIRA.ActiveWepPos + 1
+		prev = TIRA.ActiveWepPos - 1
+		if !TIRA.WeaponTable[TIRA.ActiveSlot][next] then
 			next = 1
 		end
-		if !CAKE.WeaponTable[CAKE.ActiveSlot][prev] then
-			prev = #CAKE.WeaponTable[CAKE.ActiveSlot]
+		if !TIRA.WeaponTable[TIRA.ActiveSlot][prev] then
+			prev = #TIRA.WeaponTable[TIRA.ActiveSlot]
 		end
 		prevspot, nextspot = ScrW()/2, ScrW()/2 + 175
 		surface.SetDrawColor( Color( 0,0,0, 200 ) )
 		surface.SetTexture( gradient )
 		surface.DrawTexturedRectRotated(ScrW()/2-100,50,200,25,180)
 		surface.DrawTexturedRectRotated(ScrW()/2+100,50,200,25,0)
-		draw.DrawText( CAKE.WeaponTable[CAKE.ActiveSlot][CAKE.ActiveWepPos][1], "Tiramisu16Font", ScrW()/2, 40, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT )
-		draw.DrawText( CAKE.WeaponTable[CAKE.ActiveSlot][next][1], "Tiramisu16Font", ScrW()/2 + 175, 40, Color( 255, 255, 255, 120 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT )
-		draw.DrawText( CAKE.WeaponTable[CAKE.ActiveSlot][prev][1], "Tiramisu16Font", ScrW()/2 - 175, 40, Color( 255, 255, 255, 120 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT )
+		draw.DrawText( TIRA.WeaponTable[TIRA.ActiveSlot][TIRA.ActiveWepPos][1], "Tiramisu16Font", ScrW()/2, 40, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT )
+		draw.DrawText( TIRA.WeaponTable[TIRA.ActiveSlot][next][1], "Tiramisu16Font", ScrW()/2 + 175, 40, Color( 255, 255, 255, 120 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT )
+		draw.DrawText( TIRA.WeaponTable[TIRA.ActiveSlot][prev][1], "Tiramisu16Font", ScrW()/2 - 175, 40, Color( 255, 255, 255, 120 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_LEFT )
 	elseif textalpha != 0 then
 		curslot = false
 		textalpha = Lerp( 10 * RealFrameTime(), textalpha, 0 )

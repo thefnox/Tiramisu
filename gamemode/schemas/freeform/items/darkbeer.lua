@@ -18,7 +18,7 @@ end
 
 function ITEM:UseItem(ply)
 
-	CAKE.DrugPlayer(ply, 3)
+	TIRA.DrugPlayer(ply, 3)
 	self:Remove()
 
 end

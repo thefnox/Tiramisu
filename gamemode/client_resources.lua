@@ -4,12 +4,12 @@ function AddResource( res_type, path )
 	if( string.lower( res_type ) == "lua" ) then
 	
 		AddCSLuaFile( path )
-		CAKE.DayLog( "script.txt", "Added clientside lua file '" .. path .. "'" )
+		TIRA.DayLog( "script.txt", "Added clientside lua file '" .. path .. "'" )
 		
 	else
 	
 		resource.AddFile( path )
-		CAKE.DayLog( "script.txt", "Added file '" .. path .. "'" )
+		TIRA.DayLog( "script.txt", "Added file '" .. path .. "'" )
 		
 	end
 	
@@ -19,7 +19,7 @@ local function AddContentFolder( filepath ) --Adds all of the files on the conte
 
 
 	local filepath = filepath or ""
-	local list = file.Find( "gamemodes/" .. CAKE.Name .. "/content" .. filepath  .. "/*", true ) or {}
+	local list = file.Find( "gamemodes/" .. TIRA.Name .. "/content" .. filepath  .. "/*", true ) or {}
 	for k, v in pairs( list ) do
 		if string.GetExtensionFromFilename(v) and string.GetExtensionFromFilename(v) != "dll" then
 			AddResource( string.GetExtensionFromFilename(v), string.sub( filepath .. "/" .. v, 2 ) ) --Starting from char 2 since char one is a slash.

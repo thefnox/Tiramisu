@@ -3,7 +3,7 @@ RCLICK.SubMenu = "Faction"
 
 function RCLICK.Condition(target)
 
-if target == LocalPlayer() and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 3 and table.Count(CAKE.Factions) > 0 then return true end
+if target == LocalPlayer() and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 3 and table.Count(TIRA.Factions) > 0 then return true end
 
 end
 
@@ -13,7 +13,7 @@ function RCLICK.Click(target,ply)
 		local dmenu = DermaMenu()
 		local main = dmenu:AddSubMenu( "Edit" )
 
-		for faction, uid in pairs( CAKE.Factions ) do
+		for faction, uid in pairs( TIRA.Factions ) do
 			main:AddOption(faction, function() RunConsoleCommand("rp_editfaction", uid) end)
 		end
 		dmenu:Open()

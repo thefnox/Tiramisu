@@ -1,4 +1,4 @@
-CAKE.SpawnPoints = {}
+TIRA.SpawnPoints = {}
 
 --rp_admin addspawn, while standing on the point you want the player to spawn on.
 local function Admin_AddSpawn( ply, cmd, args)
@@ -7,11 +7,11 @@ local function Admin_AddSpawn( ply, cmd, args)
 	table.remove(args, 1)
 	local name = table.concat( args, " " )
 
-	if CAKE.SpawnPoints[spawngroup] and CAKE.SpawnPoints[spawngroup][name] then
-		CAKE.SendError( ply, "Spawnpoint already exists! Please enter another name.")
+	if TIRA.SpawnPoints[spawngroup] and TIRA.SpawnPoints[spawngroup][name] then
+		TIRA.SendError( ply, "Spawnpoint already exists! Please enter another name.")
 	else
-		CAKE.AddSpawn(name, ply:GetPos(), ply:GetAngles(), spawngroup)
-		CAKE.SendSpawnPoints(ply)
+		TIRA.AddSpawn(name, ply:GetPos(), ply:GetAngles(), spawngroup)
+		TIRA.SendSpawnPoints(ply)
 	end
 
 end
@@ -22,58 +22,58 @@ local function Admin_RemoveSpawn( ply, cmd, args)
 	table.remove(args, 1)
 	local name = table.concat( args, " " )
 
-	if CAKE.SpawnPoints[spawngroup] and CAKE.SpawnPoints[spawngroup][name] then
-		CAKE.SpawnPoints[spawngroup][name] = nil
+	if TIRA.SpawnPoints[spawngroup] and TIRA.SpawnPoints[spawngroup][name] then
+		TIRA.SpawnPoints[spawngroup][name] = nil
 	end
 
-	CAKE.SaveSpawns()
-	CAKE.SendSpawnPoints(ply)
+	TIRA.SaveSpawns()
+	TIRA.SendSpawnPoints(ply)
 
 end
 
 --Adds a spawnpoint
 
-function CAKE.AddSpawn(name, pos, ang, spawngroup)
+function TIRA.AddSpawn(name, pos, ang, spawngroup)
 	spawngroup = spawngroup or 0
 
-	if !CAKE.SpawnPoints[spawngroup] then
-		CAKE.SpawnPoints[spawngroup] = {}
+	if !TIRA.SpawnPoints[spawngroup] then
+		TIRA.SpawnPoints[spawngroup] = {}
 	end
 
-	CAKE.SpawnPoints[spawngroup][name] = {}
-	CAKE.SpawnPoints[spawngroup][name].pos = pos
-	CAKE.SpawnPoints[spawngroup][name].ang = ang
+	TIRA.SpawnPoints[spawngroup][name] = {}
+	TIRA.SpawnPoints[spawngroup][name].pos = pos
+	TIRA.SpawnPoints[spawngroup][name].ang = ang
 
-	CAKE.SaveSpawns()
+	TIRA.SaveSpawns()
 end
 
 --Destroys all spawnpoints
 
-function CAKE.ClearSpawns()
-	CAKE.SpawnPoints = {}
-	CAKE.SaveSpawns()
+function TIRA.ClearSpawns()
+	TIRA.SpawnPoints = {}
+	TIRA.SaveSpawns()
 end
 
 --Saves Spawnpoints to MapInfo
 
-function CAKE.SaveSpawns()
-	file.Write( CAKE.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt" , von.serialize(CAKE.SpawnPoints))
+function TIRA.SaveSpawns()
+	file.Write( TIRA.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt" , von.serialize(TIRA.SpawnPoints))
 end
 
 --Internal function used to determine where shall a player spawn
 
-function CAKE.SpawnPointHandle(ply)
+function TIRA.SpawnPointHandle(ply)
 	local spawngroup = 0
 	if ply:IsCharLoaded() then
-		if CAKE.GroupExists( CAKE.GetCharField( ply, "activegroup" )) then
-			spawngroup = tonumber(CAKE.GetGroup(CAKE.GetCharField( ply, "activegroup" )):GetField( "spawngroup" ) or 0)
+		if TIRA.GroupExists( TIRA.GetCharField( ply, "activegroup" )) then
+			spawngroup = tonumber(TIRA.GetGroup(TIRA.GetCharField( ply, "activegroup" )):GetField( "spawngroup" ) or 0)
 		end
 	end 
 	
-	if CAKE.SpawnPoints[spawngroup] and table.Count(CAKE.SpawnPoints[spawngroup]) > 0 then
+	if TIRA.SpawnPoints[spawngroup] and table.Count(TIRA.SpawnPoints[spawngroup]) > 0 then
 		local spawn
 		while(!spawn) do
-			spawn = table.Random(CAKE.SpawnPoints[spawngroup])
+			spawn = table.Random(TIRA.SpawnPoints[spawngroup])
 		end
 		ply:SetPos(spawn.pos)
 		ply:SetEyeAngles(spawn.ang)
@@ -82,28 +82,28 @@ end
 
 --Initializes all spawnpoints
 
-function CAKE.InitSpawns()
-	if(file.Exists(CAKE.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt")) then
-		CAKE.SpawnPoints = von.deserialize(file.Read(CAKE.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt"))
+function TIRA.InitSpawns()
+	if(file.Exists(TIRA.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt")) then
+		TIRA.SpawnPoints = von.deserialize(file.Read(TIRA.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt"))
 	end
 end
 
-function CAKE.SendSpawnPoints( ply )
-	if CAKE.PlayerRank(ply) > 3 then
-		datastream.StreamToClients( ply, "Tiramisu.ReceiveSpawnPoints", CAKE.SpawnPoints )
+function TIRA.SendSpawnPoints( ply )
+	if TIRA.PlayerRank(ply) > 3 then
+		datastream.StreamToClients( ply, "Tiramisu.ReceiveSpawnPoints", TIRA.SpawnPoints )
 	end
 end
 
 hook.Add( "Initialize", "TiramisuInitSpawns", function()
-	CAKE.InitSpawns()
+	TIRA.InitSpawns()
 end)
 
 hook.Add( "PlayerSpawn", "TiramisuSpawnHandle", function( ply )
-	CAKE.SpawnPointHandle(ply)
-	CAKE.SendSpawnPoints(ply)
+	TIRA.SpawnPointHandle(ply)
+	TIRA.SendSpawnPoints(ply)
 end)
 
 function PLUGIN.Init()
-	CAKE.AdminCommand( "addspawn", Admin_AddSpawn, "Add a new spawn point on your position.", true, true, 4 )
-	CAKE.AdminCommand( "removespawn", Admin_RemoveSpawn, "Removes a spawnpoint", true, true, 4 )
+	TIRA.AdminCommand( "addspawn", Admin_AddSpawn, "Add a new spawn point on your position.", true, true, 4 )
+	TIRA.AdminCommand( "removespawn", Admin_RemoveSpawn, "Removes a spawnpoint", true, true, 4 )
 end

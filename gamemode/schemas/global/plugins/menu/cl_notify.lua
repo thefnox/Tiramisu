@@ -33,7 +33,7 @@ function panel:TrackPos( vector, margin, allowclipoff, keepoffmouse )
 				y = toscreen.y
 			end 
 		end
-		if keepoffmouse and vgui.CursorVisible() and CAKE.PosInRegion( gui.MouseX(), gui.MouseY(), x,y, self:GetWide() + x, self:GetTall() + y ) then
+		if keepoffmouse and vgui.CursorVisible() and TIRA.PosInRegion( gui.MouseX(), gui.MouseY(), x,y, self:GetWide() + x, self:GetTall() + y ) then
 			local deltax, deltay = gui.MouseX() - toscreen.x, gui.MouseY() - toscreen.y
 			if deltax > self:GetWide() / 2 then
 				toscreen.x = toscreen.x - ( x + self:GetWide() / 2 - gui.MouseX() )
@@ -80,7 +80,7 @@ end
 meta = nil
 
 --And a non panel version.
-function CAKE.TrackPos( wide, tall, vector, margin, allowclipoff )
+function TIRA.TrackPos( wide, tall, vector, margin, allowclipoff )
 	margin = margin or 0
 	if vector then
 		local toscreen = vector:ToScreen()
@@ -114,7 +114,7 @@ function CAKE.TrackPos( wide, tall, vector, margin, allowclipoff )
 end
 
 --And a helper function, to check if a point is within a region in space.
-function CAKE.PosInRegion( x, y, topx, topy, botx, boty, z, topz, botz )
+function TIRA.PosInRegion( x, y, topx, topy, botx, boty, z, topz, botz )
 	if !z then --Keep it bidimensional 
 		if ( x >= topx and x <= botx ) and ( y >= topy and y <= boty ) then
 			return true
@@ -128,17 +128,17 @@ function CAKE.PosInRegion( x, y, topx, topy, botx, boty, z, topz, botz )
 end
 
 
-function CAKE.AddNotification( text, pos, color, textcolor, allowclipoff, radius, callback, runonce )
+function TIRA.AddNotification( text, pos, color, textcolor, allowclipoff, radius, callback, runonce )
 	local tbl = {}
 	tbl["text"] = text or "-none-"
 	tbl["pos"] = pos or Vector( 0, 0, 0 )
-	tbl["color"] = color or CAKE.BaseColor
+	tbl["color"] = color or TIRA.BaseColor
 	tbl["textcolor"] = textcolor or Color( 255, 255, 255, 255 )
 	tbl["radius"] = radius or 0
 	tbl["callback"] = callback or true
 	tbl["runonce"] = runonce
 
-	table.insert( CAKE.Notifications, tbl ) 
+	table.insert( TIRA.Notifications, tbl ) 
 end
 
 	
@@ -146,10 +146,10 @@ end
 /*
 	Display a simple message box.
 	
-	CAKE.Message( "Hey Some Text Here!!!", "Message Title (Optional)", "Button Text (Optional)" )
+	TIRA.Message( "Hey Some Text Here!!!", "Message Title (Optional)", "Button Text (Optional)" )
 	
 */
-function CAKE.Message( strText, strTitle, strButtonText )
+function TIRA.Message( strText, strTitle, strButtonText )
  
 	local Window = vgui.Create( "DFrame" )
 		Window:SetTitle( strTitle or "Message" )
@@ -197,13 +197,13 @@ end
 /*
 	Ask a question with multiple answers..
 	
-	CAKE.Query( "Would you like me to punch you right in the face?", "Question!",
+	TIRA.Query( "Would you like me to punch you right in the face?", "Question!",
 						"Yesss",	function() MsgN( "Pressed YES!") end, 
 						"Nope!",	function() MsgN( "Pressed Nope!") end, 
 						"Cancel",       function() MsgN( "Cancelled!") end )
 		
 */
-function CAKE.Query( strText, strTitle, ... )
+function TIRA.Query( strText, strTitle, ... )
  
 	local Window = vgui.Create( "DFrame" )
 		Window:SetTitle( strTitle or "Message Title (First Parameter)" )
@@ -266,7 +266,7 @@ function CAKE.Query( strText, strTitle, ... )
 	if ( NumOptions == 0 ) then
 	
 		Window:Close()
-		Error( "CAKE.Query: Created Query with no Options!?" )
+		Error( "TIRA.Query: Created Query with no Options!?" )
 	
 	end
  
@@ -276,16 +276,16 @@ end
 /*
 	Request a string from the user
 	
-	CAKE.StringRequest( "Question", 
+	TIRA.StringRequest( "Question", 
 					"What Is Your Favourite Color?", 
 					"Type your answer here!", 
-					function( strTextOut ) CAKE.Message( "Your Favourite Color Is: " .. strTextOut ) end,
-					function( strTextOut ) CAKE.Message( "You pressed Cancel!" ) end,
+					function( strTextOut ) TIRA.Message( "Your Favourite Color Is: " .. strTextOut ) end,
+					function( strTextOut ) TIRA.Message( "You pressed Cancel!" ) end,
 					"Okey Dokey", 
 					"Cancel" )
 	
 */
-function CAKE.StringRequest( strTitle, strText, strDefaultText, fnEnter, fnCancel, strButtonText, strButtonCancelText, color )
+function TIRA.StringRequest( strTitle, strText, strDefaultText, fnEnter, fnCancel, strButtonText, strButtonCancelText, color )
  
 	local Window = vgui.Create( "DFrame" )
 		Window:SetTitle( strTitle or "Message Title (First Parameter)" )
@@ -350,7 +350,7 @@ function CAKE.StringRequest( strTitle, strText, strDefaultText, fnEnter, fnCance
 end
 
 --Same as the above, only that it takes a table, containing all the available choices.
-function CAKE.ChoiceRequest( strTitle, strText, tbl, fnEnter, fnCancel, strButtonText, strButtonCancelText, color )
+function TIRA.ChoiceRequest( strTitle, strText, tbl, fnEnter, fnCancel, strButtonText, strButtonCancelText, color )
 	
 	local choice
 

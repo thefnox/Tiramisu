@@ -9,7 +9,7 @@ end
 
 function RCLICK.Click(target,ply)
 
-	CAKE.StringRequest( "Set OOC delay", "Set OOC delay to how many seconds", "10", function( text )
+	TIRA.StringRequest( "Set OOC delay", "Set OOC delay to how many seconds", "10", function( text )
 		ply:ConCommand("rp_admin oocdelay " .. text )
 	end,
 	function() end, "Accept", "Cancel")

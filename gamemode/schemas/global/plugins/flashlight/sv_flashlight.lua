@@ -1,4 +1,4 @@
-function CAKE.TurnOnFlashlight(ply, cmd, arg)
+function TIRA.TurnOnFlashlight(ply, cmd, arg)
 
 	if ply.flashlight then 
 		ply.flashlight:Remove()
@@ -24,4 +24,4 @@ function CAKE.TurnOnFlashlight(ply, cmd, arg)
 		umsg.End()
 	end)
 end
-concommand.Add( "rp_flashlight", CAKE.TurnOnFlashlight )
+concommand.Add( "rp_flashlight", TIRA.TurnOnFlashlight )

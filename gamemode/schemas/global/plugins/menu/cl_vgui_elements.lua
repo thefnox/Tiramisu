@@ -30,7 +30,7 @@ Name: Init
 ---------------------------------------------------------*/
 function PANEL:Init()
 
-	CAKE.ForceDraw = true
+	TIRA.ForceDraw = true
 
 	self.LastPaint = 0
 	self.DirectionalLight = {}
@@ -73,8 +73,8 @@ function PANEL:StartDraw()
 	
 	LocalPlayer():SetNoDraw( true )
 
-	if CAKE.ClothingTbl then
-		for k, v in pairs( CAKE.ClothingTbl ) do
+	if TIRA.ClothingTbl then
+		for k, v in pairs( TIRA.ClothingTbl ) do
 			if ValidEntity( v ) then
 				v:SetNoDraw( true )
 				v.ForceDraw = true
@@ -82,8 +82,8 @@ function PANEL:StartDraw()
 		end
 	end
 
-	if CAKE.Gear then
-		for _, bone in pairs( CAKE.Gear ) do
+	if TIRA.Gear then
+		for _, bone in pairs( TIRA.Gear ) do
 			if bone then
 				for k, v in pairs( bone ) do
 					if ValidEntity( v.entity ) then
@@ -142,20 +142,20 @@ function PANEL:EndDraw()
 	// Note: Not in menu dll
 	if ( !ClientsideModel ) then return end		
 
-	if CAKE.Thirdperson:GetBool() then
+	if TIRA.Thirdperson:GetBool() then
 		
 		LocalPlayer():SetNoDraw( false )
 
-		if CAKE.ClothingTbl then
-			for k, v in pairs( CAKE.ClothingTbl ) do
+		if TIRA.ClothingTbl then
+			for k, v in pairs( TIRA.ClothingTbl ) do
 				if ValidEntity( v ) then
 					v:SetNoDraw( false )
 				end
 			end
 		end
 
-		if CAKE.Gear then
-			for _, bone in pairs( CAKE.Gear ) do
+		if TIRA.Gear then
+			for _, bone in pairs( TIRA.Gear ) do
 				if bone then
 					for k, v in pairs( bone ) do
 						if ValidEntity( v.entity ) then
@@ -166,7 +166,7 @@ function PANEL:EndDraw()
 			end
 		end
 		
-		--CAKE.ForceDraw = false
+		--TIRA.ForceDraw = false
 	end
 end
  
@@ -201,8 +201,8 @@ function PANEL:Paint()
 		LocalPlayer():CreateShadow()
 
 
-		if CAKE.ClothingTbl then
-			for k, v in pairs( CAKE.ClothingTbl ) do
+		if TIRA.ClothingTbl then
+			for k, v in pairs( TIRA.ClothingTbl ) do
 				if ValidEntity( v ) then
 					v:DrawModel()
 					v:CreateShadow()
@@ -210,8 +210,8 @@ function PANEL:Paint()
 			end
 		end
 
-		if CAKE.Gear then
-			for _, bone in pairs( CAKE.Gear ) do
+		if TIRA.Gear then
+			for _, bone in pairs( TIRA.Gear ) do
 				if bone then
 					for k, v in pairs( bone ) do
 						if ValidEntity( v.entity ) then
@@ -257,19 +257,19 @@ function PANEL:OnCursorMoved(x, y)
 end
 
 function PANEL:Close()
-	CAKE.ForceDraw = false
+	TIRA.ForceDraw = false
 	LocalPlayer():SetNoDraw( false )
 
-	if CAKE.ClothingTbl then
-		for k, v in pairs( CAKE.ClothingTbl ) do
+	if TIRA.ClothingTbl then
+		for k, v in pairs( TIRA.ClothingTbl ) do
 			if ValidEntity( v ) then
 				v:SetNoDraw( false )
 			end
 		end
 	end
 
-	if CAKE.Gear then
-		for _, bone in pairs( CAKE.Gear ) do
+	if TIRA.Gear then
+		for _, bone in pairs( TIRA.Gear ) do
 			if bone then
 				for k, v in pairs( bone ) do
 					if ValidEntity( v.entity ) then

@@ -11,9 +11,9 @@ function RCLICK.Click(target,ply)
 
 	target = target:IsTiraPlayer()
 
-	CAKE.Query( "Do you want to give " .. target:Nick() .. " tooltrust, or do you want to take it away?", "Tooltrust",
-		"Give",	function() ply:ConCommand( "rp_admin tooltrust " .. CAKE.FormatText(target:SteamID()) .. " 1") end, 
-		"Take",	function() ply:ConCommand( "rp_admin tooltrust " .. CAKE.FormatText(target:SteamID()) .. " 0") end, 
+	TIRA.Query( "Do you want to give " .. target:Nick() .. " tooltrust, or do you want to take it away?", "Tooltrust",
+		"Give",	function() ply:ConCommand( "rp_admin tooltrust " .. TIRA.FormatText(target:SteamID()) .. " 1") end, 
+		"Take",	function() ply:ConCommand( "rp_admin tooltrust " .. TIRA.FormatText(target:SteamID()) .. " 0") end, 
 		"Cancel",       function() end )
 
 end

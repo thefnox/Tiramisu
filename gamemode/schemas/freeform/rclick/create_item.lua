@@ -124,7 +124,7 @@ function RCLICK.Click(target,ply)
 	Window:MakePopup()
 
 	/*
-	CAKE.StringRequest( "Item Conversion", "Enter the name you want to give to the new item.", target:GetModel(), function( text )
+	TIRA.StringRequest( "Item Conversion", "Enter the name you want to give to the new item.", target:GetModel(), function( text )
 		ply:ConCommand("rp_admin converttoitem " .. target:EntIndex() .. " \"" .. text .. "\"" )
 	end,
 	function() end, "Accept", "Cancel")*/

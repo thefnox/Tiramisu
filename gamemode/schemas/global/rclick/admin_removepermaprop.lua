@@ -9,7 +9,7 @@ end
 
 function RCLICK.Click(target,ply)
 
-	CAKE.Query( "Remove permanent status on this prop?", "Confirm",
+	TIRA.Query( "Remove permanent status on this prop?", "Confirm",
 		"Yes",	function() ply:ConCommand("rp_admin removepermaprop " .. target:EntIndex()) end, 
 		"No",	function() end )
 

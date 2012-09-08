@@ -509,7 +509,7 @@ function GM:HandlePlayerSwimming( ply, velocity ) --Handles swimming.
 		return false 
 	end
 	
-	if !CAKE.ConVars[ "LinuxHotfix" ] then
+	if !TIRA.ConVars[ "LinuxHotfix" ] then
 		ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "swim" ] )
 	else
 		ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "fly" ] )
@@ -689,7 +689,7 @@ function GM:CalcMainActivity( ply, velocity )
 			holdtype = Anims.DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
 		end
 
-		if (holdtype == "default" and ply:GetPersonality() != "default" and !ply:GetNWBool( "specialmodel" )) or CAKE.ConVars[ "LinuxHotfix" ] then
+		if (holdtype == "default" and ply:GetPersonality() != "default" and !ply:GetNWBool( "specialmodel" )) or TIRA.ConVars[ "LinuxHotfix" ] then
 			holdtype = ply:GetPersonality() --We use the personality custom animation table, rather than the default.
 		end
 
@@ -766,7 +766,7 @@ function GM:CalcMainActivity( ply, velocity )
 		end
 	end
 
-	if CLIENT and CAKE.ForceDraw then
+	if CLIENT and TIRA.ForceDraw then
 		return ACT_IDLE, -1
 	end
 
