@@ -39,9 +39,9 @@ function SWEP:PrimaryAttack()
 			local trace = self.Owner:GetEyeTrace( )
 			if trace.StartPos:Distance( trace.HitPos ) < 150 then
 				if trace.Entity:IsPlayer() then
-					CAKE.ArrestPlayer( self.Owner, trace.Entity )
+					TIRA.ArrestPlayer( self.Owner, trace.Entity )
 				elseif trace.Entity.ply and trace.Entity.ply:IsPlayer() then
-					CAKE.ArrestPlayer( self.Owner, trace.Entity.ply )
+					TIRA.ArrestPlayer( self.Owner, trace.Entity.ply )
 				end
 			end
 		end
@@ -54,9 +54,9 @@ function SWEP:SecondaryAttack()
 			local trace = self.Owner:GetEyeTrace( )
 			if trace.StartPos:Distance( trace.HitPos ) < 150 then
 				if trace.Entity:IsPlayer() then
-					CAKE.UnArrestPlayer( self.Owner, trace.Entity )
+					TIRA.UnArrestPlayer( self.Owner, trace.Entity )
 				elseif trace.Entity.ply and trace.Entity.ply:IsPlayer() then
-					CAKE.UnArrestPlayer( self.Owner, trace.Entity.ply )
+					TIRA.UnArrestPlayer( self.Owner, trace.Entity.ply )
 				end
 			end
 		end

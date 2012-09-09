@@ -59,7 +59,7 @@ Right, so, changelog.
 
 * Removed right click shader.
 
-* Added fix for when new fields are added/removed, CAKE.NilFix simply didn't do shit.
+* Added fix for when new fields are added/removed, TIRA.NilFix simply didn't do shit.
 
 * Serverside flashlights
 

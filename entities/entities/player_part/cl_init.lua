@@ -289,7 +289,7 @@ function ENT:BuildBonePositions( n, physbones )
 		end
 	end
 
-	if self.Entity:GetParent() == LocalPlayer() and ((!(CAKE.Thirdperson:GetBool() and CAKE.ThirdpersonDistance:GetInt() != 0 ) and !CAKE.FreeScroll and !CAKE.ForceDraw and CAKE.FirstpersonBody:GetBool()) or self.Entity:GetParent():InVehicle()) then
+	if self.Entity:GetParent() == LocalPlayer() and ((!(TIRA.Thirdperson:GetBool() and TIRA.ThirdpersonDistance:GetInt() != 0 ) and !TIRA.FreeScroll and !TIRA.ForceDraw and TIRA.FirstpersonBody:GetBool()) or self.Entity:GetParent():InVehicle()) then
 		--First person, but with body visible
 		for i=0, n do
 			if table.HasValue(self.HeadBonesIndex, i) then --If they're part of the head

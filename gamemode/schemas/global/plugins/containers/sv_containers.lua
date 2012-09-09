@@ -11,7 +11,9 @@ hook.Add("Tiramisu.CreateSQLTables", "Tiramisu.CreateContainerTable", function()
 end)
 
 function TIRA.ContainerExists(uid)
-	if TIRA.Query("SELECT * FROM tiramisu_containers WHERE id = "..uid ) then
+	if !uid then return false end
+	local query = TIRA.Query("SELECT udata FROM tiramisu_containers WHERE id = '"..uid .. "'" )
+	if query and query[1]["udata"] then
 		return true
 	end
 		
@@ -26,14 +28,16 @@ function TIRA.CreateContainerObject( uid )
 	local container = FindMetaTable("Container"):New()
 
 	if uid and TIRA.ContainerExists(uid) then
-		local query = TIRA.Query("SELECT udata FROM tiramisu_chars WHERE id = ".. uid )
-		local tbl = von.deserialize( query[1] )
+		local query = TIRA.Query("SELECT udata FROM tiramisu_containers WHERE id = '".. uid .. "'" )
+		local tbl = von.deserialize( query[1]["udata"] )
 		container.UniqueID = uid
 		container:SetSize(tbl.Width, tbl.Height)
-		container.Items = tbl.Items
+		container.Items = tbl.Items or {}
 		container:Save()
 	else
 		container.UniqueID = TIRA.CreateContainerID()
+		MsgN("Creating container " .. container.UniqueID .. "...\n" )
+		TIRA.Query("INSERT INTO tiramisu_containers (id,udata) VALUES ('" .. container.UniqueID .. "','" .. von.serialize(container) .. "')" )
 		container:Save()
 	end
 	return container
@@ -47,11 +51,8 @@ end
 
 --Fetches a container, if it exists.
 function TIRA.GetContainer( uid )
-	local containerexist, fileexist = TIRA.ContainerExists( uid )
-	if !containerexist and fileexist then
-		TIRA.LoadContainer( uid )
-	end
 	if TIRA.ContainerExists( uid ) then
+		TIRA.LoadContainer( uid )
 		return TIRA.Containers[uid]
 	end
 	return false

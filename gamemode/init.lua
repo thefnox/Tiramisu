@@ -45,14 +45,14 @@ function GM:Initialize( ) -- Initialize the gamemode
 	-- Plugins need to be initialized before gamemode and schema so it can modify the way that the plugins and schema actually work.
 	-- AKA, hooks.
 
-	--Initializing MySQL first
-	TIRA.InitializeSQLDatabase()
-	
 	TIRA.DayLog( "script.txt", "Plugins Initializing" )
 	TIRA.InitPlugins( )
 
 	TIRA.DayLog( "script.txt", "Schemas Initializing" )
 	TIRA.InitSchemas( )
+
+	TIRA.DayLog( "script.txt", "SQL Database Initializing" )
+	TIRA.InitializeSQLDatabase()
 	
 	TIRA.DayLog( "script.txt", "Gamemode Initializing" )
 	

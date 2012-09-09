@@ -158,7 +158,7 @@ end
 if SERVER then
 	function meta:Save()
 		if self.UniqueID then
-			TIRA.Query("UPDATE tiramisu_containers SET udata='" .. von.serialize(self).. "' WHERE id = " .. self.UniqueID)
+			TIRA.Query("UPDATE tiramisu_containers SET udata='" .. von.serialize(self).. "' WHERE id = '" .. self.UniqueID .. "'")
 			//file.Write(TIRA.Name .. "/containers/" .. TIRA.ConVars[ "Schema" ] .. "/" .. self.UniqueID.. ".txt", von.serialize(self))
 		end
 	end
@@ -216,30 +216,6 @@ if SERVER then
 				end
 			end
 		end
-	end
-
-	function TIRA.CreateContainerID()
-		local repnum = 0
-		local uidfile = file.Exists( TIRA.Name .. "/containers/" .. TIRA.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
-		while uidfile do
-			repnum = repnum + 1
-			uidfile = file.Exists( TIRA.Name .. "/containers/" .. TIRA.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
-		end
-		return os.time() .. repnum
-	end
-
-	function TIRA.CreateContainerObject( filename )
-		local container = FindMetaTable("Container"):New()
-
-		if filename and file.Exists( filename ) then
-			local tbl = von.deserialize( file.Read(filename) )
-			container.UniqueID = tbl.UniqueID
-			container:Save()
-		else
-			container.UniqueID = TIRA.CreateContainerID()
-			container:Save()
-		end
-		return container
 	end
 else
 	function TIRA.CreateContainerObject( uid )

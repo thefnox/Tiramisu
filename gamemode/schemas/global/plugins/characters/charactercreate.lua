@@ -99,8 +99,8 @@ concommand.Add( "rp_finishcreate", function(ply, cmd, args)
 		ply:SetNWBool( "charactercreate", false )
 		
 		TIRA.SetCharField( ply, "inventory", TIRA.CreatePlayerInventory( ply ) , ply:GetNWString("uid"))
-		local chars = TIRA.GetPlayerField( ply, "characters" )
-		table.insert(ply:GetNWString("uid"))
+		local chars = TIRA.GetPlayerField( ply, "characters" ) or {}
+		table.insert(chars, ply:GetNWString("uid"))
 		TIRA.SetPlayerField(ply, "characters", chars)
 		
 		ply:SetTeam( 1 )
@@ -180,10 +180,7 @@ end )
 
 
 function TIRA.SelectRandomCharacter( ply )
-	local tbl = {}
-	for k, _ in pairs(TIRA.GetPlayerField( ply, "characters")) do
-		table.insert( tbl, k )
-	end
+	local tbl = TIRA.GetPlayerField( ply, "characters") or {}
 	if table.Count( tbl ) > 0 then
 		TIRA.SelectChar( ply, table.Random(tbl) )
 	end
@@ -192,11 +189,11 @@ end
 function TIRA.SendCharList( ply )
 	umsg.Start("ClearReceivedChars", ply)
 	umsg.End()
-	for k, v in pairs( TIRA.GetPlayerField(ply, "characters") ) do -- Send them all their characters for selection
+	for k, v in pairs( TIRA.GetPlayerField(ply, "characters") or {} ) do -- Send them all their characters for selection
 
 		umsg.Start( "ReceiveChar", ply )
 			umsg.Long( v )
-			umsg.String( TIRA.GetCharField(ply, "name", v) )
+			umsg.String( TIRA.GetCharField(ply, "name", v) or "" )
 		umsg.End( )
 		
 	end
@@ -208,7 +205,7 @@ function TIRA.SelectChar( ply, uid )
 	local special = TIRA.GetCharField( ply, "specialmodel", uid)
 	if special == "none" or special == "" then
 		ply:SetNWBool( "specialmodel", false ) 
-		local m = char[ "gender" ]
+		local m = TIRA.GetCharField( ply, "gender", uid)
 		ply:SetModel( Anims[m][ "models" ][1] )
 		ply:SetNWString( "gender", m )
 		ply:SetMaterial("models/null")

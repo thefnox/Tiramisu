@@ -1,5 +1,6 @@
 -- Define the table of player information. This is not used anymore, and it's here for completion.
 TIRA.PlayerData = {  }
+TIRA.CharacterData = {  }
 
 -- This is to be used only by the main player table.
 TIRA.PlayerDataFields = {  }
@@ -18,18 +19,22 @@ function TIRA.FormatCharString( ply )
 end
 
 function TIRA.CreateNewChar()
-	local fieldstr = ""
-	local defaultstr = ""
+	local id = TIRA.GetTableNextID( "tiramisu_chars" )
+	local fieldstr = "id,"
+	local defaultstr = id .. ","
 		-- Let's get the default fields and add them to the table.
-	for fieldname, default in pairs( TIRA.PlayerDataFields ) do
+	for fieldname, default in pairs( TIRA.CharacterDataFields ) do
 		fieldstr = fieldstr .. fieldname .. ","
-		defaulstr = defaultstr .. defaultstr .. ","
+		if type(default) == "table" then defaultstr = defaultstr .. "'" .. von.serialize(default) .. "'," end
+		if type(default) == "string" then defaultstr = defaultstr .. "'" .. default .. "'," end
+		if type(default) == "number" then defaultstr = defaultstr .. tostring(default) .. "," end
+		if type(default) == "boolean" then if default then defaultstr = defaultstr .. "1," else defaultstr = defaultstr .. "0," end end
 	end
 	fieldstr = string.sub(fieldstr, 1, string.len(fieldstr) - 1 ) --Removing the last comma
-	defaulstr = string.sub(defaulstr, 1, string.len(defaulstr) - 1 ) --Removing the last comma
+	defaultstr = string.sub(defaultstr, 1, string.len(defaultstr) - 1 ) --Removing the last comma
 
 	TIRA.Query("INSERT INTO tiramisu_chars (".. fieldstr .. ") VALUES (" .. defaultstr .. ")")
-	return TIRA.GetTableMaxID("tiramisu_chars")
+	return id
 end
 
 function TIRA.CharExists( uid )
@@ -114,10 +119,13 @@ function TIRA.LoadPlayerDataFile( ply )
 		-- Let's get the default fields and add them to the table.
 		for fieldname, default in pairs( TIRA.PlayerDataFields ) do
 			fieldstr = fieldstr .. fieldname .. ","
-			defaulstr = defaultstr .. defaultstr .. ","
+			if type(default) == "table" then defaultstr = defaultstr .. "'" .. von.serialize(default) .. "'," end
+			if type(default) == "string" then defaultstr = defaultstr .. "'" .. default .. "'," end
+			if type(default) == "number" then defaultstr = defaultstr .. tostring(default) .. "," end
+			if type(default) == "boolean" then if default then defaultstr = defaultstr .. "1," else defaultstr = defaultstr .. "0," end end
 		end
 		fieldstr = string.sub(fieldstr, 1, string.len(fieldstr) - 1 ) --Removing the last comma
-		defaulstr = string.sub(defaulstr, 1, string.len(defaulstr) - 1 ) --Removing the last comma
+		defaultstr = string.sub(defaultstr, 1, string.len(defaultstr) - 1 ) --Removing the last comma
 
 		TIRA.Query("INSERT INTO tiramisu_players (".. fieldstr .. ") VALUES (" .. defaultstr .. ")")
 
@@ -131,34 +139,37 @@ function TIRA.LoadPlayerDataFile( ply )
 end
 
 function TIRA.SetPlayerField( ply, fieldname, data )
-
+	if !TIRA.PlayerData[ ply:SteamID() ] then TIRA.PlayerData[ ply:SteamID() ] = {} end
 	-- Check to see if this is a valid field
 	if TIRA.PlayerDataFields[ fieldname ] then
-		if type(TIRA.PlayerDataFields[ fieldname ]) == "table" then data = "'" .. von.serialize(data) .. "'" end
-		if type(TIRA.PlayerDataFields[ fieldname ]) == "string" then data = "'" .. data .. "'" end
+		TIRA.PlayerData[ ply:SteamID() ][fieldname ] = data
+		if type(TIRA.PlayerDataFields[ fieldname ]) == "table" then data = von.serialize(data) end
+		if type(TIRA.PlayerDataFields[ fieldname ]) == "string" then data = data end
 		if type(TIRA.PlayerDataFields[ fieldname ]) == "number" then data = tostring(data) end
 		if type(TIRA.PlayerDataFields[ fieldname ]) == "boolean" then
 			if data then data = 1
 			else data = 0 end
 		end
-		TIRA.Query("UPDATE tiramisu_players SET " .. fieldname .. "=" .. data .. " WHERE steamid = '"..ply:SteamID().."'")
+		TIRA.Query("UPDATE tiramisu_players SET " .. fieldname .. "='" .. data .. "' WHERE steamid = '"..ply:SteamID().."'")
 	end
 		
 end
 	
 function TIRA.GetPlayerField( ply, fieldname )
-	
+	if !TIRA.PlayerData[ ply:SteamID() ] then TIRA.PlayerData[ ply:SteamID() ] = {} end
 	-- Check to see if this is a valid field
 	if( TIRA.PlayerDataFields[ fieldname ] ) then
-		
-		local query = TIRA.Query("SELECT " .. fieldname .. " FROM tiramisu_players WHERE steamid = '"..ply:SteamID().."'")
-		if query then
-			if type(TIRA.PlayerDataFields[ fieldname ]) == "table" then return von.deserialize(query[1]) end
-			if type(TIRA.PlayerDataFields[ fieldname ]) == "string" then return tostring(query[1]) end
-			if type(TIRA.PlayerDataFields[ fieldname ]) == "number" then return tonumber(query[1]) end
-			if type(TIRA.PlayerDataFields[ fieldname ]) == "boolean" then return util.tobool(query[1]) end
-		end 
-	
+		if !TIRA.PlayerData[ ply:SteamID() ][fieldname ] then
+			local query = TIRA.Query("SELECT " .. fieldname .. " FROM tiramisu_players WHERE steamid = '"..ply:SteamID().."'")
+			if query then
+				if type(TIRA.PlayerDataFields[ fieldname ]) == "table" then TIRA.PlayerData[ ply:SteamID() ][fieldname ] = von.deserialize(query[1][fieldname]) or {} end
+				if type(TIRA.PlayerDataFields[ fieldname ]) == "string" then TIRA.PlayerData[ ply:SteamID() ][fieldname ] = tostring(query[1][fieldname]) or "" end
+				if type(TIRA.PlayerDataFields[ fieldname ]) == "number" then TIRA.PlayerData[ ply:SteamID() ][fieldname ] = tonumber(query[1][fieldname]) or 0 end
+				if type(TIRA.PlayerDataFields[ fieldname ]) == "boolean" then TIRA.PlayerData[ ply:SteamID() ][fieldname ] = util.tobool(query[1][fieldname]) or false end
+			else return TIRA.PlayerDataFields[ fieldname ]
+			end 
+		end
+		return TIRA.PlayerData[ ply:SteamID() ][fieldname ]  
 	end
 
 	return false
@@ -166,32 +177,40 @@ function TIRA.GetPlayerField( ply, fieldname )
 end
 
 function TIRA.SetCharField( ply, fieldname, data, uid )
-
-	if TIRA.PlayerDataFields[ fieldname ] then
-		if type(TIRA.PlayerDataFields[ fieldname ]) == "table" then data = "'" .. von.serialize(data) .. "'" end
-		if type(TIRA.PlayerDataFields[ fieldname ]) == "string" then data = "'" .. data .. "'" end
-		if type(TIRA.PlayerDataFields[ fieldname ]) == "number" then data = tostring(data) end
-		if type(TIRA.PlayerDataFields[ fieldname ]) == "boolean" then
+	uid = tostring(uid) or ply:GetNWString("uid")
+	if !TIRA.CharacterData[ uid ] then TIRA.CharacterData[ uid ] = {} end
+	if TIRA.CharacterDataFields[ fieldname ] then
+		TIRA.CharacterData[ uid ][ fieldname ] = data
+		if type(TIRA.CharacterDataFields[ fieldname ]) == "table" then data = von.serialize(data) end
+		if type(TIRA.CharacterDataFields[ fieldname ]) == "string" then data = data end
+		if type(TIRA.CharacterDataFields[ fieldname ]) == "number" then data = tostring(data) end
+		if type(TIRA.CharacterDataFields[ fieldname ]) == "boolean" then
 			if data then data = 1
 			else data = 0 end
 		end
-		TIRA.Query("UPDATE tiramisu_chars SET " .. fieldname .. "=" .. data .. " WHERE id = '".. uid or ply:GetNWString( "uid" ).."'")
+		if data != nil then
+			TIRA.Query("UPDATE tiramisu_chars SET " .. fieldname .. "='" .. data .. "' WHERE id = '".. uid .. "'" )
+		end
 	end
 	
 end
 	
 function TIRA.GetCharField( ply, fieldname, uid )
+	uid = tostring(uid) or ply:GetNWString("uid")
 	-- Check to see if this is a valid field
-	if( TIRA.PlayerDataFields[ fieldname ] ) then
-		
-		local query = TIRA.Query("SELECT " .. fieldname .. " FROM tiramisu_chars WHERE steamid = '".. uid or ply:GetNWString( "uid" ) .."'")
-		if query then
-			if type(TIRA.PlayerDataFields[ fieldname ]) == "table" then return von.deserialize(query[1]) end
-			if type(TIRA.PlayerDataFields[ fieldname ]) == "string" then return tostring(query[1]) end
-			if type(TIRA.PlayerDataFields[ fieldname ]) == "number" then return tonumber(query[1]) end
-			if type(TIRA.PlayerDataFields[ fieldname ]) == "boolean" then return util.tobool(query[1]) end
-		end 
-	
+	if !TIRA.CharacterData[ uid ] then TIRA.CharacterData[ uid ] = {} end
+	if( TIRA.CharacterDataFields[ fieldname ] ) then
+		if !TIRA.CharacterData[ uid ][fieldname ] then
+			local query = TIRA.Query("SELECT " .. fieldname .. " FROM tiramisu_chars WHERE id = '".. uid .. "'" )
+			if query then
+				if type(TIRA.CharacterDataFields[ fieldname ]) == "table" then TIRA.CharacterData[ uid ][fieldname ] = von.deserialize(query[1][fieldname]) or {} end
+				if type(TIRA.CharacterDataFields[ fieldname ]) == "string" then TIRA.CharacterData[ uid ][fieldname ] = tostring(query[1][fieldname]) or "" end
+				if type(TIRA.CharacterDataFields[ fieldname ]) == "number" then TIRA.CharacterData[ uid ][fieldname ] = tonumber(query[1][fieldname]) or 0 end
+				if type(TIRA.CharacterDataFields[ fieldname ]) == "boolean" then TIRA.CharacterData[ uid ][fieldname ] = util.tobool(query[1][fieldname]) or false end
+			else return TIRA.CharacterDataFields[ fieldname ]
+			end 
+		end
+		return TIRA.CharacterData[ uid ][fieldname ]
 	end
 
 	return false

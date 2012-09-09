@@ -56,7 +56,7 @@ end
 function meta:GetInventory()
 	if self:IsCharLoaded() then
 		local inventory = TIRA.GetCharField( self, "inventory" )
-		if type(inventory) == "table" or inventory == "none" then
+		if type(inventory) == "table" or inventory == "none" or !inventory then
 			inventory = TIRA.CreatePlayerInventory( self )
 		end
 		return TIRA.GetContainer( inventory )

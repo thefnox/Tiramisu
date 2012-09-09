@@ -314,12 +314,16 @@ function TIRA.CreateGroupObject( uid )
 	if uid then
 		group.UniqueID = uid 
 	else
-		local fieldstr = ""
-		local defaultstr = ""
+	local id = TIRA.GetTableNextID( "tiramisu_groups" )
+	local fieldstr = "id,"
+	local defaultstr = id .. ","
 			-- Let's get the default fields and add them to the table.
 		for fieldname, default in pairs( TIRA.GroupFields ) do
 			fieldstr = fieldstr .. fieldname .. ","
-			defaulstr = defaultstr .. defaultstr .. ","
+			if type(default) == "table" then data = "'" .. von.serialize(default) .. "'" end
+			if type(default) == "string" then defaultstr = defaultstr .. default .. "," end
+			if type(default) == "number" then defaultstr = defaultstr .. tostring(default) .. "," end
+			if type(default) == "boolean" then if default then defaultstr = defaultstr .. "1," else defaultstr = defaultstr .. "0," end end
 		end
 		fieldstr = string.sub(fieldstr, 1, string.len(fieldstr) - 1 ) --Removing the last comma
 		defaulstr = string.sub(defaulstr, 1, string.len(defaulstr) - 1 ) --Removing the last comma

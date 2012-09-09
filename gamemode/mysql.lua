@@ -5,15 +5,15 @@ if TIRA.ConVars["SQLEngine"] == "tmysql" then require("tmysql") end
 TIRA.Database = nil --This is for MySQLOO, don't touch this
 
 function TIRA.GetTableMaxID( tbl )
-	local query = TIRA.Query("SELECT MAX(id) FROM ".. tbl )
-	if query then return tonumber(query[1]) end
+	local query = TIRA.Query("SELECT id FROM " .. tbl .. " ORDER BY id DESC LIMIT 1" )
+	if query and query[1]['id'] != nil then
+		return tonumber(query[1]['id'] or 0)
+	end
 	return 0
 end
 
 function TIRA.GetTableNextID( tbl )
-	local query = TIRA.Query("SELECT MAX(id) FROM ".. tbl )
-	if query then return tonumber(query[1]) + 1 end
-	return 1
+	return TIRA.GetTableMaxID( tbl ) + 1
 end
 
 
@@ -50,12 +50,13 @@ end
 
 function TIRA.CreateSQLTables()
 	--Just a little debugging thing, if you want to destroy all tables to generate them again just uncomment the following
+	/*
 	TIRA.Query("DROP TABLE tiramisu_players")
 	TIRA.Query("DROP TABLE tiramisu_chars")
 	TIRA.Query("DROP TABLE tiramisu_items")
 	TIRA.Query("DROP TABLE tiramisu_bans")
 	TIRA.Query("DROP TABLE tiramisu_containers")
-	TIRA.Query("DROP TABLE tiramisu_groups")
+	TIRA.Query("DROP TABLE tiramisu_groups")*/
 	if TIRA.ConVars["SQLEngine"] == "sqlite" then
 		if !sql.TableExists("tiramisu_players") then
 			local datastr = ""
@@ -155,7 +156,7 @@ function TIRA.CreateSQLTables()
 end
 
 function TIRA.Query(querystr) --Makes a query to the database
-	print(querystr)
+	--print(querystr)
 	if TIRA.ConVars["SQLEngine"] == "mysqloo" then
 		local err = false
 		local query = TIRA.Database:query(querystr)
@@ -180,9 +181,10 @@ function TIRA.Query(querystr) --Makes a query to the database
 	else
 		local data = sql.Query( querystr )
 		if !data then
-			print(sql.LastError())
+			--MsgN(sql.LastError())
 			return false
 		end
+		--PrintTable( data )
 		return data
 	end
 end
