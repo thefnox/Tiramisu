@@ -30,6 +30,7 @@ CLOTHING_HANDRATIO = 3
 hook.Add( "PlayerSetModel", "TiramisuSpawnClothing", function( ply )
 
 	--This is a kinda ridiculous override I use for gear that uses bonemerge. It's the only way to allow gear with bones to be rendered manually.
+print("\n\tFUCKING IS THIS WORKING\n")
 
 	if ply:IsCharLoaded() then
 		timer.Simple( 0.4, function() 

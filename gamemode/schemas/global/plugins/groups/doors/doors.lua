@@ -10,7 +10,7 @@ function TIRA.LoadDoors()
 	if(file.Exists(TIRA.Name .. "/DoorData/" .. game.GetMap() .. ".txt")) then
 
 		local rawdata = file.Read( TIRA.Name .. "/DoorData/" .. game.GetMap() .. ".txt")
-		local tabledata = von.deserialize( rawdata )
+		local tabledata = TIRA.Deserialize( rawdata )
 		
 		TIRA.Doors = tabledata
 		local entities
@@ -34,7 +34,7 @@ end
 
 function TIRA.SaveDoors()
 
-	local keys = von.serialize(TIRA.Doors)
+	local keys = TIRA.Serialize(TIRA.Doors)
 	file.Write(TIRA.Name .. "/DoorData/" .. game.GetMap() .. ".txt", keys)
 
 end

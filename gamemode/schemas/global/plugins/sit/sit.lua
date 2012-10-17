@@ -39,14 +39,14 @@ end
 
 --Saves all chairs to file
 function TIRA.SaveChairs()
-	local keys = von.serialize(TIRA.Chairs)
+	local keys = TIRA.Serialize(TIRA.Chairs)
 	file.Write( TIRA.Name .. "/chairs.txt", keys )
 end
 
 --Fetches all chairs from file
 function TIRA.LoadChairs()
 	if file.Exists( TIRA.Name .. "/chairs.txt" ) then
-		TIRA.Chairs = von.deserialize(file.Read( TIRA.Name .. "/chairs.txt" ))
+		TIRA.Chairs = TIRA.Deserialize(file.Read( TIRA.Name .. "/chairs.txt" ))
 	end
 end
 

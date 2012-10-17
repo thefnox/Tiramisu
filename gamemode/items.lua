@@ -15,13 +15,15 @@ function TIRA.LoadItem( schema, filename )
 end
 
 function TIRA.SaveUData( id )
-	local savetable = von.serialize(TIRA.UData[id])
-	TIRA.Query("UPDATE tiramisu_items SET udata='" .. savetable .. "'' WHERE id = " .. id )
+	local savetable = TIRA.Serialize(TIRA.UData[id])
+	TIRA.Query("UPDATE tiramisu_items SET udata='" .. TIRA.StrEscape(savetable) .. "' WHERE id = " .. id )
 end
 
 function TIRA.LoadUData( id )
 	local query = TIRA.Query("SELECT udata FROM tiramisu_items WHERE id = ".. id )
-	if query then TIRA.UData[id] = von.deserialize(query[1]) else TIRA.UData[id] = {} end
+	print(TIRA.Deserialize(string.sub(query[1]["udata"],2,-2)))
+	PrintTable(TIRA.Deserialize(string.sub(query[1]["udata"],2,-2)))
+	if query then TIRA.UData[id] = TIRA.Deserialize(string.sub(query[1]["udata"],2,-2)) or {} else TIRA.UData[id] = {} end
 end
 
 function TIRA.SetUData( id, key, value )
@@ -49,7 +51,7 @@ local lastostime = 0
 local genned = {}
 function TIRA.CreateItemID()
 
-	TIRA.Query("INSERT INTO tiramisu_items (udata) VALUES ('" .. von.serialize({}) .. "')")
+	TIRA.Query("INSERT INTO tiramisu_items (udata) VALUES ('" .. TIRA.Serialize({}) .. "')")
 	return TIRA.GetTableNextID("tiramisu_items") or 1
 
 end

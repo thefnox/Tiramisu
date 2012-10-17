@@ -1,6 +1,6 @@
 hook.Add( "InitPostEntity", "TiramisuLoadSchemeColor", function()
 	if file.Exists( TIRA.Name .. "/personaldata/schemecolor.txt" ) then
-		local tbl = von.deserialize( file.Read( TIRA.Name .. "/personaldata/schemecolor.txt" ))
+		local tbl = TIRA.Deserialize( file.Read( TIRA.Name .. "/personaldata/schemecolor.txt" ))
 		TIRA.BaseColor = tbl.color
 	end
 end)
@@ -178,7 +178,7 @@ local function OpenOptions()
 		local color = SchemeColor:GetColor()
 		TIRA.BaseColor = color
 		local tbl = { ["color"] = TIRA.BaseColor }
-		file.Write( TIRA.Name .. "/personaldata/schemecolor.txt", von.serialize( tbl ) )
+		file.Write( TIRA.Name .. "/personaldata/schemecolor.txt", TIRA.Serialize( tbl ) )
 	end
 	Schema:AddItem( SchemeColor )
 	Schema:AddItem( schemecolormixer )

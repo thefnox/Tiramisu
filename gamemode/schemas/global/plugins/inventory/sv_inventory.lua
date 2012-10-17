@@ -58,6 +58,7 @@ function meta:GetInventory()
 		local inventory = TIRA.GetCharField( self, "inventory" )
 		if type(inventory) == "table" or inventory == "none" or !inventory then
 			inventory = TIRA.CreatePlayerInventory( self )
+			TIRA.SetCharField( self, "inventory", inventory)
 		end
 		return TIRA.GetContainer( inventory )
 	end
@@ -72,7 +73,14 @@ function meta:RefreshInventory( )
 		inventory = TIRA.CreatePlayerInventory( self )
 	end
 
-	local container = TIRA.GetContainer( inventory )
+	local container
+	if !inventory then
+		container = TIRA.CreateContainerObject()
+		inventory = container.UniqueID
+	else
+		container = TIRA.GetContainer( inventory )
+	end
+
 	local udata = {}
 
 	if !self.TrackingContainers then

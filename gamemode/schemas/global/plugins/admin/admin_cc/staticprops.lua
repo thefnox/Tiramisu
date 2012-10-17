@@ -65,7 +65,7 @@ end
 --Saves all permaprops to file.
 function TIRA.SavePermaProps()
 
-	local keys = von.serialize(TIRA.PermaProps[ game.GetMap( ) ])
+	local keys = TIRA.Serialize(TIRA.PermaProps[ game.GetMap( ) ])
 	file.Write( TIRA.Name .. "/PermaProps/" .. TIRA.ConVars[ "Schema" ] .. "/" .. game.GetMap( ) .. ".txt" , keys)
 
 end
@@ -74,7 +74,7 @@ end
 function TIRA.LoadPermaProps()
 	local map = game.GetMap()
 	if file.Exists( TIRA.Name .. "/PermaProps/" .. TIRA.ConVars[ "Schema" ] .. "/" .. map .. ".txt" ) then
-		TIRA.PermaProps[ map ] = von.deserialize(file.Read( TIRA.Name .. "/PermaProps/" .. TIRA.ConVars[ "Schema" ] .. "/" .. map .. ".txt" ))
+		TIRA.PermaProps[ map ] = TIRA.Deserialize(file.Read( TIRA.Name .. "/PermaProps/" .. TIRA.ConVars[ "Schema" ] .. "/" .. map .. ".txt" ))
 		local time = 0
 		for k, v in ipairs( TIRA.PermaProps[ map ] ) do
 			timer.Simple( time + 0.1, function()

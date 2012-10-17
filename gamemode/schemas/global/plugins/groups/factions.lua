@@ -21,13 +21,13 @@ end
 
 --Saves all factions
 function TIRA.SaveFactions()
-	file.Write(TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/factions.txt", von.serialize(TIRA.Factions))
+	file.Write(TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/factions.txt", TIRA.Serialize(TIRA.Factions))
 end
 
 --Loads all factions
 function TIRA.LoadAllFactions()
 	if file.Exists( TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/factions.txt" ) then
-		TIRA.Factions = von.deserialize(file.Read(TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/factions.txt"))
+		TIRA.Factions = TIRA.Deserialize(file.Read(TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/factions.txt"))
 		local groupexists, fileexists
 		for k, v in pairs( TIRA.Factions ) do
 			groupexists, fileexists = TIRA.GroupExists( v )

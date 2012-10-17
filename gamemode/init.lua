@@ -12,6 +12,15 @@ include( "von.lua" ) --New serializing module
 if not(datastream) then  
     require("datastream")  
 end  
+require("glon")
+
+function TIRA.Serialize(tbl)
+	return von.serialize(tbl)
+end
+
+function TIRA.Deserialize(str)
+	return von.deserialize(string.gsub(str, "\\", ""))
+end
 
 include( "shared.lua" ) -- Shared Functions
 include( "log.lua" ) -- Logging functions
@@ -144,7 +153,8 @@ end
 
 
 function GM:PlayerSetModel(ply)
-	if ply:IsCharLoaded() and !(TIRA.GetCharField( "specialmodel") == "none" or TIRA.GetCharField( "specialmodel") == "") then
+	if ply:IsCharLoaded() and (TIRA.GetCharField(ply, "specialmodel") == "none" or TIRA.GetCharField(ply, "specialmodel") == "") then
+		print("\n\tFUCK YOU\n")
 		local m = TIRA.GetCharField( ply, "gender" )
 		ply:SetNWBool( "specialmodel", false )
 		ply:SetModel( Anims[m][ "models" ][1] )
@@ -152,8 +162,9 @@ function GM:PlayerSetModel(ply)
 		ply:SetMaterial("models/null")
 		ply:AddEffects( EF_NOSHADOW )
 		ply:SetPersonality( TIRA.GetCharField( ply, "personality" ))
-	elseif ply:IsCharLoaded() and (TIRA.GetCharField( "specialmodel") == "none" or TIRA.GetCharField( "specialmodel") == "") then
-		ply:SetSpecialModel( TIRA.GetCharField( "specialmodel") )
+	elseif ply:IsCharLoaded() and !(TIRA.GetCharField(ply, "specialmodel") == "none" or TIRA.GetCharField(ply, "specialmodel") == "") then
+		print("\n\tFUCK YOU NOT\n")
+		ply:SetSpecialModel( TIRA.GetCharField(ply, "specialmodel") )
 		ply:SetNWString( "gender", "Male" )
 	else
 		ply:SetSpecialModel( "models/kleiner.mdl" )

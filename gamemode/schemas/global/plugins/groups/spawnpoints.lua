@@ -57,7 +57,7 @@ end
 --Saves Spawnpoints to MapInfo
 
 function TIRA.SaveSpawns()
-	file.Write( TIRA.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt" , von.serialize(TIRA.SpawnPoints))
+	file.Write( TIRA.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt" , TIRA.Serialize(TIRA.SpawnPoints))
 end
 
 --Internal function used to determine where shall a player spawn
@@ -84,7 +84,7 @@ end
 
 function TIRA.InitSpawns()
 	if(file.Exists(TIRA.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt")) then
-		TIRA.SpawnPoints = von.deserialize(file.Read(TIRA.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt"))
+		TIRA.SpawnPoints = TIRA.Deserialize(file.Read(TIRA.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt"))
 	end
 end
 

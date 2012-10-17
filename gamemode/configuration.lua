@@ -10,15 +10,15 @@ TIRA.ConVars["SQLEngine"] = "sqlite"
 --Only change the following fields if you're using a MySQL module other than SQLite (Default)
 TIRA.ConVars["SQLHostname"] = "localhost" --IP you're connecting from
 TIRA.ConVars["SQLUsername"] = "root" --MySQL username to use for connecting
-TIRA.ConVars["SQLPassword"] = "" --Password for this username
+TIRA.ConVars["SQLPassword"] = "c0m1da" --Password for this username
 TIRA.ConVars["SQLDatabase"] = "tiramisu" --Database to work on. (Must already exist)
-TIRA.ConVars["SQLPort"] = 3308 --Port on which to connect on
+TIRA.ConVars["SQLPort"] = 3306 --Port on which to connect on
 --End of the MySQL section
 
 TIRA.ConVars[ "LinuxHotfix" ] = false -- TURN THIS ON ONLY IF YOUR SERVER USES LINUX. This is to turn off model swapping therefore disabling some animations. It's the only solution to a current bug in the SRCDS.
 TIRA.ConVars[ "ForceJigglebones" ] = true --Forces jigglebones on all clients. Turns this off if you know it causes performance problems. 
 
-TIRA.ConVars[ "Tiramisu" ] = "2"
+TIRA.ConVars[ "Tiramisu" ] = "3"
 TIRA.ConVars[ "Schema" ] = "freeform" -- What folder is schema data being loaded from?
 
 --General config
@@ -158,10 +158,10 @@ TIRA.ConVars[ "AllowGroupChat" ] = true --Disable this to turn off all OOC group
 
 --Intro
 TIRA.ConVars[ "UseIntro" ] = true --Set this to false if you want the player to go directly into the character menu when they join
-TIRA.ConVars[ "IntroText" ] = "Welcome to Tiramisu 2" -- Character menu and intro text. NOTE, the HL2RP scheme changes this
-TIRA.ConVars[ "IntroSubtitle" ] = "A new era in roleplay" -- Character menu and intro subtitle. If you want this gone just set it to ""
+TIRA.ConVars[ "IntroText" ] = "Welcome to Tiramisu 3" -- Character menu and intro text. NOTE, the HL2RP scheme changes this
+TIRA.ConVars[ "IntroSubtitle" ] = "GMod 13 Edition" -- Character menu and intro subtitle. If you want this gone just set it to ""
 
 --General
 TIRA.ConVars[ "Webpage" ] = "http://www.google.com/" --Set this to whatever you want to, it'll be accessible on the "Forums" tab
 
-TIRA.ConVars[ "MenuTitle" ] = "Tiramisu" --Title for the main menu
+TIRA.ConVars[ "MenuTitle" ] = "Tiramisu 3" --Title for the main menu

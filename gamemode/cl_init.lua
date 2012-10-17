@@ -4,6 +4,15 @@ CAKE = TIRA //Luckily, we can just make the TIRA table point to TIRA, so there's
 DeriveGamemode( "sandbox" )
 require( "datastream" )
 include( "von.lua" )
+require("glon")
+
+function TIRA.Serialize(tbl)
+	return von.serialize(tbl)
+end
+
+function TIRA.Deserialize(str)
+	return von.deserialize(string.gsub(str, "\\", ""))
+end
 
 --Load up the configuration file
 include( "configuration.lua" )

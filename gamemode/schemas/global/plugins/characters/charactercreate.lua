@@ -113,7 +113,7 @@ end )
 
 concommand.Add( "rp_selectchar", function(ply, cmd, args)
 	local uid = args[ 1 ]
-	
+	print("SELECTING:", uid, "\n")
 	TIRA.SelectChar( ply, uid )
 end)
 
@@ -124,6 +124,7 @@ concommand.Add( "rp_spawnchar", function(ply, cmd, args)
 	if TIRA.CharExists( uid ) then
 	
 		ply:SetNWString( "uid", uid )
+		print("SPAWNING",uid,"\n")
 		
 		ply:SetNWBool( "charactercreate", false )
 	
@@ -204,39 +205,29 @@ end
 function TIRA.SelectChar( ply, uid )
 	local special = TIRA.GetCharField( ply, "specialmodel", uid)
 	if special == "none" or special == "" then
+		local query = TIRA.Query("SELECT gender,model,clothing,helmet,handratio,bodyratio,headratio,clothingid,helmetid,bodygroup1,bodygroup2,bodygroup3,skin,gear FROM tiramisu_chars WHERE id='" .. uid .. "'")
+		local char = query[1]
+		for fieldname, value in pairs(char) do
+			if type(TIRA.CharacterDataFields[ fieldname ]) == "table" then char[fieldname] = TIRA.Deserialize(value) or {} end
+			if type(TIRA.CharacterDataFields[ fieldname ]) == "string" then if type(char[fieldname]) != "string" then char[fieldname] = tostring(value) or "" else char[fieldname] = string.sub( char[fieldname], 2, -2) end end
+			if type(TIRA.CharacterDataFields[ fieldname ]) == "number" then char[fieldname] = tonumber(value) or 0 end
+			if type(TIRA.CharacterDataFields[ fieldname ]) == "boolean" then char[fieldname] = util.tobool(value) or false end
+		end
+		local m = char["gender"]
+		PrintTable(char)
 		ply:SetNWBool( "specialmodel", false ) 
-		local m = TIRA.GetCharField( ply, "gender", uid)
 		ply:SetModel( Anims[m][ "models" ][1] )
-		ply:SetNWString( "gender", m )
+		ply:SetNWString( "gender", char[ "gender" ])
 		ply:SetMaterial("models/null")
 
-		TIRA.TestClothing( ply,
-		TIRA.GetCharField( ply, "model", uid),
-		TIRA.GetCharField( ply, "clothing", uid),
-		TIRA.GetCharField( ply, "helmet", uid),
-		TIRA.GetCharField( ply, "headratio", uid),
-		TIRA.GetCharField( ply, "bodyratio", uid),
-		TIRA.GetCharField( ply, "handratio", uid),
-		TIRA.GetCharField( ply, "clothingid", uid),
-		TIRA.GetCharField( ply, "helmetid", uid),
-		TIRA.GetCharField( ply, "bodygroup1", uid),
-		TIRA.GetCharField( ply, "bodygroup2", uid),
-		TIRA.GetCharField( ply, "bodygroup3", uid),
-		TIRA.GetCharField( ply, "skin", uid))
+		CAKE.TestClothing( ply, char[ "model" ], char[ "clothing" ], char[ "helmet" ], char[ "headratio" ],char[ "bodyratio" ], char[ "handratio" ], char[ "clothingid" ], char[ "helmetid" ], char[ "bodygroup1"], char[ "bodygroup2"], char[ "bodygroup3"], char[ "skin"])
 
-		local tbl = TIRA.GetCharField( ply, "gear", uid)
-		TIRA.RemoveAllGear( ply )
+		CAKE.RemoveAllGear( ply )
 
-		for k, v in pairs( tbl ) do
-			TIRA.HandleGear( ply, v[ "item" ],
-			v[ "bone" ],
-			v[ "itemid" ],
-			v[ "offset" ],
-			v[ "angle" ],
-			v[ "scale" ],
-			v[ "skin" ] )
+		for k, v in pairs( char[ "gear" ] ) do
+			CAKE.HandleGear( ply, v[ "item" ], v[ "bone" ], v[ "itemid" ], v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )
 		end
-		
+			
 		TIRA.SendGearToClient( ply )
 	else
 		ply:SetNWBool( "specialmodel", true ) 

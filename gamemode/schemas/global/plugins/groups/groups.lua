@@ -14,7 +14,7 @@ function meta:GetField( fieldname )
 	if self[fieldname] == nil then
 		local query = TIRA.Query("SELECT " .. fieldname .. " FROM tiramisu_groups WHERE id = ".. self.UniqueID.."")
 		if query then
-			if type(TIRA.GroupFields[fieldname]) == "table" then self[fieldname] = von.deserialize(query[1]) end
+			if type(TIRA.GroupFields[fieldname]) == "table" then self[fieldname] = TIRA.Deserialize(query[1]) end
 			if type(TIRA.GroupFields[fieldname]) == "string" then self[fieldname] = tostring(query[1]) end
 			if type(TIRA.GroupFields[fieldname]) == "number" then self[fieldname] = tonumber(query[1]) end
 			if type(TIRA.GroupFields[fieldname]) == "boolean" then self[fieldname] = util.tobool(query[1]) end
@@ -31,13 +31,20 @@ function meta:SetField( fieldname, value, dontsave )
 		self[fieldname] = value
 	end
 	if !dontsave then
+		if type(TIRA.GroupFields[fieldname]) == "table" then value = TIRA.Serialize(value) end
+		if type(TIRA.GroupFields[fieldname]) == "number" then value = tostring(value) end
+		if type(TIRA.GroupFields[fieldname]) == "boolean" then
+			if value then value = 1
+			else value = 0 end
+		end
+		TIRA.Query("UPDATE tiramisu_groups SET " .. fieldname .. "='" .. TIRA.StrEscape(value) .. "' WHERE id = '".. self.UniqueID .. "'")
 		self:Save()
 	end
 end
 
 --Saves all data to file.
 function meta:Save()
-	--file.Write(TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/" .. self.UniqueID.. ".txt", von.serialize(self))
+	--file.Write(TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/" .. self.UniqueID.. ".txt", TIRA.Serialize(self))
 end
 
 --Obtains the information of all the players in the group.
@@ -320,7 +327,7 @@ function TIRA.CreateGroupObject( uid )
 			-- Let's get the default fields and add them to the table.
 		for fieldname, default in pairs( TIRA.GroupFields ) do
 			fieldstr = fieldstr .. fieldname .. ","
-			if type(default) == "table" then data = "'" .. von.serialize(default) .. "'" end
+			if type(default) == "table" then data = "'" .. TIRA.Serialize(default) .. "'" end
 			if type(default) == "string" then defaultstr = defaultstr .. default .. "," end
 			if type(default) == "number" then defaultstr = defaultstr .. tostring(default) .. "," end
 			if type(default) == "boolean" then if default then defaultstr = defaultstr .. "1," else defaultstr = defaultstr .. "0," end end

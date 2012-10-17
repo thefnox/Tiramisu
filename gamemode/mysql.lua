@@ -5,9 +5,16 @@ if TIRA.ConVars["SQLEngine"] == "tmysql" then require("tmysql") end
 TIRA.Database = nil --This is for MySQLOO, don't touch this
 
 function TIRA.GetTableMaxID( tbl )
-	local query = TIRA.Query("SELECT id FROM " .. tbl .. " ORDER BY id DESC LIMIT 1" )
-	if query and query[1]['id'] != nil then
-		return tonumber(query[1]['id'] or 0)
+	if TIRA.ConVars["SQLEngine"] != "sqlite" then
+		local query = TIRA.Query("SELECT MAX(id) AS id FROM " .. tbl )
+		if query and query['id'] != nil then
+			return tonumber(query['id'] or 0)
+		end
+	else
+		local query = TIRA.Query("SELECT id FROM " .. tbl .. " ORDER BY id DESC LIMIT 1" )
+		if query and query[1]['id'] != nil then
+			return tonumber(query[1]['id'] or 0)
+		end
 	end
 	return 0
 end
@@ -34,6 +41,7 @@ function TIRA.InitializeSQLDatabase() --Initializes the SQL database using the c
 			print("--Connection to SQL database established-- ("..TIRA.ConVars["SQLHostname"]..")\n")
 			TIRA.CreateSQLTables()
 		end
+		TIRA.Database:connect()
 	elseif TIRA.ConVars["SQLEngine"] == "tmysql" then
 		TIRA.Database = tmysql.initialize(TIRA.ConVars["SQLHostname"], TIRA.ConVars["SQLUsername"], TIRA.ConVars["SQLPassword"], TIRA.ConVars["SQLDatabase"], TIRA.ConVars["SQLPort"])
 		if !TIRA.Database then
@@ -57,6 +65,12 @@ function TIRA.CreateSQLTables()
 	TIRA.Query("DROP TABLE tiramisu_bans")
 	TIRA.Query("DROP TABLE tiramisu_containers")
 	TIRA.Query("DROP TABLE tiramisu_groups")*/
+	TIRA.Query("DROP TABLE tiramisu_players")
+	TIRA.Query("DROP TABLE tiramisu_chars")
+	TIRA.Query("DROP TABLE tiramisu_items")
+	TIRA.Query("DROP TABLE tiramisu_bans")
+	TIRA.Query("DROP TABLE tiramisu_containers")
+	TIRA.Query("DROP TABLE tiramisu_groups")
 	if TIRA.ConVars["SQLEngine"] == "sqlite" then
 		if !sql.TableExists("tiramisu_players") then
 			local datastr = ""
@@ -150,13 +164,31 @@ function TIRA.CreateSQLTables()
 		datastr = datastr .. "PRIMARY KEY (`id`)"
 		TIRA.Query("CREATE TABLE IF NOT EXISTS tiramisu_chars ( " .. datastr .. " )")
 		TIRA.Query("CREATE TABLE IF NOT EXISTS tiramisu_items ( id INT, udata TEXT, PRIMARY KEY (`id`) )")
-		TIRA.Query("CREATE TABLE IF NOT EXISTS tiramisu_bans ( steamid VARCHAR(99), bandate INT, duration INT, date TIMESTAMP(), admin TEXT )")
+		TIRA.Query("CREATE TABLE IF NOT EXISTS tiramisu_bans ( steamid VARCHAR(99), bandate INT, duration INT, date TIMESTAMP, admin TEXT )")
 	end
 	hook.Call("Tiramisu.CreateSQLTables", GAMEMODE )
 end
 
+function TIRA.ConvertResultsToNice( results, fields )
+	//This is because tmysql and mysqloo just return results in a numbered list instead of by fields like sqlite
+	local tbl = {}
+	for k, v in pairs( results ) do
+		tbl[fields[k] or 1] = v
+	end
+	return tbl
+end
+
+function TIRA.GetFieldsFromQuery( query )
+	local exp2 = string.Explode(" ", query)
+	local exp = string.Explode(",", exp2[2])
+	return exp
+end
+
 function TIRA.Query(querystr) --Makes a query to the database
-	--print(querystr)
+	print(querystr)
+	local exp = string.Explode(" ", querystr)
+	local querytype = exp[1]
+	local fields = TIRA.GetFieldsFromQuery( querystr )
 	if TIRA.ConVars["SQLEngine"] == "mysqloo" then
 		local err = false
 		local query = TIRA.Database:query(querystr)
@@ -166,30 +198,44 @@ function TIRA.Query(querystr) --Makes a query to the database
 			print( err )
 			return false
 		else
+			PrintTable( query:getData() )
 			return query:getData()
 		end
 	elseif TIRA.ConVars["SQLEngine"] == "tmysql" then
 		local err = false
-		tmysql.query(querystr, function(result, status, error)
-			if (result and type(result) == "table" and #result > 0) then
-				err = result
+		local done = false
+		local function callback(result, status, error)
+			done = true
+			if result and type(result) == "table" and #result > 0 then
+				print("QUERY RESULT:\n")
+				local tbl = {}
+				if querytype == "SELECT" then
+					tbl[1] = TIRA.ConvertResultsToNice( result[1], fields )
+					PrintTable(tbl)
+					err = tbl
+				else
+					err = result
+				end
 			else
-				print(error)
+				MsgN(error)
+				err = false
 			end
-		end)
-		return err
+		end
+		print(tmysql.query(querystr, callback))
+		if done then return err end
 	else
 		local data = sql.Query( querystr )
 		if !data then
-			--MsgN(sql.LastError())
+			MsgN(sql.LastError())
 			return false
 		end
-		--PrintTable( data )
+		PrintTable( data )
 		return data
 	end
 end
 
 function TIRA.StrEscape( str ) --Escapes a string to avoid SQL injections.
-	if TIRA.ConVars["SQLEngine"] == "tmysql" then return tmysql.escape(str) end
+	if TIRA.ConVars["SQLEngine"] == "mysqloo" and type(str) == "string" then return TIRA.Database:escape(str) end
+	if TIRA.ConVars["SQLEngine"] == "tmysql" and type(str) == "string" then return tmysql.escape(str) end
 	return sql.SQLStr(str)
 end

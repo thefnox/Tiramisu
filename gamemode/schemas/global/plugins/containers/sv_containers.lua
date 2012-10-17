@@ -29,15 +29,16 @@ function TIRA.CreateContainerObject( uid )
 
 	if uid and TIRA.ContainerExists(uid) then
 		local query = TIRA.Query("SELECT udata FROM tiramisu_containers WHERE id = '".. uid .. "'" )
-		local tbl = von.deserialize( query[1]["udata"] )
+		//print("vON STRING",string.gsub(string.sub(query[1]["udata"],2,-2), '\\', "" ), "\n")
+		local tbl = TIRA.Deserialize( string.sub(query[1]["udata"],2,-2) )
 		container.UniqueID = uid
 		container:SetSize(tbl.Width, tbl.Height)
 		container.Items = tbl.Items or {}
 		container:Save()
 	else
-		container.UniqueID = TIRA.CreateContainerID()
+		container.UniqueID = TIRA.GetTableNextID("tiramisu_containers")
+		TIRA.Query("INSERT INTO tiramisu_containers (id,udata) VALUES ('" .. container.UniqueID .. "','" .. TIRA.Serialize(container) .. "')" )
 		MsgN("Creating container " .. container.UniqueID .. "...\n" )
-		TIRA.Query("INSERT INTO tiramisu_containers (id,udata) VALUES ('" .. container.UniqueID .. "','" .. von.serialize(container) .. "')" )
 		container:Save()
 	end
 	return container
@@ -51,11 +52,9 @@ end
 
 --Fetches a container, if it exists.
 function TIRA.GetContainer( uid )
-	if TIRA.ContainerExists( uid ) then
-		TIRA.LoadContainer( uid )
-		return TIRA.Containers[uid]
-	end
-	return false
+	TIRA.LoadContainer( uid )
+	print("Loading container ID:", uid)
+	return TIRA.Containers[uid]
 end
 
 function TIRA.IsContainer( uid )

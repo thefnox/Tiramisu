@@ -158,8 +158,8 @@ end
 if SERVER then
 	function meta:Save()
 		if self.UniqueID then
-			TIRA.Query("UPDATE tiramisu_containers SET udata='" .. von.serialize(self).. "' WHERE id = '" .. self.UniqueID .. "'")
-			//file.Write(TIRA.Name .. "/containers/" .. TIRA.ConVars[ "Schema" ] .. "/" .. self.UniqueID.. ".txt", von.serialize(self))
+			TIRA.Query("UPDATE tiramisu_containers SET udata='" .. TIRA.StrEscape(TIRA.Serialize(self)).. "' WHERE id = '" .. self.UniqueID .. "'")
+			//file.Write(TIRA.Name .. "/containers/" .. TIRA.ConVars[ "Schema" ] .. "/" .. self.UniqueID.. ".txt", TIRA.Serialize(self))
 		end
 	end
 
