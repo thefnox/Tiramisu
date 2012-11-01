@@ -2,9 +2,9 @@
 local surface = surface
 local draw = draw
 local Color = Color
-local gradient = surface.GetTextureID("gui/gradient")
+local gradient = surface.GetTextureID("gui/gradient.vtf")
 local matBlurScreen = Material( "pp/blurscreen" ) 
-local gradientUp = surface.GetTextureID("gui/gradient_up")
+local gradientUp = surface.GetTextureID("gui/gradient_up.vtf")
 
 local SKIN = derma.GetNamedSkin( "Tiramisu" )
 

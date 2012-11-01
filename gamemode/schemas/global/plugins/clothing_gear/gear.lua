@@ -2,6 +2,8 @@ PLUGIN.Name = "Gear" -- What is the plugin name
 PLUGIN.Author = "FNox/Big Bang" -- Author of the plugin
 PLUGIN.Description = "Handles the stuff that you stick on yourself" -- The description or purpose of the plugin
 
+util.AddNetworkString( "Tiramisu.GetEditGear")
+
 --Thanks to the PAC team for this list.
 local BoneList = {
 	["pelvis"			] = "ValveBiped.Bip01_Pelvis"		,
@@ -211,7 +213,8 @@ local function ccRemoveGear( ply, cmd, args )
 end
 concommand.Add( "rp_removegear", ccRemoveGear )
 
-datastream.Hook( "Tiramisu.GetEditGear", function(ply, handler, id, encoded, decoded)
+net.Receive( "Tiramisu.GetEditGear", function(ply, len)
+	local decoded = net.ReadTable()
 	local ent = decoded.entity
 	if ValidEntity( ent ) and ent:GetDTEntity( 1 ) == ply then
 		TIRA.SetUData(ent.itemid, "offset", decoded.offset)

@@ -1,6 +1,7 @@
 TIRA.Containers = {}
 
-datastream.Hook( "Tiramisu.OpenContainer", function( handler, id, encoded, decoded )
+net.Receive( "Tiramisu.OpenContainer", function( len )
+	local decoded = net.ReadTable()
 	local items = decoded.items
 	local uid = decoded.uid
 	local width = decoded.width

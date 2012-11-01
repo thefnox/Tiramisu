@@ -1,5 +1,7 @@
 TIRA.Containers = {}
 
+util.AddNetworkString("Tiramisu.OpenContainer")
+
 hook.Add("Tiramisu.CreateSQLTables", "Tiramisu.CreateContainerTable", function()
 	if TIRA.ConVars["SQLEngine"] == "sqlite" then
 		if !sql.TableExists("tiramisu_containers") then
@@ -153,13 +155,15 @@ function TIRA.OpenContainer( ply, uid )
 		end
 
 		if TIRA.CanOpenContainer( ply, uid ) then
-			datastream.StreamToClients( ply, "Tiramisu.OpenContainer", {
-				["items"] = container.Items,
-				["uid"] = container.UniqueID,
-				["width"] = container.Width,
-				["height"] = container.Height,
-				["udata"] = udata
-			})
+			net.Start("Tiramisu.OpenContainer")
+				net.WriteTable({
+					["items"] = container.Items,
+					["uid"] = container.UniqueID,
+					["width"] = container.Width,
+					["height"] = container.Height,
+					["udata"] = udata
+				})
+			net.Send(ply)
 		end
 		if !ply.TrackingContainers then
 			ply.TrackingContainers = {}

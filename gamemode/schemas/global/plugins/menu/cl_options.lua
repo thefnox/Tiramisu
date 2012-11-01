@@ -1,6 +1,6 @@
 hook.Add( "InitPostEntity", "TiramisuLoadSchemeColor", function()
-	if file.Exists( TIRA.Name .. "/personaldata/schemecolor.txt" ) then
-		local tbl = TIRA.Deserialize( file.Read( TIRA.Name .. "/personaldata/schemecolor.txt" ))
+	if file.Exists( TIRA.Name .. "/personaldata/schemecolor.txt", "DATA" ) then
+		local tbl = TIRA.Deserialize( file.Read( TIRA.Name .. "/personaldata/schemecolor.txt", "DATA" ))
 		TIRA.BaseColor = tbl.color
 	end
 end)

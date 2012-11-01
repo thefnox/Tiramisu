@@ -7,8 +7,8 @@ TIRA.RankPermissions = {}
 TIRA.Factions = {}
 TIRA.SpawnPoints = {}
 
-datastream.Hook( "TiramisuAddToGroupChat", function( handler, id, encoded, decoded )
-	
+net.Receive( "TiramisuAddToGroupChat", function( len)
+	local decoded = net.ReadTable()
 	local color = decoded.color
 	local playername = decoded.name
 	local text = decoded.text
@@ -28,8 +28,8 @@ datastream.Hook( "TiramisuAddToGroupChat", function( handler, id, encoded, decod
 	end
 end)
 
-datastream.Hook( "Tiramisu.ReceiveGroups", function( handler, id, encoded, decoded )
-
+net.Receive( "Tiramisu.ReceiveGroups", function( len )
+	local decoded = net.ReadTable()
 	TIRA.Groups = decoded["groups"]
 	TIRA.ActiveGroup = decoded["activegroup"]
 	TIRA.RankPermissions = decoded["rankpermissions"]
@@ -37,25 +37,30 @@ datastream.Hook( "Tiramisu.ReceiveGroups", function( handler, id, encoded, decod
 
 end )
 
-datastream.Hook( "Tiramisu.EditGroup", function( handler, id, encoded, decoded )
+net.Receive( "Tiramisu.EditGroup", function( len )
+	local decoded = net.ReadTable()
 	TIRA.EditGroup( decoded )
 end)
 
-datastream.Hook( "Tiramisu.GetGroupInfo", function( handler, id, encoded, decoded )
+net.Receive( "Tiramisu.GetGroupInfo", function( len )
+	local decoded = net.ReadTable()
 	TIRA.OpenGroupInfo( decoded )
 end)
 
-datastream.Hook( "Tiramisu.EditCharInfo", function( handler, id, encoded, decoded )
+net.Receive( "Tiramisu.EditCharInfo", function( len )
+	local decoded = net.ReadTable()
 	if decoded then
 		TIRA.EditCharacterInfo( decoded )
 	end
 end)
 
-datastream.Hook( "Tiramisu.ReceiveSpawnPoints", function( handler, id, encoded, decoded )
+net.Receive( "Tiramisu.ReceiveSpawnPoints", function( len )
+	local decoded = net.ReadTable()
 	TIRA.SpawnPoints = decoded
 end)
 
-datastream.Hook( "Tiramisu.GetSearchResults", function( handler, id, encoded, decoded )
+net.Receive( "Tiramisu.GetSearchResults", function( len )
+	local decoded = net.ReadTable()
 	local uid = decoded.uid
 	if decoded.results then
 		if table.Count( decoded.results ) == 1 then
@@ -168,7 +173,7 @@ function TIRA.EditCharacterInfo( tbl )
 
 		if permissions["canpromote"] and table.Count( ranks ) > 0 then
 			actions:AddItem( Label( "Promote/Demote to a rank:" ))
-			local setrank = vgui.Create( "DMultiChoice" )
+			local setrank = vgui.Create( "DComboBox" )
 			rank = ""
 			for k, v in pairs( ranks ) do
 				setrank:AddChoice(k)
@@ -685,7 +690,9 @@ function TIRA.EditGroup( tbl )
 	Accept:DockMargin( 20, 2, 5, 2 )
 
 	Accept.DoClick = function()
-		datastream.StreamToServer( "Tiramisu.GetEditGroup", tbl )
+		net.Start( "Tiramisu.GetEditGroup")
+			net.WriteTable(tbl)
+		net.SendToServer()
 		EditGroup:Remove()
 		EditGroup = nil
 	end

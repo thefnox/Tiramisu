@@ -33,13 +33,6 @@ end
 
 function ENT:Draw()
 
-	if self.Entity:GetParent() then
-		self.Entity.EyeTarget = ConvertRelativeToEyesAttachment( self.Entity, self.Entity:GetParent():EyePos() + self.Entity:GetParent():EyeAngles() * 1000 )
-		if self.Entity.EyeTarget then
-			self.Entity:SetEyeTarget(self.Entity.EyeTarget)
-		end
-	end
-
 	if self.Entity:GetParent() == LocalPlayer() and !hook.Call("ShouldDrawLocalPlayer", GAMEMODE) then
 		return
 	end

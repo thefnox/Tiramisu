@@ -1,6 +1,8 @@
 TIRA.ItemData = {  }
 TIRA.UData = {  }
 
+util.AddNetworkString("Tiramisu.ReceiveUData")
+
 function TIRA.LoadItem( schema, filename )
 
 	local path = "schemas/" .. schema .. "/items/" .. filename
@@ -16,14 +18,13 @@ end
 
 function TIRA.SaveUData( id )
 	local savetable = TIRA.Serialize(TIRA.UData[id])
-	TIRA.Query("UPDATE tiramisu_items SET udata='" .. TIRA.StrEscape(savetable) .. "' WHERE id = " .. id )
+	TIRA.Query("UPDATE tiramisu_items SET udata='" .. TIRA.StrEscape(savetable) .. "' WHERE id = '" .. id .. "'" )
 end
 
 function TIRA.LoadUData( id )
-	local query = TIRA.Query("SELECT udata FROM tiramisu_items WHERE id = ".. id )
-	print(TIRA.Deserialize(string.sub(query[1]["udata"],2,-2)))
-	PrintTable(TIRA.Deserialize(string.sub(query[1]["udata"],2,-2)))
-	if query then TIRA.UData[id] = TIRA.Deserialize(string.sub(query[1]["udata"],2,-2)) or {} else TIRA.UData[id] = {} end
+	local query = TIRA.Query("SELECT udata FROM tiramisu_items WHERE id = '".. id .. "'" )
+	local tbl = TIRA.Deserialize( string.sub(query[1]["udata"],2,-2))
+	if query then TIRA.UData[id] = tbl or {} else TIRA.UData[id] = {} end
 end
 
 function TIRA.SetUData( id, key, value )
@@ -50,26 +51,25 @@ end
 local lastostime = 0
 local genned = {}
 function TIRA.CreateItemID()
-
-	TIRA.Query("INSERT INTO tiramisu_items (udata) VALUES ('" .. TIRA.Serialize({}) .. "')")
-	return TIRA.GetTableNextID("tiramisu_items") or 1
+	local id = TIRA.GetTableNextID("tiramisu_items")
+	TIRA.Query("INSERT INTO tiramisu_items (id,udata) VALUES (" .. id .. ",'" .. TIRA.Serialize({}) .. "')")
+	return id
 
 end
 
 function TIRA.SendUData( ply, uid )
 	if TIRA.UData[uid] then
-		datastream.StreamToClients( ply, "Tiramisu.ReceiveUData",{
+		tbl = {
 			["uid"] = uid,
 			["wearable"] = TIRA.GetUData( uid, "wearable"),
 			["container"] = TIRA.GetUData( uid, "container"),
 			["name"] = TIRA.GetUData( uid, "name"),
 			["model"] = TIRA.GetUData( uid, "model")
-		})
+		}
+		net.Start( "Tiramisu.ReceiveUData" )
+			net.WriteTable(tbl)
+		net.Send(ply)
 	end
-end
-
-function TIRA.SendItemData( ply )
-	datastream.StreamToClients( ply, "NetworkItemData", TIRA.ItemData )
 end
 
 function TIRA.CreateItem( class, pos, ang, id )

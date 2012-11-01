@@ -45,8 +45,8 @@ end
 
 --Fetches all chairs from file
 function TIRA.LoadChairs()
-	if file.Exists( TIRA.Name .. "/chairs.txt" ) then
-		TIRA.Chairs = TIRA.Deserialize(file.Read( TIRA.Name .. "/chairs.txt" ))
+	if file.Exists( TIRA.Name .. "/chairs.txt", "DATA" ) then
+		TIRA.Chairs = TIRA.Deserialize(file.Read( TIRA.Name .. "/chairs.txt", "DATA" ))
 	end
 end
 

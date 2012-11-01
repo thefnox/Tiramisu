@@ -26,7 +26,10 @@ function TIRA.WriteNote()
 	WriteButton:SetPos( 270,  445 )
 	WriteButton:SetText( "Write" )
 	WriteButton.DoClick = function( button )
-		datastream.StreamToServer( "Tiramisu.WriteNote", { ["title"] = TitleBox:GetValue(), ["text"] = NoteBox:GetValue() }, function() end)
+		net.Start("Tiramisu.WriteNote")
+			net.WriteString(TitleBox:GetValue())
+			net.WriteString(NoteBox:GetValue())
+		net.SendToServer()
 		WriteMenu:Close()
 	end
 
@@ -76,6 +79,7 @@ function TIRA.OpenNote( title, text )
 
 	ReadMenu:MakePopup()
 end
-datastream.Hook( "Tiramisu.ReadNote", function( handler, id, encoded, decoded )
-	TIRA.OpenNote( decoded.title, decoded.text )
-end )
+
+net.Receive("Tiramisu.ReadNote", function(len)
+	TIRA.OpenNote( net.ReadString(), net.ReadString() )
+end)

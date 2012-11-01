@@ -1,4 +1,4 @@
-_R.Container = {}
+debug.getregistry().Container = {}
 local meta = FindMetaTable("Container")
 meta.Items = {}
 meta.Height = 0

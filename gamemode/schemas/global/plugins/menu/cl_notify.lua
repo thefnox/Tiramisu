@@ -367,7 +367,7 @@ function TIRA.ChoiceRequest( strTitle, strText, tbl, fnEnter, fnCancel, strButto
 		Text:SetContentAlignment( 5 )
 		Text:SetTextColor( color_white )
 		
-	local MultiChoice = vgui.Create( "DMultiChoice", InnerPanel )
+	local MultiChoice = vgui.Create( "DComboBox", InnerPanel )
 		choice = tbl[1]
 		for k, v in pairs( tbl ) do
 		    MultiChoice:AddChoice( v )

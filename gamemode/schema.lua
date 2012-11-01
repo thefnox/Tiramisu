@@ -27,7 +27,7 @@ function TIRA.LoadSchema( schema )
 	TIRA.LoadPlugin( schema )
 
 	-- Load the items
-	local list = file.FindInLua( TIRA.Name .. "/gamemode/schemas/" .. schema .. "/items/*.lua" )
+	local list = file.Find( TIRA.Name .. "/gamemode/schemas/" .. schema .. "/items/*.lua", "LUA" )
 	
 	for k, v in pairs( list ) do 
 	
@@ -41,7 +41,7 @@ function TIRA.LoadSchema( schema )
 	
 	-- Load right click files.
 	
-	local list = file.FindInLua( TIRA.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua" ) or {}
+	local list = file.Find( TIRA.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua", "LUA" )
 	
 	for k, v in pairs( list ) do
 	
@@ -55,7 +55,7 @@ end
 function TIRA.InitSchemas( )
 
 	for _, SCHEMA in ipairs( TIRA.Schemas ) do
-		if !file.Exists( TIRA.Name .. "/" .. SCHEMA.Name .. ".txt" ) then
+		if !file.Exists( TIRA.Name .. "/" .. SCHEMA.Name .. ".txt", "DATA" ) then
 			print( "Initializing " .. SCHEMA.Name )
 			file.Write( TIRA.Name .. "/" .. SCHEMA.Name .. ".txt", "" )
 			SCHEMA.SetUp( )

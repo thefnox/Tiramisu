@@ -1,4 +1,4 @@
-TIRA.Name = string.Replace( GM.Folder, "gamemodes/", "" )
+TIRA.Name = GM.FolderName
 
 local meta = FindMetaTable( "Player" )
 

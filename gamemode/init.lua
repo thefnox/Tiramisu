@@ -8,18 +8,20 @@ TIRA.Running = false
 TIRA.Loaded = false
 
 -- Server Includes
-include( "von.lua" ) --New serializing module
-if not(datastream) then  
-    require("datastream")  
-end  
-require("glon")
 
 function TIRA.Serialize(tbl)
-	return von.serialize(tbl)
+	return util.TableToJSON(tbl)
+end
+
+function ValidEntity(ent)
+	if ent then
+		if ent.IsValid then return ent:IsValid() end
+	end
+	return false
 end
 
 function TIRA.Deserialize(str)
-	return von.deserialize(string.gsub(str, "\\", ""))
+	return util.JSONToTable(string.gsub(str, "\\", ""))
 end
 
 include( "shared.lua" ) -- Shared Functions

@@ -25,7 +25,10 @@ end
 function ITEM:UseItem(ply)
 
 	local myid = self:GetNWString("id")
-	datastream.StreamToClients( ply, "Tiramisu.ReadNote", {["title"] = TIRA.GetUData(myid, "name"), ["text"] = TIRA.GetUData(myid, "text")})
+	net.Start( "Tiramisu.ReadNote" )
+		net.WriteString(TIRA.GetUData(myid, "name"))
+		net.WriteString(TIRA.GetUData(myid, "text"))
+	net.Send(ply)
 
 end
 

@@ -1,9 +1,12 @@
-datastream.Hook( "Tiramisu.GetEditGroup", function(ply, handler, id, encoded, decoded)
+net.Receive( "Tiramisu.GetEditGroup", function(ply, len)
+	local decoded = net.ReadTable()
 	local group = TIRA.GetGroup( decoded.uid or "none" )
 	if group and group:CharInGroup(ply) and group:GetRankField(group:GetCharInfo( ply ).Rank, "canedit") then
 		if group:Name() != decoded.name and TIRA.GroupNameExists( decoded.name ) then
 			TIRA.SendError( ply, "Group name exists! Please choose another name" )
-			datastream.StreamToClients( ply, "Tiramisu.EditGroup", decoded)
+			net.Start("Tiramisu.EditGroup")
+				net.WriteTable(decoded)
+			net.Send(ply)
 		else
 			group:SetField("name", decoded.name)
 			group:SetField("description", decoded.description)
@@ -55,8 +58,9 @@ concommand.Add( "rp_editgroup", function( ply, cmd, args )
 				tbl["ranks"][k]["handler"] = group:GetRankField( k, "handler" )
 				tbl["ranks"][k]["description"] = group:GetRankField( k, "description" )
 			end
-
-			datastream.StreamToClients( ply, "Tiramisu.EditGroup", tbl)
+			net.Start("Tiramisu.EditGroup")
+				net.WriteTable(tbl)
+			net.Send(ply)
 		end 
 	end
 end)
@@ -73,7 +77,9 @@ concommand.Add( "rp_getgroupinfo", function( ply, cmd, args )
 			tbl["uid"] = group.UniqueID
 			tbl["inventory"] = group:GetField("inventory")
 			tbl["canedit"] = group:GetRankField( group:GetCharInfo( ply ).Rank, "canedit" )
-			datastream.StreamToClients( ply, "Tiramisu.GetGroupInfo", tbl)
+			net.Start("Tiramisu.GetGroupInfo")
+				net.WriteTable(tbl)
+			net.Send(ply)
 		end
 	end
 end)
@@ -121,8 +127,9 @@ concommand.Add( "rp_creategroup", function( ply, cmd, args )
 			tbl["ranks"][k]["handler"] = group:GetRankField( k, "handler" )
 			tbl["ranks"][k]["description"] = group:GetRankField( k, "description" )
 		end
-
-		datastream.StreamToClients( ply, "Tiramisu.EditGroup", tbl)
+		net.Start("Tiramisu.EditGroup")
+			net.WriteTable(tbl)
+		net.Send(ply)
 	end
 end)
 	
@@ -239,7 +246,9 @@ concommand.Add( "rp_getcharinfo", function( ply, cmd, args )
 				tbl["permissions"]["ranks"][k] = v.name
 			end
 		end
-		datastream.StreamToClients( ply, "Tiramisu.EditCharInfo", tbl )
+		net.Start("Tiramisu.EditCharInfo")
+			net.WriteTable(tbl)
+		net.Send(ply)
 	end
 end)
 
@@ -274,9 +283,11 @@ concommand.Add( "rp_rostersearch", function( ply, cmd, args )
 			end
 		end
 	end
-	datastream.StreamToClients( ply, "Tiramisu.GetSearchResults", {
-		["uid"] = uid,
-		["results"] = searchresults
-	} )
+	net.Start("Tiramisu.GetSearchResults")
+		net.WriteTable({
+			["uid"] = uid,
+			["results"] = searchresults
+		} )
+	net.Send(ply)
 
 end)

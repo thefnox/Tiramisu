@@ -29,27 +29,29 @@ TIRA.Inventory = "none"
 TIRA.UData = {}
 TIRA.InventorySlot = {}
 
-datastream.Hook( "Tiramisu.ReceiveUData", function( handler, id, encoded, decoded )
+net.Receive( "Tiramisu.ReceiveUData", function( len )
+	local decoded = net.ReadTable()
 	local uid = decoded.uid
-	if !TIRA.UData[uid] then
-		TIRA.UData[uid] = {}
+	if !CAKE.UData[uid] then
+		CAKE.UData[uid] = {}
 	end
-	TIRA.UData[uid].Name = decoded.name
-	TIRA.UData[uid].Wearable = decoded.wearable
-	TIRA.UData[uid].Model = decoded.model
-	TIRA.UData[uid].Container = decoded.container
-	if TIRA.InventorySlot then
-		for _, tbl in pairs(TIRA.InventorySlot) do
+	CAKE.UData[uid].Name = decoded.name
+	CAKE.UData[uid].Wearable = decoded.wearable
+	CAKE.UData[uid].Model = decoded.model
+	CAKE.UData[uid].Container = decoded.container
+	if CAKE.InventorySlot then
+		for _, tbl in pairs(CAKE.InventorySlot) do
 			for k, v in pairs(tbl) do
-				if v and v.Item and TIRA.ItemData[v.Item] and v.ItemID and v.ItemID == uid then
-					v:SetTooltip(decoded.name .. "\n" .. TIRA.ItemData[v.Item].Description or "" )
+				if v and v.Item and CAKE.ItemData[v.Item] and v.ItemID and v.ItemID == uid then
+					v:SetTooltip(decoded.name .. "\n" .. CAKE.ItemData[v.Item].Description or "" )
 				end
 			end
 		end
 	end
 end)
 
-datastream.Hook( "Tiramisu.SendInventory", function( handler, id, encoded, decoded )
+net.Receive( "Tiramisu.SendInventory", function( len )
+	local decoded = net.ReadTable()
 	local items = decoded.items
 	local uid = decoded.uid
 	local width = decoded.width
@@ -417,7 +419,6 @@ function TIRA.CreateInventory()
 	local x, y
 	local color = TIRA.BaseColor or Color( 100, 100, 115, 150 )
 	local alpha = 0
-	local matBlurScreen = Material( "pp/blurscreen" ) 
 	TIRA.InventoryFrame.OnCursorEntered = function()
 		LocalPlayer().MouseInFrame = true
 	end
@@ -470,13 +471,15 @@ function TIRA.CreateInventory()
 	TIRA.InventoryFrame:SetDraggable( false )
 	TIRA.InventoryFrame:ShowCloseButton( false )
 
-	TIRA.InventoryFrame.CloseButton = vgui.Create( "DSysButton", TIRA.InventoryFrame )
-	TIRA.InventoryFrame.CloseButton:SetType( "none" )
+	TIRA.InventoryFrame.CloseButton = vgui.Create( "DButton", TIRA.InventoryFrame )
 	TIRA.InventoryFrame.CloseButton:SetSize(18,18)
 	TIRA.InventoryFrame.CloseButton:SetPos( TIRA.InventoryFrame:GetWide() - 22, 4 )
 	TIRA.InventoryFrame.CloseButton:SetVisible(false)
 	TIRA.InventoryFrame.CloseButton.PaintOver = function()
-		draw.SimpleTextOutlined( "r", "Marlett", 0,0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT, 2, Color( 0, 0, 0, 255 ))
+		surface.SetDrawColor(Color(0, 0, 0, 250 ))
+		
+		surface.DrawTexturedRectRotated( 5, 9, 18, 5, 45 )
+		surface.DrawTexturedRectRotated( 5, 9, 18, 5, 135 )
 	end
 	TIRA.InventoryFrame.CloseButton.DoClick = function()
 	 	TIRA.InventoryFrame.Display = false

@@ -7,9 +7,9 @@ TIRA.Doors = {}
 --Loads all door information
 function TIRA.LoadDoors()
 
-	if(file.Exists(TIRA.Name .. "/DoorData/" .. game.GetMap() .. ".txt")) then
+	if file.Exists(TIRA.Name .. "/DoorData/" .. game.GetMap() .. ".txt", "DATA") then
 
-		local rawdata = file.Read( TIRA.Name .. "/DoorData/" .. game.GetMap() .. ".txt")
+		local rawdata = file.Read( TIRA.Name .. "/DoorData/" .. game.GetMap() .. ".txt", "DATA")
 		local tabledata = TIRA.Deserialize( rawdata )
 		
 		TIRA.Doors = tabledata

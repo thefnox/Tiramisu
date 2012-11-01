@@ -38,7 +38,7 @@ function RCLICK.Click(target,ply)
 	Label:SetTextColor( color_white )
 	InnerPanel:AddItem( Label )
 
-	local MultiChoice = vgui.Create( "DMultiChoice", InnerPanel )
+	local MultiChoice = vgui.Create( "DComboBox", InnerPanel )
 	MultiChoice:AddChoice("body")
 	MultiChoice:AddChoice("head")
 	MultiChoice:SizeToContents()

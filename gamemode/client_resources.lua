@@ -19,14 +19,15 @@ local function AddContentFolder( filepath ) --Adds all of the files on the conte
 
 
 	local filepath = filepath or ""
-	local list = file.Find( "gamemodes/" .. TIRA.Name .. "/content" .. filepath  .. "/*", true ) or {}
+	local list, dir = file.Find( "gamemodes/" .. TIRA.Name .. "/content" .. filepath  .. "/*", "GAME" )
 	for k, v in pairs( list ) do
 		if string.GetExtensionFromFilename(v) and string.GetExtensionFromFilename(v) != "dll" then
 			AddResource( string.GetExtensionFromFilename(v), string.sub( filepath .. "/" .. v, 2 ) ) --Starting from char 2 since char one is a slash.
-		else
-			if v:len() > 2 then --Filters out ".." and "." which are special folder names
-				AddContentFolder( filepath .. "/" .. v )
-			end
+		end
+	end
+	for k, v in pairs( list ) do
+		if v != "." and v != ".." then --Filters out ".." and "." which are special folder names
+			AddContentFolder( filepath .. "/" .. v )
 		end
 	end
 

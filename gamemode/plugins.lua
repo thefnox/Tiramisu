@@ -13,7 +13,7 @@ function TIRA.LoadPlugin( schema, filename )
 
 	local filename = filename or ""
 	local path = TIRA.Name .. "/gamemode/schemas/" .. schema .. "/plugins/" .. filename
-	local list = file.FindInLua( path .. "*" ) or {}
+	local list, dir = file.Find( path .. "*", "LUA" )
 
 	for k, v in pairs( list ) do
 		PLUGIN = {}
@@ -29,11 +29,14 @@ function TIRA.LoadPlugin( schema, filename )
 					TIRA.DayLog( "script.txt", "Loading Serverside File: " .. schema .. "/plugins/" .. filename .. v )
 					include( "schemas/" .. schema .. "/plugins/" .. filename .. v )
 				end
-			else --It's a folder
-				TIRA.LoadPlugin( schema, filename .. v .. "/" )
 			end
 		end
 		table.insert( TIRA.Plugins, PLUGIN )
+	end
+	for k, v in pairs( dir ) do
+		if v != "." and v != ".." and v != filename then
+			TIRA.LoadPlugin( schema, filename .. v .. "/" )
+		end
 	end
 	
 end

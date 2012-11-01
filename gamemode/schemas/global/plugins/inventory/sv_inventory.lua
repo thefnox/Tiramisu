@@ -1,4 +1,5 @@
 local meta = FindMetaTable("Player")
+util.AddNetworkString("Tiramisu.SendInventory")
 
 hook.Add( "TiramisuPostPlayerLoaded", "TiramisuLoadGroups", function( ply, firsttime )
 	local SteamID = TIRA.FormatText(ply:SteamID())
@@ -110,13 +111,15 @@ function meta:RefreshInventory( )
 		end
 	end
 
-	datastream.StreamToClients( self, "Tiramisu.SendInventory", {
-		["items"] = container.Items,
-		["uid"] = container.UniqueID,
-		["width"] = container.Width,
-		["height"] = container.Height,
-		["udata"] = udata
-	})
+	net.Start( "Tiramisu.SendInventory")
+		net.WriteTable({
+			["items"] = container.Items,
+			["uid"] = container.UniqueID,
+			["width"] = container.Width,
+			["height"] = container.Height,
+			["udata"] = udata
+		})
+	net.Send(self)
 
 	TIRA.SetCharField( self, "inventory", inventory)
 

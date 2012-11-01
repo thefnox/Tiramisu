@@ -4,7 +4,7 @@ include( 'shared.lua' )
 
 function ENT:Initialize()
 
-	self:AddEffects( EF_BONEMERGE | EF_BONEMERGE_FASTCULL | EF_PARENT_ANIMATES )
+	self:AddEffects( bit.bor(bit.bor( EF_BONEMERGE, EF_BONEMERGE_FASTCULL ), EF_PARENT_ANIMATES ) )
 	self:SetSolid(SOLID_NONE)
 	self:SetNotSolid(true)
 	self:SetMoveType(MOVETYPE_NONE)

@@ -1,6 +1,5 @@
 --Everything about the MySQL database system.
 if TIRA.ConVars["SQLEngine"] == "mysqloo" then require("mysqloo") end
-if TIRA.ConVars["SQLEngine"] == "tmysql" then require("tmysql") end
 
 TIRA.Database = nil --This is for MySQLOO, don't touch this
 
@@ -42,35 +41,25 @@ function TIRA.InitializeSQLDatabase() --Initializes the SQL database using the c
 			TIRA.CreateSQLTables()
 		end
 		TIRA.Database:connect()
-	elseif TIRA.ConVars["SQLEngine"] == "tmysql" then
-		TIRA.Database = tmysql.initialize(TIRA.ConVars["SQLHostname"], TIRA.ConVars["SQLUsername"], TIRA.ConVars["SQLPassword"], TIRA.ConVars["SQLDatabase"], TIRA.ConVars["SQLPort"])
-		if !TIRA.Database then
-			print("\n[!]Could not initialize database at " .. TIRA.ConVars["SQLHostname"] .. ", defaulting to SQLite...[!]\n")
-			TIRA.DefaultSQLDatabase() --We default back to SQLite
-		else
-			print("--Connection to SQL database established-- ("..TIRA.ConVars["SQLHostname"]..")\n")
-			TIRA.CreateSQLTables()
-		end
 	else --Default to SQLite
 		TIRA.DefaultSQLDatabase()
 	end
 end
 
-function TIRA.CreateSQLTables()
-	--Just a little debugging thing, if you want to destroy all tables to generate them again just uncomment the following
-	/*
-	TIRA.Query("DROP TABLE tiramisu_players")
-	TIRA.Query("DROP TABLE tiramisu_chars")
-	TIRA.Query("DROP TABLE tiramisu_items")
-	TIRA.Query("DROP TABLE tiramisu_bans")
-	TIRA.Query("DROP TABLE tiramisu_containers")
-	TIRA.Query("DROP TABLE tiramisu_groups")*/
+function TIRA.DropSQLTables()
 	TIRA.Query("DROP TABLE tiramisu_players")
 	TIRA.Query("DROP TABLE tiramisu_chars")
 	TIRA.Query("DROP TABLE tiramisu_items")
 	TIRA.Query("DROP TABLE tiramisu_bans")
 	TIRA.Query("DROP TABLE tiramisu_containers")
 	TIRA.Query("DROP TABLE tiramisu_groups")
+end
+
+function TIRA.CreateSQLTables()
+	--Just a little debugging thing, if you want to destroy all tables to generate them again just uncomment the following
+
+	TIRA.DropSQLTables()
+
 	if TIRA.ConVars["SQLEngine"] == "sqlite" then
 		if !sql.TableExists("tiramisu_players") then
 			local datastr = ""
@@ -185,7 +174,7 @@ function TIRA.GetFieldsFromQuery( query )
 end
 
 function TIRA.Query(querystr) --Makes a query to the database
-	print(querystr)
+	--print(querystr)
 	local exp = string.Explode(" ", querystr)
 	local querytype = exp[1]
 	local fields = TIRA.GetFieldsFromQuery( querystr )
@@ -195,47 +184,24 @@ function TIRA.Query(querystr) --Makes a query to the database
 		query.onError = function(query,error) err = error end
 		query:start()
 		if err then
-			print( err )
+			MsgN( err )
 			return false
 		else
-			PrintTable( query:getData() )
+			--PrintTable( query:getData() )
 			return query:getData()
 		end
-	elseif TIRA.ConVars["SQLEngine"] == "tmysql" then
-		local err = false
-		local done = false
-		local function callback(result, status, error)
-			done = true
-			if result and type(result) == "table" and #result > 0 then
-				print("QUERY RESULT:\n")
-				local tbl = {}
-				if querytype == "SELECT" then
-					tbl[1] = TIRA.ConvertResultsToNice( result[1], fields )
-					PrintTable(tbl)
-					err = tbl
-				else
-					err = result
-				end
-			else
-				MsgN(error)
-				err = false
-			end
-		end
-		print(tmysql.query(querystr, callback))
-		if done then return err end
 	else
 		local data = sql.Query( querystr )
 		if !data then
-			MsgN(sql.LastError())
+			if sql.LastError() then MsgN(sql.LastError()) end
 			return false
 		end
-		PrintTable( data )
+		--PrintTable( data )
 		return data
 	end
 end
 
 function TIRA.StrEscape( str ) --Escapes a string to avoid SQL injections.
 	if TIRA.ConVars["SQLEngine"] == "mysqloo" and type(str) == "string" then return TIRA.Database:escape(str) end
-	if TIRA.ConVars["SQLEngine"] == "tmysql" and type(str) == "string" then return tmysql.escape(str) end
 	return sql.SQLStr(str)
 end

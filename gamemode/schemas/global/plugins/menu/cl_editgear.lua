@@ -693,17 +693,19 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 		EditorFrame.Close = function()
 			TIRA.Query( "Save Changes for " .. itemname:GetValue(), "Save",
 			"Yes", function()
-				datastream.StreamToServer( "Tiramisu.GetEditGear", {
-					["entity"] = entity,
-					["offset"] = Vector(xslider:GetValue(), yslider:GetValue(), zslider:GetValue()),
-					["scale"] = Vector(xscale:GetValue(), yscale:GetValue(), zscale:GetValue()),
-					["angle"] = Angle(pitchslider:GetValue(), yawslider:GetValue(), rollslider:GetValue()),
-					["skin"] = skinnumber:GetValue(),
-					["name"] = itemname:GetValue(),
-					["bodygroup1"] = bodygroup1:GetValue(),
-					["bodygroup2"] = bodygroup2:GetValue(),
-					["bodygroup3"] = bodygroup3:GetValue()
-				})
+				net.Start( "Tiramisu.GetEditGear" )
+					net.WriteTable({
+						["entity"] = entity,
+						["offset"] = Vector(xslider:GetValue(), yslider:GetValue(), zslider:GetValue()),
+						["scale"] = Vector(xscale:GetValue(), yscale:GetValue(), zscale:GetValue()),
+						["angle"] = Angle(pitchslider:GetValue(), yawslider:GetValue(), rollslider:GetValue()),
+						["skin"] = skinnumber:GetValue(),
+						["name"] = itemname:GetValue(),
+						["bodygroup1"] = bodygroup1:GetValue(),
+						["bodygroup2"] = bodygroup2:GetValue(),
+						["bodygroup3"] = bodygroup3:GetValue()
+					})
+				net.SendToServer()
 				PlayerModel:SetTargetBone("ValveBiped.Bip01_Head1")
 				EditorFrame:SetVisible( false )
 				EditorFrame:Remove()

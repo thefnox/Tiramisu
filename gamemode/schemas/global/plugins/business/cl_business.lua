@@ -101,9 +101,9 @@ local function CloseBusiness()
 	end
 end
 
-datastream.Hook("refreshbusiness", function(handler, id, encoded, decoded )
+net.Receive("Tiramisu.RefreshBusiness", function(len)
 	
-	BusinessTable = decoded
+	BusinessTable = net.ReadTable()
 	if BusinessTable and table.Count(BusinessTable) != 0 then
 		OpenBusinessMenu()
 	else

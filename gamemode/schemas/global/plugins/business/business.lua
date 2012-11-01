@@ -1,4 +1,5 @@
 TIRA.Business = {}
+util.AddNetworkString("Tiramisu.RefreshBusiness")
 
 local function Admin_AddBusinessLevels( ply, cmd, args )
 	local target = TIRA.FindPlayer(args[1])
@@ -72,9 +73,13 @@ function meta:RefreshBusiness()
 				tbl[v] = TIRA.Business[v]
 			end
 		end
-		datastream.StreamToClients( self, "refreshbusiness", tbl )
+		net.Start("Tiramisu.RefreshBusiness")
+			net.WriteTable(tbl)
+		net.Send(self)
 	else
-		datastream.StreamToClients( self, "refreshbusiness", false )
+		net.Start("Tiramisu.RefreshBusiness")
+			net.WriteTable({})
+		net.Send(self)
 	end
 
 end

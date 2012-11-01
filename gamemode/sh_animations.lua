@@ -279,7 +279,7 @@ end
 meta = nil
 
 local function FindName( actnum ) --Finds the enumeration name based on it's number.
-	for k, v in pairs ( _E ) do
+	for k, v in pairs ( _G ) do
 		if(  v == actnum ) then
 			return tostring( k )
 		end
@@ -311,17 +311,17 @@ function HandleSequence( ply, seq ) --Internal function to handle different sequ
 			return seq, -1
 		elseif seq.type == "switch" or !seq.type then --ENUMERATED SEQUENCE ON A MODEL
 			seq = seq.act or ""
-			return (_E[seq] or -1), -1
+			return (_G[seq] or -1), -1
 		end
 	elseif type( seq ) == "string" then
 		model = Anims[ply:GetGender()][ "models" ][1]
 		if( ply:GetModel():lower() != model:lower() and !ply:GetNWBool( "specialmodel" ) and ply:GetNWBool( "charloaded", false ) ) then
 			ply:SetModel( model )
 		end	
-		return (_E[seq] or -1), -1
+		return (_G[seq] or -1), -1
 	end
 	
-	return (_E[seq] or -1), -1
+	return (_G[seq] or -1), -1
 	
 end
 

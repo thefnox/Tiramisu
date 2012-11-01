@@ -2,18 +2,21 @@
 TIRA = {  } //As of Tiramisu 3, we're setting the namespace for all our globals to TIRA.
 CAKE = TIRA //Luckily, we can just make the TIRA table point to TIRA, so there's no need to change anything in your code.
 DeriveGamemode( "sandbox" )
-require( "datastream" )
-include( "von.lua" )
-require("glon")
+
+function ValidEntity(ent)
+	if ent then
+		if ent.IsValid then return ent:IsValid() end
+	end
+	return false
+end
 
 function TIRA.Serialize(tbl)
-	return von.serialize(tbl)
+	return util.TableToJSON(tbl)
 end
 
 function TIRA.Deserialize(str)
-	return von.deserialize(string.gsub(str, "\\", ""))
+	return util.JSONToTable(string.gsub(str, "\\", ""))
 end
-
 --Load up the configuration file
 include( "configuration.lua" )
 
@@ -57,12 +60,214 @@ TIRA.MinimalHUD = CreateClientConVar( "rp_minimalhud", 1, true, true ) --Disable
 TIRA.Headbob = CreateClientConVar( "rp_headbob", 1, true, true ) --Set this to 0 to have headbob disabled by default.
 TIRA.AlwaysIntro = CreateClientConVar( "rp_alwaysintro", 0, true, true ) -- Set this to 1 to have the intro always display
 
+-- font name, size, wight, antialias, additive, new font name, drop shadow, outlined, blur
+
+surface.CreateFont("Tiramisu64Font", {
+	font = TIRA.ConVars["MenuFont2"],
+	size = 64,
+	weight = 500,
+	antialias = true,
+	additive = false,
+	shadow = true,
+	outline = false
+})
+surface.CreateFont("Tiramisu48Font", {
+	font = TIRA.ConVars["MenuFont2"],
+	size = 48,
+	weight = 500,
+	antialias = true,
+	additive = false,
+	shadow = true,
+	outline = false
+})
+surface.CreateFont("Tiramisu32Font", {
+	font = TIRA.ConVars["MenuFont2"],
+	size = 32,
+	weight = 500,
+	antialias = true,
+	additive = false,
+	shadow = true,
+	outline = false
+})
+surface.CreateFont("Tiramisu24Font", {
+	font = TIRA.ConVars["MenuFont2"],
+	size = 24,
+	weight = 500,
+	antialias = true,
+	additive = false,
+	shadow = true,
+	outline = false
+})
+surface.CreateFont("Tiramisu18Font", {
+	font = TIRA.ConVars["MenuFont"],
+	size = 18,
+	weight = 500,
+	antialias = true,
+	additive = false,
+	shadow = true,
+	outline = false
+})
+surface.CreateFont("Tiramisu16Font", {
+	font = TIRA.ConVars["MenuFont"],
+	size = 16,
+	weight = 500,
+	antialias = true,
+	additive = false,
+	shadow = true,
+	outline = false
+})
+surface.CreateFont("Tiramisu14Font", {
+	font = TIRA.ConVars["MenuFont"],
+	size = 14,
+	weight = 500,
+	antialias = true,
+	additive = false,
+	shadow = false,
+	outline = true
+})
+surface.CreateFont("TiramisuDefaultFont", {
+	font = TIRA.ConVars["MenuFont"],
+	size = 14,
+	weight = 300,
+	antialias = true,
+	additive = false,
+	shadow = false,
+	outline = false
+})
+surface.CreateFont("Tiramisu12Font", {
+	font = TIRA.ConVars["MenuFont"],
+	size = 14,
+	weight = 400,
+	antialias = true,
+	additive = false,
+	shadow = true,
+	outline = false
+})
+surface.CreateFont("TiramisuWhisperFont",{
+	font = TIRA.ConVars["WhisperFont"],
+	size = 12,
+	weight = 500,
+	antialias = true,
+	additive = false,
+	shadow = false,
+	outline = false
+})
+surface.CreateFont("TiramisuWhisperFontOutline", {
+	font = TIRA.ConVars["WhisperFont"],
+	size = 12,
+	weight = 500,
+	antialias = true,
+	additive = false,
+	shadow = false,
+	outline = false
+})
+surface.CreateFont("TiramisuYellFont",{
+	font = TIRA.ConVars["YellFont"],
+	size = 24,
+	weight = 700,
+	antialias = true,
+	additive = false,
+	shadow = false,
+	outline = false
+})
+surface.CreateFont("TiramisuYellFontOutline",{
+	font = TIRA.ConVars["YellFont"],
+	size = 24,
+	weight = 700,
+	antialias = true,
+	additive = false,
+	shadow = false,
+	outline = false
+})
+surface.CreateFont("TiramisuChatFont",{
+	font = TIRA.ConVars["ChatFont"],
+	size = 16,
+	weight = 500,
+	antialias = true,
+	additive = false,
+	shadow = false,
+	outline = false
+})
+surface.CreateFont("TiramisuChatFontOutline",{
+	font = TIRA.ConVars["ChatFont"],
+	size = 16,
+	weight = 500,
+	antialias = true,
+	additive = false,
+	shadow = false,
+	outline = false
+})
+surface.CreateFont("TiramisuEmoteFont",{
+	font = TIRA.ConVars["EmoteFont"],
+	size = 16,
+	weight = 500,
+	antialias = true,
+	additive = false,
+	shadow = false,
+	outline = false
+})
+surface.CreateFont("TiramisuEmoteFontOutline",{
+	font = TIRA.ConVars["EmoteFont"],
+	size = 16,
+	weight = 500,
+	antialias = true,
+	additive = false,
+	shadow = false,
+	outline = false
+})
+surface.CreateFont("TiramisuOOCFont",{
+	font = TIRA.ConVars["OOCFont"],
+	size = 16,
+	weight = 500,
+	antialias = true,
+	additive = false,
+	shadow = false,
+	outline = false
+})
+surface.CreateFont("TiramisuOOCFontOutline",{
+	font = TIRA.ConVars["OOCFont"],
+	size = 16,
+	weight = 500,
+	antialias = true,
+	additive = false,
+	shadow = false,
+	outline = false
+})
+surface.CreateFont("TiramisuNoteFont",{
+	font = TIRA.ConVars["NoteFont"],
+	size = 18,
+	weight = 500,
+	antialias = true,
+	additive = false,
+	shadow = false,
+	outline = false
+})
+surface.CreateFont("TiramisuNamesFont",{
+	font = TIRA.ConVars["NamesFont"],
+	size = 20,
+	weight = 400,
+	antialias = true,
+	additive = false,
+	shadow = false,
+	outline = false
+})
+surface.CreateFont("TiramisuTitlesFont",{
+	font = TIRA.ConVars["TitlesFont"],
+	size = 14,
+	weight = 400,
+	antialias = true,
+	additive = false,
+	shadow = false,
+	outline = false
+})
+
+/*
 surface.CreateFont(TIRA.ConVars[ "MenuFont2" ], 64, 500, true, false, "Tiramisu64Font", false, true) -- Biggest font used only once on the intro.
 surface.CreateFont(TIRA.ConVars[ "MenuFont2" ], 48, 500, true, false, "Tiramisu48Font", false, true) -- Biggest font used.
 surface.CreateFont(TIRA.ConVars[ "MenuFont2" ], 32, 500, true, false, "Tiramisu32Font", false, true) -- Second biggest font used. Used in 3D titles and main character title.
 surface.CreateFont(TIRA.ConVars[ "MenuFont2" ], 24, 500, true, false, "Tiramisu24Font", false, true) -- Third biggest font used. Used in 3D titles and main character title.
 surface.CreateFont(TIRA.ConVars[ "MenuFont" ], 18, 500, true, false, "Tiramisu18Font", true, false ) -- Big font used for button labels.
-surface.CreateFont(TIRA.ConVars[ "MenuFont" ], 18, 500, true, false, "Tiramisu16Font", true, false ) -- Mid size button used for category headers.
+surface.CreateFont(TIRA.ConVars[ "MenuFont" ], 16, 500, true, false, "Tiramisu16Font", true, false ) -- Mid size button used for category headers.
 surface.CreateFont(TIRA.ConVars[ "MenuFont" ], 14, 500, true, false, "Tiramisu14Font", false, true) -- A moderate size font used for the main title's subtitle
 surface.CreateFont(TIRA.ConVars[ "MenuFont" ], 14, 300, true, false, "TiramisuDefaultFont") -- Replacement for "Default"
 surface.CreateFont(TIRA.ConVars[ "MenuFont" ], 12, 400, true, false, "Tiramisu12Font", true ) -- Smallest, used in tabs and the quick menu
@@ -78,7 +283,7 @@ surface.CreateFont(TIRA.ConVars[ "OOCFont" ], 16, 500, true, false, "TiramisuOOC
 surface.CreateFont(TIRA.ConVars[ "OOCFont" ], 16, 500, true, false, "TiramisuOOCFontOutline", false, false)
 surface.CreateFont(TIRA.ConVars[ "NoteFont" ], 18, 500, true, false, "TiramisuNoteFont" )
 surface.CreateFont(TIRA.ConVars[ "NamesFont"], 20, 400, true, false, "TiramisuNamesFont" ) --Font used for names
-surface.CreateFont(TIRA.ConVars[ "TitlesFont"], 14, 400, true, false, "TiramisuTitlesFont" ) --Font used for titles
+surface.CreateFont(TIRA.ConVars[ "TitlesFont"], 14, 400, true, false, "TiramisuTitlesFont" ) --Font used for titles*/
 
 -- Client Includes
 include( "sh_animations.lua" )
@@ -238,7 +443,7 @@ end)
 RclickTable = {}
 
 function TIRA.AddRightClicks(schema)
-	local list = file.FindInLua( TIRA.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua" )	
+	local list, dir = file.Find( TIRA.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua", "LUA" )	
 	for k,v in pairs( list ) do
 		local path = TIRA.Name .. "/gamemode/schemas/" .. schema .. "/rclick/" .. v
 		RCLICK = { }
@@ -253,7 +458,7 @@ function TIRA.AddClientsidePlugins( schema, filename )
 
 	local filename = filename or ""
 	local path = TIRA.Name .. "/gamemode/schemas/" .. schema .. "/plugins/" .. filename
-	local list = file.FindInLua( path .. "*" ) or {}
+	local list, dir = file.Find( path .. "*", "LUA" )
 
 
 	for k, v in pairs( list ) do
@@ -270,9 +475,13 @@ function TIRA.AddClientsidePlugins( schema, filename )
 					   	TIRA.CLPlugin[CLPLUGIN.Name].Init()
 					end
 				end
-			else --It's a folder
-				TIRA.AddClientsidePlugins( schema, filename .. v .. "/" )
 			end
+		end
+	end
+
+	for k, v in pairs( dir ) do
+		if v != "." and v != ".." then
+			TIRA.AddClientsidePlugins( schema, filename .. v .. "/" )
 		end
 	end
 
@@ -282,7 +491,7 @@ function TIRA.AddItems( schema )
 
 	local filename = filename or ""
 	local path = TIRA.Name .. "/gamemode/schemas/" .. schema .. "/items/"
-	local list = file.FindInLua( path .. "*" ) or {}
+	local list = file.Find( path .. "*", "LUA" ) or {}
 
 
 	for k, v in pairs( list ) do

@@ -1,5 +1,9 @@
 --Everything chat related
 
+util.AddNetworkString("TiramisuAddToChat")
+util.AddNetworkString("TiramisuAddToOOC")
+util.AddNetworkString("TiramisuChatHandling")
+
 local meta = FindMetaTable( "Player" )
 
 --Used instead of RunConsoleCOmmand
@@ -125,18 +129,17 @@ function GM:PlayerSay( ply, text, team )
 
 end
 
-datastream.Hook( "TiramisuChatHandling", function( ply, handler, id, encoded, decoded )
-
-	local text = decoded.text or ""
+net.Receive("TiramisuChatHandling", function(ply, len)
+	local text = net.ReadString() or ""
 	gamemode.Call("PlayerSay", ply, text )
-	
 end)
+
 
 --Adds a regular radio chat line.
 function TIRA.AddRadioLine( ply, text )
-	datastream.StreamToClients( ply, "TiramisuAddToRadio", {
-		["text"] = text,
-	})
+	net.Start("TiramisuAddToRadio")
+		net.WriteString(text)
+	net.Send(ply)
 end
 
 
@@ -188,13 +191,15 @@ function TIRA.OOCAdd( ply, text )
 
 		for _, target in pairs( player.GetAll( ) ) do
 			if ValidEntity( target ) and target:IsPlayer() and target:IsCharLoaded() then
-				datastream.StreamToClients( target, "TiramisuAddToOOC", {
-					["text"] = text,
-					["color"] = color,
-					["name"] = playername,
-					["font"] = "TiramisuOOCFont",
-					["channel"] = channel or "OOC"
-				})
+				net.Start( "TiramisuAddToOOC")
+					net.WriteTable({
+						["text"] = text,
+						["color"] = color,
+						["name"] = playername,
+						["font"] = "TiramisuOOCFont",
+						["channel"] = channel or "OOC"
+					})
+				net.Send(target)
 			end
 		end
 		

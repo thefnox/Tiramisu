@@ -1,5 +1,5 @@
-datastream.Hook( "TiramisuAddToChat", function( handler, id, encoded, decoded )
-
+net.Receive( "TiramisuAddToChat", function( len )
+	local decoded = net.ReadTable()
 	local text = decoded.text
 	local outline = false
 
@@ -32,9 +32,9 @@ datastream.Hook( "TiramisuAddToChat", function( handler, id, encoded, decoded )
 	end
 end)
 
---Same as above, it is only being sent as a different datastream for it to print properly on console (IE, so that the </color> part is not printed)
-datastream.Hook( "TiramisuAddToOOC", function( handler, id, encoded, decoded )
-	
+--Same as above, it is only being sent as a different net hook for it to print properly on console (IE, so that the </color> part is not printed)
+net.Receive( "TiramisuAddToOOC", function( len )
+	local decoded = net.ReadTable()
 	local color = decoded.color
 	local playername = decoded.name
 	local text = decoded.text
@@ -52,7 +52,6 @@ datastream.Hook( "TiramisuAddToOOC", function( handler, id, encoded, decoded )
 	end
 end)
 
-local matBlurScreen = Material( "pp/blurscreen" ) 
 local PANEL = {}
  
 /*---------------------------------------------------------
@@ -114,7 +113,9 @@ function PANEL:Init()
 					table.remove( exp, 1 )
 					RunConsoleCommand("rp_" .. string.sub( command, 2, string.len(command) ), unpack(exp) )
 				else
-				datastream.StreamToServer( "TiramisuChatHandling", { ["text"] = (self.PropertySheet:GetActiveTab().handler or "") .. string.sub(string.Replace(text, "\"", "'"), 1, math.Clamp(text:len(),1,600)) } )
+				net.Start("TiramisuChatHandling")
+					net.WriteString( (self.PropertySheet:GetActiveTab().handler or "") .. string.sub(string.Replace(text, "\"", "'"), 1, math.Clamp(text:len(),1,600)))
+				net.SendToServer()
 				end
 			end
 			self.TextEntry:Clear()
@@ -190,6 +191,7 @@ function PANEL:AddChannel( name, description, handler, cantclose )
 			tab.Tab.CantBeClosed = true
 		else
 			tab.Tab.Image:Remove()
+			/*
 			tab.Tab.Image = vgui.Create( "DSysButton", tab.Tab )
 			tab.Tab.Image:SizeToContents()
 			tab.Tab.Image:SetType( "close" )
@@ -217,7 +219,7 @@ function PANEL:AddChannel( name, description, handler, cantclose )
 				self.PropertySheet.m_pActiveTab = table.Random(self.PropertySheet.Items).Tab
 				self.PropertySheet:InvalidateLayout( true, true ) 
 				self:InvalidateLayout( true, true ) 
-			end
+			end*/
 		end
 		self.PropertySheet:InvalidateLayout( true, true ) 
 		for _,item in pairs( self.PropertySheet.Items ) do

@@ -3,12 +3,14 @@ function TIRA.SendChat( ply, msg, font, channel, handler )
 	
 	if ValidEntity( ply ) and ply:IsTiraPlayer() then
 		--ply:PrintMessage( 3, msg )
-		datastream.StreamToClients( ply, "TiramisuAddToChat", {
+		net.Start( "TiramisuAddToChat")
+		net.WriteTable( {
 			["text"] = msg,
 			["font"] = font,
 			["channel"] = channel or false,
 			["handler"] = handler or ""
 		})
+		net.Send(ply)
 		/*
 		umsg.Start( "tiramisuaddtochat", ply )
 			umsg.String( msg )
@@ -70,7 +72,7 @@ function TIRA.CreatePlayerRagdoll( ply )
 			bonevel = bone
 			if(bonephys and bonephys:IsValid())then
 				bonephys:SetPos(bonepos)
-				bonephys:SetAngle(boneang)
+				bonephys:SetAngles(boneang)
 			end
 		end;
 	end

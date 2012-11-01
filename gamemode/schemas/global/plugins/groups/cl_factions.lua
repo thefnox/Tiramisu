@@ -1,14 +1,17 @@
 TIRA.Factions = {}
 
-datastream.Hook( "Tiramisu.GetFactionInfo", function( handler, id, encoded, decoded )
+net.Receive( "Tiramisu.GetFactionInfo", function( len )
+	local decoded = net.ReadTable()
 	TIRA.OpenFactionInfo( decoded )
 end)
 
-datastream.Hook( "Tiramisu.EditFaction", function( handler, id, encoded, decoded )
+net.Receive( "Tiramisu.EditFaction", function( len )
+	local decoded = net.ReadTable()
 	TIRA.EditFaction( decoded )
 end)
 
-datastream.Hook( "Tiramisu.ReceiveFactions", function( handler, id, encoded, decoded )
+net.Receive( "Tiramisu.ReceiveFactions", function( len )
+	local decoded = net.ReadTable()
 	TIRA.Factions = decoded
 end)
 
@@ -795,7 +798,9 @@ function TIRA.EditFaction( tbl )
 	Accept:DockMargin( 20, 2, 5, 2 )
 
 	Accept.DoClick = function()
-		datastream.StreamToServer( "Tiramisu.GetEditFaction", tbl )
+		net.Start("Tiramisu.GetEditFaction")
+			net.WriteTable(tbl)
+		net.SendToServer()
 		EditGroup:Remove()
 		EditGroup = nil
 	end

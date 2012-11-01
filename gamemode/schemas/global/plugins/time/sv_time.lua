@@ -10,9 +10,9 @@ function TIRA.InitTime() -- Load the time from a text file or default value, thi
 
 	local clumpedtime = TIRA.ConVars[ "DefaultTime" ]
 	
-	if(file.Exists(TIRA.Name .. "/time/" .. TIRA.ConVars[ "Schema" ] .. "/time.txt")) then
+	if(file.Exists(TIRA.Name .. "/time/" .. TIRA.ConVars[ "Schema" ] .. "/time.txt", "DATA")) then
 	
-		clumpedtime = file.Read(TIRA.Name .. "/time/" .. TIRA.ConVars[ "Schema" ] .. "/time.txt")
+		clumpedtime = file.Read(TIRA.Name .. "/time/" .. TIRA.ConVars[ "Schema" ] .. "/time.txt", "DATA")
 		
 	else
 	

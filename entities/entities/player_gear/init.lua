@@ -10,7 +10,7 @@ include( 'shared.lua' )
 function ENT:Initialize()
 
 	if self:GetDTBool( 2 ) then
-		self.Entity:AddEffects( EF_BONEMERGE | EF_BONEMERGE_FASTCULL | EF_PARENT_ANIMATES  )
+		self.Entity:AddEffects( bit.bor(bit.bor( EF_BONEMERGE, EF_BONEMERGE_FASTCULL ), EF_PARENT_ANIMATES ) )
 	end
 	self:SetSolid(SOLID_NONE)
 	self:SetNotSolid(true)

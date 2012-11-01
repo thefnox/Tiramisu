@@ -1,9 +1,12 @@
-datastream.Hook( "Tiramisu.WriteNote", function( ply, handler, id, encoded, decoded )
+util.AddNetworkString("Tiramisu.ReadNote")
+util.AddNetworkString("Tiramisu.WriteNote")
+
+net.Receive( "Tiramisu.WriteNote", function( ply, len )
 
 	local note = TIRA.CreateItem("note", ply:CalcDrop(), Angle(0, 0, 0))
 	timer.Simple( 0, function()
-		TIRA.SetUData( note:GetNWString("id"), "name", decoded["title"] )
-		TIRA.SetUData( note:GetNWString("id"), "text", decoded["text"] )
+		TIRA.SetUData( note:GetNWString("id"), "name", net.ReadString() )
+		TIRA.SetUData( note:GetNWString("id"), "text", net.ReadString() )
 	end)
 
 end )

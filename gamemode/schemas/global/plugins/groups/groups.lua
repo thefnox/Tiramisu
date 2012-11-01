@@ -1,5 +1,14 @@
 -- lol
-_R.Group = {}
+util.AddNetworkString("Tiramisu.GetEditGroup")
+util.AddNetworkString("TiramisuAddToGroupChat")
+util.AddNetworkString("Tiramisu.ReceiveGroups")
+util.AddNetworkString("Tiramisu.EditGroup")
+util.AddNetworkString("Tiramisu.GetGroupInfo")
+util.AddNetworkString("Tiramisu.EditCharInfo")
+util.AddNetworkString("Tiramisu.ReceiveSpawnPoints")
+util.AddNetworkString("Tiramisu.GetSearchResults")
+
+debug.getregistry().Group = {}
 local meta = FindMetaTable("Group")
 
 function meta:New()
@@ -14,13 +23,18 @@ function meta:GetField( fieldname )
 	if self[fieldname] == nil then
 		local query = TIRA.Query("SELECT " .. fieldname .. " FROM tiramisu_groups WHERE id = ".. self.UniqueID.."")
 		if query then
-			if type(TIRA.GroupFields[fieldname]) == "table" then self[fieldname] = TIRA.Deserialize(query[1]) end
-			if type(TIRA.GroupFields[fieldname]) == "string" then self[fieldname] = tostring(query[1]) end
-			if type(TIRA.GroupFields[fieldname]) == "number" then self[fieldname] = tonumber(query[1]) end
-			if type(TIRA.GroupFields[fieldname]) == "boolean" then self[fieldname] = util.tobool(query[1]) end
-		end 
+			if type(TIRA.GroupFields[fieldname]) == "table" then self[fieldname] = TIRA.Deserialize(query[1][fieldname]) or {} end
+			if type(TIRA.GroupFields[fieldname]) == "string" then
+				if type(query[1][fieldname]) != "string" then query[1][fieldname] = tostring(query[1][fieldname]) or ""
+				else if (query[1][fieldname][1] == "'" or query[1][fieldname][1] == "\"")then query[1][fieldname] = string.sub( query[1][fieldname], 2, -2) end end
+				self[fieldname] = query[1][fieldname] 
+			end
+			if type(TIRA.GroupFields[fieldname]) == "number" then self[fieldname] = tonumber(query[1][fieldname]) or 0 end
+			if type(TIRA.GroupFields[fieldname]) == "boolean" then self[fieldname] = util.tobool(query[1][fieldname]) or false end
+		else return TIRA.GroupFields[fieldname]
+		end
 	end
-	return self[fieldname] or TIRA.GroupFields[fieldname] or false
+	return self[fieldname]
 end
 
 --Sets a field on the group object.
@@ -31,14 +45,18 @@ function meta:SetField( fieldname, value, dontsave )
 		self[fieldname] = value
 	end
 	if !dontsave then
-		if type(TIRA.GroupFields[fieldname]) == "table" then value = TIRA.Serialize(value) end
-		if type(TIRA.GroupFields[fieldname]) == "number" then value = tostring(value) end
-		if type(TIRA.GroupFields[fieldname]) == "boolean" then
-			if value then value = 1
-			else value = 0 end
+		if TIRA.GroupFields[fieldname] then
+			self[fieldname] = value
+			if type(TIRA.GroupFields[fieldname]) == "table" then value = TIRA.Serialize(value) end
+			if type(TIRA.GroupFields[fieldname]) == "string" then value = value end
+			if type(TIRA.GroupFields[fieldname]) == "number" then value = tostring(value) end
+			if type(TIRA.GroupFields[fieldname]) == "boolean" then
+				if value then value = 1
+				else value = 0 end
+			end
+			TIRA.Query("UPDATE tiramisu_groups SET " .. fieldname .. "='" .. TIRA.StrEscape(value) .. "' WHERE id = '".. self.UniqueID .. "'")
 		end
-		TIRA.Query("UPDATE tiramisu_groups SET " .. fieldname .. "='" .. TIRA.StrEscape(value) .. "' WHERE id = '".. self.UniqueID .. "'")
-		self:Save()
+		--self:Save()
 	end
 end
 
@@ -116,7 +134,7 @@ function meta:Delete()
 	for _, ply in pairs( self:GetOnlineCharacters() ) do
 		TIRA.LeaveGroup( ply, self.UniqueID )
 	end
-	TIRA.Query( "DELETE FROM tiramisu_groups WHERE id=" .. self.UniqueID )
+	--TIRA.Query( "DELETE FROM tiramisu_groups WHERE id=" .. self.UniqueID )
 	self = nil
 end
 
@@ -272,7 +290,7 @@ end
 --Does this group currently exist in the group list? Second argument, does the file for this group exist?
 function TIRA.GroupExists( uid )
 	if !uid then return false end
-	return TIRA.Groups[uid] or false, file.Exists(TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/" .. uid.. ".txt")
+	return TIRA.Groups[uid] or false, file.Exists(TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/" .. uid.. ".txt", "DATA")
 end
 
 function TIRA.IsGroup( uid )
@@ -321,22 +339,21 @@ function TIRA.CreateGroupObject( uid )
 	if uid then
 		group.UniqueID = uid 
 	else
-	local id = TIRA.GetTableNextID( "tiramisu_groups" )
-	local fieldstr = "id,"
-	local defaultstr = id .. ","
-			-- Let's get the default fields and add them to the table.
+		local id = TIRA.GetTableNextID( "tiramisu_groups" ) or 1
+		local fieldstr = "id,"
+		local defaultstr = id .. ","
 		for fieldname, default in pairs( TIRA.GroupFields ) do
 			fieldstr = fieldstr .. fieldname .. ","
-			if type(default) == "table" then data = "'" .. TIRA.Serialize(default) .. "'" end
-			if type(default) == "string" then defaultstr = defaultstr .. default .. "," end
+			if type(default) == "table" then defaultstr = defaultstr .. "'" .. TIRA.Serialize(default) .. "'," end
+			if type(default) == "string" then defaultstr = defaultstr .. "'" .. default .. "'," end
 			if type(default) == "number" then defaultstr = defaultstr .. tostring(default) .. "," end
 			if type(default) == "boolean" then if default then defaultstr = defaultstr .. "1," else defaultstr = defaultstr .. "0," end end
 		end
 		fieldstr = string.sub(fieldstr, 1, string.len(fieldstr) - 1 ) --Removing the last comma
-		defaulstr = string.sub(defaulstr, 1, string.len(defaulstr) - 1 ) --Removing the last comma
+		defaultstr = string.sub(defaultstr, 1, string.len(defaultstr) - 1 ) --Removing the last comma
 
 		TIRA.Query("INSERT INTO tiramisu_groups (".. fieldstr .. ") VALUES (" .. defaultstr .. ")")
-		group.UniqueID = TIRA.GetTableMaxID("tiramisu_groups")
+		group.UniqueID = id
 	end
 	return group
 end
@@ -444,8 +461,9 @@ function TIRA.SendGroupToClient( ply )
 	tbl["activegroup"] = activegroup
 
 	tbl["factions"] = TIRA.Factions
-
-	datastream.StreamToClients( ply, "Tiramisu.ReceiveGroups", tbl)
+	net.Start("Tiramisu.ReceiveGroups")
+		net.WriteTable(tbl)
+	net.Send(ply)
 end
 
 TIRA.AddGroupField( "roster", {} )

@@ -131,7 +131,7 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 		return
 	end
 	
-	if !IronsightsOn() and !LocalPlayer():InVehicle() and cmd:GetButtons() & IN_USE == 0 then
+	if !IronsightsOn() and !LocalPlayer():InVehicle() and bit.band(cmd:GetButtons(), IN_USE) == 0 then
 		if input.IsMouseDown(MOUSE_MIDDLE) then
 			TIRA.FreeScroll = true
 		else
@@ -168,7 +168,7 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 				TIRA.RealAng = TIRA.RealAng + Angle( cmd:GetMouseY() * (mPitch:GetFloat()), cmd:GetMouseX() * (-mYaw:GetFloat()), 0 )
 				TIRA.RealAng.p = Clamp( NormalizeAngle( TIRA.RealAng.p ), -89, 89 )
 				TIRA.RealAng.y = NormalizeAngle( TIRA.RealAng.y )
-				if cmd:GetButtons() & IN_FORWARD > 0 or cmd:GetButtons() & IN_BACK > 0 then
+				if bit.band(cmd:GetButtons(), IN_FORWARD) > 0 or bit.band(cmd:GetButtons(), IN_BACK) > 0 then
 					if input.IsKeyDown(KEY_LALT) and TIRA.UseHeadRotation then
 						if not TIRA.UseHeadRotation == 2 then
 							ply.CurrentLookAt = Angle(0,0,0)

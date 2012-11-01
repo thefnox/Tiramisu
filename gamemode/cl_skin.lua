@@ -2,9 +2,9 @@
 local surface = surface
 local draw = draw
 local Color = Color
-local gradient = surface.GetTextureID("gui/gradient")
-local matBlurScreen = Material( "pp/blurscreen" ) 
-local gradientUp = surface.GetTextureID("gui/gradient_up")
+local gradient = surface.GetTextureID("gui/gradient.vtf")
+//local matBlurScreen = Material( "pp/blurscreen" ) 
+local gradientUp = surface.GetTextureID("gui/gradient_up.vtf")
 
 function derma.SkinHook( strType, strName, panel, ... )
 	local Skin
@@ -104,18 +104,6 @@ function SKIN:PaintFrame( panel )
 	color = panel.Color or TIRA.BaseColor or Color( 100, 100, 115, 150 )
 	
 	// Background 
-	surface.SetMaterial( matBlurScreen ) 
-	surface.SetDrawColor( 255, 255, 255, 255 ) 
-	
-	matBlurScreen:SetMaterialFloat( "$blur", 5 ) 
-	render.UpdateScreenEffectTexture() 
-	
-	surface.DrawTexturedRect( x, y, ScrW(), ScrH() ) 
-
-	if ( panel.m_bBackgroundBlur ) then
-		Derma_DrawBackgroundBlur( panel, panel.m_fCreateTime )
-	end
-	
 	surface.SetDrawColor( color.r, color.g, color.b, 150 ) 
 	surface.DrawRect( x, y, ScrW(), ScrH() ) 
 
@@ -133,7 +121,7 @@ function SKIN:PaintFrame( panel )
 
 	surface.SetTexture( gradientUp )
 	surface.SetDrawColor( math.Clamp( color.r - 50, 0, 255 ), math.Clamp( color.g - 50,0, 255 ), math.Clamp( color.b - 50, 0, 255 ), color.a ) 
-	surface.DrawTexturedRectUV( 0, 0, panel:GetWide(), panel:GetTall(), panel:GetWide(), panel:GetWide() )
+	surface.DrawTexturedRectUV( 0, 0, panel:GetWide(), panel:GetTall(), 0, 0, panel:GetWide(), panel:GetTall())
 
 	// Border 
 	surface.SetDrawColor( math.Clamp( color.r - 50, 0, 255 ), math.Clamp( color.g - 50,0, 255 ), math.Clamp( color.b - 50, 0, 255 ), 255 ) 
@@ -235,9 +223,9 @@ function SKIN:PaintQuickMenu(panel)
 		x, y = panel:ScreenToLocal( 0, 0 )
 		surface.SetTexture( gradient )
 		surface.SetDrawColor( 0, 0, 0, fade ) 
-		surface.DrawTexturedRectUV( x, y, panel:GetWide(), panel:GetTall(), panel:GetWide(), panel:GetWide() )
+		surface.DrawTexturedRectUV( x, y, panel:GetWide(), panel:GetTall(), 0, 0, panel:GetWide(), panel:GetTall() )
 		surface.SetDrawColor( 0, 0, 0, fade ) 
-		surface.DrawTexturedRectUV(  x, y, panel:GetWide(), panel:GetTall(), panel:GetWide(), panel:GetWide() )
+		surface.DrawTexturedRectUV(  x, y, panel:GetWide(), panel:GetTall(), 0, 0, panel:GetWide(), panel:GetTall()  )
 	end
 end
 
@@ -266,18 +254,6 @@ function SKIN:PaintTiramisuChatBox(panel)
 	color = TIRA.BaseColor or Color( 100, 100, 115, 150 )
 	
 	// Background 
-	surface.SetMaterial( matBlurScreen ) 
-	surface.SetDrawColor( 255, 255, 255, panel.Alpha or 0 ) 
-	
-	matBlurScreen:SetMaterialFloat( "$blur", panel.Alpha or 0 / 50 ) 
-	render.UpdateScreenEffectTexture() 
-	
-	surface.DrawTexturedRect( x, y, ScrW(), ScrH() ) 
-
-	if ( panel.m_bBackgroundBlur ) then
-		Derma_DrawBackgroundBlur( panel, panel.m_fCreateTime )
-	end
-	
 	surface.SetDrawColor( color.r, color.g, color.b, panel.Alpha or 0 ) 
 	surface.DrawRect( x, y, ScrW(), ScrH() ) 
 
@@ -433,7 +409,7 @@ function SKIN:LayoutCharacterList()
 			deletebutton:SetText("")
 			deletebutton.Paint = function()
 				surface.SetDrawColor(Color(0, 0, 0, 250 ))
-				surface.SetTexture()
+				
 				surface.DrawTexturedRectRotated( 15, 22, 20, 8, 45 )
 				surface.DrawTexturedRectRotated( 15, 22, 20, 8, 135 )
 			end
@@ -666,7 +642,7 @@ function SKIN:CharacterCreationStep1()
 		titletext:SetTooltip( "Click to edit" )
 		panel:AddItem( titletext )
 
-		local modellist = vgui.Create( "DMultiChoice" )
+		local modellist = vgui.Create( "DComboBox" )
 		for k, v in pairs( TIRA.ConVars[ "DefaultModels" ][ Gender ] ) do
 			modellist:AddChoice( v )
 		end
@@ -676,7 +652,7 @@ function SKIN:CharacterCreationStep1()
 		end
 		modellist:ChooseOptionID( 1 )
 
-		local genderlist = vgui.Create( "DMultiChoice" )
+		local genderlist = vgui.Create( "DComboBox" )
 		genderlist:AddChoice( "Male" )
 		genderlist:AddChoice( "Female" )
 		genderlist.OnSelect = function( panel,index,value )
@@ -1108,8 +1084,8 @@ end
 	BlurScreen, used in the fullscreen editors
 ---------------------------------------------------------*/
 local x, y, n
-local gradientup = surface.GetTextureID("gui/gradient_up")
-local gradientdown = surface.GetTextureID("gui/gradient_down")
+local gradientup = surface.GetTextureID("gui/gradient_up.vtf")
+local gradientdown = surface.GetTextureID("gui/gradient_down.vtf")
 function SKIN:PaintBlurScreen()
 	color = TIRA.BaseColor or Color( 100, 100, 115, 150 )
 
@@ -1119,19 +1095,12 @@ function SKIN:PaintBlurScreen()
 
 	surface.SetTexture(gradientdown)
 	surface.SetDrawColor( 0, 0, 0, 250 ) 
-	surface.DrawTexturedRectUV( 0, 0, x, y/5 , 0, y/5, y/5 )
+	surface.DrawTexturedRectUV( 0, 0, x, y/5 , 0, 0, x, y/5 )
 	surface.SetTexture(gradientup)
-	surface.DrawTexturedRectUV( 0, y - y/5, x, y/5 , 0, y/5, y/5 )
-	surface.SetTexture()
+	surface.DrawTexturedRectUV( 0, y - y/5, x, y/5 , 0, 0, x, y/5 )
+	--
 	
 	// Background 
-	surface.SetMaterial( matBlurScreen ) 
-	surface.SetDrawColor( 255, 255, 255, 255 ) 
-	
-	matBlurScreen:SetMaterialFloat( "$blur", 5 ) 
-	render.UpdateScreenEffectTexture() 
-	
-	surface.DrawTexturedRect( 0, 0, ScrW(), ScrH() ) 
 	
 	surface.SetDrawColor( color.r, color.g, color.b, 150 ) 
 	surface.DrawRect( 0, 0, ScrW(), ScrH() ) 
@@ -1179,7 +1148,7 @@ function SKIN:PaintTiramisuWeaponSelection()
 		curslot = false
 		textalpha = Lerp( 10 * RealFrameTime(), textalpha, 0 )
 		surface.SetDrawColor( Color( 0,0,0, textalpha ) )
-		surface.SetTexture( gradientcenter )
+		--surface.SetTexture( gradientcenter )
 		surface.DrawTexturedRectRotated(ScrW()/2-100,50,200,25,180)
 		surface.DrawTexturedRectRotated(ScrW()/2+100,50,200,25,0)		
 	end

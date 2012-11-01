@@ -37,8 +37,9 @@ function TIRA.AddRadioLine( text )
 end
 
 
-datastream.Hook( "TiramisuAddToRadio", function( handler, id, encoded, decoded )
+net.Receive( "TiramisuAddToRadio", function( len )
+	local text = net.ReadString()
 	TIRA.CreateRadioMenu()
-	TIRA.Chatbox:AddLine( "<font=BudgetLabel>" .. decoded.text .. "</font>", "Radio" )
-	TIRA.AddRadioLine( "<font=BudgetLabel>" .. decoded.text .. "</font>" )
+	TIRA.Chatbox:AddLine( "<font=BudgetLabel>" .. text .. "</font>", "Radio" )
+	TIRA.AddRadioLine( "<font=BudgetLabel>" .. text .. "</font>" )
 end)

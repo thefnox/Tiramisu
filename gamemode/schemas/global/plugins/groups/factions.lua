@@ -1,5 +1,10 @@
 TIRA.Factions = {}
 
+util.AddNetworkString("Tiramisu.GetFactionInfo")
+util.AddNetworkString("Tiramisu.EditFaction")
+util.AddNetworkString("Tiramisu.GetEditFaction")
+util.AddNetworkString("Tiramisu.ReceiveFactions")
+
 --Returns true if the name introduced is currently assigned to a group
 function TIRA.GroupHandlerExists( handler )
 	for id, group in pairs( TIRA.Groups ) do
@@ -26,8 +31,8 @@ end
 
 --Loads all factions
 function TIRA.LoadAllFactions()
-	if file.Exists( TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/factions.txt" ) then
-		TIRA.Factions = TIRA.Deserialize(file.Read(TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/factions.txt"))
+	if file.Exists( TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/factions.txt", "DATA" ) then
+		TIRA.Factions = TIRA.Deserialize(file.Read(TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/factions.txt"), "DATA")
 		local groupexists, fileexists
 		for k, v in pairs( TIRA.Factions ) do
 			groupexists, fileexists = TIRA.GroupExists( v )
@@ -87,18 +92,25 @@ function TIRA.AddFactionRank( faction, name, handler, description, level, weapon
 end
 
 function TIRA.SendFactionList( ply )
-	datastream.StreamToClients( ply, "Tiramisu.ReceiveFactions", TIRA.Factions )
+	net.Start("Tiramisu.ReceiveFactions")
+		net.WriteTable(TIRA.Factions)
+	net.Send(ply)
 end
 
-datastream.Hook( "Tiramisu.GetEditFaction", function(ply, handler, id, encoded, decoded)
+net.Receive( "Tiramisu.GetEditFaction", function(ply, len)
+	local decoded = net.ReadTable()
 	local group = TIRA.GetGroup( decoded.uid or "none" )
 	if group and TIRA.PlayerRank(ply) > 3 then
 		if group:Name() != decoded.name and TIRA.GroupNameExists( decoded.name ) then
 			TIRA.SendError( ply, "Faction name exists! Please choose another name" )
-			datastream.StreamToClients( ply, "Tiramisu.EditFaction", decoded)
+			net.Start("Tiramisu.EditFaction")
+				net.WriteTable(decoded)
+			net.Send(ply)
 		elseif group:GetField( "handler" ) != decoded.handler and TIRA.GroupHandlerExists( decoded.handler ) then
 			TIRA.SendError( ply, "Faction handler exists! Please choose another shorthand for your faction" )
-			datastream.StreamToClients( ply, "Tiramisu.EditFaction", decoded)		
+			net.Start("Tiramisu.EditFaction")
+				net.WriteTable(decoded)
+			net.Send(ply)	
 		else
 			group:SetField("name", decoded.name)
 			group:SetField("handler", decoded.handler)
@@ -153,7 +165,9 @@ concommand.Add( "rp_createfaction", function( ply, cmd, args )
 				tbl["ranks"][k]["description"] = group:GetRankField( k, "description" )
 			end
 			TIRA.SendFactionList( ply )
-			datastream.StreamToClients( ply, "Tiramisu.EditFaction", tbl)
+			net.Start("Tiramisu.EditFaction")
+				net.WriteTable(tbl)
+			net.Send(ply)
 		end
 	end
 end)
@@ -188,7 +202,9 @@ concommand.Add( "rp_editfaction", function( ply, cmd, args )
 				tbl["ranks"][k]["description"] = group:GetRankField( k, "description" )
 			end
 
-			datastream.StreamToClients( ply, "Tiramisu.EditFaction", tbl)
+			net.Start("Tiramisu.EditFaction")
+				net.WriteTable(tbl)
+			net.Send(ply)
 		end 
 	end
 end)
@@ -204,7 +220,9 @@ concommand.Add( "rp_getfactioninfo", function( ply, cmd, args )
 			tbl["inventory"] = group:GetField("inventory")
 			tbl["description"] = group:GetField("description")
 			tbl["uid"] = group.UniqueID
-			datastream.StreamToClients( ply, "Tiramisu.GetFactionInfo", tbl)
+			net.Start("Tiramisu.GetFactionInfo")
+				net.WriteTable(tbl)
+			net.Send(ply)
 		end
 	end
 end)

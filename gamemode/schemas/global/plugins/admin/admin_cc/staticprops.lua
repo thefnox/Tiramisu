@@ -73,8 +73,8 @@ end
 --Loads all permaprops on initialization.
 function TIRA.LoadPermaProps()
 	local map = game.GetMap()
-	if file.Exists( TIRA.Name .. "/PermaProps/" .. TIRA.ConVars[ "Schema" ] .. "/" .. map .. ".txt" ) then
-		TIRA.PermaProps[ map ] = TIRA.Deserialize(file.Read( TIRA.Name .. "/PermaProps/" .. TIRA.ConVars[ "Schema" ] .. "/" .. map .. ".txt" ))
+	if file.Exists( TIRA.Name .. "/PermaProps/" .. TIRA.ConVars[ "Schema" ] .. "/" .. map .. ".txt", "DATA" ) then
+		TIRA.PermaProps[ map ] = TIRA.Deserialize(file.Read( TIRA.Name .. "/PermaProps/" .. TIRA.ConVars[ "Schema" ] .. "/" .. map .. ".txt" , "DATA"))
 		local time = 0
 		for k, v in ipairs( TIRA.PermaProps[ map ] ) do
 			timer.Simple( time + 0.1, function()

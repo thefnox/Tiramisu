@@ -83,14 +83,16 @@ end
 --Initializes all spawnpoints
 
 function TIRA.InitSpawns()
-	if(file.Exists(TIRA.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt")) then
-		TIRA.SpawnPoints = TIRA.Deserialize(file.Read(TIRA.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt"))
+	if(file.Exists(TIRA.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt", "DATA")) then
+		TIRA.SpawnPoints = TIRA.Deserialize(file.Read(TIRA.Name .. "/MapInfo/" ..game.GetMap().. "_spawns.txt", "DATA"))
 	end
 end
 
 function TIRA.SendSpawnPoints( ply )
 	if TIRA.PlayerRank(ply) > 3 then
-		datastream.StreamToClients( ply, "Tiramisu.ReceiveSpawnPoints", TIRA.SpawnPoints )
+		net.Start("Tiramisu.ReceiveSpawnPoints")
+			net.WriteTable(TIRA.SpawnPoints)
+		net.Send(ply)
 	end
 end
 
