@@ -1,4 +1,4 @@
-net.Receive( "Tiramisu.GetEditGroup", function(ply, len)
+net.Receive( "Tiramisu.GetEditGroup", function(len, ply)
 	local decoded = net.ReadTable()
 	local group = TIRA.GetGroup( decoded.uid or "none" )
 	if group and group:CharInGroup(ply) and group:GetRankField(group:GetCharInfo( ply ).Rank, "canedit") then

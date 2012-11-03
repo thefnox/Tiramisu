@@ -50,11 +50,11 @@ function TIRA.DrawQuickMenu()
 		end
 		label:SetSize( QuickMenu:GetWide()-10, 28 )
 		label:SetTextColor(Color(255, 255, 255, 0))
-		label:SetTextColorHovered(TIRA.BaseColor)
+		--label:SetTextColorHovered(TIRA.BaseColor)
 		label:SetPos( 10, lastpos)
 		label.SpecialColor = label:GetTextColor()
 		label.OnCursorEntered = function()
-			label.SpecialColor = label:GetTextColorHovered()
+			label.SpecialColor = TIRA.BaseColor
 		end
 		label.OnCursorExited = function()
 			label.SpecialColor = label:GetTextColor()
@@ -115,7 +115,7 @@ function GM:GUIMousePressed(mc)
 		end
 		local trace = util.TraceLine(tracedata)
 		
-		if SinglePlayer() and TIRA.Thirdperson:GetBool() then
+		if game.SinglePlayer() and TIRA.Thirdperson:GetBool() then
 			if trace.StartPos:Distance( LocalPlayer():EyePos() ) <= distance then
 				local target = trace.Entity
 				local submenus = {}

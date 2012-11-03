@@ -213,7 +213,7 @@ local function ccRemoveGear( ply, cmd, args )
 end
 concommand.Add( "rp_removegear", ccRemoveGear )
 
-net.Receive( "Tiramisu.GetEditGear", function(ply, len)
+net.Receive( "Tiramisu.GetEditGear", function(len, ply)
 	local decoded = net.ReadTable()
 	local ent = decoded.entity
 	if ValidEntity( ent ) and ent:GetDTEntity( 1 ) == ply then

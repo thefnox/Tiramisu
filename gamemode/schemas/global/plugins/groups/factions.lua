@@ -97,7 +97,7 @@ function TIRA.SendFactionList( ply )
 	net.Send(ply)
 end
 
-net.Receive( "Tiramisu.GetEditFaction", function(ply, len)
+net.Receive( "Tiramisu.GetEditFaction", function(len, ply)
 	local decoded = net.ReadTable()
 	local group = TIRA.GetGroup( decoded.uid or "none" )
 	if group and TIRA.PlayerRank(ply) > 3 then

@@ -126,7 +126,7 @@ function TIRA.WakeUp(ply, dontdestroyragdoll)
 			umsg.Bool( false )
 		umsg.End()
 	end
-	if timer.IsTimer( ply:SteamID() .. "unconcioustimer" ) then
+	if timer.Exists( ply:SteamID() .. "unconcioustimer" ) then
 		timer.Destroy( ply:SteamID() .. "unconcioustimer"  )
 	end
 	ply.CanWakeUp = false

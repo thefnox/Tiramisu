@@ -83,7 +83,7 @@ function TIRA.FindPlayer(name)
 	local name = name:lower()
 
 	for _, ply in pairs(player.GetAll()) do
-		if SinglePlayer() then
+		if game.SinglePlayer() then
 			return ply --There'll be just one player on the game, so return the sole player that should be on the player list.
 		end
 		if string.lower(ply:Nick()):match(name) or string.lower(ply:Name()):match(name) or string.lower(ply:SteamID()):match(name) or TIRA.FormatText(ply:SteamID()):match( name ) then

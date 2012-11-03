@@ -129,7 +129,7 @@ function GM:PlayerSay( ply, text, team )
 
 end
 
-net.Receive("TiramisuChatHandling", function(ply, len)
+net.Receive("TiramisuChatHandling", function(len, ply)
 	local text = net.ReadString() or ""
 	gamemode.Call("PlayerSay", ply, text )
 end)

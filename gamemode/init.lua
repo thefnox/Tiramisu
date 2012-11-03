@@ -156,7 +156,6 @@ end
 
 function GM:PlayerSetModel(ply)
 	if ply:IsCharLoaded() and (TIRA.GetCharField(ply, "specialmodel") == "none" or TIRA.GetCharField(ply, "specialmodel") == "") then
-		print("\n\tFUCK YOU\n")
 		local m = TIRA.GetCharField( ply, "gender" )
 		ply:SetNWBool( "specialmodel", false )
 		ply:SetModel( Anims[m][ "models" ][1] )
@@ -165,7 +164,6 @@ function GM:PlayerSetModel(ply)
 		ply:AddEffects( EF_NOSHADOW )
 		ply:SetPersonality( TIRA.GetCharField( ply, "personality" ))
 	elseif ply:IsCharLoaded() and !(TIRA.GetCharField(ply, "specialmodel") == "none" or TIRA.GetCharField(ply, "specialmodel") == "") then
-		print("\n\tFUCK YOU NOT\n")
 		ply:SetSpecialModel( TIRA.GetCharField(ply, "specialmodel") )
 		ply:SetNWString( "gender", "Male" )
 	else

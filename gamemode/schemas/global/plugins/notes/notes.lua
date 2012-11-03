@@ -1,7 +1,7 @@
 util.AddNetworkString("Tiramisu.ReadNote")
 util.AddNetworkString("Tiramisu.WriteNote")
 
-net.Receive( "Tiramisu.WriteNote", function( ply, len )
+net.Receive( "Tiramisu.WriteNote", function( len, ply )
 
 	local note = TIRA.CreateItem("note", ply:CalcDrop(), Angle(0, 0, 0))
 	timer.Simple( 0, function()

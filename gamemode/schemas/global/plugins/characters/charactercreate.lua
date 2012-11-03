@@ -209,7 +209,10 @@ function TIRA.SelectChar( ply, uid )
 		local char = query[1]
 		for fieldname, value in pairs(char) do
 			if type(TIRA.CharacterDataFields[ fieldname ]) == "table" then char[fieldname] = TIRA.Deserialize(value) or {} end
-			if type(TIRA.CharacterDataFields[ fieldname ]) == "string" then if type(char[fieldname]) != "string" then char[fieldname] = tostring(value) or "" end end
+			if type(TIRA.CharacterDataFields[ fieldname ]) == "string" then
+				if type(char[fieldname]) != "string" then char[fieldname] = tostring(char[fieldname]) or ""
+				else if (char[fieldname][1] == "'" or char[fieldname][1] == "\"")then char[fieldname] = string.sub( char[fieldname], 2, -2) end end 
+			end
 			if type(TIRA.CharacterDataFields[ fieldname ]) == "number" then char[fieldname] = tonumber(value) or 0 end
 			if type(TIRA.CharacterDataFields[ fieldname ]) == "boolean" then char[fieldname] = util.tobool(value) or false end
 		end

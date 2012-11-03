@@ -51,7 +51,7 @@ function GM:PlayerDeathThink(ply)
 							local rag = ply.rag
 							timer.Create("deadragdollremove".. ply:SteamID(), 0.1, 0, function()
 								if ValidEntity(rag) then
-									local r, g, b, alpha = rag:GetColor()
+									local r, g, b, alpha = unpack(rag:GetColor())
 									if alpha != 0 then
 										rag:SetColor( 255, 255, 255, math.Clamp( alpha - 25, 0, 255 ))
 									else

@@ -185,7 +185,7 @@ function PANEL:AddChannel( name, description, handler, cantclose )
 
 		end
 		self.Channels[ name ] = panel
-		local tab = self.PropertySheet:AddSheet( name, panel, "", false, false, description or name )
+		local tab = self.PropertySheet:AddSheet( name, panel, "gui/silkicons/user.vtf", false, false, description or name )
 		tab.Tab.handler = handler or ""
 		if cantclose then
 			tab.Tab.CantBeClosed = true
