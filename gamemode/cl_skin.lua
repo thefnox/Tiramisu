@@ -121,7 +121,7 @@ function SKIN:PaintFrame( panel )
 
 	surface.SetTexture( gradientUp )
 	surface.SetDrawColor( math.Clamp( color.r - 50, 0, 255 ), math.Clamp( color.g - 50,0, 255 ), math.Clamp( color.b - 50, 0, 255 ), color.a ) 
-	surface.DrawTexturedRectUV( 0, 0, panel:GetWide(), panel:GetTall(), 0, 0, panel:GetWide(), panel:GetTall())
+	surface.DrawTexturedRectUV( 0, 0, panel:GetWide(), panel:GetTall(), 0, 0, 1, 1)
 
 	// Border 
 	surface.SetDrawColor( math.Clamp( color.r - 50, 0, 255 ), math.Clamp( color.g - 50,0, 255 ), math.Clamp( color.b - 50, 0, 255 ), 255 ) 
@@ -223,9 +223,9 @@ function SKIN:PaintQuickMenu(panel)
 		x, y = panel:ScreenToLocal( 0, 0 )
 		surface.SetTexture( gradient )
 		surface.SetDrawColor( 0, 0, 0, fade ) 
-		surface.DrawTexturedRectUV( x, y, panel:GetWide(), panel:GetTall(), 0, 0, panel:GetWide(), panel:GetTall() )
+		surface.DrawTexturedRectUV( x, y, panel:GetWide(), panel:GetTall(), 0, 0, 1, 1 )
 		surface.SetDrawColor( 0, 0, 0, fade ) 
-		surface.DrawTexturedRectUV(  x, y, panel:GetWide(), panel:GetTall(), 0, 0, panel:GetWide(), panel:GetTall()  )
+		surface.DrawTexturedRectUV(  x, y, panel:GetWide(), panel:GetTall(), 0, 0, 1, 1  )
 	end
 end
 
@@ -1095,9 +1095,9 @@ function SKIN:PaintBlurScreen()
 
 	surface.SetTexture(gradientdown)
 	surface.SetDrawColor( 0, 0, 0, 250 ) 
-	surface.DrawTexturedRectUV( 0, 0, x, y/5 , 0, 0, x, y/5 )
+	surface.DrawTexturedRectUV( 0, 0, x, y/5 ,0, 0, 1, 1)
 	surface.SetTexture(gradientup)
-	surface.DrawTexturedRectUV( 0, y - y/5, x, y/5 , 0, 0, x, y/5 )
+	surface.DrawTexturedRectUV( 0, y - y/5, x, y/5 ,0, 0, 1, 1 )
 	--
 	
 	// Background 

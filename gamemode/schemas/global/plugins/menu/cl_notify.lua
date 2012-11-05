@@ -162,7 +162,7 @@ function TIRA.Message( strText, strTitle, strButtonText )
 		Text:SetText( strText or "Message Text" )
 		Text:SizeToContents()
 		Text:SetContentAlignment( 5 )
-		Text:SetTextColor( color_white )
+		Text:SetTextColor( color_black )
 		
 	local ButtonPanel = vgui.Create( "DPanel", Window )
 	ButtonPanel:SetTall( 30 )
@@ -204,6 +204,8 @@ end
 		
 */
 function TIRA.Query( strText, strTitle, ... )
+
+	local arg = {...}
  
 	local Window = vgui.Create( "DFrame" )
 		Window:SetTitle( strTitle or "Message Title (First Parameter)" )
@@ -216,7 +218,7 @@ function TIRA.Query( strText, strTitle, ... )
 		Text:SetText( strText or "Message Text (Second Parameter)" )
 		Text:SizeToContents()
 		Text:SetContentAlignment( 5 )
-		Text:SetTextColor( color_white )
+		Text:SetTextColor( color_black )
  
 	local ButtonPanel = vgui.Create( "DPanel", Window )
 	ButtonPanel:SetTall( 30 )
@@ -298,7 +300,7 @@ function TIRA.StringRequest( strTitle, strText, strDefaultText, fnEnter, fnCance
 		Text:SetText( strText or "Message Text (Second Parameter)" )
 		Text:SizeToContents()
 		Text:SetContentAlignment( 5 )
-		Text:SetTextColor( color_white )
+		Text:SetTextColor( color_black )
 		
 	local TextEntry = vgui.Create( "DTextEntry", InnerPanel )
 		TextEntry:SetText( strDefaultText or "" )
@@ -365,7 +367,7 @@ function TIRA.ChoiceRequest( strTitle, strText, tbl, fnEnter, fnCancel, strButto
 		Text:SetText( strText or "Message Text (Second Parameter)" )
 		Text:SizeToContents()
 		Text:SetContentAlignment( 5 )
-		Text:SetTextColor( color_white )
+		Text:SetTextColor( color_black )
 		
 	local MultiChoice = vgui.Create( "DComboBox", InnerPanel )
 		choice = tbl[1]
