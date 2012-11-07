@@ -58,7 +58,7 @@ end
 function TIRA.CreateSQLTables()
 	--Just a little debugging thing, if you want to destroy all tables to generate them again just uncomment the following
 
-	TIRA.DropSQLTables()
+	--TIRA.DropSQLTables()
 
 	if TIRA.ConVars["SQLEngine"] == "sqlite" then
 		if !sql.TableExists("tiramisu_players") then
