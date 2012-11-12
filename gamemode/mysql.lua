@@ -195,6 +195,12 @@ function TIRA.Query(querystr) --Makes a query to the database
 		if !data then
 			if sql.LastError() then MsgN(sql.LastError()) end
 			return false
+		else
+			for k, v in pairs(data[1] or {}) do
+				if (type(v) == "string") then
+					
+				end
+			end
 		end
 		--PrintTable( data )
 		return data

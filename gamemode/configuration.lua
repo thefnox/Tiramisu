@@ -6,11 +6,11 @@ TIRA.ConVars = {  }
 --The SQL engine option allows you to change which SQL module to use within the script, for convenience.
 --It defaults to SQLite, which is included within GMod.
 --If you don't know what this is, don't change it, leave it as it is, and head to the end of the MySQL section
-TIRA.ConVars["SQLEngine"] = "sqlite"
+TIRA.ConVars["SQLEngine"] = "mysqloo"
 --Only change the following fields if you're using a MySQL module other than SQLite (Default)
 TIRA.ConVars["SQLHostname"] = "localhost" --IP you're connecting from
 TIRA.ConVars["SQLUsername"] = "root" --MySQL username to use for connecting
-TIRA.ConVars["SQLPassword"] = "" --Password for this username
+TIRA.ConVars["SQLPassword"] = "c0m1da" --Password for this username
 TIRA.ConVars["SQLDatabase"] = "tiramisu" --Database to work on. (Must already exist)
 TIRA.ConVars["SQLPort"] = 3306 --Port on which to connect on
 --End of the MySQL section

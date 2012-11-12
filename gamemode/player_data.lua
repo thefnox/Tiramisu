@@ -154,10 +154,10 @@ function TIRA.GetPlayerField( ply, fieldname )
 		if !TIRA.PlayerData[ ply:SteamID() ][fieldname ] then
 			local query = TIRA.Query("SELECT " .. fieldname .. " FROM tiramisu_players WHERE steamid = '"..ply:SteamID().."'")
 			if query then
+				if (type(query[1][fieldname]) == "string" and (query[1][fieldname][1] == "'" or query[1][fieldname][1] == "\"")) then query[1][fieldname] = string.sub( query[1][fieldname], 2, -2) end
 				if type(TIRA.PlayerDataFields[ fieldname ]) == "table" then TIRA.PlayerData[ ply:SteamID() ][fieldname ] = TIRA.Deserialize(query[1][fieldname]) or {} end
 				if type(TIRA.PlayerDataFields[ fieldname ]) == "string" then
-					if type(query[1][fieldname]) != "string" then query[1][fieldname] = tostring(query[1][fieldname]) or ""
-					else if (query[1][fieldname][1] == "'" or query[1][fieldname][1] == "\"")then query[1][fieldname] = string.sub( query[1][fieldname], 2, -2) end end
+					if type(query[1][fieldname]) != "string" then query[1][fieldname] = tostring(query[1][fieldname]) or "" end
 					TIRA.PlayerData[ ply:SteamID() ][fieldname ] = query[1][fieldname] 
 				end
 				if type(TIRA.PlayerDataFields[ fieldname ]) == "number" then TIRA.PlayerData[ ply:SteamID() ][fieldname ] = tonumber(query[1][fieldname]) or 0 end
@@ -201,11 +201,11 @@ function TIRA.GetCharField( ply, fieldname, uid )
 		if !TIRA.CharacterData[ uid ][fieldname ] then
 			local query = TIRA.Query("SELECT " .. fieldname .. " FROM tiramisu_chars WHERE id = '".. uid .. "'" )
 			if query then
+				if (type(query[1][fieldname]) == "string" and (query[1][fieldname][1] == "'" or query[1][fieldname][1] == "\"")) then query[1][fieldname] = string.sub( query[1][fieldname], 2, -2) end
 				if type(TIRA.CharacterDataFields[ fieldname ]) == "table" then TIRA.CharacterData[ uid ][fieldname ] = TIRA.Deserialize(query[1][fieldname]) or {} end
 				if type(TIRA.CharacterDataFields[ fieldname ]) == "string" then
 					if type(query[1][fieldname]) != "string" then
 						query[1][fieldname] = tostring(query[1][fieldname]) or ""
-						else if (query[1][fieldname][1] == "'" or query[1][fieldname][1] == "\"")then query[1][fieldname] = string.sub( query[1][fieldname], 2, -2) end
 					end
 					TIRA.CharacterData[ uid ][fieldname ] = query[1][fieldname]
 				end

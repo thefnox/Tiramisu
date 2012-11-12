@@ -23,10 +23,10 @@ function meta:GetField( fieldname )
 	if self[fieldname] == nil then
 		local query = TIRA.Query("SELECT " .. fieldname .. " FROM tiramisu_groups WHERE id = ".. self.UniqueID.."")
 		if query then
+			if (type(query[1][fieldname]) == "string" and (query[1][fieldname][1] == "'" or query[1][fieldname][1] == "\"")) then query[1][fieldname] = string.sub( query[1][fieldname], 2, -2) end
 			if type(TIRA.GroupFields[fieldname]) == "table" then self[fieldname] = TIRA.Deserialize(query[1][fieldname]) or {} end
 			if type(TIRA.GroupFields[fieldname]) == "string" then
-				if type(query[1][fieldname]) != "string" then query[1][fieldname] = tostring(query[1][fieldname]) or ""
-				else if (query[1][fieldname][1] == "'" or query[1][fieldname][1] == "\"")then query[1][fieldname] = string.sub( query[1][fieldname], 2, -2) end end
+				if type(query[1][fieldname]) != "string" then query[1][fieldname] = tostring(query[1][fieldname]) or "" end
 				self[fieldname] = query[1][fieldname] 
 			end
 			if type(TIRA.GroupFields[fieldname]) == "number" then self[fieldname] = tonumber(query[1][fieldname]) or 0 end

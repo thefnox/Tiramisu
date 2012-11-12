@@ -32,7 +32,8 @@ function TIRA.CreateContainerObject( uid )
 	if uid and TIRA.ContainerExists(uid) then
 		local query = TIRA.Query("SELECT udata FROM tiramisu_containers WHERE id = '".. uid .. "'" )
 		//print("vON STRING",string.gsub(string.sub(query[1]["udata"],2,-2), '\\', "" ), "\n")
-		local tbl = TIRA.Deserialize( string.sub(query[1]["udata"],2,-2) )
+		if (type(query[1]["udata"]) == "string" and (query[1]["udata"][1] == "'" or query[1]["udata"][1] == "\"")) then query[1]["udata"] = string.sub( query[1]["udata"], 2, -2) end
+		local tbl = TIRA.Deserialize( query[1]["udata"] )
 		container.UniqueID = uid
 		container:SetSize(tbl.Width, tbl.Height)
 		container.Items = tbl.Items or {}
