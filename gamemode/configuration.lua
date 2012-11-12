@@ -10,7 +10,7 @@ TIRA.ConVars["SQLEngine"] = "mysqloo"
 --Only change the following fields if you're using a MySQL module other than SQLite (Default)
 TIRA.ConVars["SQLHostname"] = "localhost" --IP you're connecting from
 TIRA.ConVars["SQLUsername"] = "root" --MySQL username to use for connecting
-TIRA.ConVars["SQLPassword"] = "c0m1da" --Password for this username
+TIRA.ConVars["SQLPassword"] = "" --Password for this username
 TIRA.ConVars["SQLDatabase"] = "tiramisu" --Database to work on. (Must already exist)
 TIRA.ConVars["SQLPort"] = 3306 --Port on which to connect on
 --End of the MySQL section
