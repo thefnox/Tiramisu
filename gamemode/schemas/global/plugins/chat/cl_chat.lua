@@ -122,7 +122,7 @@ function PANEL:Init()
 			self:Close()
 		end
 		self.TextEntry.Clear = function()
-			self.TextEntry:SetValue("")
+			self.TextEntry:SetText("")
 			self.TextEntry:SetCaretPos( 0 )
 		end
  
@@ -311,6 +311,7 @@ function PANEL:OpenChat()
 		self:SetMouseInputEnabled(true)
 		self:MakePopup()
 		self.TextEntry:RequestFocus()
+		self.TextEntry:SetText("")
 		gui.EnableScreenClicker( true )
 		LocalPlayer( ):ConCommand( "rp_openedchat" )
 		if self.PropertySheet.tabScroller then

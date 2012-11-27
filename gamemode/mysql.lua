@@ -28,6 +28,12 @@ function TIRA.DefaultSQLDatabase()
 	TIRA.CreateSQLTables()
 end
 
+function TIRA.ConnectToDatabase()
+	if TIRA.ConVars["SQLEngine"] == "mysqloo" then
+		TIRA.Database:connect()
+	end
+end
+
 function TIRA.InitializeSQLDatabase() --Initializes the SQL database using the currently selected SQL engine.
 	print("\nInitializing SQL Database: ")
 	if TIRA.ConVars["SQLEngine"] == "mysqloo" then
@@ -40,7 +46,6 @@ function TIRA.InitializeSQLDatabase() --Initializes the SQL database using the c
 			print("--Connection to SQL database established-- ("..TIRA.ConVars["SQLHostname"]..")\n")
 			TIRA.CreateSQLTables()
 		end
-		TIRA.Database:connect()
 	else --Default to SQLite
 		TIRA.DefaultSQLDatabase()
 	end

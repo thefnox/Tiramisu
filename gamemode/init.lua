@@ -77,8 +77,15 @@ function GM:Initialize( ) -- Initialize the gamemode
 	
 end
 
+local runonce = false
+
 -- Player Initial Spawn
 function GM:PlayerInitialSpawn( ply )
+
+	if(!runonce) then 
+		runonce = true
+		TIRA.ConnectToDatabase()
+	end
 	
 	ply.LastOOC = -100000 -- This is so people can talk for the first time without having to wait.
 	
