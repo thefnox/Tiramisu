@@ -1,26 +1,29 @@
-TIRA.Factions = {}
+CAKE.Factions = {}
 
+--datastream.Hook( "Tiramisu.GetFactionInfo", function( handler, id, encoded, decoded )
+--	CAKE.OpenFactionInfo( decoded )
 net.Receive( "Tiramisu.GetFactionInfo", function( len )
-	local decoded = net.ReadTable()
-	TIRA.OpenFactionInfo( decoded )
+	CAKE.OpenFactionInfo( net.ReadTable( ) )
 end)
 
+--datastream.Hook( "Tiramisu.EditFaction", function( handler, id, encoded, decoded )
+--	CAKE.EditFaction( decoded )
 net.Receive( "Tiramisu.EditFaction", function( len )
-	local decoded = net.ReadTable()
-	TIRA.EditFaction( decoded )
+	CAKE.EditFaction( net.ReadTable( ) )
 end)
 
+--datastream.Hook( "Tiramisu.ReceiveFactions", function( handler, id, encoded, decoded )
+--	CAKE.Factions = decoded
 net.Receive( "Tiramisu.ReceiveFactions", function( len )
-	local decoded = net.ReadTable()
-	TIRA.Factions = decoded
+	CAKE.Factions = net.ReadTable( )
 end)
 
 usermessage.Hook( "Tiramisu.FactionCreateQuery", function( um )
-	TIRA.BeginFactionCreation( um:ReadString() )
+	CAKE.BeginFactionCreation( um:ReadString() )
 end)
 
-function TIRA.BeginFactionCreation( title )
-	TIRA.StringRequest( "Faction Creation", "Please enter the name of the faction you want to create", title or "New Faction",
+function CAKE.BeginFactionCreation( title )
+	CAKE.StringRequest( "Faction Creation", "Please enter the name of the faction you want to create", title or "New Faction",
 	function( entry )
 		RunConsoleCommand( "rp_createfaction", entry )
 	end,
@@ -39,7 +42,7 @@ local hl2weapons = {
 }
 
 local list
-function TIRA.OpenWeaponList( tbl )
+function CAKE.OpenWeaponList( tbl )
 	local frame = vgui.Create( "DFrame" )
 	frame:SetSize( 300, 250 )
 	frame:SetTitle( "Select which weapons to make available" )
@@ -78,7 +81,7 @@ function TIRA.OpenWeaponList( tbl )
 	end
 
 	frame.Close = function()
-		TIRA.Query( "Save changes to weapon loadout?", "Save changes",
+		CAKE.Query( "Save changes to weapon loadout?", "Save changes",
 		"Yes",	function()
 			table.Empty(tbl)
 			for k, line in pairs(list.Lines) do
@@ -96,10 +99,10 @@ function TIRA.OpenWeaponList( tbl )
 	end
 end
 
-function TIRA.OpenItemList( tbl )
+function CAKE.OpenItemList( tbl )
 	local frame = vgui.Create( "DFrame" )
 	frame:SetSize( 300, 250 )
-	frame:SetTitle( "Select which items to make available" )
+	frame:SetTitle( "Select which items to make available (Hold CTRL)" )
 	frame:Center()
 	frame:MakePopup()
 	frame:SetSizable( true )
@@ -111,15 +114,8 @@ function TIRA.OpenItemList( tbl )
 	list:AddColumn( "Class" )
 	list:AddColumn( "Name" )
 
-	function list:OnClickLine( Line )
-		Line:SetSelected( !Line:GetSelected() )
-		Line.m_fClickTime = SysTime()
-
-		self:OnRowSelected( Line:GetID(), Line )
-	end
-
 	local line
-	for k, item in pairs(TIRA.ItemData) do
+	for k, item in pairs(CAKE.ItemData) do
 		line = list:AddLine( k, item.Name )
 		if table.HasValue(tbl, k) then
 			line:SetSelected( true )
@@ -127,13 +123,11 @@ function TIRA.OpenItemList( tbl )
 	end
 
 	frame.Close = function()
-		TIRA.Query( "Save changes to item loadout?", "Save changes",
+		CAKE.Query( "Save changes to item loadout?", "Save changes",
 		"Yes",	function()
 			table.Empty(tbl)
-			for k, line in pairs(list.Lines) do
-				if line and line:GetSelected() then
-					table.insert(tbl, line:GetValue(1)) 
-				end
+			for k, line in pairs(list:GetSelected()) do
+				table.insert(tbl, line:GetColumnText(1)) 
 			end
 			frame:Remove()
 			frame = nil
@@ -145,7 +139,7 @@ function TIRA.OpenItemList( tbl )
 	end
 end
 
-function TIRA.OpenFactionInfo( tbl )
+function CAKE.OpenFactionInfo( tbl )
 	PlayerMenu = vgui.Create( "DFrame" )
 	PlayerMenu:SetSize( 500, 340 )
 	PlayerMenu:SetTitle( "Faction" )
@@ -196,7 +190,7 @@ function TIRA.OpenFactionInfo( tbl )
 	FindPlayer:SetText( "Find A Player" )
 	FindPlayer:SetTall( 30 )
 	FindPlayer.DoClick = function()
-		TIRA.StringRequest( "Find A Player", 
+		CAKE.StringRequest( "Find A Player", 
 			"Enter the name, rank, or SteamID of the player you want to find:\nLeave empty to fetch the whole roster", 
 			LocalPlayer():Nick(), 
 			function( str ) RunConsoleCommand("rp_rostersearch", tbl.uid, str) end,
@@ -210,8 +204,8 @@ function TIRA.OpenFactionInfo( tbl )
 	OpenChat:SetText( "Open Group Chat" )
 	OpenChat:SetTall( 30 )
 	OpenChat.DoClick = function()
-		if TIRA.Chatbox then
-			TIRA.Chatbox:AddChannel( "[" .. tbl.name .. "]", "Group: " .. tbl.uid, "/g " .. tbl.uid .. " " )
+		if CAKE.Chatbox then
+			CAKE.Chatbox:AddChannel( "[" .. tbl.name .. "]", "Group: " .. tbl.uid, "/g " .. tbl.uid .. " " )
 		end
 	end
 	actions:AddItem(OpenChat)
@@ -230,7 +224,7 @@ function TIRA.OpenFactionInfo( tbl )
 	LeaveGroup:SetText( "Leave Group" )
 	LeaveGroup:SetTall( 30 )
 	LeaveGroup.DoClick = function()
-		TIRA.Query( "Are you sure you want to leave " .. tbl.name .. "?", "Leaving a group",
+		CAKE.Query( "Are you sure you want to leave " .. tbl.name .. "?", "Leaving a group",
 			"Yes",	function() PlayerMenu:Remove() RunConsoleCommand("rp_leavegroup", tbl.uid) end, 
 			"No",	function() end )
 	end
@@ -239,13 +233,13 @@ function TIRA.OpenFactionInfo( tbl )
 	local SetActive = vgui.Create( "DButton" )
 	SetActive:SetText( "Set As Active Group" )
 	SetActive:SetTall( 30 )
-	if TIRA.ActiveGroup == tbl.uid then
+	if CAKE.ActiveGroup == tbl.uid then
 		SetActive:SetText("Currently Active Group")
 		SetActive:SetDisabled( true ) 
 	end
 	SetActive.DoClick = function()
 		if !SetActive:GetDisabled() then
-			TIRA.Query( "Make " .. tbl.name .. " your active group?", "Active Group",
+			CAKE.Query( "Make " .. tbl.name .. " your active group?", "Active Group",
 				"Yes",	function() RunConsoleCommand("rp_setactivegroup", tbl.uid) SetActive:SetText("Currently Active Group") SetActive:SetDisabled( true ) end, 
 				"No",	function() end )
 		end
@@ -254,7 +248,7 @@ function TIRA.OpenFactionInfo( tbl )
 
 end
 
-function TIRA.AddFactionRank( tbl )
+function CAKE.AddFactionRank( tbl )
 	local rank = {}
 	rank["canedit"] = false
 	rank["caninvite"] = false
@@ -397,14 +391,14 @@ function TIRA.AddFactionRank( tbl )
 	local ItemLoadout = vgui.Create( "DButton" )
 	ItemLoadout:SetText( "Edit Item Loadout" )
 	ItemLoadout.DoClick = function()
-		TIRA.OpenItemList( rank["loadout"] )
+		CAKE.OpenItemList( rank["loadout"] )
 	end	
 	Permissions:AddItem(ItemLoadout)
 
 	local WeaponLoadout = vgui.Create( "DButton" )
 	WeaponLoadout:SetText( "Edit Weapon Loadout" )
 	WeaponLoadout.DoClick = function()
-		TIRA.OpenWeaponList( rank["weapons"] )
+		CAKE.OpenWeaponList( rank["weapons"] )
 	end	
 	Permissions:AddItem(WeaponLoadout)
 
@@ -416,13 +410,13 @@ function TIRA.AddFactionRank( tbl )
 	Accept:DockMargin( 20, 2, 5, 2 )
 	Accept.DoClick = function()
 		if tbl["ranks"][rank.handler] then
-			TIRA.Message( "Handler already exists! Please choose a new one.", "Error!", "OK" )
+			CAKE.Message( "Handler already exists! Please choose a new one.", "Error!", "OK" )
 		else
 			if tbl["defaultrank"] == "none" then
 				tbl["defaultrank"] = rank.handler
 			end
 			tbl["ranks"][rank.handler] = rank
-			TIRA.EditFaction( tbl )
+			CAKE.EditFaction( tbl )
 			frame:Remove()
 			frame = nil
 		end
@@ -434,13 +428,13 @@ function TIRA.AddFactionRank( tbl )
 	Cancel:SetTall( 30 )
 	Cancel:DockMargin( 20, 2, 20, 2 )
 	Cancel.DoClick = function()
-		TIRA.EditFaction( tbl )
+		CAKE.EditFaction( tbl )
 		frame:Remove()
 	end
 end
 
 
-function TIRA.EditFactionRank( tbl, rankname )
+function CAKE.EditFactionRank( tbl, rankname )
 
 	local rank = {}
 	rank["caninvite"] = tbl["ranks"][rankname]["caninvite"]
@@ -601,14 +595,14 @@ function TIRA.EditFactionRank( tbl, rankname )
 	local ItemLoadout = vgui.Create( "DButton" )
 	ItemLoadout:SetText( "Edit Item Loadout" )
 	ItemLoadout.DoClick = function()
-		TIRA.OpenItemList( rank["loadout"] )
+		CAKE.OpenItemList( rank["loadout"] )
 	end	
 	Permissions:AddItem(ItemLoadout)
 
 	local WeaponLoadout = vgui.Create( "DButton" )
 	WeaponLoadout:SetText( "Edit Weapon Loadout" )
 	WeaponLoadout.DoClick = function()
-		TIRA.OpenWeaponList( rank["weapons"] )
+		CAKE.OpenWeaponList( rank["weapons"] )
 	end	
 	Permissions:AddItem(WeaponLoadout)
 
@@ -620,7 +614,7 @@ function TIRA.EditFactionRank( tbl, rankname )
 	Accept:DockMargin( 20, 2, 5, 2 )
 	Accept.DoClick = function()
 		tbl["ranks"][rankname] = rank
-		TIRA.EditFaction( tbl )
+		CAKE.EditFaction( tbl )
 		frame:Remove()
 		frame = nil
 	end
@@ -632,12 +626,12 @@ function TIRA.EditFactionRank( tbl, rankname )
 	Cancel:DockMargin( 20, 2, 20, 2 )
 	Cancel.DoClick = function()
 		frame:Remove()
-		TIRA.EditFaction( tbl )
+		CAKE.EditFaction( tbl )
 	end
 
 end
 
-function TIRA.EditFaction( tbl )
+function CAKE.EditFaction( tbl )
 	if EditGroup then
 		EditGroup:Remove()
 	end
@@ -773,7 +767,7 @@ function TIRA.EditFaction( tbl )
 			end
 		end
 		Ranks.OnClickLine = function(parent, line, isselected)
-			TIRA.EditFactionRank( tbl, line:GetValue(1) )
+			CAKE.EditFactionRank( tbl, line:GetValue(1) )
 			EditGroup:Remove()
 			EditGroup = nil
 		end
@@ -784,7 +778,7 @@ function TIRA.EditFaction( tbl )
 	AddRank:SetText( "Add a rank" )
 	AddRank:SetTall( 30 )
 	AddRank.DoClick = function()
-		TIRA.AddFactionRank( tbl )
+		CAKE.AddFactionRank( tbl )
 		EditGroup:Remove()
 		EditGroup = nil
 	end
@@ -798,9 +792,10 @@ function TIRA.EditFaction( tbl )
 	Accept:DockMargin( 20, 2, 5, 2 )
 
 	Accept.DoClick = function()
-		net.Start("Tiramisu.GetEditFaction")
-			net.WriteTable(tbl)
-		net.SendToServer()
+		-- datastream.StreamToServer( "Tiramisu.GetEditFaction", tbl )
+		net.Start( "Tiramisu.GetEditFaction" )
+			net.WriteTable( tbl )
+		net.SendToServer( )
 		EditGroup:Remove()
 		EditGroup = nil
 	end

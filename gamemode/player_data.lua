@@ -1,252 +1,274 @@
--- Define the table of player information. This is not used anymore, and it's here for completion.
-TIRA.PlayerData = {  }
-TIRA.CharacterData = {  }
+-- Define the table of player information.
+CAKE.PlayerData = {  }
 
 -- This is to be used only by the main player table.
-TIRA.PlayerDataFields = {  }
-TIRA.PlayerDataFieldTypes = {  }
+CAKE.PlayerDataFields = {  }
 
 -- This is to be used only by the characters table.
-TIRA.CharacterDataFields = {  }
-TIRA.CharacterDataFieldTypes = {  }
+CAKE.CharacterDataFields = {  }
 
 local meta = FindMetaTable( "Player" )
 
-function TIRA.FormatCharString( ply )
+function CAKE.FormatCharString( ply )
 	
 	return ply:SteamID( ) .. "-" .. ply:GetNWString( "uid" )
 	
 end
 
-function TIRA.CreateNewChar()
-	local id = TIRA.GetTableNextID( "tiramisu_chars" )
-	local fieldstr = "id,"
-	local defaultstr = id .. ","
-		-- Let's get the default fields and add them to the table.
-	for fieldname, default in pairs( TIRA.CharacterDataFields ) do
-		fieldstr = fieldstr .. fieldname .. ","
-		if type(default) == "table" then defaultstr = defaultstr .. "'" .. TIRA.Serialize(default) .. "'," end
-		if type(default) == "string" then defaultstr = defaultstr .. "'" .. default .. "'," end
-		if type(default) == "number" then defaultstr = defaultstr .. tostring(default) .. "," end
-		if type(default) == "boolean" then if default then defaultstr = defaultstr .. "1," else defaultstr = defaultstr .. "0," end end
-	end
-	fieldstr = string.sub(fieldstr, 1, string.len(fieldstr) - 1 ) --Removing the last comma
-	defaultstr = string.sub(defaultstr, 1, string.len(defaultstr) - 1 ) --Removing the last comma
-
-	TIRA.Query("INSERT INTO tiramisu_chars (".. fieldstr .. ") VALUES (" .. defaultstr .. ")")
-	return id
-end
-
-function TIRA.CharExists( uid )
-	if TIRA.Query("SELECT id FROM tiramisu_chars WHERE id = "..uid ) then
-		return true
-	end
-		
-	return false
-end
-
-function TIRA.GetNextCharID()
-	return TIRA.GetTableNextID("tiramisu_chars") or 1
-end
-
 -- When fieldtype is 1, it adds it to the player table.
--- When it is 2, it adds it to the character table.function TIRA.AddDataField( fieldtype, fieldname, default )
-function TIRA.AddDataField( fieldtype, fieldname, default, mysqltype )
+-- When it is 2, it adds it to the character table.function CAKE.AddDataField( fieldtype, fieldname, default )
+function CAKE.AddDataField( fieldtype, fieldname, default )
 	
 	if( fieldtype == 1 ) then
 	
-		TIRA.DayLog( "script.txt", "Adding player data field " .. fieldname .. " with default value of " .. tostring( default ) )
-		TIRA.PlayerDataFields[ fieldname ] = default
-		if mysqltype then TIRA.PlayerDataFieldTypes[ fieldname ] = mysqltype end
-
+		CAKE.DayLog( "script.txt", "Adding player data field " .. fieldname .. " with default value of " .. tostring( default ) )
+		CAKE.PlayerDataFields[ fieldname ] = CAKE.ReferenceFix(default)
+		
 	elseif( fieldtype == 2 ) then
 	
-		TIRA.DayLog( "script.txt", "Adding character data field " .. fieldname .. " with default value of " .. tostring( default ) )
-		TIRA.CharacterDataFields[ fieldname ] = default
-		if mysqltype then TIRA.CharacterDataFieldTypes[ fieldname ] = mysqltype end
-
+		CAKE.DayLog( "script.txt", "Adding character data field " .. fieldname .. " with default value of " .. tostring( default ) )
+		CAKE.CharacterDataFields[ fieldname ] = CAKE.ReferenceFix(default)
+		
+		if( type( default ) == "table" ) then
+			default = table.concat( default, "," )
+		end
+		
+		if( type( default ) == "string" ) then
+			default = "'" .. default .. "'"
+		end
+		
 	end
 
 end
 
-function TIRA.HasSavedData( ply )
-	local query = TIRA.Query("SELECT * FROM tiramisu_players WHERE steamid='"..ply:SteamID().."'")
-	if query then
-		return true
+function CAKE.HasSavedData( ply )
+
+	-- if( file.Exists( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" ) ) then
+	-- if ( file.Exists( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt", "DATA" ) ) then
+	if( file.Exists( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt", "DATA" ) ) then
+		-- Read the data from their data file
+		local Data_Raw = file.Read( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" )
+		-- Convert the data into a table
+		local Data_Table = glon.decode( Data_Raw )			
+		if Data_Table and table.Count( Data_Table or {}) > 1 then return true end
 	end
 		
 	return false
 	
 end
 
--- Load a player's data
-function TIRA.LoadPlayerDataFile( ply )
+function CAKE.CreateNewDataFile( ply )
 
-	local SteamID = TIRA.FormatText( ply:SteamID( ) )
+	local SteamID = CAKE.FormatText( ply:SteamID( ) )
+
+	-- Seems they don't have a player table. Let's create a default one for them.
 	
-	TIRA.PlayerData[ SteamID ]  = {  }
+	CAKE.DayLog( "script.txt", "Creating new data file for " .. ply:SteamID( ) )
 	
-	if( TIRA.HasSavedData( ply ) ) then	
+	CAKE.PlayerData[ SteamID ] = {  }
+	
+	-- Let's get the default fields and add them to the table.
+	for fieldname, default in pairs( CAKE.PlayerDataFields ) do
 		
-		TIRA.DayLog( "script.txt", "Loading player data for " .. ply:SteamID( ) )
+		if( CAKE.PlayerData[ fieldname ] == nil ) then
+		
+			CAKE.PlayerData[ SteamID ][ fieldname ] = CAKE.ReferenceFix(default)
+			
+		end
+		
+	end
+
+	-- In case someone wants to make a quiz later on.
+	ply.FirstTimeJoining = true
+	
+	-- We won't make a character, obviously. That is done later.
+	CAKE.SavePlayerData(ply)
+
+end
+
+
+-- Load a player's data
+function CAKE.LoadPlayerDataFile( ply )
+
+	local SteamID = CAKE.FormatText( ply:SteamID( ) )
+	
+	CAKE.PlayerData[ SteamID ]  = {  }
+	
+	if( CAKE.HasSavedData( ply ) ) then	
+		
+		CAKE.DayLog( "script.txt", "Loading player data file for " .. ply:SteamID( ) )
+		
+		-- Read the data from their data file
+		local Data_Raw = file.Read( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" )
+		
+		-- Convert the data into a table
+		local Data_Table = CAKE.NilFix(glon.decode( Data_Raw ), { })
+		
+		-- Insert the table into the data table
+		CAKE.PlayerData[ SteamID ] = Data_Table
+		
+		-- Retrieve the data table for easier access
+		local PlayerTable = CAKE.PlayerData[ SteamID ]
+		local CharTable = CAKE.PlayerData[ SteamID ][ "characters" ]
+
+		-- If any values were loaded and they aren't in the DataFields table, delete them from the player.
+		for _, v in pairs( PlayerTable ) do
+			
+			if( CAKE.PlayerDataFields[ _ ] == nil ) then
+			
+				CAKE.DayLog( "script.txt", "Invalid player data field '" .. tostring( _ ) .. "' in " .. ply:SteamID( ) .. ", removing." )
+				CAKE.PlayerData[ SteamID ][ _ ] = nil
+				
+			end
+			
+		end
 		
 		-- If any fields were not loaded and they are in the DataFields table, add them.
-		for fieldname, default in pairs( TIRA.PlayerDataFields ) do
-			if type(default) != "boolean" and !TIRA.GetPlayerField(ply, fieldname) then
-				TIRA.DayLog( "script.txt", "Missing player data field '" .. tostring( fieldname ) .. "' in " .. ply:SteamID( ) .. ", inserting with default value of '" .. tostring(default) .. "'" )
-				TIRA.SetPlayerField(ply, fieldname, default)
+		for fieldname, default in pairs( CAKE.PlayerDataFields ) do
+			
+			if( PlayerTable[ fieldname ] == nil ) then
+			
+				CAKE.DayLog( "script.txt", "Missing player data field '" .. tostring( fieldname ) .. "' in " .. ply:SteamID( ) .. ", inserting with default value of '" .. tostring(default) .. "'" )
+				CAKE.PlayerData[ SteamID ][ fieldname ] = CAKE.ReferenceFix(default)
+				
 			end
+			
 		end
 		
-	else 
-		
-		-- Seems they don't have data. Let's create a default one for them.
-		MsgN("Creating new data for " .. ply:SteamID( ))
-		
-		TIRA.DayLog( "script.txt", "Creating new data for " .. ply:SteamID( ) )
-		local fieldstr = "steamid,"
-		local defaultstr = "'".. ply:SteamID() .. "',"
-		
-		-- Let's get the default fields and add them to the table.
-		for fieldname, default in pairs( TIRA.PlayerDataFields ) do
-			if fieldname == "steamid" then continue end
-			fieldstr = fieldstr .. fieldname .. ","
-			if type(default) == "table" then defaultstr = defaultstr .. "'" .. TIRA.Serialize(default) .. "'," end
-			if type(default) == "string" then defaultstr = defaultstr .. "'" .. default .. "'," end
-			if type(default) == "number" then defaultstr = defaultstr .. tostring(default) .. "," end
-			if type(default) == "boolean" then if default then defaultstr = defaultstr .. "1," else defaultstr = defaultstr .. "0," end end
+		-- If any values were loaded and they aren't in the DataFields table, delete them from the character.
+		for _, char in pairs( CharTable ) do
+
+			for k, v in pairs( char ) do
+				
+				if( CAKE.CharacterDataFields[ k ] == nil ) then
+					CAKE.DayLog( "script.txt", "Invalid character data field '" .. tostring( _ ) .. "' in character " .. ply:SteamID( ) .. "-" .. _ .. ", removing." )
+					if CAKE.PlayerData[ SteamID ][ "characters" ][ _ ][ k ] then
+						CAKE.PlayerData[ SteamID ][ "characters" ][ _ ][ k ] = nil
+					end
+				end
+				
+			end
+
+			if !char["inventory"] then
+				char["inventory"] = CAKE.CreatePlayerInventory( ply, _ )
+				CAKE.DayLog( "script.txt", "Character " .. ply:SteamID( ) .. "-" .. _ .. " does not have a valid inventory" )
+			end
+			
 		end
-		fieldstr = string.sub(fieldstr, 1, string.len(fieldstr) - 1 ) --Removing the last comma
-		defaultstr = string.sub(defaultstr, 1, string.len(defaultstr) - 1 ) --Removing the last comma
-
-		TIRA.Query("INSERT INTO tiramisu_players (".. fieldstr .. ") VALUES (" .. defaultstr .. ")")
-
-		-- In case someone wants to make a quiz later on.
-		ply.FirstTimeJoining = true
 		
+		-- If any fields were not loaded and they are in the DataFields table, add them.
+		for _, char in pairs( CharTable ) do
+			
+			for fieldname, default in pairs( CAKE.CharacterDataFields ) do
+			
+				if( char[ fieldname ] == nil ) then
+				
+					CAKE.DayLog( "script.txt", "Missing character data field '" .. tostring( fieldname ) .. "' in character " .. ply:SteamID( ) .. "-" .. _ .. ", inserting with default value of '" .. tostring(default) .. "'" )
+					CAKE.PlayerData[ SteamID ][ "characters" ][ _ ][ fieldname ] = CAKE.ReferenceFix(default)
+					
+				end
+				
+			end
+			
+		end
+		
+		CAKE.SavePlayerData(ply)
+		
+	else
+		CAKE.CreateNewDataFile( ply )
 	end
 
 	hook.Call( "TiramisuPostPlayerLoaded", GAMEMODE, ply, ply.FirstTimeJoining )
 	
 end
 
-function TIRA.SetPlayerField( ply, fieldname, data )
-	if !TIRA.PlayerData[ ply:SteamID() ] then TIRA.PlayerData[ ply:SteamID() ] = {} end
+function CAKE.ResendCharData( ply ) -- Network all of the player's character data
+
+	local SteamID = CAKE.FormatText( ply:SteamID() )
+	
+	if( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ] == nil ) then
+		return
+	end
+
+	ply:SetNWString( "name", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "name" ] or "" )
+	ply:SetNWString( "title", CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "title" ] or "" )
+	ply:SetNWInt( "money", tonumber( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ "money" ] ) or 0 )
+	
+end
+
+function CAKE.SetPlayerField( ply, fieldname, data )
+
+	local SteamID = CAKE.FormatText( ply:SteamID() )
 	-- Check to see if this is a valid field
-	if TIRA.PlayerDataFields[ fieldname ] then
-		TIRA.PlayerData[ ply:SteamID() ][fieldname ] = data
-		if type(TIRA.PlayerDataFields[ fieldname ]) == "table" then data = TIRA.Serialize(data) end
-		if type(TIRA.PlayerDataFields[ fieldname ]) == "string" then data = data end
-		if type(TIRA.PlayerDataFields[ fieldname ]) == "number" then data = tostring(data) end
-		if type(TIRA.PlayerDataFields[ fieldname ]) == "boolean" then
-			if data then data = 1
-			else data = 0 end
-		end
-		TIRA.Query("UPDATE tiramisu_players SET " .. fieldname .. "='" .. TIRA.StrEscape(data) .. "' WHERE steamid = '"..ply:SteamID().."'")
+	if( CAKE.PlayerDataFields[ fieldname ] ) then
+	
+		CAKE.PlayerData[ SteamID ][ fieldname ] = data
+		CAKE.SavePlayerData(ply)
+	
 	end
 		
 end
 	
-function TIRA.GetPlayerField( ply, fieldname )
-	if !TIRA.PlayerData[ ply:SteamID() ] then TIRA.PlayerData[ ply:SteamID() ] = {} end
+function CAKE.GetPlayerField( ply, fieldname )
+
+	local SteamID = CAKE.FormatText( ply:SteamID() )
+	
 	-- Check to see if this is a valid field
-	if( TIRA.PlayerDataFields[ fieldname ] ) then
-		if !TIRA.PlayerData[ ply:SteamID() ][fieldname ] then
-			local query = TIRA.Query("SELECT " .. fieldname .. " FROM tiramisu_players WHERE steamid = '"..ply:SteamID().."'")
-			if query then
-				if (type(query[1][fieldname]) == "string" and (query[1][fieldname][1] == "'" or query[1][fieldname][1] == "\"")) then query[1][fieldname] = string.sub( query[1][fieldname], 2, -2) end
-				if type(TIRA.PlayerDataFields[ fieldname ]) == "table" then TIRA.PlayerData[ ply:SteamID() ][fieldname ] = TIRA.Deserialize(query[1][fieldname]) or {} end
-				if type(TIRA.PlayerDataFields[ fieldname ]) == "string" then
-					if type(query[1][fieldname]) != "string" then query[1][fieldname] = tostring(query[1][fieldname]) or "" end
-					TIRA.PlayerData[ ply:SteamID() ][fieldname ] = query[1][fieldname] 
-				end
-				if type(TIRA.PlayerDataFields[ fieldname ]) == "number" then TIRA.PlayerData[ ply:SteamID() ][fieldname ] = tonumber(query[1][fieldname]) or 0 end
-				if type(TIRA.PlayerDataFields[ fieldname ]) == "boolean" then TIRA.PlayerData[ ply:SteamID() ][fieldname ] = util.tobool(query[1][fieldname]) or false end
-			else return TIRA.PlayerDataFields[ fieldname ]
-			end 
-		end
-		return TIRA.PlayerData[ ply:SteamID() ][fieldname ]  
+	if( CAKE.PlayerDataFields[ fieldname ] ) then
+	
+		return CAKE.NilFix(CAKE.PlayerData[ SteamID ][ fieldname ], false)
+	
 	end
 
 	return false
 
 end
 
-function TIRA.SetCharField( ply, fieldname, data, uid )
-	uid = uid or ply:GetNWString("uid")
-	if type(uid) != "string" then tostring(uid) end
-	if !TIRA.CharacterData[ uid ] then TIRA.CharacterData[ uid ] = {} end
-	if TIRA.CharacterDataFields[ fieldname ] then
-		TIRA.CharacterData[ uid ][ fieldname ] = data
-		if type(TIRA.CharacterDataFields[ fieldname ]) == "table" then data = TIRA.Serialize(data) end
-		if type(TIRA.CharacterDataFields[ fieldname ]) == "string" then data = data end
-		if type(TIRA.CharacterDataFields[ fieldname ]) == "number" then data = tostring(data) end
-		if type(TIRA.CharacterDataFields[ fieldname ]) == "boolean" then
-			if data then data = 1
-			else data = 0 end
-		end
-		if data != nil then
-			TIRA.Query("UPDATE tiramisu_chars SET " .. fieldname .. "='" .. TIRA.StrEscape(data) .. "' WHERE id = '".. uid .. "'" )
-		end
-	end
+function CAKE.SetCharField( ply, fieldname, data )
+
+	local SteamID = CAKE.FormatText( ply:SteamID() )
+	-- Check to see if this is a valid field
+	if( CAKE.CharacterDataFields[ fieldname ] ) then
+
+		CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ] = data
+		CAKE.SavePlayerData(ply)
 	
+	end
+		
 end
 	
-function TIRA.GetCharField( ply, fieldname, uid )
-	uid = uid or ply:GetNWString("uid")
-	if type(uid) != "string" then tostring(uid) end
+function CAKE.GetCharField( ply, fieldname )
 	-- Check to see if this is a valid field
-	if !TIRA.CharacterData[ uid ] then TIRA.CharacterData[ uid ] = {} end
-	if( TIRA.CharacterDataFields[ fieldname ] ) then
-		if !TIRA.CharacterData[ uid ][fieldname ] then
-			local query = TIRA.Query("SELECT " .. fieldname .. " FROM tiramisu_chars WHERE id = '".. uid .. "'" )
-			if query then
-				if (type(query[1][fieldname]) == "string" and (query[1][fieldname][1] == "'" or query[1][fieldname][1] == "\"")) then query[1][fieldname] = string.sub( query[1][fieldname], 2, -2) end
-				if type(TIRA.CharacterDataFields[ fieldname ]) == "table" then TIRA.CharacterData[ uid ][fieldname ] = TIRA.Deserialize(query[1][fieldname]) or {} end
-				if type(TIRA.CharacterDataFields[ fieldname ]) == "string" then
-					if type(query[1][fieldname]) != "string" then
-						query[1][fieldname] = tostring(query[1][fieldname]) or ""
-					end
-					TIRA.CharacterData[ uid ][fieldname ] = query[1][fieldname]
-				end
-				if type(TIRA.CharacterDataFields[ fieldname ]) == "number" then TIRA.CharacterData[ uid ][fieldname ] = tonumber(query[1][fieldname]) or 0 end
-				if type(TIRA.CharacterDataFields[ fieldname ]) == "boolean" then TIRA.CharacterData[ uid ][fieldname ] = util.tobool(query[1][fieldname]) or false end
-			else return TIRA.CharacterDataFields[ fieldname ]
-			end 
+	if( CAKE.CharacterDataFields[ fieldname ] ) then
+		if CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ] and CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ] and CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid", "" ) ] then
+			if CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid", "" ) ][ fieldname ] then
+				return CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ ply:GetNWString( "uid", "" ) ][ fieldname ]
+			else
+				--Field is not yet set.
+				CAKE.SetCharField( ply, fieldname, CAKE.CharacterDataFields[ fieldname ])
+				return CAKE.CharacterDataFields[ fieldname ]
+			end
+		else
+			--Character not loaded, return default
+			return CAKE.CharacterDataFields[ fieldname ]
 		end
-		return TIRA.CharacterData[ uid ][fieldname ]
 	end
 
 	return false
 
 end
 
-function TIRA.ResendCharData( ply ) -- Network all of the player's necessary character data
-	
-	ply:SetNWString( "name", TIRA.GetCharField( ply, "name" ) or "" )
-	ply:SetNWString( "title", TIRA.GetCharField( ply, "title" ) or ""  )
-	ply:SetNWInt( "money", TIRA.GetCharField( ply, "money" ) or 0 )
-
-end
-
-function TIRA.SavePlayerData( ply )
-	--This function has been deprecated
-end
-
-function TIRA.RemoveCharacter( ply, id ) --Eliminates a character from the player's character list
-	local characters = TIRA.GetPlayerField(ply, "characters")
-	if table.HasValue(character, id) then
-		for k, v in pairs(characters) do
-			if v == id then table.remove(characters, k) end
-		end
+function CAKE.SavePlayerData( ply )
+	if IsValid( ply ) then
+		local keys = glon.encode(CAKE.PlayerData[CAKE.FormatText( ply:SteamID() )])
+		file.Write( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" , keys)
 	end
-	TIRA.SetPlayerField(ply, "characters", characters)
 end
 
-function TIRA.AddCharacter( ply, id ) --Adds a character from the player's character list
-	local characters = TIRA.GetPlayerField(ply, "characters")
-	if !table.HasValue(character, id) then
-		table.insert(characters, id)
-	end
-	TIRA.SetPlayerField(ply, "characters", characters)
+function CAKE.RemoveCharacter( ply, id )
+	local SteamID = CAKE.FormatText( ply:SteamID() )
+	table.Empty( CAKE.PlayerData[ SteamID ][ "characters" ][ id ] )
+	CAKE.PlayerData[ SteamID ][ "characters" ][ id ] = nil
+	CAKE.SavePlayerData( ply )
+	CAKE.ResendCharData( ply )
 end

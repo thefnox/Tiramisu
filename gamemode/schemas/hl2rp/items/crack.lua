@@ -19,7 +19,7 @@ end
 function ITEM:UseItem(ply)
 
 	ply:TakeItem("crack")
-	TIRA.DrugPlayer(ply, 1)
+	CAKE.DrugPlayer(ply, 1)
 	self:Remove()
 
 end

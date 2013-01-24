@@ -3,13 +3,13 @@ RCLICK.SubMenu = "Admin"
 
 function RCLICK.Condition(target)
 
-	if TIRA.IsDoor( target ) and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 3 then return true end
+	if CAKE.IsDoor( target ) and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 3 then return true end
 
 end
 
 function RCLICK.Click(target,ply)
 
-	TIRA.StringRequest( "Set Door Group", "Enter which doorgroup to assign to this door", "0", function( text )
+	CAKE.StringRequest( "Set Door Group", "Enter which doorgroup to assign to this door", "0", function( text )
 		ply:ConCommand("rp_admin setdoorgroup " .. target:EntIndex() .. " " .. text)
 	end,
 	function() end, "Accept", "Cancel")

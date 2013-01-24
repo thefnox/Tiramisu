@@ -24,8 +24,8 @@ end
 function ITEM:UseItem(ply)
 
 	local id = self:GetNWString("id")
-	if TIRA.GetUData(id, "container") then
-		TIRA.OpenContainer( ply, TIRA.GetUData(id, "container") )
+	if CAKE.GetUData(id, "container") then
+		CAKE.OpenContainer( ply, CAKE.GetUData(id, "container") )
 	end
 
 end

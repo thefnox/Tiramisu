@@ -1,7 +1,7 @@
-TIRA.ClockStarted = false
+CAKE.ClockStarted = false
 
 --Fix for certain tables not loading right.
-function TIRA.ReferenceFix(data)
+function CAKE.ReferenceFix(data)
 
 	if(type(data) == "table") then
 	
@@ -16,13 +16,13 @@ function TIRA.ReferenceFix(data)
 end
 
 --If the value provided to it is not valid, then it returns the default.
-function TIRA.NilFix(val, default)
+function CAKE.NilFix(val, default)
 
 	return val or default
 	
 end
 
 --Fetches a player's character signature.
-function TIRA.GetCharSignature( ply )
+function CAKE.GetCharSignature( ply )
 	return ply:Nick() .. "@" .. ply:SteamID()
 end

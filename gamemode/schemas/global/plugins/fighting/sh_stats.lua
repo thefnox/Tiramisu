@@ -58,8 +58,8 @@ else
 		if ply:IsCharLoaded() then
 			ply:SetStamina( 100 )
 			timer.Create( "Tiramisu.StaminaRecovery." .. ply:SteamID(), 1, 0, function()
-				if ValidEntity( ply ) then
-					ply:SetStamina(ply:GetStamina() + TIRA.Stats.Stamina.BaseRegenRate)
+				if IsValid( ply ) then
+					ply:SetStamina(ply:GetStamina() + CAKE.Stats.Stamina.BaseRegenRate)
 				end
 			end)
 		end
@@ -70,11 +70,11 @@ else
 	end)
 
 	hook.Add( "SetupMove", "Tiramisu.DrainStaminaWhenRunning", function( ply, mv )
-		if ply:KeyDown(IN_SPEED) and ply:KeyDown(IN_FORWARD) and ply:GetStamina() >= TIRA.Stats.Stamina.BaseRunCost then
+		if ply:KeyDown(IN_SPEED) and ply:KeyDown(IN_FORWARD) and ply:GetStamina() >= CAKE.Stats.Stamina.BaseRunCost then
 			if !ply.IsRunning then
 				if ply:GetStamina() > 10 then
-					ply:StatDamage( "stamina",0, 0.25, TIRA.Stats.Stamina.BaseRunCost/-4, function()
-						if ply:KeyDown(IN_SPEED) and ply:KeyDown(IN_FORWARD) and ply.IsRunning and ply:GetRunSpeed() > TIRA.ConVars[ "WalkSpeed" ] and ply:Alive() then
+					ply:StatDamage( "stamina",0, 0.25, CAKE.Stats.Stamina.BaseRunCost/-4, function()
+						if ply:KeyDown(IN_SPEED) and ply:KeyDown(IN_FORWARD) and ply.IsRunning and ply:GetRunSpeed() > CAKE.ConVars[ "WalkSpeed" ] and ply:Alive() then
 							return true
 						end
 						ply.IsRunning = false
@@ -84,29 +84,29 @@ else
 				end
 			end
 			if ply.IsRunning then
-				if( ValidEntity(ply:GetActiveWeapon()) and Anims.DetectHoldType(ply:GetActiveWeapon():GetHoldType()) == "default") then
+				if( IsValid(ply:GetActiveWeapon()) and Anims.DetectHoldType(ply:GetActiveWeapon():GetHoldType()) == "default") then
 					if !ply:KeyDown( IN_MOVELEFT ) and !ply:KeyDown( IN_MOVERIGHT ) then
-						ply:SetRunSpeed( Lerp( 0.01, ply:GetRunSpeed(), TIRA.ConVars[ "RunSpeed" ] ))
+						ply:SetRunSpeed( Lerp( 0.01, ply:GetRunSpeed(), CAKE.ConVars[ "RunSpeed" ] ))
 					else
-						ply:SetRunSpeed( Lerp( 0.01, ply:GetRunSpeed(), TIRA.ConVars[ "RunSpeed" ] * 0.75 ))				
+						ply:SetRunSpeed( Lerp( 0.01, ply:GetRunSpeed(), CAKE.ConVars[ "RunSpeed" ] * 0.75 ))				
 					end
 				else
-					ply:SetRunSpeed( Lerp( 0.01, ply:GetRunSpeed(), TIRA.ConVars[ "RunSpeed" ] * 0.66 ))
+					ply:SetRunSpeed( Lerp( 0.01, ply:GetRunSpeed(), CAKE.ConVars[ "RunSpeed" ] * 0.66 ))
 				end
 			end
 		else
-			if ply:GetWalkSpeed() < TIRA.ConVars[ "WalkSpeed" ] + 10 then
+			if ply:GetWalkSpeed() < CAKE.ConVars[ "WalkSpeed" ] + 10 then
 				ply.IsRunning = false
 			end
 			if ply.IsRunning and ply:KeyDown(IN_FORWARD) then
-				ply:SetRunSpeed( Lerp( 0.1, ply:GetRunSpeed(), TIRA.ConVars[ "WalkSpeed" ] ))
+				ply:SetRunSpeed( Lerp( 0.1, ply:GetRunSpeed(), CAKE.ConVars[ "WalkSpeed" ] ))
 				ply:SetWalkSpeed( ply:GetRunSpeed() )
 			elseif ply.IsRunning and !ply:KeyDown(IN_FORWARD) then
 				ply:SetRunSpeed( Lerp( 0.1, ply:GetRunSpeed(), 0 ))
 				ply:SetVelocity( ply:GetForward() * ply:GetRunSpeed() / 10 )
 			else
-				ply:SetRunSpeed( TIRA.ConVars[ "WalkSpeed" ] )
-				ply:SetWalkSpeed( TIRA.ConVars[ "WalkSpeed" ] )
+				ply:SetRunSpeed( CAKE.ConVars[ "WalkSpeed" ] )
+				ply:SetWalkSpeed( CAKE.ConVars[ "WalkSpeed" ] )
 			end
 		end
 	end)
@@ -160,14 +160,14 @@ if CLIENT then
 else
 	hook.Add( "PlayerSpawn", "Tiramisu.ResetHealth", function( ply )
 		if ply:IsCharLoaded() then
-			ply:SetMaxHealth( math.Clamp(TIRA.GetCharField( ply, "health" ),1, TIRA.Stats.Health.Max))
+			ply:SetMaxHealth( math.Clamp(CAKE.GetCharField( ply, "health" ),1, CAKE.Stats.Health.Max))
 			umsg.Start("Tiramisu.SendMaxHealth", ply )
-				umsg.Float(TIRA.GetCharField( ply, "health" ))
+				umsg.Float(CAKE.GetCharField( ply, "health" ))
 			umsg.End()
 			timer.Create( "Tiramisu.HealthRecovery." .. ply:SteamID(), 1, 0, function()
-				if ValidEntity( ply ) then
-					if (ply:Health() + TIRA.Stats.Health.BaseRegenRate) / ply:GetMaxHealth() * 100 <= TIRA.Stats.Health.MaxRegenPerc then
-						ply:SetHealth(ply:Health() + TIRA.Stats.Health.BaseRegenRate)
+				if IsValid( ply ) then
+					if (ply:Health() + CAKE.Stats.Health.BaseRegenRate) / ply:GetMaxHealth() * 100 <= CAKE.Stats.Health.MaxRegenPerc then
+						ply:SetHealth(ply:Health() + CAKE.Stats.Health.BaseRegenRate)
 					end
 				end
 			end)
@@ -180,5 +180,5 @@ else
 end
 
 function PLUGIN.Init()
-	TIRA.AddDataField( 2, "health", TIRA.Stats.Health.Base )
+	CAKE.AddDataField( 2, "health", CAKE.Stats.Health.Base )
 end

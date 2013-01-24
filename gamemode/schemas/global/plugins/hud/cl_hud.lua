@@ -1,39 +1,76 @@
-TIRA.WeaponTable = {}
-TIRA.DefaultWepTranslation = {}
-TIRA.DefaultWepTranslation["#GMOD_Physgun"] = "Physics Gun"
-TIRA.DefaultWepTranslation["#HL2_GravityGun"] = "Gravity Gun"
-TIRA.DefaultWepSlot = {}
-TIRA.DefaultWepSlot["#GMOD_Physgun"] = 0
-TIRA.DefaultWepSlot["#HL2_GravityGun"] = 0
-TIRA.DefaultWepSlot["#HL2_Crossbow"] = 4
-TIRA.DefaultWepSlot["#HL2_RPG"] = 4
-TIRA.DefaultWepSlot["#HL2_Crowbar"] = 0
-TIRA.DefaultWepSlot["#HL2_Shotgun"] = 3
-TIRA.DefaultWepSlot["#HL2_SMG1"] = 2
-TIRA.DefaultWepSlot["#HL2_Pulse_Rifle"] = 3
-TIRA.DefaultWepSlot["#HL2_Pistol"] = 1
-TIRA.ActiveWepPos = -1
-TIRA.ActiveSlot = -1
+CAKE.DeathScreenRed = 180
+CAKE.DeathScreenAlpha = 0
+CAKE.DrawDeathScreen = false
 
-function TIRA.BuildWeaponTable()
-	TIRA.WeaponTable = {}
+CAKE.WeaponTable = {}
+CAKE.DefaultWepTranslation = {}
+CAKE.DefaultWepTranslation["#GMOD_Physgun"] = "Physics Gun"
+CAKE.DefaultWepTranslation["#HL2_GravityGun"] = "Gravity Gun"
+CAKE.DefaultWepSlot = {}
+CAKE.DefaultWepSlot["#GMOD_Physgun"] = 0
+CAKE.DefaultWepSlot["#HL2_GravityGun"] = 0
+CAKE.DefaultWepSlot["#HL2_Crossbow"] = 4
+CAKE.DefaultWepSlot["#HL2_RPG"] = 4
+CAKE.DefaultWepSlot["#HL2_Crowbar"] = 0
+CAKE.DefaultWepSlot["#HL2_Shotgun"] = 3
+CAKE.DefaultWepSlot["#HL2_SMG1"] = 2
+CAKE.DefaultWepSlot["#HL2_Pulse_Rifle"] = 3
+CAKE.DefaultWepSlot["#HL2_Pistol"] = 1
+CAKE.ActiveWepPos = -1
+CAKE.ActiveSlot = -1
+
+usermessage.Hook( "Tiramisu.EnableDeathScreen", function( um)
+	CAKE.ToggleDeathScreen( um:ReadBool() )
+end)
+
+function CAKE.ToggleDeathScreen( b )
+	CAKE.DrawDeathScreen = b
+	if !CAKE.DrawDeathScreen then
+		CAKE.DeathScreenRed = 180
+		CAKE.DeathScreenAlpha = 0
+		LocalPlayer():SetNoDraw( false )
+
+		if CAKE.ClothingTbl then
+			for k, v in pairs( CAKE.ClothingTbl ) do
+				if IsValid( v ) then
+					v:SetNoDraw( false )
+				end
+			end
+		end
+
+		if CAKE.Gear then
+			for _, bone in pairs( CAKE.Gear ) do
+				if bone then
+					for k, v in pairs( bone ) do
+						if IsValid( v.entity ) then
+							v.entity:SetNoDraw( false )
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
+function CAKE.BuildWeaponTable()
+	CAKE.WeaponTable = {}
 	local slot = 0
 	local name = ""
 	for _, wep in pairs( LocalPlayer():GetWeapons() ) do
-		if ValidEntity( wep ) then
+		if IsValid( wep ) then
 			slot = wep.Slot or 0
 			name = wep:GetPrintName()
-			if TIRA.DefaultWepSlot[name] then
-				slot = TIRA.DefaultWepSlot[name]
+			if CAKE.DefaultWepSlot[name] then
+				slot = CAKE.DefaultWepSlot[name]
 			end
-			if !TIRA.WeaponTable[slot] then
-				TIRA.WeaponTable[slot] = {}
+			if !CAKE.WeaponTable[slot] then
+				CAKE.WeaponTable[slot] = {}
 			end
-			if TIRA.DefaultWepTranslation[name] then
-				name = TIRA.DefaultWepTranslation[name]
+			if CAKE.DefaultWepTranslation[name] then
+				name = CAKE.DefaultWepTranslation[name]
 			end
 
-			table.insert(TIRA.WeaponTable[slot], {name, wep:GetClass()})
+			table.insert(CAKE.WeaponTable[slot], {name, wep:GetClass()})
 		end
 	end
 end
@@ -43,7 +80,7 @@ hook.Add( "HUDPaint", "TiramisuDrawHUD", function()
 	derma.SkinHook( "Paint", "TargetInfo" ) --The labels over items and props.
 	derma.SkinHook( "Paint", "TiramisuWeaponSelection" ) --The weapon selection
 	derma.SkinHook( "Paint", "PlayerTitles") --The labels above players.
-	if !TIRA.FreeScroll and LocalPlayer():Alive() and LocalPlayer():GetAiming() then
+	if !CAKE.FreeScroll and LocalPlayer():Alive() and LocalPlayer():GetAiming() then
 		derma.SkinHook( "Paint", "AmmoDisplay" )
 		if hook.Call("ShouldDrawLocalPlayer", GAMEMODE) then
 			derma.SkinHook( "Paint", "TiramisuCrosshair" ) --The crosshair
@@ -92,56 +129,60 @@ local sort = false
 hook.Add( "PlayerBindPress", "Tiramisu.HandleWeaponSelection", function(ply, bind, pressed)
 
 	if string.match(bind, "attack") then
-		if TIRA.ActiveSlot != -1 and TIRA.WeaponTable[TIRA.ActiveSlot] and TIRA.WeaponTable[TIRA.ActiveSlot][TIRA.ActiveWepPos] then
-			RunConsoleCommand("rp_selectweapon", TIRA.WeaponTable[TIRA.ActiveSlot][TIRA.ActiveWepPos][2])
+		if CAKE.ActiveSlot != -1 and CAKE.WeaponTable[CAKE.ActiveSlot] and CAKE.WeaponTable[CAKE.ActiveSlot][CAKE.ActiveWepPos] then
+			RunConsoleCommand("rp_selectweapon", CAKE.WeaponTable[CAKE.ActiveSlot][CAKE.ActiveWepPos][2])
 			timer.Destroy("TiramisuResetDefaultWep")
-			TIRA.ActiveWepPos = -1
-			TIRA.ActiveSlot = -1
+			CAKE.ActiveWepPos = -1
+			CAKE.ActiveSlot = -1
 			return true
 		end
 	end
 
 	sort = false
 	if string.match(bind, "slot1") and pressed then
-		TIRA.ActiveSlot = 0
+		CAKE.ActiveSlot = 0
 		sort = true
 	elseif string.match(bind, "slot2") and pressed then
-		TIRA.ActiveSlot = 1
+		CAKE.ActiveSlot = 1
 		sort = true
 	elseif string.match(bind, "slot3") and pressed then
-		TIRA.ActiveSlot = 2
+		CAKE.ActiveSlot = 2
 		sort = true
 	elseif string.match(bind, "slot4") and pressed then
-		TIRA.ActiveSlot = 3
+		CAKE.ActiveSlot = 3
 		sort = true
 	elseif string.match(bind, "slot5") and pressed then
-		TIRA.ActiveSlot = 4
+		CAKE.ActiveSlot = 4
 		sort = true
 	elseif string.match(bind, "slot6") and pressed then
-		TIRA.ActiveSlot = 5
+		CAKE.ActiveSlot = 5
 		sort = true
 	elseif string.match(bind, "slot7") and pressed then
-		TIRA.ActiveSlot = 6
+		CAKE.ActiveSlot = 6
 		sort = true
 	end
 
 	if sort then
-		if TIRA.ActiveSlot != -1 then
-			TIRA.BuildWeaponTable()
-			if TIRA.WeaponTable[TIRA.ActiveSlot] then
+		if CAKE.ActiveSlot != -1 then
+			CAKE.BuildWeaponTable()
+			if CAKE.WeaponTable[CAKE.ActiveSlot] then
 				timer.Create( "TiramisuResetDefaultWep", 3, 1, function()
-					TIRA.ActiveWepPos = -1
-					TIRA.ActiveSlot = -1
+					CAKE.ActiveWepPos = -1
+					CAKE.ActiveSlot = -1
 				end)
-				if TIRA.ActiveWepPos == -1 then
-					TIRA.ActiveWepPos = 1
+				if CAKE.ActiveWepPos == -1 then
+					CAKE.ActiveWepPos = 1
 				end
-				TIRA.ActiveWepPos = TIRA.ActiveWepPos + 1
-				if !TIRA.WeaponTable[TIRA.ActiveSlot][TIRA.ActiveWepPos] then
-					TIRA.ActiveWepPos = 1
+				CAKE.ActiveWepPos = CAKE.ActiveWepPos + 1
+				if !CAKE.WeaponTable[CAKE.ActiveSlot][CAKE.ActiveWepPos] then
+					CAKE.ActiveWepPos = 1
 				end 
 				return true
 			end
 		end
 	end
+end)
+
+hook.Add("HUDPaintBackground", "Tiramisu.DrawFadetoDeathScreen", function()
+	derma.SkinHook( "Paint", "DeathScreen" )
 end)

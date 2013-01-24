@@ -3,7 +3,7 @@ RCLICK.SubMenu = "Appearance"
 
 function RCLICK.Condition(target)
 
-	if target == LocalPlayer() and TIRA.Gear and table.Count( TIRA.Gear ) > 0 then return true end
+	if target == LocalPlayer() and CAKE.Gear and table.Count( CAKE.Gear ) > 0 then return true end
 
 end
 
@@ -13,7 +13,7 @@ function RCLICK.Click(target,ply)
 		local main = dmenu:AddSubMenu( "Take Off" )
 		local bones = {} 
 
-		for bone, tbl in pairs( TIRA.Gear ) do
+		for bone, tbl in pairs( CAKE.Gear ) do
 			if !bones[bone] then
 				bones[bone] = main:AddSubMenu( bone:sub( 1, 1 ):upper() .. bone:sub( 2 ) )
 			end

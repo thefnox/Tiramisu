@@ -1,40 +1,17 @@
 -- lol
-util.AddNetworkString("Tiramisu.GetEditGroup")
-util.AddNetworkString("TiramisuAddToGroupChat")
-util.AddNetworkString("Tiramisu.ReceiveGroups")
-util.AddNetworkString("Tiramisu.EditGroup")
-util.AddNetworkString("Tiramisu.GetGroupInfo")
-util.AddNetworkString("Tiramisu.EditCharInfo")
-util.AddNetworkString("Tiramisu.ReceiveSpawnPoints")
-util.AddNetworkString("Tiramisu.GetSearchResults")
-
 debug.getregistry().Group = {}
 local meta = FindMetaTable("Group")
 
 function meta:New()
-	local new = {}
-	setmetatable( new, self )
-	self.__index = self
-	return new
+local new = {}
+setmetatable( new, self )
+self.__index = self
+return new
 end
 
 --Fetches a field from the group object.
 function meta:GetField( fieldname )
-	if self[fieldname] == nil then
-		local query = TIRA.Query("SELECT " .. fieldname .. " FROM tiramisu_groups WHERE id = ".. self.UniqueID.."")
-		if query then
-			if (type(query[1][fieldname]) == "string" and (query[1][fieldname][1] == "'" or query[1][fieldname][1] == "\"")) then query[1][fieldname] = string.sub( query[1][fieldname], 2, -2) end
-			if type(TIRA.GroupFields[fieldname]) == "table" then self[fieldname] = TIRA.Deserialize(query[1][fieldname]) or {} end
-			if type(TIRA.GroupFields[fieldname]) == "string" then
-				if type(query[1][fieldname]) != "string" then query[1][fieldname] = tostring(query[1][fieldname]) or "" end
-				self[fieldname] = query[1][fieldname] 
-			end
-			if type(TIRA.GroupFields[fieldname]) == "number" then self[fieldname] = tonumber(query[1][fieldname]) or 0 end
-			if type(TIRA.GroupFields[fieldname]) == "boolean" then self[fieldname] = util.tobool(query[1][fieldname]) or false end
-		else return TIRA.GroupFields[fieldname]
-		end
-	end
-	return self[fieldname]
+	return self[fieldname] or CAKE.GroupFields[fieldname] or false
 end
 
 --Sets a field on the group object.
@@ -45,24 +22,13 @@ function meta:SetField( fieldname, value, dontsave )
 		self[fieldname] = value
 	end
 	if !dontsave then
-		if TIRA.GroupFields[fieldname] then
-			self[fieldname] = value
-			if type(TIRA.GroupFields[fieldname]) == "table" then value = TIRA.Serialize(value) end
-			if type(TIRA.GroupFields[fieldname]) == "string" then value = value end
-			if type(TIRA.GroupFields[fieldname]) == "number" then value = tostring(value) end
-			if type(TIRA.GroupFields[fieldname]) == "boolean" then
-				if value then value = 1
-				else value = 0 end
-			end
-			TIRA.Query("UPDATE tiramisu_groups SET " .. fieldname .. "='" .. TIRA.StrEscape(value) .. "' WHERE id = '".. self.UniqueID .. "'")
-		end
-		--self:Save()
+		self:Save()
 	end
 end
 
 --Saves all data to file.
 function meta:Save()
-	--file.Write(TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/" .. self.UniqueID.. ".txt", TIRA.Serialize(self))
+	file.Write(CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/" .. self.UniqueID.. ".txt", glon.encode(self))
 end
 
 --Obtains the information of all the players in the group.
@@ -93,7 +59,7 @@ function meta:GetRankField( rankname, field )
 	if ranks[rankname] then
 		return ranks[rankname][field]
 	end
-	return TIRA.RankFields[field]
+	return CAKE.RankFields[field]
 end
 
 function meta:SetRankField( rankname, field, value, dontsave )
@@ -109,7 +75,7 @@ function meta:AddRank( rankname )
 	local ranks = self:GetRanks()
 	if !ranks[rankname] then
 		ranks[rankname] = {}
-		for field, value in pairs(TIRA.RankFields) do
+		for field, value in pairs(CAKE.RankFields) do
 			self:SetRankField( rankname, field, value, true )
 		end
 	end
@@ -132,15 +98,15 @@ end
 
 function meta:Delete()
 	for _, ply in pairs( self:GetOnlineCharacters() ) do
-		TIRA.LeaveGroup( ply, self.UniqueID )
+		CAKE.LeaveGroup( ply, self.UniqueID )
 	end
-	--TIRA.Query( "DELETE FROM tiramisu_groups WHERE id=" .. self.UniqueID )
+	file.Delete( CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/" .. self.UniqueID .. ".txt"  )
 	self = nil
 end
 
 --Is the player in the group?
 function meta:PlayerInGroup( ply )
-	if ValidEntity( ply ) and ply:IsTiraPlayer() and ply:IsCharLoaded() then
+	if IsValid( ply ) and ply:IsTiraPlayer() and ply:IsCharLoaded() then
 		for _, v in pairs(self:GetRoster()) do
 			if v and v.SteamID == ply:SteamID() then
 				return true
@@ -152,7 +118,7 @@ end
 
 --Is the currently active character of this player in the group?
 function meta:CharacterInGroup( ply )
-	if ValidEntity( ply ) and ply:IsTiraPlayer() and ply:IsCharLoaded() then
+	if IsValid( ply ) and ply:IsTiraPlayer() and ply:IsCharLoaded() then
 		for _, v in pairs(self:GetRoster()) do
 			if v and v.SteamID == ply:SteamID() and v.UID == ply:GetNWString( "uid" ) then
 				return true
@@ -172,7 +138,7 @@ end
 
 --Fetches the information of a character, given a player.
 function meta:GetCharacterInfo( ply )
-	if ValidEntity( ply ) and ply:IsTiraPlayer() and ply:IsCharLoaded() then
+	if IsValid( ply ) and ply:IsTiraPlayer() and ply:IsCharLoaded() then
 		for plyid, v in pairs(self:GetRoster()) do
 			if v and v.SteamID == ply:SteamID() and v.UID == ply:GetNWString( "uid" ) then
 				return v
@@ -229,7 +195,7 @@ end
 
 --Adds an online player to the roster.
 function meta:AddToRoster( ply, rank )
-	if ValidEntity( ply ) and ply:IsTiraPlayer() and ply:IsCharLoaded() then
+	if IsValid( ply ) and ply:IsTiraPlayer() and ply:IsCharLoaded() then
 		if !self:GetCharacterInfo( ply ) then
 			local tbl = {}
 			tbl.Name = ply:Nick()
@@ -237,7 +203,7 @@ function meta:AddToRoster( ply, rank )
 			tbl.UID = ply:GetNWString( "uid" )
 			tbl.Rank = rank or self:GetDefaultRank()
 			local roster = self:GetRoster()
-			roster[TIRA.FormatText(ply:SteamID()) .. ";" .. ply:GetNWString( "uid" )] = tbl
+			roster[CAKE.FormatText(ply:SteamID()) .. ";" .. ply:GetNWString( "uid" )] = tbl
 			self:SetField( "roster", roster )
 		end
 	end
@@ -245,10 +211,10 @@ end
 
 --Removes an online player from the roster.
 function meta:RemoveFromRoster( ply )
-	if ValidEntity( ply ) and ply:IsTiraPlayer() and ply:IsCharLoaded() then
+	if IsValid( ply ) and ply:IsTiraPlayer() and ply:IsCharLoaded() then
 		if self:GetCharacterInfo( ply ) then
 			local roster = self:GetRoster()
-			roster[TIRA.FormatText(ply:SteamID()) .. ";" .. ply:GetNWString( "uid" )] = nil
+			roster[CAKE.FormatText(ply:SteamID()) .. ";" .. ply:GetNWString( "uid" )] = nil
 			self:SetField( "roster", roster )
 		end
 	end
@@ -257,57 +223,57 @@ function meta:RemoveFromRoster( ply )
 	end
 end
 
-TIRA.Groups = {}
-TIRA.GroupFields = {}
-TIRA.RankFields = {}
+CAKE.Groups = {}
+CAKE.GroupFields = {}
+CAKE.RankFields = {}
 
 --Creates an unique ID for the currently active group.
-function TIRA.CreateGroupID()
-	return TIRA.GetTableNextID("tiramisu_groups") or 1
-	/*
+function CAKE.CreateGroupID()
 	local repnum = 0
-	local uidfile = file.Exists( TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
+	-- local uidfile = file.Exists( CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
+	local uidfile = file.Exists( CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt", "DATA" )
 	while uidfile do
 		repnum = repnum + 1
-		uidfile = file.Exists( TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
+		-- uidfile = file.Exists( CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt" )
+		uidfile = file.Exists( CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/" .. os.time() .. repnum .. ".txt", "DATA" )
 	end
-	return os.time() .. repnum*/
+	return os.time() .. repnum
 end
 
 --Loads a group from file.
-function TIRA.LoadGroup( uid )
-	local group = TIRA.CreateGroupObject(uid)
-	TIRA.Groups[group.UniqueID] = group
+function CAKE.LoadGroup( uid )
+	local group = CAKE.CreateGroupObject( CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/" .. uid.. ".txt" )
+	CAKE.Groups[group.UniqueID] = group
 end
 
 --Creates a new group and adds it to the group list.
-function TIRA.CreateGroup()
-	local group = TIRA.CreateGroupObject()
-	TIRA.Groups[group.UniqueID] = group
+function CAKE.CreateGroup()
+	local group = CAKE.CreateGroupObject()
+	CAKE.Groups[group.UniqueID] = group
 	return group
 end
 
 --Does this group currently exist in the group list? Second argument, does the file for this group exist?
-function TIRA.GroupExists( uid )
+function CAKE.GroupExists( uid )
 	if !uid then return false end
-	return TIRA.Groups[uid] or false, file.Exists(TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/" .. uid.. ".txt", "DATA")
+	return CAKE.Groups[uid] or false, file.Exists(CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/" .. uid.. ".txt", "DATA")
 end
 
-function TIRA.IsGroup( uid )
-	return TIRA.GroupExists( uid ) --Just an alias. 
+function CAKE.IsGroup( uid )
+	return CAKE.GroupExists( uid ) --Just an alias. 
 end
 
 --Fetches a group, if it exists.
-function TIRA.GetGroup( uid )
-	if TIRA.GroupExists( uid ) then
-		return TIRA.Groups[uid]
+function CAKE.GetGroup( uid )
+	if CAKE.GroupExists( uid ) then
+		return CAKE.Groups[uid]
 	end
 	return false
 end
 
 --Returns true if the name introduced is currently assigned to a group
-function TIRA.GroupNameExists( name )
-	for id, group in pairs( TIRA.Groups ) do
+function CAKE.GroupNameExists( name )
+	for id, group in pairs( CAKE.Groups ) do
 		if group and group:Name() == name then
 			return true
 		end
@@ -316,8 +282,8 @@ function TIRA.GroupNameExists( name )
 end
 
 --Finds a group object based on a name
-function TIRA.FindGroupByName( name )
-	for id, group in pairs( TIRA.Groups ) do
+function CAKE.FindGroupByName( name )
+	for id, group in pairs( CAKE.Groups ) do
 		if group and group:Name() == name then
 			return group
 		end
@@ -325,55 +291,56 @@ function TIRA.FindGroupByName( name )
 	return false
 end
 
-function TIRA.CreateGroupInventory(uid)
-	local container = TIRA.CreateContainerObject()
+function CAKE.CreateGroupInventory(uid)
+	local container = CAKE.CreateContainerObject()
 	container:SetSize(10,5)
 	container.Group = uid
 	container:Save()
 	return container.UniqueID
 end
 
-function TIRA.CreateGroupObject( uid )
+function CAKE.CreateGroupObject( filename )
 	local group = FindMetaTable("Group"):New()
 
-	if uid then
-		group.UniqueID = uid 
-	else
-		local id = TIRA.GetTableNextID( "tiramisu_groups" ) or 1
-		local fieldstr = "id,"
-		local defaultstr = id .. ","
-		for fieldname, default in pairs( TIRA.GroupFields ) do
-			fieldstr = fieldstr .. fieldname .. ","
-			if type(default) == "table" then defaultstr = defaultstr .. "'" .. TIRA.Serialize(default) .. "'," end
-			if type(default) == "string" then defaultstr = defaultstr .. "'" .. default .. "'," end
-			if type(default) == "number" then defaultstr = defaultstr .. tostring(default) .. "," end
-			if type(default) == "boolean" then if default then defaultstr = defaultstr .. "1," else defaultstr = defaultstr .. "0," end end
+	if filename and file.Exists( filename, "DATA" ) then
+		local tbl = glon.decode( file.Read(filename) )
+		for k, v in pairs(tbl) do
+			group:SetField( k, v, true )
 		end
-		fieldstr = string.sub(fieldstr, 1, string.len(fieldstr) - 1 ) --Removing the last comma
-		defaultstr = string.sub(defaultstr, 1, string.len(defaultstr) - 1 ) --Removing the last comma
-
-		TIRA.Query("INSERT INTO tiramisu_groups (".. fieldstr .. ") VALUES (" .. defaultstr .. ")")
-		group.UniqueID = id
+		group.UniqueID = tbl.UniqueID
+		if type(group:GetField("inventory")) == "table" or group:GetField("inventory") == "none" then
+			group:SetField("inventory", CAKE.CreateGroupInventory(group.UniqueID))
+		end
+		group:Save()
+	else
+		group.UniqueID = CAKE.CreateGroupID()
+		for k, v in pairs(CAKE.GroupFields) do
+			group:SetField( k, v, true )
+		end
+		if type(group:GetField("inventory")) == "table" or group:GetField("inventory") == "none" then
+			group:SetField("inventory", CAKE.CreateGroupInventory(group.UniqueID))
+		end
+		group:Save()
 	end
 	return group
 end
 
-function TIRA.AddGroupField( fieldname, default )
-	if !TIRA.GroupFields[fieldname] then
-		TIRA.GroupFields[fieldname] = default
+function CAKE.AddGroupField( fieldname, default )
+	if !CAKE.GroupFields[fieldname] then
+		CAKE.GroupFields[fieldname] = default
 	end
 end
 
-function TIRA.AddRankField( fieldname, default )
-	if !TIRA.RankFields[fieldname] then
-		TIRA.RankFields[fieldname] = default
+function CAKE.AddRankField( fieldname, default )
+	if !CAKE.RankFields[fieldname] then
+		CAKE.RankFields[fieldname] = default
 	end
 end
 
 --Makes a character promote another to a certain rank, if possible.
-function TIRA.PromoteCharacter( group, promoter, ply, rank )
-	if ValidEntity(promoter) and promoter:IsTiraPlayer() and ValidEntity(ply) and ply:IsTiraPlayer() and TIRA.GroupExists( group ) then
-		group = TIRA.GetGroup( group )
+function CAKE.PromoteCharacter( group, promoter, ply, rank )
+	if IsValid(promoter) and promoter:IsTiraPlayer() and IsValid(ply) and ply:IsTiraPlayer() and CAKE.GroupExists( group ) then
+		group = CAKE.GetGroup( group )
 		if !group:CharacterInGroup( ply ) then return end
 		if !group:CharacterInGroup( promoter ) then return end
 		if !group:IsRank( rank ) then return end
@@ -383,69 +350,69 @@ function TIRA.PromoteCharacter( group, promoter, ply, rank )
 		if tonumber(group:GetRankField( rank, "level" )) > tonumber(group:GetRankField(promoinfo.Rank, "level")) then return end
 		plyinfo.Rank = rank
 		group:Save()
-		TIRA.SendGroupToClient( ply )
+		CAKE.SendGroupToClient( ply )
 	end
 end
 
 --Makes a player leave a group, given a group ID
-function TIRA.LeaveGroup( ply, uid, reason )
-	if TIRA.GroupExists( uid ) then
-		group = TIRA.GetGroup( uid )
+function CAKE.LeaveGroup( ply, uid, reason )
+	if CAKE.GroupExists( uid ) then
+		group = CAKE.GetGroup( uid )
 		group:RemoveFromRoster( ply )
-		local plygroups = TIRA.GetCharField( ply, "groups")
-		local activegroup = TIRA.GetCharField( ply, "activegroup")
+		local plygroups = CAKE.GetCharField( ply, "groups")
+		local activegroup = CAKE.GetCharField( ply, "activegroup")
 		for k, v in pairs( plygroups ) do
 			if v == uid then
 				table.remove( plygroups, k )
 			end
 		end
 		if activegroup == uid and table.Count(plygroups) > 1 then
-			TIRA.SetCharField( ply, "activegroup", table.Random(plygroups))
+			CAKE.SetCharField( ply, "activegroup", table.Random(plygroups))
 		end
-		TIRA.SetCharField( ply, "groups", table.Copy(plygroups) )
+		CAKE.SetCharField( ply, "groups", table.Copy(plygroups) )
 		group:Save()
-		TIRA.SendGroupToClient( ply )
-		TIRA.SendError( ply, reason or "You have left " .. group:GetField( "name" ))
+		CAKE.SendGroupToClient( ply )
+		CAKE.SendError( ply, reason or "You have left " .. group:GetField( "name" ))
 	end
 end
 
-function TIRA.JoinGroup( ply, uid, referral )
-	if ValidEntity( ply ) and ply:IsPlayer() and TIRA.GroupExists( uid ) and ply:IsCharLoaded() then
-		local group = TIRA.GetGroup( uid )
-		if group:GetField("type") == "public" or (ValidEntity( referral ) and referral:IsPlayer() and ply.AuthorizedToJoin == uid and group:GetCharacterInfo( referral ) and group:GetRankField(group:GetCharacterInfo( referral ).Rank, "caninvite")) then
+function CAKE.JoinGroup( ply, uid, referral )
+	if IsValid( ply ) and ply:IsPlayer() and CAKE.GroupExists( uid ) and ply:IsCharLoaded() then
+		local group = CAKE.GetGroup( uid )
+		if group:GetField("type") == "public" or (IsValid( referral ) and referral:IsPlayer() and ply.AuthorizedToJoin == uid and group:GetCharacterInfo( referral ) and group:GetRankField(group:GetCharacterInfo( referral ).Rank, "caninvite")) then
 			if !group:GetCharacterInfo( ply ) then
-				local plygroups = TIRA.GetCharField( ply, "groups")
+				local plygroups = CAKE.GetCharField( ply, "groups")
 				if !table.HasValue( plygroups, uid ) then
 					table.insert( plygroups, uid )
 				end
-				TIRA.SetCharField( ply, "groups", table.Copy(plygroups))
-				TIRA.SetCharField( ply, "activegroup", uid)
+				CAKE.SetCharField( ply, "groups", table.Copy(plygroups))
+				CAKE.SetCharField( ply, "activegroup", uid)
 				group:AddToRoster( ply )
-				TIRA.SendError( ply, "You have joined " .. group:GetField( "name" ))
-				if ValidEntity( referral ) and referral:IsPlayer() then
-					TIRA.SendError( referral, ply:Nick() .. " has accepted your invitation to join " .. group:GetField( "name" ))
+				CAKE.SendError( ply, "You have joined " .. group:GetField( "name" ))
+				if IsValid( referral ) and referral:IsPlayer() then
+					CAKE.SendError( referral, ply:Nick() .. " has accepted your invitation to join " .. group:GetField( "name" ))
 				end
 				group:Save()
-				TIRA.SendGroupToClient( ply )
+				CAKE.SendGroupToClient( ply )
 			else
-				TIRA.SendError( ply, "You are already a member of " .. group:GetField( "name" ))
+				CAKE.SendError( ply, "You are already a member of " .. group:GetField( "name" ))
 			end
 			ply.AuthorizedToJoin = false
 		end
 	end
 end
 
-function TIRA.SendGroupToClient( ply )
+function CAKE.SendGroupToClient( ply )
 	local tbl = {}
-	local groups = TIRA.GetCharField( ply, "groups" )
+	local groups = CAKE.GetCharField( ply, "groups" )
 	local group
-	local activegroup = TIRA.GetCharField( ply, "activegroup" )
+	local activegroup = CAKE.GetCharField( ply, "activegroup" )
 	local rank
 	tbl["groups"] = {}
 	tbl["rankpermissions"] = {}
 	for k, v in pairs(groups) do
-		if TIRA.GroupExists( v ) then
-			group = TIRA.GetGroup( v )
+		if CAKE.GroupExists( v ) then
+			group = CAKE.GetGroup( v )
 			tbl["groups"][group.UniqueID] = group:Name()
 			tbl["rankpermissions"][group.UniqueID] = {}
 			rank = group:GetCharacterInfo( ply ).Rank
@@ -460,93 +427,59 @@ function TIRA.SendGroupToClient( ply )
 	end
 	tbl["activegroup"] = activegroup
 
-	tbl["factions"] = TIRA.Factions
-	net.Start("Tiramisu.ReceiveGroups")
-		net.WriteTable(tbl)
-	net.Send(ply)
+	tbl["factions"] = CAKE.Factions
+
+	-- datastream.StreamToClients( ply, "Tiramisu.ReceiveGroups", tbl)
+	if not tbl then error( "tbl == nil" ) end
+	net.Start( "Tiramisu.ReceiveGroups" )
+		net.WriteTable( tbl )
+	net.Send( ply )
 end
 
-TIRA.AddGroupField( "roster", {} )
-TIRA.AddGroupField( "ranks", {
-	["founder"] = {
-		["canedit"] = true,
-		["cankick"] = true,
-		["caninvite"] = true,
-		["canpromote"] = true,
-		["cannotice"] = true,
-		["cantakeinventory"] = true,
-		["canplaceinventory"] = true,
-		["level"] = 100,
-		["name"] = "Group Founder",
-		["handler"] = "founder",
-		["description"] = "The one who founded the group"
-	}
-} )
-TIRA.AddGroupField( "doorgroup", 0 )
-TIRA.AddGroupField( "notices", {} )
-TIRA.AddGroupField( "inventory", "none" )
-TIRA.AddGroupField( "defaultrank", "none" )
-TIRA.AddGroupField( "name", "New Group" )
-TIRA.AddGroupField( "description", "None available." )
-TIRA.AddGroupField( "founder", "none" )
-TIRA.AddGroupField( "type", "public" )
+function PLUGIN.Init()
+	CAKE.AddGroupField( "roster", {} )
+	CAKE.AddGroupField( "ranks", {
+		["founder"] = {
+			["canedit"] = true,
+			["cankick"] = true,
+			["caninvite"] = true,
+			["canpromote"] = true,
+			["cannotice"] = true,
+			["cantakeinventory"] = true,
+			["canplaceinventory"] = true,
+			["level"] = 100,
+			["name"] = "Group Founder",
+			["handler"] = "founder",
+			["description"] = "The one who founded the group"
+		}
+	} )
+	CAKE.AddGroupField( "doorgroup", 0 )
+	CAKE.AddGroupField( "notices", {} )
+	CAKE.AddGroupField( "inventory", "none" )
+	CAKE.AddGroupField( "defaultrank", "none" )
+	CAKE.AddGroupField( "name", "New Group" )
+	CAKE.AddGroupField( "description", "None available." )
+	CAKE.AddGroupField( "founder", "none" )
+	CAKE.AddGroupField( "type", "public" )
 
---Rank Fields
-TIRA.AddRankField( "canedit", false )
-TIRA.AddRankField( "cankick", false )
-TIRA.AddRankField( "caninvite", false )
-TIRA.AddRankField( "canpromote", false )
-TIRA.AddRankField( "cannotice", false )
-TIRA.AddRankField( "cantakeinventory", false )
-TIRA.AddRankField( "canplaceinventory", false )
-TIRA.AddRankField( "level", 0 )
-TIRA.AddRankField( "name", "none" )
-TIRA.AddRankField( "handler", "none" )
-TIRA.AddRankField( "description", "none" )
-TIRA.AddRankField( "loadout", {} )
-TIRA.AddRankField( "weapons", {} )
+	--Rank Fields
+	CAKE.AddRankField( "canedit", false )
+	CAKE.AddRankField( "cankick", false )
+	CAKE.AddRankField( "caninvite", false )
+	CAKE.AddRankField( "canpromote", false )
+	CAKE.AddRankField( "cannotice", false )
+	CAKE.AddRankField( "cantakeinventory", false )
+	CAKE.AddRankField( "canplaceinventory", false )
+	CAKE.AddRankField( "level", 0 )
+	CAKE.AddRankField( "name", "none" )
+	CAKE.AddRankField( "handler", "none" )
+	CAKE.AddRankField( "description", "none" )
+	CAKE.AddRankField( "loadout", {} )
+	CAKE.AddRankField( "weapons", {} )
 
---Player Fields
-TIRA.AddDataField( 2, "groups", {} )
-TIRA.AddDataField( 2, "activegroup", "none" )
-TIRA.AddDataField( 2, "lastonline", 0 )
+	--Player Fields
+	CAKE.AddDataField( 2, "groups", {} )
+	CAKE.AddDataField( 2, "activegroup", "none" )
+	CAKE.AddDataField( 2, "lastonline", 0 )
 
-hook.Add("Tiramisu.CreateSQLTables", "Tiramisu.CreateGroupTable", function()
-	if TIRA.ConVars["SQLEngine"] == "sqlite" then
-		if !sql.TableExists("tiramisu_groups") then
-			local datastr = "id int NOT NULL PRIMARY KEY,"
-			for k, v in pairs(TIRA.GroupFields) do
-				datastr = datastr .. k .. " "
-				if type(v) == "table" then
-					datastr = datastr .. "text"
-				elseif type(v) == "string" then
-					datastr = datastr .. "text"
-				elseif type(v) == "number" then
-					datastr = datastr .. "float"
-				else --default to bool
-					datastr = datastr .. "bit"
-				end
-				datastr = datastr .. "," 
-			end
-			datastr = string.sub(datastr, 1, string.len(datastr) - 1 ) --Removing the last comma
-			TIRA.Query("CREATE TABLE tiramisu_groups ( " .. datastr .. " )")
-		end
-	else
-		local datastr = "id INT,"
-		for k, v in pairs(TIRA.GroupFields) do
-			datastr = datastr .. k .. " "
-			if type(v) == "table" then
-				datastr = datastr .. "MEDIUMTEXT"
-			elseif type(v) == "string" then
-				datastr = datastr .. "TEXT"
-			elseif type(v) == "number" then
-				datastr = datastr .. "FLOAT"
-			else --default to bool
-				datastr = datastr .. "TINYINT"
-			end
-			datastr = datastr .. "," 
-		end
-		datastr = datastr .. "PRIMARY KEY (`id`)"
-		TIRA.Query("CREATE TABLE IF NOT EXISTS tiramisu_groups ( " .. datastr .. " )")
-	end
-end)
+end

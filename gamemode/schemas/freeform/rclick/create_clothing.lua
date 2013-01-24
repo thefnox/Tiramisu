@@ -3,7 +3,7 @@ RCLICK.SubMenu = "Create"
 
 function RCLICK.Condition(target)
 
-	if ValidEntity( target) and target:GetClass() == "prop_ragdoll" and target:LookupBone("ValveBiped.Bip01_Head1") and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) == 0 then return true end
+	if IsValid( target) and target:GetClass() == "prop_ragdoll" and target:LookupBone("ValveBiped.Bip01_Head1") and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) == 0 then return true end
 
 end
 
@@ -38,6 +38,7 @@ function RCLICK.Click(target,ply)
 	Label:SetTextColor( color_white )
 	InnerPanel:AddItem( Label )
 
+	-- local MultiChoice = vgui.Create( "DMultiChoice", InnerPanel )
 	local MultiChoice = vgui.Create( "DComboBox", InnerPanel )
 	MultiChoice:AddChoice("body")
 	MultiChoice:AddChoice("head")

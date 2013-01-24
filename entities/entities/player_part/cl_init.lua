@@ -1,17 +1,19 @@
 include('shared.lua')
 
-local n
+function ENT:BoneScale( realboneid, scale )
+self:ManipulateBoneScale( realboneid, Vector( scale, scale, scale ) )
+end
 
 function ENT:Draw()
 
-	if self.Entity:GetParent() == LocalPlayer() and !hook.Call("ShouldDrawLocalPlayer", GAMEMODE) then
-		return
-	end
-	
-	self.Entity:DrawModel()
-	self.Entity:DrawShadow( true )
+if self.Entity:GetParent() == LocalPlayer() and !hook.Call("ShouldDrawLocalPlayer", GAMEMODE) then
+return
+end
 
-	n = self:GetBoneCount()
+self.Entity:DrawModel()
+self.Entity:DrawShadow( true )
+
+local n = self:GetBoneCount()
 
 	if !self.HeadBonesIndex then
 		self.HeadBonesIndex = {}
@@ -33,15 +35,15 @@ function ENT:Draw()
 		end
 	end
 
-	if self.Entity:GetParent() == LocalPlayer() and ((!(TIRA.Thirdperson:GetBool() and TIRA.ThirdpersonDistance:GetInt() != 0 ) and !TIRA.FreeScroll and !TIRA.ForceDraw and TIRA.FirstpersonBody:GetBool()) or self.Entity:GetParent():InVehicle()) then
-		--First person, but with body visible
-		for i=0, n do
-			if table.HasValue(self.HeadBonesIndex, i) then --If they're part of the head
-				self:ManipulateBoneScale(i, Vector(0,0,0)) -- Scale them down so they don't get in the way.
-			end		
-		end
+if self.Entity:GetParent() == LocalPlayer() and ((!(CAKE.Thirdperson:GetBool() and CAKE.ThirdpersonDistance:GetInt() != 0 ) and !CAKE.FreeScroll and !CAKE.ForceDraw and CAKE.FirstpersonBody:GetBool()) or self.Entity:GetParent():InVehicle()) then
+--First person, but with body visible
+for i=0, n do
+if table.HasValue(self.HeadBonesIndex, i) then --If they're part of the head
+self:ManipulateBoneScale(i, Vector(0,0,0)) -- Scale them down so they don't get in the way.
+end	
+end
 
-	else
+else
 
 		if self.Entity:GetDTInt( CLOTHING_TYPE ) == CLOTHING_FULL then --Don't do anything.
 			for i=0, n do

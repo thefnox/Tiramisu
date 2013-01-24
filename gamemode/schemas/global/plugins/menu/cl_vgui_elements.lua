@@ -30,7 +30,7 @@ Name: Init
 ---------------------------------------------------------*/
 function PANEL:Init()
 
-	TIRA.ForceDraw = true
+	CAKE.ForceDraw = true
 
 	self.LastPaint = 0
 	self.DirectionalLight = {}
@@ -73,20 +73,20 @@ function PANEL:StartDraw()
 	
 	LocalPlayer():SetNoDraw( true )
 
-	if TIRA.ClothingTbl then
-		for k, v in pairs( TIRA.ClothingTbl ) do
-			if ValidEntity( v ) then
+	if CAKE.ClothingTbl then
+		for k, v in pairs( CAKE.ClothingTbl ) do
+			if IsValid( v ) then
 				v:SetNoDraw( true )
 				v.ForceDraw = true
 			end
 		end
 	end
 
-	if TIRA.Gear then
-		for _, bone in pairs( TIRA.Gear ) do
+	if CAKE.Gear then
+		for _, bone in pairs( CAKE.Gear ) do
 			if bone then
 				for k, v in pairs( bone ) do
-					if ValidEntity( v.entity ) then
+					if IsValid( v.entity ) then
 						v.entity:SetNoDraw( true )
 					end
 				end
@@ -97,7 +97,7 @@ function PANEL:StartDraw()
 end
 
 function PANEL:SetTarget( entity )
-	if ValidEntity( entity ) then
+	if IsValid( entity ) then
 		self.CamTarget = entity
 		self:SetTargetBone( "ValveBiped.Bip01_Head1" )
 		local pos, angle = self:GetCamOrigin()
@@ -125,7 +125,7 @@ function PANEL:GetCamOrigin()
 	if !self.LastCamAngle then
 		self.LastCamAngle = Angle( 0, 0, 0 )
 	end
-	if self.CamTarget and ValidEntity( self.CamTarget ) then
+	if self.CamTarget and IsValid( self.CamTarget ) then
 		origbone = self.CamTarget:LookupBone( self:GetTargetBone() )
 		if origbone then
 			self.LastCamOrigin, self.LastCamAngle = self.CamTarget:GetBonePosition( origbone )
@@ -142,23 +142,23 @@ function PANEL:EndDraw()
 	// Note: Not in menu dll
 	if ( !ClientsideModel ) then return end		
 
-	if TIRA.Thirdperson:GetBool() then
+	if CAKE.Thirdperson:GetBool() then
 		
 		LocalPlayer():SetNoDraw( false )
 
-		if TIRA.ClothingTbl then
-			for k, v in pairs( TIRA.ClothingTbl ) do
-				if ValidEntity( v ) then
+		if CAKE.ClothingTbl then
+			for k, v in pairs( CAKE.ClothingTbl ) do
+				if IsValid( v ) then
 					v:SetNoDraw( false )
 				end
 			end
 		end
 
-		if TIRA.Gear then
-			for _, bone in pairs( TIRA.Gear ) do
+		if CAKE.Gear then
+			for _, bone in pairs( CAKE.Gear ) do
 				if bone then
 					for k, v in pairs( bone ) do
-						if ValidEntity( v.entity ) then
+						if IsValid( v.entity ) then
 							v.entity:SetNoDraw( false )
 						end
 					end
@@ -166,7 +166,7 @@ function PANEL:EndDraw()
 			end
 		end
 		
-		--TIRA.ForceDraw = false
+		--CAKE.ForceDraw = false
 	end
 end
  
@@ -201,20 +201,20 @@ function PANEL:Paint()
 		LocalPlayer():CreateShadow()
 
 
-		if TIRA.ClothingTbl then
-			for k, v in pairs( TIRA.ClothingTbl ) do
-				if ValidEntity( v ) then
+		if CAKE.ClothingTbl then
+			for k, v in pairs( CAKE.ClothingTbl ) do
+				if IsValid( v ) then
 					v:DrawModel()
 					v:CreateShadow()
 				end
 			end
 		end
 
-		if TIRA.Gear then
-			for _, bone in pairs( TIRA.Gear ) do
+		if CAKE.Gear then
+			for _, bone in pairs( CAKE.Gear ) do
 				if bone then
 					for k, v in pairs( bone ) do
-						if ValidEntity( v.entity ) then
+						if IsValid( v.entity ) then
 							v.entity:DrawModel()
 							v.entity:CreateShadow()
 						end
@@ -257,22 +257,22 @@ function PANEL:OnCursorMoved(x, y)
 end
 
 function PANEL:Close()
-	TIRA.ForceDraw = false
+	CAKE.ForceDraw = false
 	LocalPlayer():SetNoDraw( false )
 
-	if TIRA.ClothingTbl then
-		for k, v in pairs( TIRA.ClothingTbl ) do
-			if ValidEntity( v ) then
+	if CAKE.ClothingTbl then
+		for k, v in pairs( CAKE.ClothingTbl ) do
+			if IsValid( v ) then
 				v:SetNoDraw( false )
 			end
 		end
 	end
 
-	if TIRA.Gear then
-		for _, bone in pairs( TIRA.Gear ) do
+	if CAKE.Gear then
+		for _, bone in pairs( CAKE.Gear ) do
 			if bone then
 				for k, v in pairs( bone ) do
-					if ValidEntity( v.entity ) then
+					if IsValid( v.entity ) then
 						v.entity:SetNoDraw( false )
 					end
 				end

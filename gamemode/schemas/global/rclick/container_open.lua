@@ -1,7 +1,7 @@
 RCLICK.Name = "Open"
 
 function RCLICK.Condition(target)
-	if ValidEntity( target) and target:GetNWString("container", "") != "" and target:GetClass() == "prop_physics" then return true end
+	if IsValid( target) and target:GetNWString("container", "") != "" and target:GetClass() == "prop_physics" then return true end
 end
 
 function RCLICK.Click(target,ply)

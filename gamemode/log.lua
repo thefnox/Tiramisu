@@ -1,5 +1,5 @@
 -- Anything that would be logged would be passed to this.
-function TIRA.DayLog( outputfile, text )
+function CAKE.DayLog( outputfile, text )
 
 	local month = os.date( "%m" )
 	local day = os.date( "%d" )
@@ -7,7 +7,7 @@ function TIRA.DayLog( outputfile, text )
 
 	local curdate = month .. "-" .. day .. "-" .. year
 
-	local filedir = TIRA.Name .. "/logs/daylogs/" .. curdate .. "/" .. outputfile
+	local filedir = CAKE.Name .. "/logs/daylogs/" .. curdate .. "/" .. outputfile
 	
 	local hours = os.date( "%H" )
 	local mins = os.date( "%M" )

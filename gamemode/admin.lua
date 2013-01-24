@@ -1,8 +1,8 @@
-TIRA.AdminCommands = {  }
-TIRA.AdminRanks = {  } 
+CAKE.AdminCommands = {  }
+CAKE.AdminRanks = {  } 
 
 --Sends an admin message to all players.
-function TIRA.AnnounceAction( ply, action )
+function CAKE.AnnounceAction( ply, action )
 
 	local s
 	if ply:IsTiraPlayer() then
@@ -10,7 +10,7 @@ function TIRA.AnnounceAction( ply, action )
 
 		for k, v in pairs( player.GetAll( ) ) do
 
-			TIRA.SendChat( v, s )
+			CAKE.SendChat( v, s )
 			
 		end
 	else
@@ -18,7 +18,7 @@ function TIRA.AnnounceAction( ply, action )
 
 		for k, v in pairs( player.GetAll( ) ) do
 
-			TIRA.SendChat( v, s )
+			CAKE.SendChat( v, s )
 			
 		end
 	end
@@ -26,27 +26,27 @@ function TIRA.AnnounceAction( ply, action )
 end
 
 -- This will create an admin function.
-function TIRA.AdminCommand( ccName, func, description, CanRunFromConsole, CanRunFromAdmin, MinRank )
+function CAKE.AdminCommand( ccName, func, description, CanRunFromConsole, CanRunFromAdmin, MinRank )
 
 		local cmd = {  }
 		cmd.func = func
 		cmd.desc = description
-		cmd.CanRunFromConsole = TIRA.NilFix(CanRunFromConsole, true)
-		cmd.CanRunFromAdmin = TIRA.NilFix(CanRunFromAdmin, true)
-		cmd.MinRank = TIRA.NilFix(MinRank, 0)
+		cmd.CanRunFromConsole = CAKE.NilFix(CanRunFromConsole, true)
+		cmd.CanRunFromAdmin = CAKE.NilFix(CanRunFromAdmin, true)
+		cmd.MinRank = CAKE.NilFix(MinRank, 0)
 
-		TIRA.AdminCommands[ ccName ] = cmd
+		CAKE.AdminCommands[ ccName ] = cmd
 	
 end
 
-function TIRA.RemoveAdminCommand( ccName )
-	if TIRA.AdminCommands[ ccName ] then
-		TIRA.AdminCommands[ ccName ] = nil
+function CAKE.RemoveAdminCommand( ccName )
+	if CAKE.AdminCommands[ ccName ] then
+		CAKE.AdminCommands[ ccName ] = nil
 	end
 end
 
 --Fetches a player's rank. Automatically compensates for administrators set outside of Tiramisu.
-function TIRA.PlayerRank(ply)
+function CAKE.PlayerRank(ply)
 
 	if ply:IsSuperAdmin() then
 		return 5
@@ -54,8 +54,8 @@ function TIRA.PlayerRank(ply)
 		return 4
 	end
 		
-	if TIRA.AdminRanks[TIRA.GetPlayerField( ply, "adrank" )] then
-		return TIRA.AdminRanks[TIRA.GetPlayerField( ply, "adrank" )].rank
+	if CAKE.AdminRanks[CAKE.GetPlayerField( ply, "adrank" )] then
+		return CAKE.AdminRanks[CAKE.GetPlayerField( ply, "adrank" )].rank
 	else
 		return 0
 	end
@@ -127,11 +127,11 @@ end
 -- Syntax is rp_admin command args
 function ccAdmin( ply, cmd, args )
 
-	local cmd = TIRA.NilFix( TIRA.AdminCommands[args[ 1 ]], 0)
+	local cmd = CAKE.NilFix( CAKE.AdminCommands[args[ 1 ]], 0)
 	
 	if( cmd == 0 ) then
 	
-		TIRA.SendChat( ply, "That is not a valid command!" )
+		CAKE.SendChat( ply, "That is not a valid command!" )
 		return
 		
 	end
@@ -152,28 +152,28 @@ function ccAdmin( ply, cmd, args )
 			
 		else
 
-			TIRA.PrintConsole( "You cannot run this command from server console!" )
+			CAKE.PrintConsole( "You cannot run this command from server console!" )
 			
 		end
 		
 	else	
 	
-		if TIRA.PlayerRank(ply) >= 0 then -- We're dealing with an admin.
+		if CAKE.PlayerRank(ply) >= 0 then -- We're dealing with an admin.
 			
-			if TIRA.PlayerRank(ply) >= cmd.MinRank then
+			if CAKE.PlayerRank(ply) >= cmd.MinRank then
 			
 				func( ply, cmd, args )
 				
 			else
 			
-				if !ply:IsSuperAdmin() then TIRA.SendChat( ply, "You are of insufficient rank!" ) end
+				if !ply:IsSuperAdmin() then CAKE.SendChat( ply, "You are of insufficient rank!" ) end
 				
 			end
 		
 		else 
 		
-			if TIRA.PlayerRank(ply) == 0 then
-				TIRA.SendChat( ply, "You are not an admin!")
+			if CAKE.PlayerRank(ply) == 0 then
+				CAKE.SendChat( ply, "You are not an admin!")
 			end
 		
 		end
@@ -184,15 +184,15 @@ end
 concommand.Add("rp_admin", ccAdmin) 
 
 --Creates a new administrative rank. int refers to it's hirearchical level.
-function TIRA.AddAdminRank(name, int, short)
+function CAKE.AddAdminRank(name, int, short)
 	
 	rank = {}
 	rank.rank = int
 	rank.name = name
 	rank.short = short
 	
-	TIRA.AdminRanks[name] = rank
+	CAKE.AdminRanks[name] = rank
 	
 end
 
-TIRA.AddAdminRank("Player", 0, "none")
+CAKE.AddAdminRank("Player", 0, "none")

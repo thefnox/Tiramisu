@@ -1,11 +1,7 @@
 "Gamemode"
 {
 	"base"		"sandbox"
-	"title"		"Tiramisu"
+	"title"		"Tiramisu 2"
 	"maps"		"^rp_"
 	"menusystem"	"1"
-	"settings"
-	{
-
-	}
 }

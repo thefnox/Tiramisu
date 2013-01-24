@@ -1,10 +1,10 @@
-TIRA.PermaProps = {}
+CAKE.PermaProps = {}
 
---Adds a permanent prop to the TIRA.PermaProps table. This is for storage only.
-function TIRA.AddPermaProp( mdl, pos, ang, containerid )
+--Adds a permanent prop to the CAKE.PermaProps table. This is for storage only.
+function CAKE.AddPermaProp( mdl, pos, ang, containerid )
 
-	if !TIRA.PermaProps[ game.GetMap( ) ] then
-		TIRA.PermaProps[ game.GetMap( ) ] = {}
+	if !CAKE.PermaProps[ game.GetMap( ) ] then
+		CAKE.PermaProps[ game.GetMap( ) ] = {}
 	end
 	
 	local tbl = {}
@@ -15,40 +15,40 @@ function TIRA.AddPermaProp( mdl, pos, ang, containerid )
 		tbl[ "container" ] = containerid
 	end
 	
-	table.insert( TIRA.PermaProps[ game.GetMap( ) ], tbl )  
+	table.insert( CAKE.PermaProps[ game.GetMap( ) ], tbl )  
 	
-	TIRA.SavePermaProps()
+	CAKE.SavePermaProps()
 
 end
 
 --Removes permaprop status from an entity.
-function TIRA.RemovePermaProp( ent )
+function CAKE.RemovePermaProp( ent )
 
-	if !TIRA.PermaProps[ game.GetMap( ) ] then
-		TIRA.PermaProps[ game.GetMap( ) ] = {}
+	if !CAKE.PermaProps[ game.GetMap( ) ] then
+		CAKE.PermaProps[ game.GetMap( ) ] = {}
 	end
 	
 	local id = ent.PermaID or 0
 	
-	if TIRA.PermaProps[ game.GetMap( ) ][ id ] then
-		TIRA.PermaProps[ game.GetMap( ) ][ id ] = nil
+	if CAKE.PermaProps[ game.GetMap( ) ][ id ] then
+		CAKE.PermaProps[ game.GetMap( ) ][ id ] = nil
 	end
 
 	ent:SetNWBool("permaprop", false)
 	
-	TIRA.SavePermaProps()
+	CAKE.SavePermaProps()
 	
 end
 
---Creates a new permaprop on the map based on it's ID on the TIRA.PermaProps table
-function TIRA.CreatePermaProp( id )
-	if TIRA.PermaProps[ game.GetMap( ) ][ id ] then
+--Creates a new permaprop on the map based on it's ID on the CAKE.PermaProps table
+function CAKE.CreatePermaProp( id )
+	if CAKE.PermaProps[ game.GetMap( ) ][ id ] then
 		local prop = ents.Create( "prop_physics" )
-		prop:SetModel( TIRA.PermaProps[ game.GetMap( ) ][ id ][ "model" ] )
-		prop:SetPos( TIRA.PermaProps[ game.GetMap( ) ][ id ][ "position" ] )
-		prop:SetAngles( TIRA.PermaProps[ game.GetMap( ) ][ id ][ "angles" ] )
-		if TIRA.PermaProps[ game.GetMap( ) ][ id ][ "container" ] then
-			prop:SetNWString("container", TIRA.PermaProps[ game.GetMap( ) ][ id ][ "container" ])
+		prop:SetModel( CAKE.PermaProps[ game.GetMap( ) ][ id ][ "model" ] )
+		prop:SetPos( CAKE.PermaProps[ game.GetMap( ) ][ id ][ "position" ] )
+		prop:SetAngles( CAKE.PermaProps[ game.GetMap( ) ][ id ][ "angles" ] )
+		if CAKE.PermaProps[ game.GetMap( ) ][ id ][ "container" ] then
+			prop:SetNWString("container", CAKE.PermaProps[ game.GetMap( ) ][ id ][ "container" ])
 		end
 		prop:SetUnFreezable( false )
 		prop:SetMoveType( MOVETYPE_NONE )
@@ -63,22 +63,22 @@ function TIRA.CreatePermaProp( id )
 end
 
 --Saves all permaprops to file.
-function TIRA.SavePermaProps()
+function CAKE.SavePermaProps()
 
-	local keys = TIRA.Serialize(TIRA.PermaProps[ game.GetMap( ) ])
-	file.Write( TIRA.Name .. "/PermaProps/" .. TIRA.ConVars[ "Schema" ] .. "/" .. game.GetMap( ) .. ".txt" , keys)
+	local keys = glon.encode(CAKE.PermaProps[ game.GetMap( ) ])
+	file.Write( CAKE.Name .. "/PermaProps/" .. CAKE.ConVars[ "Schema" ] .. "/" .. game.GetMap( ) .. ".txt" , keys)
 
 end
 
 --Loads all permaprops on initialization.
-function TIRA.LoadPermaProps()
+function CAKE.LoadPermaProps()
 	local map = game.GetMap()
-	if file.Exists( TIRA.Name .. "/PermaProps/" .. TIRA.ConVars[ "Schema" ] .. "/" .. map .. ".txt", "DATA" ) then
-		TIRA.PermaProps[ map ] = TIRA.Deserialize(file.Read( TIRA.Name .. "/PermaProps/" .. TIRA.ConVars[ "Schema" ] .. "/" .. map .. ".txt" , "DATA"))
+	if file.Exists( CAKE.Name .. "/PermaProps/" .. CAKE.ConVars[ "Schema" ] .. "/" .. map .. ".txt", "DATA" ) then
+		CAKE.PermaProps[ map ] = glon.decode(file.Read( CAKE.Name .. "/PermaProps/" .. CAKE.ConVars[ "Schema" ] .. "/" .. map .. ".txt" ))
 		local time = 0
-		for k, v in ipairs( TIRA.PermaProps[ map ] ) do
+		for k, v in ipairs( CAKE.PermaProps[ map ] ) do
 			timer.Simple( time + 0.1, function()
-				TIRA.CreatePermaProp( k )
+				CAKE.CreatePermaProp( k )
 			end)
 			time = time + 0.1
 		end
@@ -86,7 +86,7 @@ function TIRA.LoadPermaProps()
 end
 
 hook.Add( "InitPostEntity", "TiramisuPermaProps", function()
-	TIRA.LoadPermaProps()
+	CAKE.LoadPermaProps()
 end)
 
 --rp_admin addpermaprop. Right click an entity to make it permanent
@@ -96,7 +96,7 @@ local function Admin_AddPermaProp( ply, cmd, args )
 	ent:SetNWBool("permaprop", true)
 	ent:SetUnFreezable( false )
 	ent:SetMoveType( MOVETYPE_NONE )
-	TIRA.AddPermaProp( ent:GetModel(), ent:GetPos(), ent:GetAngles() )
+	CAKE.AddPermaProp( ent:GetModel(), ent:GetPos(), ent:GetAngles() )
 
 end
 
@@ -104,7 +104,7 @@ end
 local function Admin_RemovePermaProp( ply, cmd, args )
 	
 	local ent = ents.GetByIndex(tonumber(args[1]))
-	TIRA.RemovePermaProp( ent )
+	CAKE.RemovePermaProp( ent )
 	
 end
 
@@ -115,12 +115,12 @@ hook.Add("OnPhysgunFreeze", "TiramisuPhysgunPermapropProtection", function(weapo
 end)
 
 hook.Add("CanTool", "TiramisuToolPermapropProtection", function(ply, tr, toolmode)
-	if ValidEntity( tr.Entity ) and tr.Entity:GetNWBool("permaprop", false) then
+	if IsValid( tr.Entity ) and tr.Entity:GetNWBool("permaprop", false) then
 		return false
 	end
 end)
 
 function PLUGIN.Init()
-	TIRA.AdminCommand( "addpermaprop", Admin_AddPermaProp, "Add a permanent prop", true, true, 1 )
-	TIRA.AdminCommand( "removepermaprop", Admin_RemovePermaProp, "Remove a permanent prop", true, true, 1 )
+	CAKE.AdminCommand( "addpermaprop", Admin_AddPermaProp, "Add a permanent prop", true, true, 1 )
+	CAKE.AdminCommand( "removepermaprop", Admin_RemovePermaProp, "Remove a permanent prop", true, true, 1 )
 end

@@ -1,13 +1,8 @@
-TIRA.Factions = {}
-
-util.AddNetworkString("Tiramisu.GetFactionInfo")
-util.AddNetworkString("Tiramisu.EditFaction")
-util.AddNetworkString("Tiramisu.GetEditFaction")
-util.AddNetworkString("Tiramisu.ReceiveFactions")
+CAKE.Factions = {}
 
 --Returns true if the name introduced is currently assigned to a group
-function TIRA.GroupHandlerExists( handler )
-	for id, group in pairs( TIRA.Groups ) do
+function CAKE.GroupHandlerExists( handler )
+	for id, group in pairs( CAKE.Groups ) do
 		if group and group:GetField( "handler" ) == handler then
 			return true
 		end
@@ -15,8 +10,8 @@ function TIRA.GroupHandlerExists( handler )
 	return false
 end
 
-function TIRA.FindByHandler( handler )
-	for id, group in pairs( TIRA.Groups ) do
+function CAKE.FindByHandler( handler )
+	for id, group in pairs( CAKE.Groups ) do
 		if group and group:GetField( "handler" ) == handler then
 			return group
 		end
@@ -25,54 +20,54 @@ function TIRA.FindByHandler( handler )
 end
 
 --Saves all factions
-function TIRA.SaveFactions()
-	file.Write(TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/factions.txt", TIRA.Serialize(TIRA.Factions))
+function CAKE.SaveFactions()
+	file.Write(CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/factions.txt", glon.encode(CAKE.Factions))
 end
 
 --Loads all factions
-function TIRA.LoadAllFactions()
-	if file.Exists( TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/factions.txt", "DATA" ) then
-		TIRA.Factions = TIRA.Deserialize(file.Read(TIRA.Name .. "/groups/" .. TIRA.ConVars[ "Schema" ] .. "/factions.txt"), "DATA")
+function CAKE.LoadAllFactions()
+	if file.Exists( CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/factions.txt", "DATA" ) then
+		CAKE.Factions = glon.decode(file.Read(CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/factions.txt"))
 		local groupexists, fileexists
-		for k, v in pairs( TIRA.Factions ) do
-			groupexists, fileexists = TIRA.GroupExists( v )
+		for k, v in pairs( CAKE.Factions ) do
+			groupexists, fileexists = CAKE.GroupExists( v )
 			if !groupexists and fileexists then
 				print( "Loading Faction", v )
-				TIRA.LoadGroup( v )
-				TIRA.Factions[TIRA.Groups[v]:Name()] = v
+				CAKE.LoadGroup( v )
+				CAKE.Factions[CAKE.Groups[v]:Name()] = v
 			elseif !groupexists and !fileexists then
 				print( "Removing Faction", v )
-				table.remove( TIRA.Factions, k )
+				table.remove( CAKE.Factions, k )
 			end
 		end
-		TIRA.SaveFactions()
+		CAKE.SaveFactions()
 	end
 end
 
 --Creates a new faction object and stores it on the table
-function TIRA.CreateFaction( name, shorthand, description )
-	if !TIRA.GroupNameExists( name ) and !TIRA.GroupHandlerExists( shorthand ) then
-		local group = TIRA.CreateGroup()
+function CAKE.CreateFaction( name, shorthand, description )
+	if !CAKE.GroupNameExists( name ) and !CAKE.GroupHandlerExists( shorthand ) then
+		local group = CAKE.CreateGroup()
 		group:SetField( "name", name )
 		group:SetField( "description", description )
 		group:SetField( "founder", "" )
 		group:SetField( "handler", shorthand )
 		group:SetField( "type", "faction" )
 		group:Save()
-		TIRA.Factions[group:Name()] = group.UniqueID
-		TIRA.SaveFactions()
+		CAKE.Factions[group:Name()] = group.UniqueID
+		CAKE.SaveFactions()
 		return group
 	end
 	return false
 end
 
-function TIRA.AddFactionRank( faction, name, handler, description, level, weapons, items, permissions )
+function CAKE.AddFactionRank( faction, name, handler, description, level, weapons, items, permissions )
 	level = level or 0
 	weapons = weapons or {}
 	items = items or {}
 	permissions = permissions or {}
-	if TIRA.GroupHandlerExists( faction ) then
-		group = TIRA.FindByHandler( faction )
+	if CAKE.GroupHandlerExists( faction ) then
+		group = CAKE.FindByHandler( faction )
 		if group and !group:IsRank( handler ) then
 			group:AddRank( handler )
 			group:SetRankField( handler, "name", name, true )
@@ -91,26 +86,30 @@ function TIRA.AddFactionRank( faction, name, handler, description, level, weapon
 	end
 end
 
-function TIRA.SendFactionList( ply )
-	net.Start("Tiramisu.ReceiveFactions")
-		net.WriteTable(TIRA.Factions)
-	net.Send(ply)
+function CAKE.SendFactionList( ply )
+	--datastream.StreamToClients( ply, "Tiramisu.ReceiveFactions", CAKE.Factions )
+	net.Start( "Tiramisu.ReceiveFactions" )
+		net.WriteTable( CAKE.Factions )
+	net.Send( ply )
 end
 
-net.Receive( "Tiramisu.GetEditFaction", function(len, ply)
-	local decoded = net.ReadTable()
-	local group = TIRA.GetGroup( decoded.uid or "none" )
-	if group and TIRA.PlayerRank(ply) > 3 then
-		if group:Name() != decoded.name and TIRA.GroupNameExists( decoded.name ) then
-			TIRA.SendError( ply, "Faction name exists! Please choose another name" )
-			net.Start("Tiramisu.EditFaction")
-				net.WriteTable(decoded)
-			net.Send(ply)
-		elseif group:GetField( "handler" ) != decoded.handler and TIRA.GroupHandlerExists( decoded.handler ) then
-			TIRA.SendError( ply, "Faction handler exists! Please choose another shorthand for your faction" )
-			net.Start("Tiramisu.EditFaction")
-				net.WriteTable(decoded)
-			net.Send(ply)	
+-- datastream.Hook( "Tiramisu.GetEditFaction", function(ply, handler, id, encoded, decoded)
+net.Receive( "Tiramisu.GetEditFaction", function( len, ply )
+	local decoded = net.ReadTable( )
+	local group = CAKE.GetGroup( decoded.uid or "none" )
+	if group and CAKE.PlayerRank(ply) > 3 then
+		if group:Name() != decoded.name and CAKE.GroupNameExists( decoded.name ) then
+			CAKE.SendError( ply, "Faction name exists! Please choose another name" )
+			-- datastream.StreamToClients( ply, "Tiramisu.EditFaction", decoded)
+			net.Start( "Tiramisu.EditFaction" )
+				net.WriteTable( decoded )
+			net.Send( ply )
+		elseif group:GetField( "handler" ) != decoded.handler and CAKE.GroupHandlerExists( decoded.handler ) then
+			CAKE.SendError( ply, "Faction handler exists! Please choose another shorthand for your faction" )
+			-- datastream.StreamToClients( ply, "Tiramisu.EditFaction", decoded)
+			net.Start( "Tiramisu.EditFaction" )
+				net.WriteTable( decoded )
+			net.Send( ply )
 		else
 			group:SetField("name", decoded.name)
 			group:SetField("handler", decoded.handler)
@@ -124,20 +123,20 @@ net.Receive( "Tiramisu.GetEditFaction", function(len, ply)
 end)
 
 concommand.Add( "rp_createfaction", function( ply, cmd, args )
-	if TIRA.PlayerRank(ply) > 3 then
+	if CAKE.PlayerRank(ply) > 3 then
 		local name = table.concat( args, " " )
-		if TIRA.GroupNameExists( name ) then
+		if CAKE.GroupNameExists( name ) then
 			umsg.Start( "Tiramisu.FactionCreateQuery", ply )
 				umsg.String( name )
 			umsg.End()
-			TIRA.SendError( ply, "Group already exists! Please choose another name." )
+			CAKE.SendError( ply, "Group already exists! Please choose another name." )
 		else
-			local group = TIRA.CreateGroup()
+			local group = CAKE.CreateGroup()
 			group:SetField( "name", name )
 			group:SetField( "type", "faction" )
 			group:Save()
-			TIRA.Factions[group:Name()] = group.UniqueID
-			TIRA.SaveFactions()
+			CAKE.Factions[group:Name()] = group.UniqueID
+			CAKE.SaveFactions()
 			local uid = group.UniqueID
 
 			local tbl = {
@@ -164,19 +163,20 @@ concommand.Add( "rp_createfaction", function( ply, cmd, args )
 				tbl["ranks"][k]["handler"] = group:GetRankField( k, "handler" )
 				tbl["ranks"][k]["description"] = group:GetRankField( k, "description" )
 			end
-			TIRA.SendFactionList( ply )
-			net.Start("Tiramisu.EditFaction")
-				net.WriteTable(tbl)
-			net.Send(ply)
+			CAKE.SendFactionList( ply )
+			-- datastream.StreamToClients( ply, "Tiramisu.EditFaction", tbl)
+			net.Start( "Tiramisu.EditFaction" )
+				net.WriteTable( tbl )
+			net.Send( ply )
 		end
 	end
 end)
 
 concommand.Add( "rp_editfaction", function( ply, cmd, args )
 	local id = args[1]
-	if TIRA.GroupExists( id ) then
-		local group = TIRA.GetGroup( id )
-		if TIRA.PlayerRank(ply) > 3 then
+	if CAKE.GroupExists( id ) then
+		local group = CAKE.GetGroup( id )
+		if CAKE.PlayerRank(ply) > 3 then
 			local tbl = {
 				["name"] = group:Name(),
 				["handler"] = group:GetField( "handler" ),
@@ -202,17 +202,18 @@ concommand.Add( "rp_editfaction", function( ply, cmd, args )
 				tbl["ranks"][k]["description"] = group:GetRankField( k, "description" )
 			end
 
-			net.Start("Tiramisu.EditFaction")
-				net.WriteTable(tbl)
-			net.Send(ply)
+			-- datastream.StreamToClients( ply, "Tiramisu.EditFaction", tbl)
+			net.Start( "Tiramisu.EditFaction" )
+				net.WriteTable( tbl )
+			net.Send( ply )
 		end 
 	end
 end)
 
 concommand.Add( "rp_getfactioninfo", function( ply, cmd, args )
 	local id = args[1]
-	if TIRA.GroupExists( id ) then
-		local group = TIRA.GetGroup( id )
+	if CAKE.GroupExists( id ) then
+		local group = CAKE.GetGroup( id )
 		local tbl = {}
 		if group:CharInGroup( ply ) and group:GetField("type") == "faction" then
 			tbl["name"] = group:Name()
@@ -220,15 +221,16 @@ concommand.Add( "rp_getfactioninfo", function( ply, cmd, args )
 			tbl["inventory"] = group:GetField("inventory")
 			tbl["description"] = group:GetField("description")
 			tbl["uid"] = group.UniqueID
-			net.Start("Tiramisu.GetFactionInfo")
-				net.WriteTable(tbl)
-			net.Send(ply)
+			-- datastream.StreamToClients( ply, "Tiramisu.GetFactionInfo", tbl)
+			net.Start( "Tiramisu.GetFactionInfo" )
+				net.WriteTable( tbl )
+			net.Send( ply )
 		end
 	end
 end)
 
 hook.Add("Initialize", "Tiramisu.InitFactions", function()
-	TIRA.LoadAllFactions()
+	CAKE.LoadAllFactions()
 end)
 
 
@@ -236,10 +238,10 @@ hook.Add( "PlayerLoadout", "TiramisuGroupWeaponsLoadout", function( ply )
 
 	if ply:IsCharLoaded() then
 		timer.Simple( 2, function()
-			local groups = TIRA.GetCharField( ply, "groups" )
+			local groups = CAKE.GetCharField( ply, "groups" )
 			for _, group in pairs( groups ) do
-				if TIRA.GroupExists( group ) then
-					group = TIRA.GetGroup( group )
+				if CAKE.GroupExists( group ) then
+					group = CAKE.GetGroup( group )
 					if group and group:GetField( "type" ) == "faction" and group:CharacterInGroup( ply ) then
 						local plyinfo = group:GetCharacterInfo( ply )
 						for k, v in pairs( group:GetRankField( plyinfo.Rank, "loadout" ) ) do
@@ -265,7 +267,7 @@ local function Admin_JoinFaction( ply, cmd, args )
 
 	if( #args < 2 ) then
 	
-		TIRA.SendChat( ply, "Invalid number of arguments! (rp_admin joinfaction \"factionhandler\" \"playername\" [\"rank\"] )" )
+		CAKE.SendChat( ply, "Invalid number of arguments! (rp_admin joinfaction \"factionhandler\" \"playername\" [\"rank\"] )" )
 		return
 		
 	end
@@ -274,62 +276,62 @@ local function Admin_JoinFaction( ply, cmd, args )
 	local faction = args[ 1 ]
 	local rank = args[ 3 ]
 	
-	local pl = TIRA.FindPlayer( plyname )
+	local pl = CAKE.FindPlayer( plyname )
 	
-	if ValidEntity( ply ) and ply:IsTiraPlayer( ) then
-		if TIRA.GroupHandlerExists( faction ) then
-			local group = TIRA.FindByHandler( faction )
+	if IsValid( ply ) and ply:IsTiraPlayer( ) then
+		if CAKE.GroupHandlerExists( faction ) then
+			local group = CAKE.FindByHandler( faction )
 			if group and !group:CharInGroup( pl ) and group:GetField("type") == "faction" then
 				group:AddToRoster( pl )
 				if rank and group:IsRank( rank ) then
 					group:GetCharInfo( pl ).Rank = rank
 				end
 				group:Save()
-				local plygroups = TIRA.GetCharField( pl, "groups")
+				local plygroups = CAKE.GetCharField( pl, "groups")
 				if !table.HasValue( plygroups, group.UniqueID ) then
 					table.insert( plygroups, group.UniqueID )
 				end
-				TIRA.SetCharField( pl, "groups", table.Copy(plygroups))
-				TIRA.SetCharField( pl, "activegroup", group.UniqueID)
-				TIRA.SendGroupToClient( pl )
-				TIRA.SendError( pl, "You have been placed into the faction " .. group:Name() .. " by an admin.")
+				CAKE.SetCharField( pl, "groups", table.Copy(plygroups))
+				CAKE.SetCharField( pl, "activegroup", group.UniqueID)
+				CAKE.SendGroupToClient( pl )
+				CAKE.SendError( pl, "You have been placed into the faction " .. group:Name() .. " by an admin.")
 			elseif group and group:CharInGroup( pl ) and rank and group:IsRank( rank ) then
 				group:GetCharInfo( pl ).Rank = rank
-				TIRA.SendError( pl, "You have been placed on the rank " .. rank .. " by an admin.")
+				CAKE.SendError( pl, "You have been placed on the rank " .. rank .. " by an admin.")
 			end
-		elseif TIRA.GroupNameExists( faction ) then
-			local group = TIRA.FindGroupByName( faction )
+		elseif CAKE.GroupNameExists( faction ) then
+			local group = CAKE.FindGroupByName( faction )
 			if group and !group:CharInGroup( pl ) and group:GetField("type") == "faction" then
 				group:AddToRoster( pl )
 				if rank and group:IsRank( rank ) then
 					group:GetCharInfo( pl ).Rank = rank
 				end
 				group:Save()
-				local plygroups = TIRA.GetCharField( pl, "groups")
+				local plygroups = CAKE.GetCharField( pl, "groups")
 				if !table.HasValue( plygroups, group.UniqueID ) then
 					table.insert( plygroups, group.UniqueID )
 				end
-				TIRA.SetCharField( pl, "groups", table.Copy(plygroups))
-				TIRA.SetCharField( pl, "activegroup", group.UniqueID)
-				TIRA.SendGroupToClient( pl )
-				TIRA.SendError( pl, "You have been placed into the faction " .. group:Name() .. " by an admin.")
+				CAKE.SetCharField( pl, "groups", table.Copy(plygroups))
+				CAKE.SetCharField( pl, "activegroup", group.UniqueID)
+				CAKE.SendGroupToClient( pl )
+				CAKE.SendError( pl, "You have been placed into the faction " .. group:Name() .. " by an admin.")
 			elseif group and group:CharInGroup( pl ) and rank and group:IsRank( rank ) then
 				group:GetCharInfo( pl ).Rank = rank
-				TIRA.SendError( pl, "You have been placed on the rank " .. rank .. " by an admin.")
+				CAKE.SendError( pl, "You have been placed on the rank " .. rank .. " by an admin.")
 			end
 		else
-			TIRA.SendChat( ply, "Can't find faction!" )
+			CAKE.SendChat( ply, "Can't find faction!" )
 		end
 	else
-		TIRA.SendChat( ply, "Cannot find " .. plyname .. "!" )
+		CAKE.SendChat( ply, "Cannot find " .. plyname .. "!" )
 	end
 	
 end
 
 
 function PLUGIN.Init()
-	TIRA.AdminCommand( "joinfaction", Admin_JoinFaction, "Force a player to join a faction", true, true, 4 )
-	TIRA.AdminCommand( "forcejoin", Admin_JoinFaction, "Force a player to join a faction", true, true, 4 )
-	TIRA.AddGroupField( "handler", "" )
-	TIRA.AddGroupField( "spawngroup", 0 )
+	CAKE.AdminCommand( "joinfaction", Admin_JoinFaction, "Force a player to join a faction", true, true, 4 )
+	CAKE.AdminCommand( "forcejoin", Admin_JoinFaction, "Force a player to join a faction", true, true, 4 )
+	CAKE.AddGroupField( "handler", "" )
+	CAKE.AddGroupField( "spawngroup", 0 )
 end

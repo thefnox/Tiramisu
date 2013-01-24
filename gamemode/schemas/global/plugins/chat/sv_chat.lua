@@ -13,9 +13,9 @@ function meta:Say( text )
 
 end
 
-TIRA.ChatCommands = {  }
+CAKE.ChatCommands = {  }
 
-function TIRA.SimpleChatCommand( prefix, range, form, font, channel )
+function CAKE.SimpleChatCommand( prefix, range, form, font, channel )
 
 	-- This is for simple chat commands like /me, /y, /w, etc
 	-- This isn't useful for radio, broadcast, etc.
@@ -42,18 +42,18 @@ function TIRA.SimpleChatCommand( prefix, range, form, font, channel )
 	cc.channel = channel
 	cc.font = font
 	
-	TIRA.ChatCommands[ prefix ] = cc
+	CAKE.ChatCommands[ prefix ] = cc
 	
 end
 
-function TIRA.ChatCommand( prefix, callback )
+function CAKE.ChatCommand( prefix, callback )
 
 	local cc = {  }
 	cc.simple = false
 	cc.cmd = prefix
 	cc.callback = callback
 	
-	TIRA.ChatCommands[ prefix ] = cc
+	CAKE.ChatCommands[ prefix ] = cc
 	
 end
 
@@ -63,18 +63,18 @@ hook.Add( "AcceptStream", "TiramisuAcceptChatStream", function( pl, handler, id 
 	end
 end)
 
---NOTE: TIRAMISU IS NOW COMPATIBLE WITH REGULAR CHAT :D
+--NOTE: CAKEMISU IS NOW COMPATIBLE WITH REGULAR CHAT :D
 
 function GM:PlayerSay( ply, text, team )
 
-	TIRA.DayLog("chat.txt", ply:SteamID() .. ": " .. text) -- we be spyins.
+	CAKE.DayLog("chat.txt", ply:SteamID() .. ": " .. text) -- we be spyins.
 	
 	if( string.sub( text, 1, 2) == "//" or string.sub( text, 1, 4) == "/ooc" ) then --OOC override, to add colors.
-		TIRA.OOCAdd( ply, text )
+		CAKE.OOCAdd( ply, text )
 		return ""
 	end
 	
-	for prefix, cc in pairs( TIRA.ChatCommands ) do
+	for prefix, cc in pairs( CAKE.ChatCommands ) do
 	
 		local cmd = prefix
 		local cmdlen = string.len( cmd )
@@ -104,7 +104,7 @@ function GM:PlayerSay( ply, text, team )
 			local s = string.gsub( s, "$2", ply:Name( ) ) -- OOC Name
 			local s = string.gsub( s, "$3", args ) -- Text
 			
-			TIRA.ICAdd( ply, s, cc.range, cc.font, cc.channel )
+			CAKE.ICAdd( ply, s, cc.range, cc.font, cc.channel )
 
 			return ""
 			
@@ -114,14 +114,14 @@ function GM:PlayerSay( ply, text, team )
 	
 	if( string.sub( text, 1, 1 ) == "/" ) then
 	
-		TIRA.SendChat( ply, "That is not a valid command" )
+		CAKE.SendChat( ply, "That is not a valid command" )
 		return ""
 	
 	else
 	
 		-- Hurr, IC Chat..
 
-		TIRA.ICAdd( ply, ply:Nick() .. ": " .. text )
+		CAKE.ICAdd( ply, ply:Nick() .. ": " .. text )
 		
 		return ""
 		
@@ -136,7 +136,7 @@ end)
 
 
 --Adds a regular radio chat line.
-function TIRA.AddRadioLine( ply, text )
+function CAKE.AddRadioLine( ply, text )
 	net.Start("TiramisuAddToRadio")
 		net.WriteString(text)
 	net.Send(ply)
@@ -146,17 +146,17 @@ end
 --Concommand to handle OOC color changes. Takes 4 arguments, red, green, blue and alpha.
 local function ccChangeOOCColor( ply, cmd, args )
 	
-	TIRA.SetPlayerField( ply, "ooccolor", Color( math.Clamp( tonumber( args[1] ), 0, 255 ), math.Clamp( tonumber( args[2] ), 0, 255 ), math.Clamp( tonumber( args[3] ), 0, 255 ), math.Clamp( tonumber( args[4] ), 0, 100 ) ) )
+	CAKE.SetPlayerField( ply, "ooccolor", Color( math.Clamp( tonumber( args[1] ), 0, 255 ), math.Clamp( tonumber( args[2] ), 0, 255 ), math.Clamp( tonumber( args[3] ), 0, 255 ), math.Clamp( tonumber( args[4] ), 0, 100 ) ) )
 
 end
 concommand.Add( "rp_ooccolor", ccChangeOOCColor )
 
 --Sends a regular blue IC message.
 
-function TIRA.ICAdd( ply, text, range, font, channel )
+function CAKE.ICAdd( ply, text, range, font, channel )
 
 	if ply:Alive() then
-		range = range or TIRA.ConVars[ "TalkRange" ]
+		range = range or CAKE.ConVars[ "TalkRange" ]
 
 		for _, pl in pairs( ents.FindInSphere( ply:GetPos(), range * 2 ) ) do
 			local tracedata = {}
@@ -166,7 +166,7 @@ function TIRA.ICAdd( ply, text, range, font, channel )
 			tracedata.mask = CONTENTS_SOLID + CONTENTS_MOVEABLE + CONTENTS_OPAQUE + CONTENTS_DEBRIS + CONTENTS_HITBOX + CONTENTS_MONSTER
 			if( pl:IsTiraPlayer() and pl:IsPlayer() and (pl:EyePos( ):Distance( ply:EyePos( ) ) <= range or util.TraceLine(tracedata).Entity == ply )) then
 			
-				TIRA.SendChat( pl, text, font, channel or "IC" )
+				CAKE.SendChat( pl, text, font, channel or "IC" )
 			
 			end
 		
@@ -177,12 +177,12 @@ end
 
 --Handles OOC messaging.
 
-function TIRA.OOCAdd( ply, text )
+function CAKE.OOCAdd( ply, text )
 
-	if( ply.LastOOC + TIRA.ConVars[ "OOCDelay" ] < CurTime() or TIRA.PlayerRank(ply) > 2 ) then
+	if( ply.LastOOC + CAKE.ConVars[ "OOCDelay" ] < CurTime() or CAKE.PlayerRank(ply) > 2 ) then
 	
-		local playername = ply:Name( ) 
-		local color = TIRA.GetPlayerField( ply, "ooccolor" )
+		local playername = ply:SteamID( ) 
+		local color = CAKE.GetPlayerField( ply, "ooccolor" )
 		if( string.sub( text, 1, 4 ) == "/ooc" ) then
 			text = string.sub( text, 5 )
 		else
@@ -190,11 +190,12 @@ function TIRA.OOCAdd( ply, text )
 		end
 
 		for _, target in pairs( player.GetAll( ) ) do
-			if ValidEntity( target ) and target:IsPlayer() and target:IsCharLoaded() then
+			if IsValid( target ) and target:IsPlayer() and target:IsCharLoaded() then
 				net.Start( "TiramisuAddToOOC")
 					net.WriteTable({
 						["text"] = text,
 						["color"] = color,
+						["player"] = ply,
 						["name"] = playername,
 						["font"] = "TiramisuOOCFont",
 						["channel"] = channel or "OOC"
@@ -207,8 +208,8 @@ function TIRA.OOCAdd( ply, text )
 		
 	else
 	
-		local TimeLeft = math.ceil(ply.LastOOC + TIRA.ConVars[ "OOCDelay" ] - CurTime())
-		TIRA.SendChat( ply, "Please wait " .. TimeLeft .. " seconds before using OOC chat again!", false, "OOC")
+		local TimeLeft = math.ceil(ply.LastOOC + CAKE.ConVars[ "OOCDelay" ] - CurTime())
+		CAKE.SendChat( ply, "Please wait " .. TimeLeft .. " seconds before using OOC chat again!", false, "OOC")
 		
 	end
 end
@@ -250,7 +251,7 @@ local function ccRoll( ply, cmd, args )
 		
 			if( v:EyePos():Distance( ply:EyePos() ) <= 300 ) then
 			
-				TIRA.SendChat( v, "[Roll] " .. ply:Nick() .. " rolled a " .. roll .. " out of " .. Min .. "-" .. Max .. ".", false, "IC")
+				CAKE.SendChat( v, "[Roll] " .. ply:Nick() .. " rolled a " .. roll .. " out of " .. Min .. "-" .. Max .. ".", false, "IC")
 			
 			end
 		
@@ -282,7 +283,7 @@ local function Report( ply, text )
 		
 		if( v:IsAdmin() or v:IsSuperAdmin() ) then
 		
-			TIRA.SendChat( v, ply:Nick() .. " | " .. ply:Name() .. " [" .. ply:SteamID()  .. "] [REPORT]:" .. text, false, "Reports" )
+			CAKE.SendChat( v, ply:Nick() .. " | " .. ply:Name() .. " [" .. ply:SteamID()  .. "] [REPORT]:" .. text, false, "Reports" )
 			
 		end
 	
@@ -290,7 +291,7 @@ local function Report( ply, text )
 	
 	if( !ply:IsAdmin() and !ply:IsSuperAdmin() ) then 
 	
-		TIRA.SendChat( ply, ply:Nick() .. " [REPORT]:" .. text )
+		CAKE.SendChat( ply, ply:Nick() .. " [REPORT]:" .. text )
 		
 	end
 	
@@ -302,11 +303,11 @@ end
 local function Event( ply, text )
 
 	-- Check to see if the player's team allows broadcasting
-	if( TIRA.PlayerRank(ply) > 0 ) then
+	if( CAKE.PlayerRank(ply) > 0 ) then
 		
 		for k, v in pairs( player.GetAll( ) ) do
 		
-			TIRA.SendChat( v, "[EVENT]: " .. text, false, "IC" )
+			CAKE.SendChat( v, "[EVENT]: " .. text, false, "IC" )
 			
 		end
 	
@@ -321,13 +322,13 @@ local function PersonalMessage( ply, text )
 
 	-- Check to see if the player's team allows broadcasting
 	local exp = string.Explode( " ", text )
-	local target = TIRA.FindPlayer( exp[1] )
+	local target = CAKE.FindPlayer( exp[1] )
 	table.remove( exp, 1)
 	if target then
-		TIRA.SendChat( target, "[FROM:" .. ply:Nick() .. "]" .. table.concat( exp, " " ), false, ply:Name(), "/pm " .. TIRA.FormatText(ply:SteamID()) .. " " )
-		TIRA.SendChat( ply, "[TO:" .. target:Nick() .. "]" .. table.concat( exp, " " ), false, target:Name(),"/pm " .. TIRA.FormatText(target:SteamID()) .. " " )
+		CAKE.SendChat( target, "[FROM:" .. ply:Nick() .. "]" .. table.concat( exp, " " ), false, ply:Name(), "/pm " .. CAKE.FormatText(ply:SteamID()) .. " " )
+		CAKE.SendChat( ply, "[TO:" .. target:Nick() .. "]" .. table.concat( exp, " " ), false, target:Name(),"/pm " .. CAKE.FormatText(target:SteamID()) .. " " )
 	else
-		TIRA.SendChat( ply, "Target not found!" )
+		CAKE.SendChat( ply, "Target not found!" )
 	end
 	
 	return ""
@@ -337,7 +338,7 @@ end
 --Removes your currently wore helmet.
 local function RemoveHelmet( ply, text )
 	
-	local gender = TIRA.GetCharField( ply, "gender" )
+	local gender = CAKE.GetCharField( ply, "gender" )
 	local article = ""
 	
 	if gender == "Female" then
@@ -348,17 +349,17 @@ local function RemoveHelmet( ply, text )
 	
 	for k, v in pairs(player.GetAll()) do
 		
-		local range = TIRA.ConVars[ "TalkRange" ]
+		local range = CAKE.ConVars[ "TalkRange" ]
 			
 		if( v:EyePos( ):Distance( ply:EyePos( ) ) <= range ) then
 			
-			TIRA.SendChat( v, "*** " .. ply:Nick() .. " removed " .. article .. " helmet.", false, "IC" )
+			CAKE.SendChat( v, "*** " .. ply:Nick() .. " removed " .. article .. " helmet.", false, "IC" )
 				
 		end
 			
 	end
 	
-	TIRA.RemoveHelmet( ply )
+	CAKE.RemoveHelmet( ply )
 	
 	return ""
 
@@ -367,27 +368,27 @@ end
 --Sends a global message if advertising is allowed. Costs money.
 local function Advertise( ply, text )
 
-	if(TIRA.ConVars[ "AdvertiseEnabled" ] == "1") then
+	if(CAKE.ConVars[ "AdvertiseEnabled" ] == "1") then
 	
-		if( tonumber( TIRA.GetCharField( ply, "money" ) ) >= TIRA.ConVars[ "AdvertisePrice" ] ) then
+		if( tonumber( CAKE.GetCharField( ply, "money" ) ) >= CAKE.ConVars[ "AdvertisePrice" ] ) then
 			
-			TIRA.ChangeMoney( ply, 0 - TIRA.ConVars[ "AdvertisePrice" ] )
+			CAKE.ChangeMoney( ply, 0 - CAKE.ConVars[ "AdvertisePrice" ] )
 		
 			for _, pl in pairs(player.GetAll()) do
 			
-				TIRA.SendChat(pl, "[AD] " .. ply:Nick() .. ": " .. text, false, "IC" )
+				CAKE.SendChat(pl, "[AD] " .. ply:Nick() .. ": " .. text, false, "IC" )
 		
 			end
 			
 		else
 		
-			TIRA.SendChat(ply, "You do not have enough credits! You need " .. TIRA.ConVars[ "AdvertisePrice" ] .. " to send an advertisement.")
+			CAKE.SendChat(ply, "You do not have enough credits! You need " .. CAKE.ConVars[ "AdvertisePrice" ] .. " to send an advertisement.")
 			
 		end	
 		
 	else
 	
-		TIRA.ChatPrint(ply, "Advertisements are not enabled")
+		CAKE.ChatPrint(ply, "Advertisements are not enabled")
 		
 	end
 	
@@ -421,35 +422,35 @@ end
 
 function PLUGIN.Init( ) -- We run this in init, because this is called after the entire gamemode has been loaded.
 
-	TIRA.AddDataField( 1, "ooccolor", Color( 0, 255, 0, 100 ))
+	CAKE.AddDataField( 1, "ooccolor", Color( 0, 255, 0, 100 ))
 
-	TIRA.ConVars[ "AdvertiseEnabled" ] = "1" -- Can players advertise
-	TIRA.ConVars[ "AdvertisePrice" ] = 25 -- How much do advertisements cost
-	TIRA.ConVars[ "OOCDelay" ] = 10 -- How long do you have to wait between OOC Chat
+	CAKE.ConVars[ "AdvertiseEnabled" ] = "1" -- Can players advertise
+	CAKE.ConVars[ "AdvertisePrice" ] = 25 -- How much do advertisements cost
+	CAKE.ConVars[ "OOCDelay" ] = 10 -- How long do you have to wait between OOC Chat
 	
-	TIRA.ConVars[ "YellRange" ] = 1.5 * TIRA.ConVars[ "TalkRange" ] -- How much farther will yell chat go
-	TIRA.ConVars[ "WhisperRange" ] = 0.2 * TIRA.ConVars[ "TalkRange" ]  -- How far will whisper chat go
-	TIRA.ConVars[ "MeRange" ] = TIRA.ConVars[ "TalkRange" ]  -- How far will me chat go
-	TIRA.ConVars[ "LOOCRange" ] = TIRA.ConVars[ "TalkRange" ]   -- How far will LOOC chat go
+	CAKE.ConVars[ "YellRange" ] = 1.5 * CAKE.ConVars[ "TalkRange" ] -- How much farther will yell chat go
+	CAKE.ConVars[ "WhisperRange" ] = 0.2 * CAKE.ConVars[ "TalkRange" ]  -- How far will whisper chat go
+	CAKE.ConVars[ "MeRange" ] = CAKE.ConVars[ "TalkRange" ]  -- How far will me chat go
+	CAKE.ConVars[ "LOOCRange" ] = CAKE.ConVars[ "TalkRange" ]   -- How far will LOOC chat go
 	
-	TIRA.SimpleChatCommand( "/?", TIRA.ConVars[ "MeRange" ], "??? : $3", "TiramisuEmoteFont" ) -- Anon chat
-	TIRA.SimpleChatCommand( "/me", TIRA.ConVars[ "MeRange" ], "*** $1 $3", "TiramisuEmoteFont" ) -- Me chat
-	TIRA.SimpleChatCommand( "/it", TIRA.ConVars[ "MeRange" ], "*** $3", "TiramisuEmoteFont" ) -- It chat
-	TIRA.SimpleChatCommand( "/anon", TIRA.ConVars[ "MeRange" ], "???: $3", "TiramisuEmoteFont" ) -- It chat
-	TIRA.SimpleChatCommand( "/y", TIRA.ConVars[ "YellRange" ], "$1 [YELL]: $3", "TiramisuYellFont" ) -- Yell chat
-	TIRA.SimpleChatCommand( "/w", TIRA.ConVars[ "WhisperRange" ], "$1 [WHISPER]: $3</font>", "TiramisuWhisperFont" ) -- Whisper chat
-	TIRA.SimpleChatCommand( ".//", TIRA.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3", "TiramisuOOCFont", "OOC" ) -- Local OOC Chat
-	TIRA.SimpleChatCommand( "[[", TIRA.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3", "TiramisuOOCFont", "OOC"  ) -- Local OOC Chat
+	CAKE.SimpleChatCommand( "/?", CAKE.ConVars[ "MeRange" ], "??? : $3", "TiramisuEmoteFont" ) -- Anon chat
+	CAKE.SimpleChatCommand( "/me", CAKE.ConVars[ "MeRange" ], "*** $1 $3", "TiramisuEmoteFont" ) -- Me chat
+	CAKE.SimpleChatCommand( "/it", CAKE.ConVars[ "MeRange" ], "*** $3", "TiramisuEmoteFont" ) -- It chat
+	CAKE.SimpleChatCommand( "/anon", CAKE.ConVars[ "MeRange" ], "???: $3", "TiramisuEmoteFont" ) -- It chat
+	CAKE.SimpleChatCommand( "/y", CAKE.ConVars[ "YellRange" ], "$1 [YELL]: $3", "TiramisuYellFont" ) -- Yell chat
+	CAKE.SimpleChatCommand( "/w", CAKE.ConVars[ "WhisperRange" ], "$1 [WHISPER]: $3</font>", "TiramisuWhisperFont" ) -- Whisper chat
+	CAKE.SimpleChatCommand( ".//", CAKE.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3", "TiramisuOOCFont", "OOC" ) -- Local OOC Chat
+	CAKE.SimpleChatCommand( "[[", CAKE.ConVars[ "LOOCRange" ], "$1 | $2 [LOOC]: $3", "TiramisuOOCFont", "OOC"  ) -- Local OOC Chat
 
-	TIRA.ChatCommand( "/ad", Advertise )
-	--TIRA.ChatCommand( "/y", Yell)
-	--TIRA.ChatCommand( "/me", Emote)
-	--TIRA.ChatCommand( "/w", Whisper)
-	TIRA.ChatCommand( "/event", Event )	-- Advertisements
-	TIRA.ChatCommand( "/removehelmet", RemoveHelmet )
-	TIRA.ChatCommand( "/pm", PersonalMessage )
-	TIRA.ChatCommand( "/title", Title )
-	TIRA.ChatCommand( "/report", Report )
+	CAKE.ChatCommand( "/ad", Advertise )
+	--CAKE.ChatCommand( "/y", Yell)
+	--CAKE.ChatCommand( "/me", Emote)
+	--CAKE.ChatCommand( "/w", Whisper)
+	CAKE.ChatCommand( "/event", Event )	-- Advertisements
+	CAKE.ChatCommand( "/removehelmet", RemoveHelmet )
+	CAKE.ChatCommand( "/pm", PersonalMessage )
+	CAKE.ChatCommand( "/title", Title )
+	CAKE.ChatCommand( "/report", Report )
 	
 end
 

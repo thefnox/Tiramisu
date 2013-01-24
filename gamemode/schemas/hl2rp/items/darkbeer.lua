@@ -19,7 +19,7 @@ end
 function ITEM:UseItem(ply)
 
 	ply:TakeItem("darkbeer")
-	TIRA.DrugPlayer(ply, 3)
+	CAKE.DrugPlayer(ply, 3)
 	self:Remove()
 
 end

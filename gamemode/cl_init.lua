@@ -1,289 +1,310 @@
 -- Set up the gamemode
-TIRA = {  } //As of Tiramisu 3, we're setting the namespace for all our globals to TIRA.
-CAKE = TIRA //Luckily, we can just make the TIRA table point to TIRA, so there's no need to change anything in your code.
+CAKE = {  }
+TIRA = CAKE
+include("glon.lua")
+
 DeriveGamemode( "sandbox" )
+-- require( "datastream" )
 
-function ValidEntity(ent)
-	if ent then
-		if ent.IsValid then return ent:IsValid() end
-	end
-	return false
-end
-
-function TIRA.Serialize(tbl)
-	return util.TableToJSON(tbl)
-end
-
-function TIRA.Deserialize(str)
-	return util.JSONToTable(string.gsub(str, "\\", ""))
-end
+-- Menu texture, don't touch this
+EMPTY_TEXTURE = surface.GetTextureID("VGUI/white.vtf")
+ 
 --Load up the configuration file
 include( "configuration.lua" )
 
 --Initializing global variables. Don't touch this
-TIRA.ItemData = {}
-TIRA.Running = false
-TIRA.Loaded = false
-TIRA.Skin = "Tiramisu"
-TIRA.CharCreate = function() end
-TIRA.Clothing = "none"
-TIRA.Helmet = "none"
-TIRA.Gear = {}
-TIRA.ClothingTbl = {}
-TIRA.MyGroup = {}
+CAKE.ItemData = {}
+CAKE.Running = false
+CAKE.Loaded = false
+CAKE.Skin = "Tiramisu"
+CAKE.CharCreate = function() end
+CAKE.Clothing = "none"
+CAKE.Helmet = "none"
+CAKE.Gear = {}
+CAKE.ClothingTbl = {}
+CAKE.MyGroup = {}
 readysent = false
-TIRA.MenuTabs = {}
-TIRA.ActiveTab = nil
-TIRA.MenuOpen = false
-TIRA.DisplayMenu = false
-TIRA.ViewRagdoll = false
-TIRA.FreeScroll = false
-TIRA.ForceFreeScroll = false
-TIRA.Notifications = {}
-TIRA.ActiveNotifications = {}
-TIRA.NearbyPlayers = {}
+CAKE.MenuTabs = {}
+CAKE.ActiveTab = nil
+CAKE.MenuOpen = false
+CAKE.DisplayMenu = false
+CAKE.ViewRagdoll = false
+CAKE.FreeScroll = false
+CAKE.ForceFreeScroll = false
+CAKE.Notifications = {}
+CAKE.ActiveNotifications = {}
+CAKE.NearbyPlayers = {}
 
 --Schema configuration options
 
-TIRA.Thirdperson = CreateClientConVar( "rp_thirdperson", 1, true, true ) -- Set this to 1 to have thirdperson enabled by default.
-TIRA.ThirdpersonDistance = CreateClientConVar( "rp_thirdpersondistance", 50, true, true ) --Maximum thirdperson distance
-TIRA.CameraSmoothFactor = CreateClientConVar( "rp_camerasmooth", 12, true, true ) --Camera smoothing factor, affects speed.
-TIRA.FirstpersonBody = CreateClientConVar( "rp_firstpersonbody", 1, true, true ) --The return of first person legs!
-TIRA.FirstpersonForward = CreateClientConVar( "rp_firstpersonforward", 6, true, true ) --How much forward should the firstperson camera be
-TIRA.FirstpersonUp = CreateClientConVar( "rp_firstpersonup", 1, true, true ) --How much higher should the firstperson camera be
-TIRA.StayCrouched = CreateClientConVar( "rp_crouchtoggle", 1, true, true ) -- Enables crouch toggle.
-TIRA.TitleDrawDistance = CreateClientConVar( "rp_titledrawdistance", TIRA.ConVars[ "TitleDrawDistance"], true, true ) --Maximum distance a player can be to have his or her title drawn
-TIRA.FadeNames = CreateClientConVar( "rp_fadenames", TIRA.ConVars[ "FadeNames"], true, true ) --Will character names fade over time?
-TIRA.FadeTitles = CreateClientConVar( "rp_fadetitles", TIRA.ConVars[ "FadeTitles"], true, true ) --Will character titles fade over time?
-TIRA.TitlesFadeTime = CreateClientConVar( "rp_titlefadetime", TIRA.ConVars[ "TitleFadeTime"], true, true ) --Amount of time in seconds it takes for titles to fade.
-TIRA.MinimalHUD = CreateClientConVar( "rp_minimalhud", 1, true, true ) --Disables HUD elements for a more clear view.
-TIRA.Headbob = CreateClientConVar( "rp_headbob", 1, true, true ) --Set this to 0 to have headbob disabled by default.
-TIRA.AlwaysIntro = CreateClientConVar( "rp_alwaysintro", 0, true, true ) -- Set this to 1 to have the intro always display
+CAKE.Thirdperson = CreateClientConVar( "rp_thirdperson", 1, true, true ) -- Set this to 1 to have thirdperson enabled by default.
+CAKE.ThirdpersonDistance = CreateClientConVar( "rp_thirdpersondistance", 50, true, true ) --Maximum thirdperson distance
+CAKE.CameraSmoothFactor = CreateClientConVar( "rp_camerasmooth", 12, true, true ) --Camera smoothing factor, affects speed.
+CAKE.FirstpersonBody = CreateClientConVar( "rp_firstpersonbody", 1, true, true ) --The return of first person legs!
+CAKE.FirstpersonForward = CreateClientConVar( "rp_firstpersonforward", 6, true, true ) --How much forward should the firstperson camera be
+CAKE.FirstpersonUp = CreateClientConVar( "rp_firstpersonup", 1, true, true ) --How much higher should the firstperson camera be
+CAKE.StayCrouched = CreateClientConVar( "rp_crouchtoggle", 1, true, true ) -- Enables crouch toggle.
+CAKE.TitleDrawDistance = CreateClientConVar( "rp_titledrawdistance", CAKE.ConVars[ "TitleDrawDistance"], true, true ) --Maximum distance a player can be to have his or her title drawn
+CAKE.FadeNames = CreateClientConVar( "rp_fadenames", CAKE.ConVars[ "FadeNames"], true, true ) --Will character names fade over time?
+CAKE.FadeTitles = CreateClientConVar( "rp_fadetitles", CAKE.ConVars[ "FadeTitles"], true, true ) --Will character titles fade over time?
+CAKE.TitlesFadeTime = CreateClientConVar( "rp_titlefadetime", CAKE.ConVars[ "TitleFadeTime"], true, true ) --Amount of time in seconds it takes for titles to fade.
+CAKE.MinimalHUD = CreateClientConVar( "rp_minimalhud", 1, true, true ) --Disables HUD elements for a more clear view.
+CAKE.Headbob = CreateClientConVar( "rp_headbob", 1, true, true ) --Set this to 0 to have headbob disabled by default.
+CAKE.AlwaysIntro = CreateClientConVar( "rp_alwaysintro", 0, true, true ) -- Set this to 1 to have the intro always display
+ 
+surface.CreateFont( "Tiramisu64Font",
+{
 
--- font name, size, wight, antialias, additive, new font name, drop shadow, outlined, blur
+	font		= CAKE.ConVars[ "MenuFont2" ],
+	size		= 64,
+	antialias	= true,
+	weight		= 500
 
-surface.CreateFont("Tiramisu64Font", {
-	font = TIRA.ConVars["MenuFont2"],
-	size = 64,
-	weight = 500,
-	antialias = true,
-	additive = false,
-	shadow = true,
-	outline = false
-})
-surface.CreateFont("Tiramisu48Font", {
-	font = TIRA.ConVars["MenuFont2"],
-	size = 48,
-	weight = 500,
-	antialias = true,
-	additive = false,
-	shadow = true,
-	outline = false
-})
-surface.CreateFont("Tiramisu32Font", {
-	font = TIRA.ConVars["MenuFont2"],
-	size = 32,
-	weight = 500,
-	antialias = true,
-	additive = false,
-	shadow = true,
-	outline = false
-})
-surface.CreateFont("Tiramisu24Font", {
-	font = TIRA.ConVars["MenuFont2"],
-	size = 24,
-	weight = 500,
-	antialias = true,
-	additive = false,
-	shadow = true,
-	outline = false
-})
-surface.CreateFont("Tiramisu18Font", {
-	font = TIRA.ConVars["MenuFont"],
-	size = 18,
-	weight = 500,
-	antialias = true,
-	additive = false,
-	shadow = true,
-	outline = false
-})
-surface.CreateFont("Tiramisu16Font", {
-	font = TIRA.ConVars["MenuFont"],
-	size = 16,
-	weight = 500,
-	antialias = true,
-	additive = false,
-	shadow = true,
-	outline = false
-})
-surface.CreateFont("Tiramisu14Font", {
-	font = TIRA.ConVars["MenuFont"],
-	size = 14,
-	weight = 500,
-	antialias = true,
-	additive = false,
-	shadow = false,
-	outline = true
-})
-surface.CreateFont("TiramisuDefaultFont", {
-	font = TIRA.ConVars["MenuFont"],
-	size = 14,
-	weight = 300,
-	antialias = true,
-	additive = false,
-	shadow = false,
-	outline = false
-})
-surface.CreateFont("Tiramisu12Font", {
-	font = TIRA.ConVars["MenuFont"],
-	size = 14,
-	weight = 400,
-	antialias = true,
-	additive = false,
-	shadow = true,
-	outline = false
-})
-surface.CreateFont("TiramisuWhisperFont",{
-	font = TIRA.ConVars["WhisperFont"],
-	size = 12,
-	weight = 500,
-	antialias = true,
-	additive = false,
-	shadow = false,
-	outline = false
-})
-surface.CreateFont("TiramisuWhisperFontOutline", {
-	font = TIRA.ConVars["WhisperFont"],
-	size = 12,
-	weight = 500,
-	antialias = true,
-	additive = false,
-	shadow = false,
-	outline = false
-})
-surface.CreateFont("TiramisuYellFont",{
-	font = TIRA.ConVars["YellFont"],
-	size = 24,
-	weight = 700,
-	antialias = true,
-	additive = false,
-	shadow = false,
-	outline = false
-})
-surface.CreateFont("TiramisuYellFontOutline",{
-	font = TIRA.ConVars["YellFont"],
-	size = 24,
-	weight = 700,
-	antialias = true,
-	additive = false,
-	shadow = false,
-	outline = false
-})
-surface.CreateFont("TiramisuChatFont",{
-	font = TIRA.ConVars["ChatFont"],
-	size = 16,
-	weight = 500,
-	antialias = true,
-	additive = false,
-	shadow = false,
-	outline = false
-})
-surface.CreateFont("TiramisuChatFontOutline",{
-	font = TIRA.ConVars["ChatFont"],
-	size = 16,
-	weight = 500,
-	antialias = true,
-	additive = false,
-	shadow = false,
-	outline = false
-})
-surface.CreateFont("TiramisuEmoteFont",{
-	font = TIRA.ConVars["EmoteFont"],
-	size = 16,
-	weight = 500,
-	antialias = true,
-	additive = false,
-	shadow = false,
-	outline = false
-})
-surface.CreateFont("TiramisuEmoteFontOutline",{
-	font = TIRA.ConVars["EmoteFont"],
-	size = 16,
-	weight = 500,
-	antialias = true,
-	additive = false,
-	shadow = false,
-	outline = false
-})
-surface.CreateFont("TiramisuOOCFont",{
-	font = TIRA.ConVars["OOCFont"],
-	size = 16,
-	weight = 500,
-	antialias = true,
-	additive = false,
-	shadow = false,
-	outline = false
-})
-surface.CreateFont("TiramisuOOCFontOutline",{
-	font = TIRA.ConVars["OOCFont"],
-	size = 16,
-	weight = 500,
-	antialias = true,
-	additive = false,
-	shadow = false,
-	outline = false
-})
-surface.CreateFont("TiramisuNoteFont",{
-	font = TIRA.ConVars["NoteFont"],
-	size = 18,
-	weight = 500,
-	antialias = true,
-	additive = false,
-	shadow = false,
-	outline = false
-})
-surface.CreateFont("TiramisuNamesFont",{
-	font = TIRA.ConVars["NamesFont"],
-	size = 20,
-	weight = 400,
-	antialias = true,
-	additive = false,
-	shadow = false,
-	outline = false
-})
-surface.CreateFont("TiramisuTitlesFont",{
-	font = TIRA.ConVars["TitlesFont"],
-	size = 14,
-	weight = 400,
-	antialias = true,
-	additive = false,
-	shadow = false,
-	outline = false
-})
+} )
 
-/*
-surface.CreateFont(TIRA.ConVars[ "MenuFont2" ], 64, 500, true, false, "Tiramisu64Font", false, true) -- Biggest font used only once on the intro.
-surface.CreateFont(TIRA.ConVars[ "MenuFont2" ], 48, 500, true, false, "Tiramisu48Font", false, true) -- Biggest font used.
-surface.CreateFont(TIRA.ConVars[ "MenuFont2" ], 32, 500, true, false, "Tiramisu32Font", false, true) -- Second biggest font used. Used in 3D titles and main character title.
-surface.CreateFont(TIRA.ConVars[ "MenuFont2" ], 24, 500, true, false, "Tiramisu24Font", false, true) -- Third biggest font used. Used in 3D titles and main character title.
-surface.CreateFont(TIRA.ConVars[ "MenuFont" ], 18, 500, true, false, "Tiramisu18Font", true, false ) -- Big font used for button labels.
-surface.CreateFont(TIRA.ConVars[ "MenuFont" ], 16, 500, true, false, "Tiramisu16Font", true, false ) -- Mid size button used for category headers.
-surface.CreateFont(TIRA.ConVars[ "MenuFont" ], 14, 500, true, false, "Tiramisu14Font", false, true) -- A moderate size font used for the main title's subtitle
-surface.CreateFont(TIRA.ConVars[ "MenuFont" ], 14, 300, true, false, "TiramisuDefaultFont") -- Replacement for "Default"
-surface.CreateFont(TIRA.ConVars[ "MenuFont" ], 12, 400, true, false, "Tiramisu12Font", true ) -- Smallest, used in tabs and the quick menu
-surface.CreateFont(TIRA.ConVars[ "WhisperFont" ], 12, 500, true, false, "TiramisuWhisperFont") -- Used only for whispering
-surface.CreateFont(TIRA.ConVars[ "WhisperFont" ], 12, 500, true, false, "TiramisuWhisperFontOutline", false, false)
-surface.CreateFont(TIRA.ConVars[ "YellFont" ], 24, 700, true, false, "TiramisuYellFont") -- Used only for yelling
-surface.CreateFont(TIRA.ConVars[ "YellFont" ], 24, 700, true, false, "TiramisuYellFontOutline", false, false)
-surface.CreateFont(TIRA.ConVars[ "ChatFont" ], 16, 500, true, false, "TiramisuChatFont")
-surface.CreateFont(TIRA.ConVars[ "ChatFont" ], 16, 500, true, false, "TiramisuChatFontOutline", false, false)
-surface.CreateFont(TIRA.ConVars[ "EmoteFont" ], 16,500, true, false, "TiramisuEmoteFont")
-surface.CreateFont(TIRA.ConVars[ "EmoteFont" ], 16,500, true, false, "TiramisuEmoteFontOutline", false, false)
-surface.CreateFont(TIRA.ConVars[ "OOCFont" ], 16, 500, true, false, "TiramisuOOCFont")
-surface.CreateFont(TIRA.ConVars[ "OOCFont" ], 16, 500, true, false, "TiramisuOOCFontOutline", false, false)
-surface.CreateFont(TIRA.ConVars[ "NoteFont" ], 18, 500, true, false, "TiramisuNoteFont" )
-surface.CreateFont(TIRA.ConVars[ "NamesFont"], 20, 400, true, false, "TiramisuNamesFont" ) --Font used for names
-surface.CreateFont(TIRA.ConVars[ "TitlesFont"], 14, 400, true, false, "TiramisuTitlesFont" ) --Font used for titles*/
+surface.CreateFont( "Tiramisu48Font",
+{
+
+	font		= CAKE.ConVars[ "MenuFont2" ],
+	size		= 48,
+	antialias	= true,
+	weight		= 500
+
+} )
+
+surface.CreateFont( "Tiramisu32Font",
+{
+
+	font		= CAKE.ConVars[ "MenuFont2" ],
+	size		= 32,
+	antialias	= true,
+	weight		= 500
+
+} )
+
+surface.CreateFont( "Tiramisu24Font",
+{
+
+	font		= CAKE.ConVars[ "MenuFont2" ],
+	size		= 24,
+	antialias	= true,
+	weight		= 500
+
+} )
+
+surface.CreateFont( "Tiramisu18Font",
+{
+
+	font		= CAKE.ConVars[ "MenuFont" ],
+	size		= 18,
+	antialias	= true,
+	weight		= 500
+
+} )
+
+surface.CreateFont( "Tiramisu16Font",
+{
+
+	font		= CAKE.ConVars[ "MenuFont" ],
+	size		= 18,
+	antialias	= true,
+	weight		= 500
+
+} )
+
+surface.CreateFont( "Tiramisu14Font",
+{
+
+	font		= CAKE.ConVars[ "MenuFont" ],
+	size		= 14,
+	antialias	= true,
+	weight		= 500
+
+} )
+
+surface.CreateFont( "TiramisuDefaultFont",
+{
+
+	font		= CAKE.ConVars[ "MenuFont" ],
+	size		= 14,
+	antialias	= true,
+	weight		= 300
+
+} )
+
+surface.CreateFont( "Tiramisu12Font",
+{
+
+	font		= CAKE.ConVars[ "MenuFont" ],
+	size		= 12,
+	antialias	= true,
+	weight		= 400
+
+} )
+
+surface.CreateFont( "Tiramisu12Font",
+{
+
+	font		= CAKE.ConVars[ "MenuFont" ],
+	size		= 12,
+	antialias	= true,
+	weight		= 400
+
+} )
+
+surface.CreateFont( "TiramisuWhisperFont",
+{
+
+	font		= CAKE.ConVars[ "WhisperFont" ],
+	size		= 12,
+	antialias	= true,
+	weight		= 500
+
+} )
+
+surface.CreateFont( "TiramisuWhisperFontOutline",
+{
+
+	shadow	= true,
+	font		= CAKE.ConVars[ "WhisperFont" ],
+	size		= 12,
+	antialias	= true,
+	weight		= 400
+
+} )
+
+surface.CreateFont( "TiramisuYellFont",
+{
+
+	font		= CAKE.ConVars[ "YellFont" ],
+	size		= 24,
+	antialias	= true,
+	weight		= 700
+
+} )
+
+surface.CreateFont( "TiramisuYellFontOutline",
+{
+	shadow	= true,
+	font		= CAKE.ConVars[ "YellFont" ],
+	size		= 24,
+	antialias	= true,
+	weight		= 550
+
+} )
+
+surface.CreateFont( "TiramisuChatFont",
+{
+
+	font		= CAKE.ConVars[ "ChatFont" ],
+	size		= 16,
+	antialias	= true,
+	weight		= 500
+
+} )
+
+surface.CreateFont( "TiramisuChatFontOutline",
+{
+	shadow	= true,
+	font		= CAKE.ConVars[ "ChatFont" ],
+	size		= 16,
+	antialias	= true,
+	weight		= 400
+
+} )
+
+surface.CreateFont( "TiramisuEmoteFont",
+{
+
+	font		= CAKE.ConVars[ "EmoteFont" ],
+	size		= 16,
+	antialias	= true,
+	weight		= 400
+
+} )
+
+surface.CreateFont( "TiramisuEmoteFontOutline",
+{
+	shadow	= true,
+	font		= CAKE.ConVars[ "EmoteFont" ],
+	size		= 16,
+	antialias	= true,
+	weight		= 400
+
+} )
+
+surface.CreateFont( "TiramisuOOCFont",
+{
+
+	font		= CAKE.ConVars[ "OOCFont" ],
+	size		= 16,
+	antialias	= true,
+	weight		= 500
+
+} )
+
+surface.CreateFont( "TiramisuOOCFontOutline",
+{
+	shadow	= true,
+	font		= CAKE.ConVars[ "OOCFont" ],
+	size		= 16,
+	antialias	= true,
+	weight		= 400
+
+} )
+
+surface.CreateFont( "TiramisuNoteFont",
+{
+
+	font		= CAKE.ConVars[ "NoteFont" ],
+	size		= 18,
+	antialias	= true,
+	weight		= 500
+
+} )
+
+surface.CreateFont( "TiramisuNamesFont",
+{
+
+	font		= CAKE.ConVars[ "NamesFont" ],
+	size		= 20,
+	antialias	= true,
+	weight		= 400
+
+} )
+
+surface.CreateFont( "TiramisuTitlesFont",
+{
+
+	font		= CAKE.ConVars[ "TitlesFont" ],
+	size		= 14,
+	antialias	= true,
+	weight		= 400
+
+} )
+
+-- surface.CreateFont(CAKE.ConVars[ "MenuFont2" ], 64, 500, true, false, "Tiramisu64Font", false, true) -- Biggest font used only once on the intro.
+-- surface.CreateFont(CAKE.ConVars[ "MenuFont2" ], 48, 500, true, false, "Tiramisu48Font", false, true) -- Biggest font used.
+-- surface.CreateFont(CAKE.ConVars[ "MenuFont2" ], 32, 500, true, false, "Tiramisu32Font", false, true) -- Second biggest font used. Used in 3D titles and main character title.
+-- surface.CreateFont(CAKE.ConVars[ "MenuFont2" ], 24, 500, true, false, "Tiramisu24Font", false, true) -- Third biggest font used. Used in 3D titles and main character title.
+-- surface.CreateFont(CAKE.ConVars[ "MenuFont" ], 18, 500, true, false, "Tiramisu18Font", true, false ) -- Big font used for button labels.
+-- surface.CreateFont(CAKE.ConVars[ "MenuFont" ], 18, 500, true, false, "Tiramisu16Font", true, false ) -- Mid size button used for category headers.
+-- surface.CreateFont(CAKE.ConVars[ "MenuFont" ], 14, 500, true, false, "Tiramisu14Font", false, true) -- A moderate size font used for the main title's subtitle
+-- surface.CreateFont(CAKE.ConVars[ "MenuFont" ], 14, 300, true, false, "TiramisuDefaultFont") -- Replacement for "Default"
+-- surface.CreateFont(CAKE.ConVars[ "MenuFont" ], 12, 400, true, false, "Tiramisu12Font", true ) -- Smallest, used in tabs and the quick menu
+-- surface.CreateFont(CAKE.ConVars[ "WhisperFont" ], 12, 500, true, false, "TiramisuWhisperFont") -- Used only for whispering
+-- surface.CreateFont(CAKE.ConVars[ "WhisperFont" ], 12, 500, true, false, "TiramisuWhisperFontOutline", false, false)
+-- surface.CreateFont(CAKE.ConVars[ "YellFont" ], 24, 700, true, false, "TiramisuYellFont") -- Used only for yelling
+-- surface.CreateFont(CAKE.ConVars[ "YellFont" ], 24, 700, true, false, "TiramisuYellFontOutline", false, false)
+-- surface.CreateFont(CAKE.ConVars[ "ChatFont" ], 16, 500, true, false, "TiramisuChatFont")
+-- surface.CreateFont(CAKE.ConVars[ "ChatFont" ], 16, 500, true, false, "TiramisuChatFontOutline", false, false)
+-- surface.CreateFont(CAKE.ConVars[ "EmoteFont" ], 16,500, true, false, "TiramisuEmoteFont")
+-- surface.CreateFont(CAKE.ConVars[ "EmoteFont" ], 16,500, true, false, "TiramisuEmoteFontOutline", false, false)
+-- surface.CreateFont(CAKE.ConVars[ "OOCFont" ], 16, 500, true, false, "TiramisuOOCFont")
+-- surface.CreateFont(CAKE.ConVars[ "OOCFont" ], 16, 500, true, false, "TiramisuOOCFontOutline", false, false)
+-- surface.CreateFont(CAKE.ConVars[ "NoteFont" ], 18, 500, true, false, "TiramisuNoteFont" )
+-- surface.CreateFont(CAKE.ConVars[ "NamesFont"], 20, 400, true, false, "TiramisuNamesFont" ) --Font used for names
+-- -- surface.CreateFont(CAKE.ConVars[ "TitlesFont"], 14, 400, true, false, "TiramisuTitlesFont" ) --Font used for titles
 
 -- Client Includes
 include( "sh_animations.lua" )
@@ -292,16 +313,16 @@ include( "shared.lua" )
 include( "cl_binds.lua" )
 include( "cl_skin.lua" )
 
-for _,mdl in pairs(TIRA.ConVars[ "DefaultModels" ].Male) do
+for _,mdl in pairs(CAKE.ConVars[ "DefaultModels" ].Male) do
 	util.PrecacheModel( mdl )
 end
 
-for _,mdl in pairs(TIRA.ConVars[ "DefaultModels" ].Female) do
+for _,mdl in pairs(CAKE.ConVars[ "DefaultModels" ].Female) do
 	util.PrecacheModel( mdl )
 end
 
 
-TIRA.Loaded = true
+CAKE.Loaded = true
 
 --Some quick utility stuff
 local sin,cos,rad = math.sin,math.cos,math.rad
@@ -347,7 +368,7 @@ end
 -- Initialize the gamemode
 function GM:Initialize()
 
-	TIRA.Running = true
+	CAKE.Running = true
 
 	self.BaseClass:Initialize()
 
@@ -358,16 +379,16 @@ function GM:InitPostEntity()
 	self.BaseClass:InitPostEntity()
 
 	RunConsoleCommand( "rp_ready" )
-	if TIRA.ConVars[ "ForceJigglebones" ] then
+	if CAKE.ConVars[ "ForceJigglebones" ] then
 		RunConsoleCommand( "cl_jiggle_bone_framerate_cutoff", "1" )
 	end
-	TIRA.EnableBlackScreen( TIRA.ConVars[ "SpawnWithBlackScreen" ], TIRA.ConVars[ "SpawnWithBlackScreen" ] )
+	CAKE.EnableBlackScreen( CAKE.ConVars[ "SpawnWithBlackScreen" ], CAKE.ConVars[ "SpawnWithBlackScreen" ] )
 	
 end
 
 function GM:ForceDermaSkin()
 
-	return TIRA.Skin
+	return CAKE.Skin
 	
 end
 
@@ -402,19 +423,19 @@ Schemas = {}
 
 usermessage.Hook("Tiramisu.AddSchema", function(data)
 	local schema = data:ReadString()
-	TIRA.AddRightClicks(schema)
-	TIRA.AddClientsidePlugins(schema)
-	TIRA.AddItems(schema)
+	CAKE.AddRightClicks(schema)
+	CAKE.AddClientsidePlugins(schema)
+	CAKE.AddItems(schema)
 end )
 
 usermessage.Hook( "Tiramisu.EnableBlackScreen", function( um)
-	TIRA.EnableBlackScreen( um:ReadBool(), false )
+	CAKE.EnableBlackScreen( um:ReadBool(), false )
 end)
 
 usermessage.Hook( "Tiramisu.SendError", function( um )
 	
 	local text = um:ReadString()
-	TIRA.Message( text, "Message", "OK" )
+	CAKE.Message( text, "Message", "OK" )
 
 end)
 
@@ -442,26 +463,42 @@ end)
 
 RclickTable = {}
 
-function TIRA.AddRightClicks(schema)
-	local list, dir = file.Find( TIRA.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua", "LUA" )	
-	for k,v in pairs( list ) do
-		local path = TIRA.Name .. "/gamemode/schemas/" .. schema .. "/rclick/" .. v
+function CAKE.AddRightClicks(schema)
+	-- local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua" )	
+	local files, folders = file.Find( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua", "LUA" )
+	
+	for k,v in pairs( files ) do
+		local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/" .. v
 		RCLICK = { }
+		MsgN( "Loading " .. path )
 		include( path )
 		table.insert(RclickTable, RCLICK)
 	end
 end
 
-TIRA.CLPlugin = {}
+CAKE.CLPlugin = {}
 
-function TIRA.AddClientsidePlugins( schema, filename )
+function CAKE.AddClientsidePlugins( schema, filename )
 
 	local filename = filename or ""
-	local path = TIRA.Name .. "/gamemode/schemas/" .. schema .. "/plugins/" .. filename
-	local list, dir = file.Find( path .. "*", "LUA" )
+	local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/" .. filename
+	-- local list = file.FindInLua( path .. "*" ) or {}
+	-- local list = file.Find( path .. "*", "LUA" ) or {}
+	local files, folders = file.Find( path .. "*", "LUA" )
 
 
-	for k, v in pairs( list ) do
+	for k, v in pairs( files ) do
+		if v:sub( 1, 3 ) == "cl_" or v:sub( 1,3 ) == "sh_" then --Filters out serverside files that may have got sent
+			PLUGIN = {} -- Support for shared plugins. 
+			CLPLUGIN = {}
+			MsgN( "Loading " .. path ..v )
+			include( path .. v )
+			CLPLUGIN.Name = CLPLUGIN.Name or schema .. "/plugins/" .. filename .. v
+			CAKE.CLPlugin[CLPLUGIN.Name] = {}
+			if CLPLUGIN and CLPLUGIN.Init then
+				CAKE.CLPlugin[CLPLUGIN.Name].Init = CLPLUGIN.Init or function() end
+				CAKE.CLPlugin[CLPLUGIN.Name].Init()
+	--[[ for k, v in pairs( list ) do
 		if v != "." and v != ".." then
 			if string.GetExtensionFromFilename( v ) and string.GetExtensionFromFilename( v ) == "lua" then
 				if v:sub( 1, 3 ) == "cl_" or v:sub( 1,3 ) == "sh_" then --Filters out serverside files that may have got sent
@@ -469,32 +506,39 @@ function TIRA.AddClientsidePlugins( schema, filename )
 					CLPLUGIN = {}
 					include( path .. v )
 					CLPLUGIN.Name = CLPLUGIN.Name or schema .. "/plugins/" .. filename .. v 
-					TIRA.CLPlugin[CLPLUGIN.Name] = {}
+					CAKE.CLPlugin[CLPLUGIN.Name] = {}
 					if CLPLUGIN and CLPLUGIN.Init then
-						TIRA.CLPlugin[CLPLUGIN.Name].Init = CLPLUGIN.Init or function() end
-					   	TIRA.CLPlugin[CLPLUGIN.Name].Init()
+						CAKE.CLPlugin[CLPLUGIN.Name].Init = CLPLUGIN.Init or function() end
+					   	CAKE.CLPlugin[CLPLUGIN.Name].Init()
 					end
 				end
+			else --It's a folder
+				CAKE.AddClientsidePlugins( schema, filename .. v .. "/" ) ]]--
 			end
 		end
 	end
 
-	for k, v in pairs( dir ) do
-		if v != "." and v != ".." then
-			TIRA.AddClientsidePlugins( schema, filename .. v .. "/" )
-		end
+	for k, v in pairs( folders ) do 
+		CAKE.AddClientsidePlugins( schema, filename .. v .. "/" )
 	end
-
 end
 
-function TIRA.AddItems( schema )
+function CAKE.AddItems( schema )
 
 	local filename = filename or ""
-	local path = TIRA.Name .. "/gamemode/schemas/" .. schema .. "/items/"
-	local list = file.Find( path .. "*", "LUA" ) or {}
+	local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/items/"
+	-- local list = file.FindInLua( path .. "*" ) or {}
+	-- local list = file.Find( path .. "*", "LUA" ) or {}
+	local files, folders = file.Find( path .. "*", "LUA" )
 
-
-	for k, v in pairs( list ) do
+	for k, v in pairs( files ) do
+		ITEM = {  }
+		MsgN( "Loading " .. path ..v )
+		include( path .. v )
+		for k,v in pairs(ITEM) do
+			if type(v) == "function" then
+				ITEM[k] = nil
+	--[[ for k, v in pairs( list ) do
 		if v != "." and v != ".." then
 			if string.GetExtensionFromFilename( v ) and string.GetExtensionFromFilename( v ) == "lua" then
 				ITEM = {  }
@@ -504,45 +548,46 @@ function TIRA.AddItems( schema )
 						ITEM[k] = nil
 					end
 				end
-				TIRA.ItemData[ ITEM.Class ] = ITEM
+				CAKE.ItemData[ ITEM.Class ] = ITEM --]]
 			end
 		end
+		CAKE.ItemData[ ITEM.Class ] = ITEM
 	end
 
 end
 
-function TIRA.RegisterMenuTab( name, func, closefunc ) --The third argument is the function used for closing your panel.
-	TIRA.MenuTabs[ name ] = {}
-	TIRA.MenuTabs[ name ][ "function" ] = func or function() end
-	TIRA.MenuTabs[ name ][ "closefunc" ] = closefunc or function() end
+function CAKE.RegisterMenuTab( name, func, closefunc ) --The third argument is the function used for closing your panel.
+	CAKE.MenuTabs[ name ] = {}
+	CAKE.MenuTabs[ name ][ "function" ] = func or function() end
+	CAKE.MenuTabs[ name ][ "closefunc" ] = closefunc or function() end
 end
 
-function TIRA.CloseTabs()
-	for k, v in pairs( TIRA.MenuTabs ) do
+function CAKE.CloseTabs()
+	for k, v in pairs( CAKE.MenuTabs ) do
 		v[ "closefunc" ]()
 	end
-	TIRA.ActiveTab = nil
+	CAKE.ActiveTab = nil
 end
 
-function TIRA.SetActiveTab( name )
-	--TIRA.MenuOpen = true
-	TIRA.CloseTabs()
-	if TIRA.MenuTabs and TIRA.MenuTabs[ name ] then
-		TIRA.MenuTabs[ name ][ "function" ]()
+function CAKE.SetActiveTab( name )
+	--CAKE.MenuOpen = true
+	CAKE.CloseTabs()
+	if CAKE.MenuTabs and CAKE.MenuTabs[ name ] then
+		CAKE.MenuTabs[ name ][ "function" ]()
 	else
 		timer.Simple( 1, function()
-			if TIRA.MenuTabs and TIRA.MenuTabs[ name ] then
-				TIRA.MenuTabs[ name ][ "function" ]()
+			if CAKE.MenuTabs and CAKE.MenuTabs[ name ] then
+				CAKE.MenuTabs[ name ][ "function" ]()
 			end
 		end)
 	end
-	TIRA.ActiveTab = name
+	CAKE.ActiveTab = name
 end
 
 local blackscreenalpha = 0
 hook.Add( "PostDrawHUD", "Tiramisu.DrawBlackScreen", function()
-	if TIRA.DrawBlackScreen then
-		if !TIRA.ForceBlackScreen then
+	if CAKE.DrawBlackScreen then
+		if !CAKE.ForceBlackScreen then
 			blackscreenalpha = Lerp( RealFrameTime() * 1.5, blackscreenalpha, 255 )
 		else
 			blackscreenalpha = 255
@@ -558,17 +603,17 @@ hook.Add( "PostDrawHUD", "Tiramisu.DrawBlackScreen", function()
 	end
 end)
 
-function TIRA.EnableBlackScreen( bool, force )
-	TIRA.DrawBlackScreen, TIRA.ForceBlackScreen = bool, force
+function CAKE.EnableBlackScreen( bool, force )
+	CAKE.DrawBlackScreen, CAKE.ForceBlackScreen = bool, force
 end
 
-function TIRA.DrawBlurScreen()
+function CAKE.DrawBlurScreen()
 	derma.SkinHook( "Paint", "BlurScreen" )
 end
 
---This function was made by Nori, not me, as many other parts of the gamemode. This one's special though, since it's from TIRAscript G3 lol.
-function TIRA.CalculateDoorTextPosition(door, reversed)
-	if !ValidEntity(door) then return false end
+--This function was made by Nori, not me, as many other parts of the gamemode. This one's special though, since it's from Cakescript G3 lol.
+function CAKE.CalculateDoorTextPosition(door, reversed)
+	if !IsValid(door) then return false end
 	local traceData = {}
 	local obbCenter = door:OBBCenter()
 	local obbMaxs = door:OBBMaxs()
@@ -622,7 +667,7 @@ function TIRA.CalculateDoorTextPosition(door, reversed)
 	local angles = trace.HitNormal:Angle()
 	
 	if (trace.HitWorld and !reversed) then
-		return TIRA.CalculateDoorTextPosition(door, true)
+		return CAKE.CalculateDoorTextPosition(door, true)
 	end
 		
 	angles:RotateAroundAxis(angles:Forward(), 90)

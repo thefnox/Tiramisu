@@ -8,9 +8,9 @@ local function ccArrest( ply, cmd, args )
 	if trace.StartPos:Distance( trace.HitPos ) < 150 then
 		if ply:HasItem( "zipties" ) then
 			if trace.Entity:IsTiraPlayer() then
-				TIRA.ArrestPlayer( ply, trace.Entity )
+				CAKE.ArrestPlayer( ply, trace.Entity )
 			elseif trace.Entity.ply:IsTiraPlayer() then
-				TIRA.ArrestPlayer( ply, trace.Entity.ply )
+				CAKE.ArrestPlayer( ply, trace.Entity.ply )
 			end
 		end
 	end
@@ -19,7 +19,7 @@ end
 concommand.Add( "rp_arrest", ccArrest )
 
 --Arrests a player. First argument is the person detaining the player on the second argument.
-function TIRA.ArrestPlayer( ply, detainee )
+function CAKE.ArrestPlayer( ply, detainee )
 	
 	if ply:HasItem( "weapon_zipties" ) and !detainee:GetNWBool( "arrested", false ) then
 		timer.Create( ply:SteamID() .. "arresttimer", 0.25, 7, function()
@@ -52,7 +52,7 @@ function TIRA.ArrestPlayer( ply, detainee )
 end
 
 --Unties a player. The first argument is the player performing the untying.
-function TIRA.UnArrestPlayer( ply, detainee )
+function CAKE.UnArrestPlayer( ply, detainee )
 	
 	if detainee:GetNWBool( "arrested", false ) then
 		timer.Create( detainee:SteamID() .. "unarrested", 2, 1, function()

@@ -49,7 +49,7 @@ function RCLICK.Click(target,ply)
 	Button:SetWide( Button:GetWide() + 20 )
 	Button:SetPos( 5, 5 )
 	Button.DoClick = function()
-		local str = "rp_admin addbusiness " .. TIRA.FormatText( target:SteamID() ) .. " "
+		local str = "rp_admin addbusiness " .. CAKE.FormatText( target:SteamID() ) .. " "
 		for k, v in pairs (checkboxes) do
 			if v and v:GetChecked() then
 				str = str .. v.BusinessLevel .. " "

@@ -1,34 +1,34 @@
-TIRA.SpawnTable = {}
+CAKE.SpawnTable = {}
 
-function TIRA.MaxProps(ply)
+function CAKE.MaxProps(ply)
 
-	return tonumber(TIRA.ConVars[ "PropLimit" ])
+	return tonumber(CAKE.ConVars[ "PropLimit" ])
 	
 end
 
-function TIRA.MaxRagdolls(ply)
+function CAKE.MaxRagdolls(ply)
 
-	return tonumber(TIRA.ConVars[ "RagdollLimit" ])
+	return tonumber(CAKE.ConVars[ "RagdollLimit" ])
 	
 end
 
-function TIRA.MaxVehicles(ply)
+function CAKE.MaxVehicles(ply)
 
-	return tonumber(TIRA.ConVars[ "VehicleLimit" ])
+	return tonumber(CAKE.ConVars[ "VehicleLimit" ])
 	
 end
 
-function TIRA.MaxEffects(ply)
+function CAKE.MaxEffects(ply)
 
-	return tonumber(TIRA.ConVars[ "EffectLimit" ])
+	return tonumber(CAKE.ConVars[ "EffectLimit" ])
 	
 end
 
-function TIRA.CreateSpawnTable(ply)
+function CAKE.CreateSpawnTable(ply)
 	
-	TIRA.SpawnTable[TIRA.FormatText(ply:SteamID())] = {}
+	CAKE.SpawnTable[CAKE.FormatText(ply:SteamID())] = {}
 	
-	local spawntable = TIRA.SpawnTable[TIRA.FormatText(ply:SteamID())]
+	local spawntable = CAKE.SpawnTable[CAKE.FormatText(ply:SteamID())]
 	spawntable.props = {}
 	spawntable.ragdolls = {}
 	spawntable.vehicles = {}
@@ -38,18 +38,18 @@ end
 
 function GM:PlayerSpawnProp(ply, mdl)
 
-	local spawntable = TIRA.SpawnTable[TIRA.FormatText(ply:SteamID())]
+	local spawntable = CAKE.SpawnTable[CAKE.FormatText(ply:SteamID())]
 	
-	if TIRA.PlayerRank(ply) <= 2 then
+	if CAKE.PlayerRank(ply) <= 2 then
 		
-		if !util.tobool( TIRA.GetPlayerField(ply, "tooltrust") ) and !TIRA.ConVars[ "DefaultPropTrust" ] then -- require tt to spawn stuff.
-			TIRA.SendChat(ply, "You are not allowed to spawn anything!")
+		if !util.tobool( CAKE.GetPlayerField(ply, "tooltrust") ) and !CAKE.ConVars[ "DefaultPropTrust" ] then -- require tt to spawn stuff.
+			CAKE.SendChat(ply, "You are not allowed to spawn anything!")
 			return false
 		end
 
 		if(!spawntable) then
-			TIRA.CreateSpawnTable(ply)
-			spawntable = TIRA.SpawnTable[TIRA.FormatText(ply:SteamID())]
+			CAKE.CreateSpawnTable(ply)
+			spawntable = CAKE.SpawnTable[CAKE.FormatText(ply:SteamID())]
 		end
 
 		local spawned = 0
@@ -61,15 +61,15 @@ function GM:PlayerSpawnProp(ply, mdl)
 			end
 		end
 		
-		if(spawned >= TIRA.MaxProps(ply)) then
-			TIRA.SendChat(ply, "You have reached your limit! (" .. TIRA.MaxProps(ply) .. ")")
+		if(spawned >= CAKE.MaxProps(ply)) then
+			CAKE.SendChat(ply, "You have reached your limit! (" .. CAKE.MaxProps(ply) .. ")")
 			return false
 		else
 			return true
 		end
 		
 	else
-		TIRA.CreateSpawnTable(ply)
+		CAKE.CreateSpawnTable(ply)
 		return true
 	end
 	
@@ -77,18 +77,18 @@ end
 
 function GM:PlayerSpawnRagdoll(ply, mdl)
 
-	local spawntable = TIRA.SpawnTable[TIRA.FormatText(ply:SteamID())]
+	local spawntable = CAKE.SpawnTable[CAKE.FormatText(ply:SteamID())]
 	
-	if TIRA.PlayerRank(ply) <= 2 then
+	if CAKE.PlayerRank(ply) <= 2 then
 	
-		if !util.tobool( TIRA.GetPlayerField(ply, "tooltrust") ) and !TIRA.ConVars[ "DefaultPropTrust" ] then
-			TIRA.SendChat(ply, "You are not allowed to spawn ragdolls!")
+		if !util.tobool( CAKE.GetPlayerField(ply, "tooltrust") ) and !CAKE.ConVars[ "DefaultPropTrust" ] then
+			CAKE.SendChat(ply, "You are not allowed to spawn ragdolls!")
 			return false
 		end
 		
 		if(!spawntable) then
-			TIRA.CreateSpawnTable(ply)
-			spawntable = TIRA.SpawnTable[TIRA.FormatText(ply:SteamID())]
+			CAKE.CreateSpawnTable(ply)
+			spawntable = CAKE.SpawnTable[CAKE.FormatText(ply:SteamID())]
 		end
 
 		local spawned = 0
@@ -99,14 +99,14 @@ function GM:PlayerSpawnRagdoll(ply, mdl)
 				spawntable.ragdolls[k] = nil -- No longer exists. Wipe it out.
 			end
 		end
-		if(spawned >= TIRA.MaxRagdolls(ply)) then
-			TIRA.SendChat(ply, "You have reached your limit! (" .. TIRA.MaxRagdolls(ply) .. ")")
+		if(spawned >= CAKE.MaxRagdolls(ply)) then
+			CAKE.SendChat(ply, "You have reached your limit! (" .. CAKE.MaxRagdolls(ply) .. ")")
 			return false
 		else
 			return true
 		end
 	else
-		TIRA.CreateSpawnTable(ply)
+		CAKE.CreateSpawnTable(ply)
 		return true
 	end
 	
@@ -114,18 +114,18 @@ end
 
 function GM:PlayerSpawnVehicle(ply)
 
-	local spawntable = TIRA.SpawnTable[TIRA.FormatText(ply:SteamID())]
+	local spawntable = CAKE.SpawnTable[CAKE.FormatText(ply:SteamID())]
 	
-	if TIRA.PlayerRank(ply) <= 2 then
+	if CAKE.PlayerRank(ply) <= 2 then
 
-		if !util.tobool( TIRA.GetPlayerField(ply, "tooltrust") ) and !TIRA.ConVars[ "DefaultVehicles" ] then
-			TIRA.SendChat(ply, "You are not allowed to spawn vehicles!")
+		if !util.tobool( CAKE.GetPlayerField(ply, "tooltrust") ) and !CAKE.ConVars[ "DefaultVehicles" ] then
+			CAKE.SendChat(ply, "You are not allowed to spawn vehicles!")
 			return false
 		end
 
 		if(!spawntable) then
-			TIRA.CreateSpawnTable(ply)
-			spawntable = TIRA.SpawnTable[TIRA.FormatText(ply:SteamID())]
+			CAKE.CreateSpawnTable(ply)
+			spawntable = CAKE.SpawnTable[CAKE.FormatText(ply:SteamID())]
 		end
 
 		local spawned = 0
@@ -138,8 +138,8 @@ function GM:PlayerSpawnVehicle(ply)
 			end
 		end
 		
-		if(spawned >= TIRA.MaxVehicles(ply)) then
-			TIRA.SendChat(ply, "You have reached your limit! (" .. TIRA.MaxVehicles(ply) .. ")")
+		if(spawned >= CAKE.MaxVehicles(ply)) then
+			CAKE.SendChat(ply, "You have reached your limit! (" .. CAKE.MaxVehicles(ply) .. ")")
 			return false
 		else
 			return true
@@ -147,7 +147,7 @@ function GM:PlayerSpawnVehicle(ply)
 			
 	
 	else
-		TIRA.CreateSpawnTable(ply)
+		CAKE.CreateSpawnTable(ply)
 		return true
 	end
 	
@@ -155,25 +155,25 @@ end
 
 function GM:PlayerSpawnNPC( ply, class )
 
-	return TIRA.PlayerRank( ply ) > 0
+	return CAKE.PlayerRank( ply ) > 0
 
 end
 
 
 function GM:PlayerSpawnEffect(ply, mdl)
 
-	local spawntable = TIRA.SpawnTable[TIRA.FormatText(ply:SteamID())]
+	local spawntable = CAKE.SpawnTable[CAKE.FormatText(ply:SteamID())]
 	
-	if TIRA.PlayerRank(ply) <= 2 then
+	if CAKE.PlayerRank(ply) <= 2 then
 	
-		if(!tobool(TIRA.GetPlayerField(ply, "tooltrust")) and !TIRA.ConVars[ "DefaultPropTrust" ]) then
-			TIRA.SendChat(ply, "You are not allowed to spawn effects!" )
+		if(!tobool(CAKE.GetPlayerField(ply, "tooltrust")) and !CAKE.ConVars[ "DefaultPropTrust" ]) then
+			CAKE.SendChat(ply, "You are not allowed to spawn effects!" )
 			return false
 		end
 		
 		if(!spawntable) then
-			TIRA.CreateSpawnTable(ply)
-			spawntable = TIRA.SpawnTable[TIRA.FormatText(ply:SteamID())]
+			CAKE.CreateSpawnTable(ply)
+			spawntable = CAKE.SpawnTable[CAKE.FormatText(ply:SteamID())]
 		end
 		
 		local spawned = 0
@@ -186,15 +186,15 @@ function GM:PlayerSpawnEffect(ply, mdl)
 			end
 		end
 		
-		if(spawned >= TIRA.MaxEffects(ply)) then
-			TIRA.SendChat(ply, "You have reached your limit! (" .. TIRA.MaxEffects(ply) .. ")")
+		if(spawned >= CAKE.MaxEffects(ply)) then
+			CAKE.SendChat(ply, "You have reached your limit! (" .. CAKE.MaxEffects(ply) .. ")")
 			return false
 		else
 			return true
 		end
 		
 	else
-		TIRA.CreateSpawnTable(ply)
+		CAKE.CreateSpawnTable(ply)
 		return true
 	end
 	
@@ -202,40 +202,40 @@ end
 
 function GM:PlayerSpawnedProp(ply, mdl, ent)
 
-	local spawntable = TIRA.SpawnTable[TIRA.FormatText(ply:SteamID())]
+	local spawntable = CAKE.SpawnTable[CAKE.FormatText(ply:SteamID())]
 	table.insert(spawntable.props, ent)
 	
 end
 
 function GM:PlayerSpawnedRagdoll(ply, mdl, ent)
 
-	local spawntable = TIRA.SpawnTable[TIRA.FormatText(ply:SteamID())]
+	local spawntable = CAKE.SpawnTable[CAKE.FormatText(ply:SteamID())]
 	table.insert(spawntable.ragdolls, ent)
 	
 end
 
 function GM:PlayerSpawnedVehicle(ply, ent)
 
-	local spawntable = TIRA.SpawnTable[TIRA.FormatText(ply:SteamID())]
+	local spawntable = CAKE.SpawnTable[CAKE.FormatText(ply:SteamID())]
 	table.insert(spawntable.vehicles, ent)
 	
 end
 
 function GM:PlayerSpawnedEffect(ply, mdl, ent)
 
-	local spawntable = TIRA.SpawnTable[TIRA.FormatText(ply:SteamID())]
+	local spawntable = CAKE.SpawnTable[CAKE.FormatText(ply:SteamID())]
 	table.insert(spawntable.effects, ent)
 	
 end
 
 hook.Add( "PlayerLoadout", "TiramisuTooltrustLoadout", function( ply )
 
-	if(!util.tobool(TIRA.GetPlayerField(ply, "tooltrust"))) then
+	if(!util.tobool(CAKE.GetPlayerField(ply, "tooltrust"))) then
 
-		if TIRA.ConVars[ "DefaultGravgun" ] then
+		if CAKE.ConVars[ "DefaultGravgun" ] then
 			ply:Give("weapon_physcannon")
 		end
-		if TIRA.ConVars[ "DefaultPhysgun" ] then
+		if CAKE.ConVars[ "DefaultPhysgun" ] then
 			ply:Give("weapon_physgun")
 		end
 
@@ -253,42 +253,42 @@ function Admin_Tooltrust(ply, cmd, args)
 
 	if(#args != 2) then
 	
-		TIRA.SendChat( ply, "Invalid number of arguments! ( rp_admin tooltrust \"name\" value )" )
+		CAKE.SendChat( ply, "Invalid number of arguments! ( rp_admin tooltrust \"name\" value )" )
 		return
 
 	end
 	
-	local target = TIRA.FindPlayer(args[1])
+	local target = CAKE.FindPlayer(args[1])
 	
 	if !(target and target:IsValid() and target:IsTiraPlayer()) then
-		TIRA.SendChat( ply, "Target not found!" )
+		CAKE.SendChat( ply, "Target not found!" )
 		return
 	end
 
 	local toggle = util.tobool(args[2])
 
 	if toggle then
-		TIRA.SetPlayerField(target, "tooltrust", 1)
-		TIRA.SendChat( target, "You have been granted tooltrust by " .. ply:Name() )
-		TIRA.SendChat( ply, target:Name() .. " [" .. target:SteamID() .. "] | " .. target:Nick() .. " has been granted tooltrust" )
+		CAKE.SetPlayerField(target, "tooltrust", 1)
+		CAKE.SendChat( target, "You have been granted tooltrust by " .. ply:Name() )
+		CAKE.SendChat( ply, target:Name() .. " [" .. target:SteamID() .. "] | " .. target:Nick() .. " has been granted tooltrust" )
 
-		if !TIRA.ConVars[ "DefaultPhysgun" ] then
+		if !CAKE.ConVars[ "DefaultPhysgun" ] then
 			target:Give("weapon_physgun")
 		end
-		if !TIRA.ConVars[ "DefaultGravgun" ] then
+		if !CAKE.ConVars[ "DefaultGravgun" ] then
 			target:Give("weapon_physgun")
 		end
 		target:Give("gmod_tool")
 	else
-		TIRA.SetPlayerField(target, "tooltrust", 0)
-		TIRA.SendChat( target, "Your tooltrust has been removed by " .. ply:Name() )
-		TIRA.SendChat( ply, target:Name() .. " [" .. target:SteamID() .. "] | " .. target:Nick() .. " has been removed from tooltrust" )
+		CAKE.SetPlayerField(target, "tooltrust", 0)
+		CAKE.SendChat( target, "Your tooltrust has been removed by " .. ply:Name() )
+		CAKE.SendChat( ply, target:Name() .. " [" .. target:SteamID() .. "] | " .. target:Nick() .. " has been removed from tooltrust" )
 		
 		target:StripWeapon("gmod_tool")
-		if !TIRA.ConVars[ "DefaultPhysgun" ] then
+		if !CAKE.ConVars[ "DefaultPhysgun" ] then
 			target:StripWeapon("weapon_physgun")
 		end
-		if !TIRA.ConVars[ "DefaultGravgun" ] then
+		if !CAKE.ConVars[ "DefaultGravgun" ] then
 			target:StripWeapon("weapon_physgun")
 		end
 	end
@@ -297,13 +297,13 @@ end
 
 
 hook.Add( "PhysgunPickup", "TiramisuPhysgunPickup", function( ply, ent )
-	if TIRA.IsDoor( ent ) then
+	if CAKE.IsDoor( ent ) then
 		return false
 	end
 
-	if ValidEntity(ent) then
+	if IsValid(ent) then
 		if ent:IsTiraPlayer() or ent:GetClass() == "item_prop" then
-			return TIRA.PlayerRank(ply) > 0
+			return CAKE.PlayerRank(ply) > 0
 		end
 	end
 
@@ -311,8 +311,8 @@ end)
 
 function PLUGIN.Init()
 
-	TIRA.AddDataField( 1, "tooltrust", TIRA.ConVars[ "DefaultToolTrust" ] ) -- Is the player allowed to have the toolgun
+	CAKE.AddDataField( 1, "tooltrust", CAKE.ConVars[ "DefaultToolTrust" ] ) -- Is the player allowed to have the toolgun
 	
-	TIRA.AdminCommand( "tooltrust", Admin_Tooltrust, "Change someones tooltrust", true, true, 3 )
+	CAKE.AdminCommand( "tooltrust", Admin_Tooltrust, "Change someones tooltrust", true, true, 3 )
 	
 end

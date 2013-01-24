@@ -1,33 +1,23 @@
 -- Set up the gamemode
 DeriveGamemode( "sandbox" )
+include("glon.lua")
 
 -- Define global variables
-TIRA = {  } //As of Tiramisu 3, we're setting the namespace for all our globals to TIRA.
-CAKE = TIRA //Luckily, we can just make the TIRA table point to TIRA, so there's no need to change anything in your code.
-TIRA.Running = false
-TIRA.Loaded = false
+CAKE = {  }
+TIRA = CAKE
+CAKE.Running = false
+CAKE.Loaded = false
 
 -- Server Includes
+-- include( "von.lua" )
 
-function TIRA.Serialize(tbl)
-	return util.TableToJSON(tbl)
-end
-
-function ValidEntity(ent)
-	if ent then
-		if ent.IsValid then return ent:IsValid() end
-	end
-	return false
-end
-
-function TIRA.Deserialize(str)
-	return util.JSONToTable(string.gsub(str, "\\", ""))
-end
+--if not(datastream) then  
+--    require("datastream");  
+--end  
 
 include( "shared.lua" ) -- Shared Functions
 include( "log.lua" ) -- Logging functions
 include( "configuration.lua" ) -- Configuration data
-include( "mysql.lua" ) --MySQL
 include( "player_data.lua" ) -- Player data functions
 include( "player_util.lua" ) -- Player functions
 include( "admin.lua" ) -- Admin functions
@@ -45,51 +35,87 @@ resource.AddFile( "resource/fonts/YanoneKaffeesatz-Regular.ttf")
 resource.AddFile( "materials/models/null.vmt" )
 resource.AddFile( "materials/models/null.vtf" )
 
-GM.Name = "Tiramisu " .. TIRA.ConVars[ "Tiramisu" ]
-TIRA.LoadSchema( TIRA.ConVars[ "Schema" ] ) -- Load the schema and plugins, this is NOT initializing.
+util.AddNetworkString( "TiramisuAddToChat" )
+util.AddNetworkString( "Tiramisu.ReadNote" )
+util.AddNetworkString( "refreshbusiness" )
+util.AddNetworkString( "refreshbusiness_false" )
+util.AddNetworkString( "TiramisuChatHandling" )
+util.AddNetworkString( "TiramisuAddToRadio" )
+util.AddNetworkString( "TiramisuAddToOOC" )
+util.AddNetworkString( "Tiramisu.OpenContainer" )
+util.AddNetworkString( "Tiramisu.GetEditFaction" )
+util.AddNetworkString( "Tiramisu.GetEditGroup" )
+util.AddNetworkString( "Tiramisu.ReceiveFactions" )
+util.AddNetworkString( "Tiramisu.EditFaction" )
+util.AddNetworkString( "Tiramisu.GetFactionInfo" )
+util.AddNetworkString( "Tiramisu.ReceiveGroups" )
+util.AddNetworkString( "Tiramisu.ReceiveSpawnPoints" )
+util.AddNetworkString( "TiramisuAddToGroupChat" )
+util.AddNetworkString( "Tiramisu.EditGroup" )
+util.AddNetworkString( "Tiramisu.GetGroupInfo" )
+util.AddNetworkString( "Tiramisu.EditCharInfo" )
+util.AddNetworkString( "Tiramisu.GetSearchResults" )
+util.AddNetworkString( "Tiramisu.SendInventory" )
+util.AddNetworkString( "Tiramisu.GetEditGear" ) 
+util.AddNetworkString( "Tiramisu.WriteNote" )
 
-TIRA.Loaded = true -- Tell the server that we're loaded up
+GM.Name = "Tiramisu " .. CAKE.ConVars[ "Tiramisu" ]
+CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ) -- Load the schema and plugins, this is NOT initializing.
+
+CAKE.Loaded = true -- Tell the server that we're loaded up
+
+local fw = file.Write
+function file.Write( name, content )
+	if not file.IsDir( string.GetPathFromFilename( name ) or ".", "DATA" ) then
+		local dirs = string.Explode( "/", string.GetPathFromFilename( name ) )
+		for k, v in pairs( dirs ) do
+			if k > 1 then
+				local path = dirs[1]
+				for i = 2, k do
+					path = path .. "/" .. dirs[i]
+				end
+				print( path )
+				file.CreateDir( path )
+			else
+				file.CreateDir( v )
+			end
+		end
+	end
+	fw( name, content )
+end
 
 function GM:Initialize( ) -- Initialize the gamemode
 	
 	-- My reasoning for this certain order is due to the fact that plugins are meant to modify the gamemode sometimes.
 	-- Plugins need to be initialized before gamemode and schema so it can modify the way that the plugins and schema actually work.
 	-- AKA, hooks.
-
-	TIRA.DayLog( "script.txt", "Plugins Initializing" )
-	TIRA.InitPlugins( )
-
-	TIRA.DayLog( "script.txt", "Schemas Initializing" )
-	TIRA.InitSchemas( )
-
-	TIRA.DayLog( "script.txt", "SQL Database Initializing" )
-	TIRA.InitializeSQLDatabase()
 	
-	TIRA.DayLog( "script.txt", "Gamemode Initializing" )
+	CAKE.DayLog( "script.txt", "Plugins Initializing" )
+	CAKE.InitPlugins( )
+
+	CAKE.DayLog( "script.txt", "Schemas Initializing" )
+	CAKE.InitSchemas( )
+	
+	CAKE.DayLog( "script.txt", "Gamemode Initializing" )
 	
 	--Timer to save the current gamemode time
-	timer.Create( "timesave", 120, 0, TIRA.SaveTime )
+	-- timer.Create( "timesave", 120, 0, CAKE.SaveTime )
+	timer.Create( "timesave", 120, 0, function() CAKE.SaveTime() end )
 
 	--Timer to send the time to the player
-	timer.Create( "sendtime", 1, 0, TIRA.SendTime )
+	-- timer.Create( "sendtime", 1, 0, CAKE.SendTime )
+	timer.Create( "sendtime", 1, 0, function() CAKE.SendTime() end )
 	
-	TIRA.Running = true
+	CAKE.Running = true
 	
 end
 
-local runonce = false
-
 -- Player Initial Spawn
 function GM:PlayerInitialSpawn( ply )
-
-	if(!runonce) then 
-		runonce = true
-		TIRA.ConnectToDatabase()
-	end
 	
 	ply.LastOOC = -100000 -- This is so people can talk for the first time without having to wait.
 	
-	for k, v in ipairs( TIRA.Schemafile ) do
+	for k, v in ipairs( CAKE.Schemafile ) do
 		umsg.Start( "Tiramisu.AddSchema", ply )
 			umsg.String( v )
 		umsg.End( )
@@ -103,7 +129,7 @@ function GM:PlayerInitialSpawn( ply )
 	ply:SetModel( "models/kleiner.mdl" )
 
 	-- Load their data, or create a new datafile for them.
-	TIRA.LoadPlayerDataFile( ply )
+	CAKE.LoadPlayerDataFile( ply )
 	
 	self.BaseClass:PlayerInitialSpawn( ply )
 
@@ -118,13 +144,17 @@ function GM:PlayerSpawn( ply )
 		return -- Player data isn't loaded. This is an initial spawn.
 	end
 	
-	TIRA.SavePlayerData( ply )
+	CAKE.SavePlayerData( ply )
 	
 	umsg.Start( "Tiramisu.ReceiveRagdoll", ply )
 		umsg.Short( nil )
 	umsg.End()--This is to reset the player's view back to their character after they die.
 
 	umsg.Start("Tiramisu.EnableBlackScreen", ply) --This is to disable the black screen after the player spawns.
+		umsg.Bool( false )
+	umsg.End()
+
+	umsg.Start("Tiramisu.EnableDeathScreen", ply) --This is to disable the death screen after the player spawns.
 		umsg.Bool( false )
 	umsg.End()
 	
@@ -142,36 +172,38 @@ function GM:PlayerSpawn( ply )
 	end
 	
 	timer.Create( ply:SteamID() .. "savetimer", 30, 0, function()
-		if ValidEntity( ply ) then
-			TIRA.SavePlayerData( ply )
+		if IsValid( ply ) then
+			CAKE.SavePlayerData( ply )
 		end
 	end)
 
 	ply:RefreshInventory( )
 
-	ply:SetNWInt( "TiramisuAdminLevel", TIRA.PlayerRank(ply) )
+	ply:SetNWInt( "TiramisuAdminLevel", CAKE.PlayerRank(ply) )
 	ply:Give("hands")
 	ply:SelectWeapon("hands")
 
-	ply:SetNWString( "model", TIRA.GetCharField( ply, "model" ))
+	ply:SetNWString( "model", CAKE.GetCharField( ply, "model" ))
 	
 	self.BaseClass:PlayerSpawn( ply )
-	GAMEMODE:SetPlayerSpeed( ply, TIRA.ConVars[ "WalkSpeed" ], TIRA.ConVars[ "RunSpeed" ] )
+	GAMEMODE:SetPlayerSpeed( ply, CAKE.ConVars[ "WalkSpeed" ], CAKE.ConVars[ "RunSpeed" ] )
 	
 end
 
 
 function GM:PlayerSetModel(ply)
-	if ply:IsCharLoaded() and (TIRA.GetCharField(ply, "specialmodel") == "none" or TIRA.GetCharField(ply, "specialmodel") == "") then
-		local m = TIRA.GetCharField( ply, "gender" )
+	if ply:IsCharLoaded() and !(CAKE.GetCharField( "specialmodel") == "none" or CAKE.GetCharField( "specialmodel") == "") then
+		local m = CAKE.GetCharField( ply, "gender" )
 		ply:SetNWBool( "specialmodel", false )
 		ply:SetModel( Anims[m][ "models" ][1] )
 		ply:SetNWString( "gender", m )
 		ply:SetMaterial("models/null")
+		ply:SetColor( 255, 255, 255, 0 )
+		ply:SetRenderMode(RENDERMODE_TRANSALPHA)
 		ply:AddEffects( EF_NOSHADOW )
-		ply:SetPersonality( TIRA.GetCharField( ply, "personality" ))
-	elseif ply:IsCharLoaded() and !(TIRA.GetCharField(ply, "specialmodel") == "none" or TIRA.GetCharField(ply, "specialmodel") == "") then
-		ply:SetSpecialModel( TIRA.GetCharField(ply, "specialmodel") )
+		ply:SetPersonality( CAKE.GetCharField( ply, "personality" ))
+	elseif ply:IsCharLoaded() and (CAKE.GetCharField( "specialmodel") == "none" or CAKE.GetCharField( "specialmodel") == "") then
+		ply:SetSpecialModel( CAKE.GetCharField( "specialmodel") )
 		ply:SetNWString( "gender", "Male" )
 	else
 		ply:SetSpecialModel( "models/kleiner.mdl" )
@@ -179,20 +211,20 @@ function GM:PlayerSetModel(ply)
 end
 
 function GM:PlayerDisconnected( ply )
-	TIRA.SavePlayerData( ply )
+	CAKE.SavePlayerData( ply )
 end
 
 
 function GM:PlayerSpawnSWEP( ply, class )
 
-	if( TIRA.PlayerRank( ply ) > 0 ) then return true end
+	if( CAKE.PlayerRank( ply ) > 0 ) then return true end
 	return false
 	
 end
 
 function GM:PlayerGiveSWEP( ply )
 
-	if( TIRA.PlayerRank( ply ) > 0 ) then return true end
+	if( CAKE.PlayerRank( ply ) > 0 ) then return true end
 	return false 
 	
 end
@@ -228,7 +260,7 @@ end
 -- NO SENT FOR YOU. Unless you're an admin
 function GM:PlayerSpawnSENT( ply, class )
 	
-	if( TIRA.PlayerRank( ply ) > 0 ) then return true end
+	if( CAKE.PlayerRank( ply ) > 0 ) then return true end
 	return false
 	
 end

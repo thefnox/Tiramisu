@@ -17,7 +17,7 @@ local function OpenForums()
 
 	local html = vgui.Create( "HTML" , PlayerMenu )
 	html:Dock(FILL)
-	html:OpenURL( TIRA.ConVars[ "Webpage" ] )
+	html:OpenURL( CAKE.ConVars[ "Webpage" ] )
 
 	controls:SetHTML( html )
 
@@ -31,4 +31,4 @@ local function CloseForums()
 		PlayerMenu = nil
 	end
 end
-TIRA.RegisterMenuTab( "Forums", OpenForums, CloseForums )
+CAKE.RegisterMenuTab( "Forums", OpenForums, CloseForums )

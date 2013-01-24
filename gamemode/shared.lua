@@ -1,4 +1,4 @@
-TIRA.Name = GM.FolderName
+CAKE.Name = string.Replace( GM.Folder, "gamemodes/", "" )
 
 local meta = FindMetaTable( "Player" )
 
@@ -6,7 +6,7 @@ function meta:CanTraceTo( ent, filter ) -- Can the player and the entity "see" e
 	filter = self
 	local trace = {  }
 	if CLIENT and self == LocalPlayer() then
-		trace.start = TIRA.CameraPos
+		trace.start = CAKE.CameraPos
 	else
 		trace.start = self:EyePos()
 	end
@@ -57,13 +57,13 @@ function meta:IsCharLoaded()
 end
 
 --Returns a door's title
-function TIRA.GetDoorTitle( door )
+function CAKE.GetDoorTitle( door )
 	return door:GetNWString( "doortitle", "" )
 end
 
 -- This formats a player's SteamID for things such as data file names
 -- For example, STEAM_0:1:5947214 would turn into 015947214
-function TIRA.FormatText( SteamID )
+function CAKE.FormatText( SteamID )
 
 	local SteamID = SteamID or "STEAM_0:0:0"
 
@@ -77,7 +77,7 @@ function TIRA.FormatText( SteamID )
 end
 
 --Finds a player based on its OOC name, its IC name or its SteamID
-function TIRA.FindPlayer(name)
+function CAKE.FindPlayer(name)
 	local count = 0
 
 	local name = name:lower()
@@ -86,7 +86,7 @@ function TIRA.FindPlayer(name)
 		if game.SinglePlayer() then
 			return ply --There'll be just one player on the game, so return the sole player that should be on the player list.
 		end
-		if string.lower(ply:Nick()):match(name) or string.lower(ply:Name()):match(name) or string.lower(ply:SteamID()):match(name) or TIRA.FormatText(ply:SteamID()):match( name ) then
+		if string.lower(ply:Nick()):match(name) or string.lower(ply:Name()):match(name) or string.lower(ply:SteamID()):match(name) or CAKE.FormatText(ply:SteamID()):match( name ) then
 			return ply
 		end	
 	end

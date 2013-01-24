@@ -1,8 +1,8 @@
 usermessage.Hook("Tiramisu.StartWrite", function()
-	TIRA.WriteNote()
+	CAKE.WriteNote()
 end)
 
-function TIRA.WriteNote()
+function CAKE.WriteNote()
 	WriteMenu = vgui.Create( "DFrame" )
 	WriteMenu:SetSize( 640, 480 )
 	WriteMenu:SetTitle( "Write" )
@@ -26,17 +26,18 @@ function TIRA.WriteNote()
 	WriteButton:SetPos( 270,  445 )
 	WriteButton:SetText( "Write" )
 	WriteButton.DoClick = function( button )
-		net.Start("Tiramisu.WriteNote")
-			net.WriteString(TitleBox:GetValue())
-			net.WriteString(NoteBox:GetValue())
-		net.SendToServer()
+		-- datastream.StreamToServer( "Tiramisu.WriteNote", { ["title"] = TitleBox:GetValue(), ["text"] = NoteBox:GetValue() }, function() end)
+		net.Start( "Tiramisu.WriteNote" )
+			net.WriteString( TitleBox:GetValue( ) )
+			net.WriteString( NoteBox:GetValue( ) )
+		net.SendToServer( )
 		WriteMenu:Close()
 	end
 
 	WriteMenu:MakePopup()
 end
 
-function TIRA.OpenNote( title, text )
+function CAKE.OpenNote( title, text )
 	ReadMenu = vgui.Create( "DFrame" )
 	ReadMenu:SetSize( 640, 480 )
 	ReadMenu:SetTitle( "Note" )
@@ -79,7 +80,8 @@ function TIRA.OpenNote( title, text )
 
 	ReadMenu:MakePopup()
 end
-
-net.Receive("Tiramisu.ReadNote", function(len)
-	TIRA.OpenNote( net.ReadString(), net.ReadString() )
-end)
+--datastream.Hook( "Tiramisu.ReadNote", function( handler, id, encoded, decoded )
+--	CAKE.OpenNote( decoded.title, decoded.text )
+net.Receive( "Tiramisu.ReadNote", function( len )
+	CAKE.OpenNote( net.ReadString( ), net.ReadString( ) )
+end )

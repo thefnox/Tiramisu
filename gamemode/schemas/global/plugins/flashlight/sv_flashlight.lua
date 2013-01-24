@@ -1,5 +1,4 @@
-function TIRA.TurnOnFlashlight(ply, cmd, arg)
-
+concommand.Add( "rp_flashlight", function(ply, cmd, arg)
 	if ply.flashlight then 
 		ply.flashlight:Remove()
 		ply.flashlight = nil
@@ -23,5 +22,4 @@ function TIRA.TurnOnFlashlight(ply, cmd, arg)
 			umsg.Entity( ply.flashlight )
 		umsg.End()
 	end)
-end
-concommand.Add( "rp_flashlight", TIRA.TurnOnFlashlight )
+end )

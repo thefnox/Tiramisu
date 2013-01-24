@@ -89,13 +89,13 @@ local function CloseBusiness()
 	end
 end
 
-net.Receive("Tiramisu.RefreshBusiness", function(len)
+datastream.Hook("refreshbusiness", function(handler, id, encoded, decoded )
 	
-	BusinessTable = net.ReadTable()
+	BusinessTable = decoded
 	if BusinessTable and table.Count(BusinessTable) != 0 then
 		OpenBusinessMenu()
 	else
-		TIRA.Message( "You do not have access to this tab!", "Error: No Business data", "OK" )
+		CAKE.Message( "You do not have access to this tab!", "Error: No Business data", "OK" )
 		if BusinessFrame then
 			BusinessFrame:Remove()
 			BusinessFrame = nil
@@ -104,4 +104,5 @@ net.Receive("Tiramisu.RefreshBusiness", function(len)
 	
 end )
 
-TIRA.RegisterMenuTab( "Business", OpenBusiness, CloseBusiness )
+
+CAKE.RegisterMenuTab( "Business", OpenBusiness, CloseBusiness )

@@ -1,12 +1,12 @@
-TIRA.Business = {}
+CAKE.Business = {}
 
 --Buys an item.
-function TIRA.BuyItem( ply, class )
+function CAKE.BuyItem( ply, class )
 
-	local buygroups = TIRA.GetCharField(ply, "business")
+	local buygroups = CAKE.GetCharField(ply, "business")
 	
-	if !TIRA.ItemData[class] or !TIRA.ItemData[class].Purchaseable then return "Item not purchaseable!" end
-	if !table.HasValue(buygroups, TIRA.ItemData[class].ItemGroup) then return "You're not allowed to buy that!" end
+	if !CAKE.ItemData[class] or !CAKE.ItemData[class].Purchaseable then return "Item not purchaseable!" end
+	if !table.HasValue(buygroups, CAKE.ItemData[class].ItemGroup) then return "You're not allowed to buy that!" end
 
 	ply:GiveItem(class)
 

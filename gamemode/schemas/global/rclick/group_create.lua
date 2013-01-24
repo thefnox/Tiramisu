@@ -9,6 +9,6 @@ end
 
 function RCLICK.Click(target,ply)
 
-	TIRA.BeginGroupCreation()
+	CAKE.BeginGroupCreation()
 
 end

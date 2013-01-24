@@ -3,7 +3,7 @@ RCLICK.SubMenu = "Admin"
 
 function RCLICK.Condition(target)
 
-	if ValidEntity( target) and target:GetClass() == "prop_physics" and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 3 then return true end
+	if IsValid( target) and target:GetClass() == "prop_physics" and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) > 3 then return true end
 
 end
 

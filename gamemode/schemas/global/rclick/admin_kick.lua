@@ -10,8 +10,8 @@ end
 function RCLICK.Click(target,ply)
 
 	target = target:IsTiraPlayer()
-	TIRA.StringRequest( "Kick A Player", "Give a reason to kick " .. target:Nick(), "Bye.", function( text )
-		ply:ConCommand("rp_admin kick " .. TIRA.FormatText(target:SteamID()) .. " \"" .. text .. "\"" )
+	CAKE.StringRequest( "Kick A Player", "Give a reason to kick " .. target:Nick(), "Bye.", function( text )
+		ply:ConCommand("rp_admin kick " .. CAKE.FormatText(target:SteamID()) .. " \"" .. text .. "\"" )
 	end,
 	function() end, "Accept", "Cancel")
 

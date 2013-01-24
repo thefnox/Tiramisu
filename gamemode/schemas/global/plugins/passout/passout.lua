@@ -1,8 +1,8 @@
 --Makes you fall unconcious.
 concommand.Add( "rp_passout", function( ply, cmd, args )
-	TIRA.UnconciousMode( ply )
+	CAKE.UnconciousMode( ply )
 	if ply:GetNWBool( "unconciousmode", false ) and ply.CanWakeUp then
-		TIRA.WakeUp(ply)
+		CAKE.WakeUp(ply)
 	end
 end)
 
@@ -10,31 +10,31 @@ end)
 concommand.Add( "rp_wakeup", function( ply, cmd, args )
 
 	if ply:GetNWBool( "unconciousmode", false ) and ply.CanWakeUp then
-		TIRA.WakeUp(ply)
+		CAKE.WakeUp(ply)
 	end
 
 end)
 
 --Toggles unconcious status.
-function TIRA.UnconciousMode( ply, wait, delay )
+function CAKE.UnconciousMode( ply, wait, delay )
 
 	if ply:Alive() and !ply:GetNWBool( "unconciousmode", false ) then
 
 		ply.LastUnconcious = ply.LastUnconcious or 0
 
-		if ply:GetNWBool( "sittingchair", false ) or ply:GetNWBool( "sittingground", false ) and TIRA.PlayerRank(ply) < 1 then
+		if ply:GetNWBool( "sittingchair", false ) or ply:GetNWBool( "sittingground", false ) and CAKE.PlayerRank(ply) < 1 then
 			--ADMIN ONLY BUTT RACING FUCK YEAH
-			TIRA.SendError( ply, "You must stand up to go unconcious!")
+			CAKE.SendError( ply, "You must stand up to go unconcious!")
 			return
 		end
 
 		if ply:GetNWBool( "observe" ) then
-			TIRA.SendError( ply, "You can't go unconcious while on observe!")
+			CAKE.SendError( ply, "You can't go unconcious while on observe!")
 			return
 		end
 
 		if ply.LastUnconcious > CurTime() then
-			TIRA.SendError( ply, "You must wait " .. tostring( math.ceil( ply.LastUnconcious - CurTime() )) .. " seconds to go unconcious again!")
+			CAKE.SendError( ply, "You must wait " .. tostring( math.ceil( ply.LastUnconcious - CurTime() )) .. " seconds to go unconcious again!")
 			return
 		end
 
@@ -46,14 +46,14 @@ function TIRA.UnconciousMode( ply, wait, delay )
 		ply:SetNoDraw( true )
 		ply:SetNotSolid( true )
 		
-		if ValidEntity( ply.rag ) then
+		if IsValid( ply.rag ) then
 			ply.rag:Remove()
 			ply.rag = nil
 		end
 		
-		TIRA.DayLog( "script.txt", "Starting unconcious mode for " .. ply:SteamID( ) )
+		CAKE.DayLog( "script.txt", "Starting unconcious mode for " .. ply:SteamID( ) )
 		
-		local rag = TIRA.CreatePlayerRagdoll( ply )
+		local rag = CAKE.CreatePlayerRagdoll( ply )
 		ply.rag = rag
 		ply.unconcioustime = 0
 
@@ -68,7 +68,7 @@ function TIRA.UnconciousMode( ply, wait, delay )
 		bull:Activate()
 
 		for _, npc in pairs( ents.GetAll() ) do
-			if ValidEntity( npc ) and npc:IsNPC( ) and npc:Disposition(ply) == D_HT then
+			if IsValid( npc ) and npc:IsNPC( ) and npc:Disposition(ply) == D_HT then
 				npc:AddEntityRelationship( rag, D_HT, 999 )
 				npc:AddRelationship("npc_bullseye D_HT 1")
 				npc:AddEntityRelationship( ply, D_NU, 1 )
@@ -86,7 +86,7 @@ function TIRA.UnconciousMode( ply, wait, delay )
 			umsg.End()
 		end)		
 		 
-		timer.Create(ply:SteamID() .. "unconcioustimer", wait or TIRA.ConVars[ "UnconciousTimer" ], 1, function()
+		timer.Create(ply:SteamID() .. "unconcioustimer", wait or CAKE.ConVars[ "UnconciousTimer" ], 1, function()
 			ply.CanWakeUp = true
 			umsg.Start( "Tiramisu.DisplayWakeUpButton", ply )
 				umsg.Bool( true )
@@ -97,7 +97,7 @@ function TIRA.UnconciousMode( ply, wait, delay )
 	end
 end
 
-function TIRA.WakeUp(ply, dontdestroyragdoll)
+function CAKE.WakeUp(ply, dontdestroyragdoll)
 	if !(ply:GetNWBool( "unconciousmode", false )) then return end
 	ply:SetNWBool( "unconciousmode", false )
 	ply:SetPos( ply.rag:GetPos() + Vector( 0, 0, 10 ))
@@ -109,12 +109,12 @@ function TIRA.WakeUp(ply, dontdestroyragdoll)
 	ply:DrawViewModel(true)
 	if !dontdestroyragdoll then
 		for _, npc in pairs( ents.GetAll( ) ) do
-			if ValidEntity( npc ) and npc:IsNPC( ) and npc:Disposition(ply.rag) == D_HT then
+			if IsValid( npc ) and npc:IsNPC( ) and npc:Disposition(ply.rag) == D_HT then
 				npc:AddEntityRelationship( ply, D_HT, 99 )
 			end
 		end
-		TIRA.RestoreClothing( ply )
-		TIRA.RestoreGear( ply )
+		CAKE.RestoreClothing( ply )
+		CAKE.RestoreGear( ply )
 		ply:SetViewEntity( ply )
 		if ply.rag then
 			ply.rag:Remove()
@@ -136,13 +136,13 @@ function TIRA.WakeUp(ply, dontdestroyragdoll)
 	ply:SetVelocity( Vector(0,0,0))
 end
 
-function TIRA.RagDamage( ent, inflictor, attacker, amount )
+function CAKE.RagDamage( ent, inflictor, attacker, amount )
  
-	if ValidEntity(ent.ply) and ent.ply:Alive() and ValidEntity(inflictor) and (inflictor:IsPlayer() or inflictor:IsNPC()) then
-		if TIRA.ConVars[ "DamageWhileUnconcious" ] then
+	if IsValid(ent.ply) and ent.ply:Alive() and IsValid(inflictor) and (inflictor:IsPlayer() or inflictor:IsNPC()) then
+		if CAKE.ConVars[ "DamageWhileUnconcious" ] then
 			ent.ply:SetHealth(ent.ply:Health()-amount)
 			if ent.ply:Health() <= 0 then
-				TIRA.WakeUp(ent.ply, true)
+				CAKE.WakeUp(ent.ply, true)
 				ent.ply.DeadWhileUnconcious = true
 				ent.ply:Kill()
 				ent.ply = nil
@@ -151,4 +151,4 @@ function TIRA.RagDamage( ent, inflictor, attacker, amount )
 	end
  
 end
-hook.Add( "EntityTakeDamage", "Tiramisu.RagdollDamage", TIRA.RagDamage )
+hook.Add( "EntityTakeDamage", "Tiramisu.RagdollDamage", CAKE.RagDamage )

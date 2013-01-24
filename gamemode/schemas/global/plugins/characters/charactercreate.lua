@@ -1,30 +1,32 @@
+util.AddNetworkString("Tiramisu.InitialSpawn")
+
 -- Set Model
 concommand.Add( "rp_setmodel", function(ply, cmd, args)
 	local mdl = args[ 1 ]
 	
-	if( ply:GetNWBool( "charactercreate") ) then
-		TIRA.SetCharField(ply, "model", mdl )
+	if( ply:GetNWInt( "charactercreate" ) == 1 ) then
+		CAKE.SetCharField(ply, "model", mdl )
 	end
 
 end )
 
 concommand.Add( "rp_setage", function(ply, cmd, args)
 	local age = args[ 1 ]
-	TIRA.SetCharField(ply, "age", age )	
+	CAKE.SetCharField(ply, "age", age )	
 end )
 
 concommand.Add( "rp_facevariation", function(ply, cmd, args)
 	local skin = tonumber(args[ 1 ]) or 0
-	TIRA.SetCharField(ply, "skin", skin )
+	CAKE.SetCharField(ply, "skin", skin )
 end)
 
 concommand.Add( "rp_setstartclothing", function(ply,cmd,args)
-	if( ply:GetNWBool( "charactercreate") ) then
-		if TIRA.ConVars[ "DefaultClothing" ][ ply:GetNWString( "gender", "Male" ) ] then
+	if( ply:GetNWInt( "charactercreate" ) == 1 ) then
+		if CAKE.ConVars[ "DefaultClothing" ][ ply:GetNWString( "gender", "Male" ) ] then
 
-			if table.HasValue( TIRA.ConVars[ "DefaultClothing" ][ ply:GetNWString( "gender", "Male" ) ], args[1] ) then
+			if table.HasValue( CAKE.ConVars[ "DefaultClothing" ][ ply:GetNWString( "gender", "Male" ) ], args[1] ) then
 				ply:GiveItem( args[1] )
-				TIRA.SetCharField(ply, "clothing", args[1] )
+				CAKE.SetCharField(ply, "clothing", args[1] )
 			end
 
 		end
@@ -35,36 +37,61 @@ end )
 concommand.Add( "rp_setgender", function(ply, cmd, args)
 	local gender = args[ 1 ]
 	
-	if( ply:GetNWBool( "charactercreate") ) then
-		TIRA.SetCharField(ply, "gender", gender )	
+	if( ply:GetNWInt( "charactercreate" ) == 1 ) then
+		CAKE.SetCharField(ply, "gender", gender )	
 	end
 end )
 
 concommand.Add( "rp_begincreate", function(ply, cmd, args)
 
-	ply:SetNWBool( "charactercreate", true )
-	umsg.Start( "StartCharacterCreation", ply )
-	umsg.End()
+	if CAKE.ConVars[ "MaxCharacters" ] == 0 or (CAKE.ConVars[ "MaxCharacters" ] > 0 and table.Count(CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ]) < CAKE.ConVars[ "MaxCharacters" ]) then
+		ply:SetNWInt( "charactercreate", 1 )
+		umsg.Start( "StartCharacterCreation", ply )
+		umsg.End()
+	elseif CAKE.ConVars[ "MaxCharacters" ] > 0 and table.Count(CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ]) >= CAKE.ConVars[ "MaxCharacters" ] then
+		CAKE.SendError( ply, "You can't create any more characters! (You have:" .. table.Count(CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ]) .. ", Max: " ..   CAKE.ConVars[ "MaxCharacters" ] .. ")")
+	end
 
 end )
 
 -- Start Creation
 concommand.Add( "rp_startcreate", function(ply, cmd, args)
-	if ply:GetNWBool( "charactercreate" ) then
-		ply:SetNWString( "uid", TIRA.CreateNewChar() )
+	if ply:GetNWInt( "charactercreate", 0 )> 0 then
+		local PlyCharTable = CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ]
+		
+		-- Find the highest Unique ID
+		local high = 0
+		
+		for k, v in pairs( PlyCharTable ) do
+		
+			k = tonumber( k )
+			high = tonumber( high )
+			
+			if( k > high ) then 
+			
+				high = k
+				
+			end
+			
+		end
+		
+		high = high + 1
+		ply:SetNWString( "uid", tostring(high) )
+
+		CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ][ "characters" ][ tostring(high) ] = {  }
 	end
 end )
 
 concommand.Add( "rp_escapecreate", function(ply, cmd, args)
-	if ply:GetNWBool( "charactercreate" )  then
-		ply:SetNWBool( "charactercreate", false )
+	if ply:GetNWInt( "charactercreate", 0 ) > 0 then
+		ply:SetNWInt( "charactercreate", 0 )
 	end
-	TIRA.SelectRandomCharacter( ply )
+	CAKE.SelectRandomCharacter( ply )
 end )
 
 concommand.Add( "rp_testclothing", function(ply, cmd, args)
-	if ply:GetNWBool( "charactercreate" ) then
-		TIRA.RemoveAllGear( ply )
+	if ply:GetNWInt( "charactercreate", 0 )> 0 then
+		CAKE.RemoveAllGear( ply )
 		if args[ 1 ] and args[ 1 ] != "none" then
 			ply:SetNWBool( "specialmodel", false ) 
 			ply:SetModel( Anims[args[ 1 ]][ "models" ][1] )
@@ -72,20 +99,20 @@ concommand.Add( "rp_testclothing", function(ply, cmd, args)
 			ply:SetMaterial("models/null")
 		end
 		if args[ 2 ] and args[ 2 ] != "none" then
-			TIRA.TestClothing( ply, args[ 2 ] )
+			CAKE.TestClothing( ply, args[ 2 ] )
 		end
 		if args[ 3 ] and args[ 3 ] != "none" then
-			TIRA.TestClothing( ply, args[ 2 ], args[ 3 ] )
+			CAKE.TestClothing( ply, args[ 2 ], args[ 3 ] )
 		end
 		if args[ 4 ] and args[ 4 ] != "none" then
-			TIRA.TestClothing( ply, args[ 2 ], args[ 3 ], args[ 4 ] )
+			CAKE.TestClothing( ply, args[ 2 ], args[ 3 ], args[ 4 ] )
 		end
 	end
 end )
 
 concommand.Add("rp_testskin", function(ply, cmd, args)
 	local skin = tonumber(args[1]) or 0
-	if ply:GetNWBool( "charactercreate" ) then
+	if ply:GetNWInt( "charactercreate", 0 )> 0 then
 		for _, ent in pairs( ply.Clothing ) do
 			ent:SetSkin( skin )
 		end
@@ -94,45 +121,59 @@ end)
 
 -- Finish Creation
 concommand.Add( "rp_finishcreate", function(ply, cmd, args)
-	if( ply:GetNWBool( "charactercreate") ) then
+	if( ply:GetNWInt( "charactercreate" ) == 1 ) then
 		
-		ply:SetNWBool( "charactercreate", false )
+		ply:SetNWInt( "charactercreate", 0 )
 		
-		TIRA.SetCharField( ply, "inventory", TIRA.CreatePlayerInventory( ply ) , ply:GetNWString("uid"))
-		local chars = TIRA.GetPlayerField( ply, "characters" ) or {}
-		table.insert(chars, ply:GetNWString("uid"))
-		TIRA.SetPlayerField(ply, "characters", chars)
+		local SteamID = CAKE.FormatText( ply:SteamID() )
+		
+		for fieldname, default in pairs( CAKE.CharacterDataFields ) do
+			if( CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ] == nil) then
+				CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ][ fieldname ] = CAKE.ReferenceFix(default)
+			end
+		end
+
+		CAKE.PlayerData[ SteamID ][ "characters" ][ ply:GetNWString( "uid" ) ]["inventory"] = CAKE.CreatePlayerInventory( ply )
 		
 		ply:SetTeam( 1 )
 		
-		TIRA.SendCharList( ply )
-		TIRA.ResendCharData( ply )
+		umsg.Start("ClearReceivedChars", ply)
+		umsg.End()
+		for k, v in pairs( CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ]["characters"] ) do -- Send them all their characters for selection
+
+			umsg.Start( "ReceiveChar", ply )
+				umsg.Long( tonumber(k) )
+				umsg.String( v[ "name" ] )
+			umsg.End( )
+			
+		end
+		umsg.Start("DisplayCharacterList", ply)
+		umsg.End()
+		CAKE.ResendCharData( ply )
 		
 	end
 end )
 
 concommand.Add( "rp_selectchar", function(ply, cmd, args)
 	local uid = args[ 1 ]
-	print("SELECTING:", uid, "\n")
-	TIRA.SelectChar( ply, uid )
+	
+	CAKE.SelectChar( ply, uid )
 end)
 
 concommand.Add( "rp_spawnchar", function(ply, cmd, args) 
 	local uid = args[ 1 ]
-	local SteamID = TIRA.FormatText(ply:SteamID())
 	
-	if TIRA.CharExists( uid ) then
-	
+	if CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ]["characters"] and CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ]["characters"][uid]  then
+		MsgN("Spawning Character ", args[1], " from player ", ply:SteamID())
 		ply:SetNWString( "uid", uid )
-		print("SPAWNING",uid,"\n")
 		
-		ply:SetNWBool( "charactercreate", false )
+		ply:SetNWInt( "charactercreate", 0 )
 	
 		ply:SetTeam( 1 )
 		ply:SetNWBool( "charloaded", true )
 
 		ply:Spawn( )
-		TIRA.ResendCharData( ply )
+		CAKE.ResendCharData( ply )
 	end
 end)
 
@@ -152,20 +193,32 @@ concommand.Add( "rp_ready", function(ply, cmd, args)
 	end
 end )
 
+
 concommand.Add( "rp_receivechars", function( ply, cmd, args )
-	TIRA.SendCharList( ply )
-	TIRA.ResendCharData( ply )
+	umsg.Start("ClearReceivedChars", ply)
+	umsg.End()
+	for k, v in pairs( CAKE.PlayerData[ CAKE.FormatText( ply:SteamID() ) ]["characters"] ) do -- Send them all their characters for selection
+
+		umsg.Start( "ReceiveChar", ply )
+			umsg.Long( tonumber(k) )
+			umsg.String( v[ "name" ] )
+		umsg.End( )
+		
+	end
+	umsg.Start("DisplayCharacterList", ply)
+	umsg.End()
 	if !util.tobool(args[1]) then
 		timer.Simple( 1, function()
-			TIRA.SelectRandomCharacter( ply )
+			CAKE.SelectRandomCharacter( ply )
 		end)
 	end
 end)
 concommand.Add( "rp_confirmremoval", function(ply, cmd, args) 
 	local id = args[1]
-	local name = TIRA.GetCharField( ply, "name", id)
-	local age = TIRA.GetCharField( ply, "age", id)
-	local model = TIRA.GetCharField( ply, "model", id)
+	local SteamID = CAKE.FormatText( ply:SteamID() )
+	local name = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "name" ]
+	local age = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "age" ]
+	local model = CAKE.PlayerData[ SteamID ][ "characters" ][ id ][ "model" ]
 	umsg.Start("ConfirmCharRemoval", ply)
 		umsg.String( name )
 		umsg.Long( id )
@@ -174,70 +227,51 @@ end )
 
 concommand.Add( "rp_removechar", function(ply, cmd, args) 
 	local id = args[1]
-	TIRA.RemoveCharacter( ply, id )
+	CAKE.RemoveCharacter( ply, id )
 	umsg.Start( "DisplayCharacterList", ply )
 	umsg.End()
 end )
 
 
-function TIRA.SelectRandomCharacter( ply )
-	local tbl = TIRA.GetPlayerField( ply, "characters") or {}
+function CAKE.SelectRandomCharacter( ply )
+	local tbl = {}
+	for k, _ in pairs(CAKE.PlayerData[ CAKE.FormatText(ply:SteamID()) ][ "characters" ]) do
+		table.insert( tbl, k )
+	end
 	if table.Count( tbl ) > 0 then
-		TIRA.SelectChar( ply, table.Random(tbl) )
+		CAKE.SelectChar( ply, table.Random(tbl) )
 	end
 end
 
-function TIRA.SendCharList( ply )
-	umsg.Start("ClearReceivedChars", ply)
-	umsg.End()
-	for k, v in pairs( TIRA.GetPlayerField(ply, "characters") or {} ) do -- Send them all their characters for selection
+function CAKE.SelectChar( ply, uid )
+	local SteamID = CAKE.FormatText(ply:SteamID())
+	if( CAKE.PlayerData[ SteamID ][ "characters" ][ uid ] != nil ) then
+		local char = CAKE.PlayerData[ SteamID ][ "characters" ][ uid ]
+		local special = char[ "specialmodel" ]
+		if special == "none" or special == "" then
+			ply:SetNWBool( "specialmodel", false ) 
+			local m = char[ "gender" ]
+			ply:SetModel( Anims[m][ "models" ][1] )
+			ply:SetNWString( "gender", m )
+			ply:SetMaterial("models/null")
 
-		umsg.Start( "ReceiveChar", ply )
-			umsg.Long( v )
-			umsg.String( TIRA.GetCharField(ply, "name", v) or "" )
-		umsg.End( )
-		
-	end
-	umsg.Start("DisplayCharacterList", ply)
-	umsg.End()
-end
+			CAKE.TestClothing( ply, char[ "model" ], char[ "clothing" ], char[ "helmet" ], char[ "headratio" ],char[ "bodyratio" ], char[ "handratio" ], char[ "clothingid" ], char[ "helmetid" ], char[ "bodygroup1"], char[ "bodygroup2"], char[ "bodygroup3"], char[ "skin"])
 
-function TIRA.SelectChar( ply, uid )
-	local special = TIRA.GetCharField( ply, "specialmodel", uid)
-	if special == "none" or special == "" then
-		local query = TIRA.Query("SELECT gender,model,clothing,helmet,handratio,bodyratio,headratio,clothingid,helmetid,bodygroup1,bodygroup2,bodygroup3,skin,gear FROM tiramisu_chars WHERE id='" .. uid .. "'")
-		local char = query[1]
-		for fieldname, value in pairs(char) do
-			if type(TIRA.CharacterDataFields[ fieldname ]) == "table" then char[fieldname] = TIRA.Deserialize(value) or {} end
-			if type(TIRA.CharacterDataFields[ fieldname ]) == "string" then
-				if type(char[fieldname]) != "string" then char[fieldname] = tostring(char[fieldname]) or ""
-				else if (char[fieldname][1] == "'" or char[fieldname][1] == "\"")then char[fieldname] = string.sub( char[fieldname], 2, -2) end end 
+			local tbl = char[ "gear" ]
+			CAKE.RemoveAllGear( ply )
+
+			for k, v in pairs( tbl ) do
+				CAKE.HandleGear( ply, v[ "item" ], v[ "bone" ], v[ "itemid" ], v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )
 			end
-			if type(TIRA.CharacterDataFields[ fieldname ]) == "number" then char[fieldname] = tonumber(value) or 0 end
-			if type(TIRA.CharacterDataFields[ fieldname ]) == "boolean" then char[fieldname] = util.tobool(value) or false end
-		end
-		local m = char["gender"]
-		PrintTable(char)
-		ply:SetNWBool( "specialmodel", false ) 
-		ply:SetModel( Anims[m][ "models" ][1] )
-		ply:SetNWString( "gender", char[ "gender" ])
-		ply:SetMaterial("models/null")
-
-		CAKE.TestClothing( ply, char[ "model" ], char[ "clothing" ], char[ "helmet" ], char[ "headratio" ],char[ "bodyratio" ], char[ "handratio" ], char[ "clothingid" ], char[ "helmetid" ], char[ "bodygroup1"], char[ "bodygroup2"], char[ "bodygroup3"], char[ "skin"])
-
-		CAKE.RemoveAllGear( ply )
-
-		for k, v in pairs( char[ "gear" ] ) do
-			CAKE.HandleGear( ply, v[ "item" ], v[ "bone" ], v[ "itemid" ], v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )
-		end
 			
-		TIRA.SendGearToClient( ply )
-	else
-		ply:SetNWBool( "specialmodel", true ) 
-		ply:SetModel( tostring( special ) )
-	end 	
-	umsg.Start("SelectThisCharacter")
-		umsg.Long( uid )
-	umsg.End()
+			CAKE.SendGearToClient( ply )
+		else
+			ply:SetNWBool( "specialmodel", true ) 
+			ply:SetModel( tostring( special ) )
+		end 	
+		umsg.Start("SelectThisCharacter")
+			umsg.Long( uid )
+		umsg.End()
+	end
 
 end

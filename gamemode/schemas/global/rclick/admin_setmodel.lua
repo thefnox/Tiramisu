@@ -11,8 +11,8 @@ function RCLICK.Click(target,ply)
 
 	target = target:IsTiraPlayer()
 
-	TIRA.StringRequest( "Change a player's model", "Select what model to set " .. target:Nick() .. " as (Will remove clothing)", target:GetModel(), function( text )
-		ply:ConCommand("rp_admin setmodel " .. TIRA.FormatText(target:SteamID()) .. " " .. text )
+	CAKE.StringRequest( "Change a player's model", "Select what model to set " .. target:Nick() .. " as (Will remove clothing)", target:GetModel(), function( text )
+		ply:ConCommand("rp_admin setmodel " .. CAKE.FormatText(target:SteamID()) .. " " .. text )
 	end,
 	function() end, "Accept", "Cancel")
 

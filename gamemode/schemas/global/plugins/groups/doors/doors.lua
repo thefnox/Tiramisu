@@ -1,29 +1,29 @@
 hook.Add( "InitPostEntity", "TiramisuLoadDoors", function()
-	TIRA.LoadDoors()
+	CAKE.LoadDoors()
 end)
 
-TIRA.Doors = {}
+CAKE.Doors = {}
 
 --Loads all door information
-function TIRA.LoadDoors()
+function CAKE.LoadDoors()
 
-	if file.Exists(TIRA.Name .. "/DoorData/" .. game.GetMap() .. ".txt", "DATA") then
+	if(file.Exists(CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt", "DATA")) then
 
-		local rawdata = file.Read( TIRA.Name .. "/DoorData/" .. game.GetMap() .. ".txt", "DATA")
-		local tabledata = TIRA.Deserialize( rawdata )
+		local rawdata = file.Read( CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt")
+		local tabledata = glon.decode( rawdata )
 		
-		TIRA.Doors = tabledata
+		CAKE.Doors = tabledata
 		local entities
 
-		for _, door in pairs( TIRA.Doors ) do
+		for _, door in pairs( CAKE.Doors ) do
 			entities = ents.FindByClass( door["class"] )
 			for _, entity in pairs( entities ) do
-				if ValidEntity( entity ) and entity:GetPos() == door["pos"] then
+				if IsValid( entity ) and entity:GetPos() == door["pos"] then
 					entity.doorgroup = door["doorgroup"]
 					entity.title = door["title"]
 					entity.building = door["building"]
 					entity.purchaseable = door["purchaseable"]
-					TIRA.SetDoorTitle( entity, entity.title )
+					CAKE.SetDoorTitle( entity, entity.title )
 				end
 			end
 		end
@@ -32,21 +32,21 @@ function TIRA.LoadDoors()
 
 end
 
-function TIRA.SaveDoors()
+function CAKE.SaveDoors()
 
-	local keys = TIRA.Serialize(TIRA.Doors)
-	file.Write(TIRA.Name .. "/DoorData/" .. game.GetMap() .. ".txt", keys)
+	local keys = glon.encode(CAKE.Doors)
+	file.Write(CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt", keys)
 
 end
 
 --Fetches a door's group affinity.
-function TIRA.GetDoorGroup( entity )
+function CAKE.GetDoorGroup( entity )
 
-	if ValidEntity( entity ) then
+	if IsValid( entity ) then
 		if entity.doorgroup then
 			return entity.doorgroup
 		end
-		for k, v in pairs(TIRA.Doors) do
+		for k, v in pairs(CAKE.Doors) do
 			if(v["class"] == entity:GetClass() and v["pos"] == entity:GetPos() and v["doorgroup"]) then
 				return v["doorgroup"]
 			end
@@ -58,13 +58,13 @@ function TIRA.GetDoorGroup( entity )
 end
 
 --Fetches on what group of doors does this entity belong to.
-function TIRA.GetDoorBuilding(entity)
+function CAKE.GetDoorBuilding(entity)
 
 	if entity.building then
 		return entity.building
 	end
 
-	for k, v in pairs(TIRA.Doors) do
+	for k, v in pairs(CAKE.Doors) do
 		if v["class"] == entity:GetClass() and v["pos"] == entity:GetPos() then
 			return v["building"]
 		end
@@ -75,7 +75,7 @@ function TIRA.GetDoorBuilding(entity)
 end
 
 --Sets a door's title.
-function TIRA.SetDoorTitle( door, title )
+function CAKE.SetDoorTitle( door, title )
 	door:SetNWString( "doortitle", string.sub( title, 1, 33) )
 end
 
@@ -83,22 +83,22 @@ function ccLockDoor( ply, cmd, args )
 	
 	local entity = ents.GetByIndex( tonumber( args[ 1 ] ) )
 	local door = ents.GetByIndex( tonumber( args[ 1 ] ) )
-	local doorgroup = TIRA.GetDoorGroup(entity) or 0
-	local group = TIRA.GetGroup( TIRA.GetCharField( ply, "activegroup" ))
+	local doorgroup = CAKE.GetDoorGroup(entity) or 0
+	local group = CAKE.GetGroup( CAKE.GetCharField( ply, "activegroup" ))
 	local groupdoor = 0
 	if group then
 		groupdoor = group:GetField("doorgroup")
 	end
-	if( TIRA.IsDoor( door ) ) then
-		if (door.owner and door.owner == ply) or ply:IsSuperAdmin() or ply:IsAdmin() or !TIRA.ConVars[ "DoorsPurchaseable" ] then
+	if( CAKE.IsDoor( door ) ) then
+		if (door.owner and door.owner == ply) or ply:IsSuperAdmin() or ply:IsAdmin() or !CAKE.ConVars[ "DoorsPurchaseable" ] then
 			door:Fire( "lock", "", 0 )
-			TIRA.SendChat( ply, "Door locked!" )
+			CAKE.SendChat( ply, "Door locked!" )
 		else
 			if doorgroup == groupdoor then
 				door:Fire( "lock", "", 0 )
-				TIRA.SendChat( ply, "Door locked!" )
+				CAKE.SendChat( ply, "Door locked!" )
 			else
-				TIRA.SendChat( ply, "This is not your door!" )
+				CAKE.SendChat( ply, "This is not your door!" )
 			end
 		end
 	end
@@ -110,22 +110,22 @@ function ccUnLockDoor( ply, cmd, args )
 	
 	local entity = ents.GetByIndex( tonumber( args[ 1 ] ) )
 	local door = ents.GetByIndex( tonumber( args[ 1 ] ) )
-	local doorgroup = TIRA.GetDoorGroup(entity) or 0
-	local group = TIRA.GetGroup( TIRA.GetCharField( ply, "activegroup" ))
+	local doorgroup = CAKE.GetDoorGroup(entity) or 0
+	local group = CAKE.GetGroup( CAKE.GetCharField( ply, "activegroup" ))
 	local groupdoor = 0
 	if group then
 		groupdoor = group:GetField("doorgroup")
 	end
-	if( TIRA.IsDoor( door ) ) then
-		if (door.owner and door.owner == ply) or ply:IsSuperAdmin() or ply:IsAdmin() or !TIRA.ConVars[ "DoorsPurchaseable" ] then
+	if( CAKE.IsDoor( door ) ) then
+		if (door.owner and door.owner == ply) or ply:IsSuperAdmin() or ply:IsAdmin() or !CAKE.ConVars[ "DoorsPurchaseable" ] then
 			door:Fire( "unlock", "", 0 )
-			TIRA.SendChat( ply, "Door unlocked!" )
+			CAKE.SendChat( ply, "Door unlocked!" )
 		else
 			if doorgroup == groupdoor then
 				door:Fire( "unlock", "", 0 )
-				TIRA.SendChat( ply, "Door unlocked!" )
+				CAKE.SendChat( ply, "Door unlocked!" )
 			else
-				TIRA.SendChat( ply, "This is not your door!" )
+				CAKE.SendChat( ply, "This is not your door!" )
 			end
 		end
 	end
@@ -139,67 +139,67 @@ function ccPurchaseDoor( ply, cmd, args )
 	
 	local pos = door:GetPos( )
 
-	if !TIRA.ConVars[ "DoorsPurchaseable" ] then
+	if !CAKE.ConVars[ "DoorsPurchaseable" ] then
 
-		TIRA.SendChat( ply, "Purchasing doors is disabled." )
+		CAKE.SendChat( ply, "Purchasing doors is disabled." )
 		return
 
 	end
 	
 		
-	if( TIRA.GetDoorGroup( door ) != 0 or !door.purchaseable ) then
+	if( CAKE.GetDoorGroup( door ) != 0 or !door.purchaseable ) then
 		
-		TIRA.SendChat( ply, "This is not a purchaseable door!" )
+		CAKE.SendChat( ply, "This is not a purchaseable door!" )
 		return
 			
 	end
 
 	
-	if( TIRA.IsDoor( door ) ) then
+	if( CAKE.IsDoor( door ) ) then
 
 		if( door.owner == nil ) then
 
-			if TIRA.GetDoorBuilding(door) != 0 then
-				local building = TIRA.GetDoorBuilding(door)
+			if CAKE.GetDoorBuilding(door) != 0 then
+				local building = CAKE.GetDoorBuilding(door)
 				local doors
-				for _, targetdoor in pairs( TIRA.Doors ) do
+				for _, targetdoor in pairs( CAKE.Doors ) do
 					if targetdoor["building"] == building then
 						doors = ents.FindByClass( targetdoor["class"] )
 						for k, v in pairs( doors ) do
 							if v:GetPos() == targetdoor["pos"] then
-								TIRA.ChangeMoney( ply, -50 )
+								CAKE.ChangeMoney( ply, -50 )
 								v.owner = ply
 							end
 						end
 					end
 				end
-				TIRA.SendChat( ply, "Building Owned" )
+				CAKE.SendChat( ply, "Building Owned" )
 			else
-				if( tonumber( TIRA.GetCharField( ply, "money" ) ) >= 50 ) then
+				if( tonumber( CAKE.GetCharField( ply, "money" ) ) >= 50 ) then
 					-- Enough money to start off, let's start the rental.
-					TIRA.ChangeMoney( ply, -50 )
+					CAKE.ChangeMoney( ply, -50 )
 					door.owner = ply
-					TIRA.SendChat( ply, "Door Owned" )
+					CAKE.SendChat( ply, "Door Owned" )
 				end
 			end
 			
 		elseif( door.owner == ply ) then
 		
 			door.owner = nil
-			TIRA.ChangeMoney( ply, 50 )
-			TIRA.SetDoorTitle( door, "" )
-			for _, Door in pairs( TIRA.Doors ) do
+			CAKE.ChangeMoney( ply, 50 )
+			CAKE.SetDoorTitle( door, "" )
+			for _, Door in pairs( CAKE.Doors ) do
 				if Door[ "pos" ] == door:GetPos() then
-					TIRA.SetDoorTitle( door, Door["title"] )
+					CAKE.SetDoorTitle( door, Door["title"] )
 					break
 				end
 			end
 
-			TIRA.SendChat( ply, "Door Unowned" )
+			CAKE.SendChat( ply, "Door Unowned" )
 			
 		else
 		
-			TIRA.SendChat( ply, "This door is already rented by someone else!" )
+			CAKE.SendChat( ply, "This door is already rented by someone else!" )
 			
 		end
 	
@@ -213,13 +213,13 @@ local function ccDoorTitle( ply, cmd, args )
 	local door = ply:GetEyeTrace( ).Entity
 
 	if door.owner and door.owner != ply then
-		TIRA.SendChat( ply, "You don't own this door!" )
+		CAKE.SendChat( ply, "You don't own this door!" )
 		return
 	end
 
-	if (ValidEntity( door ) and TIRA.IsDoor( door ) and (door.owner and door.owner == ply)) or !TIRA.ConVars[ "DoorsPurchaseable" ] then
+	if (IsValid( door ) and CAKE.IsDoor( door ) and (door.owner and door.owner == ply)) or !CAKE.ConVars[ "DoorsPurchaseable" ] then
 		local title = table.concat( args, " " )
-		TIRA.SetDoorTitle( door, title )
+		CAKE.SetDoorTitle( door, title )
 	end
 
 end

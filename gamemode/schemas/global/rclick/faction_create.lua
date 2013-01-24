@@ -9,6 +9,6 @@ end
 
 function RCLICK.Click(target,ply)
 
-	TIRA.BeginFactionCreation()
+	CAKE.BeginFactionCreation()
 
 end

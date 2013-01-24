@@ -1,19 +1,17 @@
-/*
-function TIRA.FlashLightBindPress(ply, bind, pressed)
-	if string.find(bind, "impulse 100") then
+hook.Add("PlayerBindPress", "Tiramisu.FlashBind", function(ply, bind, pressed)
+	if string.find(bind, "impulse 100") and pressed then
 		RunConsoleCommand("rp_flashlight")
 		return true
 	end
-end
-hook.Add("PlayerBindPress", "FlashBind", TIRA.FlashLightBindPress)
+end)
 
-function TIRA.FlashLightOn(um)
+usermessage.Hook( "flashlighton", function(um)
 	local ply = um:ReadEntity()
 	ply.flashlight = um:ReadEntity()
-end
-usermessage.Hook( "flashlighton", TIRA.FlashLightOn )
+end)
 
-function TIRA.FlashlightThink()
+hook.Add("Think", "Tiramisu.FlashlightThink", function()
+
 	for k,v in pairs(player.GetAll()) do
 		if v.flashlight and v.flashlight:IsValid() then
 			local headpos = v:EyePos()
@@ -23,5 +21,5 @@ function TIRA.FlashlightThink()
 			v.flashlight:SetAngles((v.CurrentLookAt + v:GetAngles()) or Angle(90,90,90))
 		end
 	end
-end
-hook.Add("Think", "FlashlightThink", TIRA.FlashlightThink)*/
+
+end)

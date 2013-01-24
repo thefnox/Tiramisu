@@ -92,7 +92,7 @@ local function CloseScoreboard()
 		PlayerMenu = nil
 	end
 end
-TIRA.RegisterMenuTab( "Scoreboard", OpenScoreboard, CloseScoreboard )
+CAKE.RegisterMenuTab( "Scoreboard", OpenScoreboard, CloseScoreboard )
 
 usermessage.Hook( "showscoreboard", function( um )
 	

@@ -1,7 +1,7 @@
 hook.Add( "InitPostEntity", "TiramisuLoadSchemeColor", function()
-	if file.Exists( TIRA.Name .. "/personaldata/schemecolor.txt", "DATA" ) then
-		local tbl = TIRA.Deserialize( file.Read( TIRA.Name .. "/personaldata/schemecolor.txt", "DATA" ))
-		TIRA.BaseColor = tbl.color
+	if file.Exists( CAKE.Name .. "/personaldata/schemecolor.txt", "DATA" ) then
+		local tbl = glon.decode( file.Read( CAKE.Name .. "/personaldata/schemecolor.txt" ))
+		CAKE.BaseColor = tbl.color
 	end
 end)
 
@@ -162,7 +162,7 @@ local function OpenOptions()
 	Schema:SetPadding( 5 )
 
 	local schemecolormixer = vgui.Create( "DColorMixer")
-	schemecolormixer:SetColor( TIRA.BaseColor )
+	schemecolormixer:SetColor( CAKE.BaseColor )
 	schemecolormixer:SetSize( 200, 140 )
 	
 	local SchemeColor = vgui.Create( "DLabel" )
@@ -176,9 +176,9 @@ local function OpenOptions()
 	SetSchemeColor:SetText( "Set the scheme color" )
 	SetSchemeColor.DoClick = function()
 		local color = SchemeColor:GetColor()
-		TIRA.BaseColor = color
-		local tbl = { ["color"] = TIRA.BaseColor }
-		file.Write( TIRA.Name .. "/personaldata/schemecolor.txt", TIRA.Serialize( tbl ) )
+		CAKE.BaseColor = color
+		local tbl = { ["color"] = CAKE.BaseColor }
+		file.Write( CAKE.Name .. "/personaldata/schemecolor.txt", glon.encode( tbl ) )
 	end
 	Schema:AddItem( SchemeColor )
 	Schema:AddItem( schemecolormixer )
@@ -222,4 +222,4 @@ local function CloseOptions()
 		PlayerMenu = nil
 	end
 end
-TIRA.RegisterMenuTab( "Options", OpenOptions, CloseOptions )
+CAKE.RegisterMenuTab( "Options", OpenOptions, CloseOptions )

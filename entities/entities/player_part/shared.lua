@@ -174,7 +174,3 @@ end
 function ENT:Think()
 
 end
-
-function ENT:BoneScale( realboneid, scale )
-	self:ManipulateBoneScale( realboneid, Vector( scale, scale, scale ) )
-end

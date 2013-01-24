@@ -18,11 +18,11 @@ function SWEP:SecondaryAttack()
 	if SERVER then
 		if !self.Owner:GetNWBool( "arrested", false ) then
 			local trace = self.Owner:GetEyeTrace( )
-			if trace.StartPos:Distance( trace.HitPos ) < 150 and TIRA.UnArrestPlayer then
+			if trace.StartPos:Distance( trace.HitPos ) < 150 and CAKE.UnArrestPlayer then
 				if trace.Entity:IsPlayer() then
-					TIRA.UnArrestPlayer( self.Owner, trace.Entity )
+					CAKE.UnArrestPlayer( self.Owner, trace.Entity )
 				elseif trace.Entity.ply and trace.Entity.ply:IsPlayer() then
-					TIRA.UnArrestPlayer( self.Owner, trace.Entity.ply )
+					CAKE.UnArrestPlayer( self.Owner, trace.Entity.ply )
 				end
 			end
 		end

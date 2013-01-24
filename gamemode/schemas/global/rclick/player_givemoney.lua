@@ -1,4 +1,4 @@
-RCLICK.Name = "Give " .. TIRA.ConVars[ "CurrencyName" ] .. "s"
+RCLICK.Name = "Give " .. CAKE.ConVars[ "CurrencyName" ] .. "s"
 
 function RCLICK.Condition(target)
 
@@ -14,7 +14,7 @@ function RCLICK.Click(target,ply)
 		local CreditPanel = vgui.Create( "DFrame" )
 		CreditPanel:SetPos(gui.MouseX(), gui.MouseY())
 		CreditPanel:SetSize( 200, 175 )
-		CreditPanel:SetTitle( "Give " .. target:Nick() .. " " ..TIRA.ConVars[ "CurrencySlang" ] .. "s")
+		CreditPanel:SetTitle( "Give " .. target:Nick() .. " " ..CAKE.ConVars[ "CurrencySlang" ] .. "s")
 		CreditPanel:SetVisible(true)
 		CreditPanel:SetDraggable(true)
 		CreditPanel:ShowCloseButton(true)
@@ -23,7 +23,7 @@ function RCLICK.Click(target,ply)
 		local Credits = vgui.Create( "DNumSlider", CreditPanel )
 		Credits:SetPos( 25, 50 )
 		Credits:SetWide(150)
-		Credits:SetText(TIRA.ConVars[ "CurrencyName" ] .."s to Give")
+		Credits:SetText(CAKE.ConVars[ "CurrencyName" ] .."s to Give")
 		Credits:SetMin( 0 )
 		Credits:SetMax( tonumber(LocalPlayer():GetNWInt("money", 0)) )
 		Credits:SetDecimals( 0 )
@@ -38,7 +38,7 @@ function RCLICK.Click(target,ply)
 			CreditPanel = nil
 		end
 	else
-		TIRA.Message( "You don't have any money to give!", "Error", "OK :(" )
+		CAKE.Message( "You don't have any money to give!", "Error", "OK :(" )
 	end
 
 end

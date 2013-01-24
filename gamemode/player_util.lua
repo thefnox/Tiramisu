@@ -1,7 +1,7 @@
 --Sends a player a chat message using the enhanced message system.
-function TIRA.SendChat( ply, msg, font, channel, handler )
+function CAKE.SendChat( ply, msg, font, channel, handler )
 	
-	if ValidEntity( ply ) and ply:IsTiraPlayer() then
+	if IsValid( ply ) and ply:IsTiraPlayer() then
 		--ply:PrintMessage( 3, msg )
 		net.Start( "TiramisuAddToChat")
 		net.WriteTable( {
@@ -16,7 +16,7 @@ function TIRA.SendChat( ply, msg, font, channel, handler )
 			umsg.String( msg )
 			umsg.String( font )
 		umsg.End()*/
-		--TIRA.SendConsole( ply, msg )
+		--CAKE.SendConsole( ply, msg )
 	else
 		for i = 0, msg:len() / 255 do
 			MsgN(string.sub( msg, i * 255 + 1, i * 255 + 255 ) )
@@ -25,8 +25,9 @@ function TIRA.SendChat( ply, msg, font, channel, handler )
 	
 end
 
+
 --Sends a message to a player's console
-function TIRA.SendConsole( ply, msg )
+function CAKE.SendConsole( ply, msg )
 
 	if ply:IsTiraPlayer() then
 		ply:PrintMessage( 2, msg )
@@ -37,7 +38,7 @@ function TIRA.SendConsole( ply, msg )
 end
 
 --Sends a popup message to a player.
-function TIRA.SendError( ply, msg )
+function CAKE.SendError( ply, msg )
 
 	if ply:IsTiraPlayer() then
 		umsg.Start( "Tiramisu.SendError", ply )
@@ -48,7 +49,7 @@ function TIRA.SendError( ply, msg )
 	end
 end
 
-function TIRA.CreatePlayerRagdoll( ply )
+function CAKE.CreatePlayerRagdoll( ply )
 
 	local speed = ply:GetVelocity()
 
@@ -74,33 +75,24 @@ function TIRA.CreatePlayerRagdoll( ply )
 				bonephys:SetPos(bonepos)
 				bonephys:SetAngles(boneang)
 			end
-		end;
+		end
 	end
 
 	if ply.Clothing then
 		for k, v in pairs( ply.Clothing ) do
-			if( ValidEntity( v ) ) then
+			if( IsValid( v ) ) then
 				v:SetParent( rag )
 				v:Initialize()
 			end
 		end
 	end
-
-	rag.BonemergeGearEntity = ents.Create( "player_gearhandler" )
-	rag.BonemergeGearEntity:SetPos( rag:GetPos() + Vector( 0, 0, 80 ) )
-	rag.BonemergeGearEntity:SetAngles( rag:GetAngles() )
-	rag.BonemergeGearEntity:SetModel("models/gibs/agibs.mdl")
-	rag.BonemergeGearEntity:SetMaterial("models/null")
-	rag.BonemergeGearEntity:SetParent( rag )
-	rag.BonemergeGearEntity:SetNoDraw( true )
-	rag.BonemergeGearEntity:SetSolid( SOLID_NONE )
-	rag.BonemergeGearEntity:Spawn()
 	
 	if ply.Gear then
 		for k, v in pairs( ply.Gear ) do
-			if( ValidEntity( v ) ) then
-				v:SetParent( rag.BonemergeGearEntity )
-				v:SetDTEntity( 1, rag )
+			if( IsValid( v ) ) then
+				v:SetParent( rag )
+				v:SetDTEntity(1, rag )
+				v:SetDTBool(1, true )
 				v:Initialize()
 			end
 		end
@@ -129,24 +121,24 @@ function meta:ConCommand( cmd ) --Rewriting this due to Garry fucking it up.
 	umsg.End()
 end
 
-function TIRA.ChangeMoney( ply, amount ) -- Modify someone's money amount.
+function CAKE.ChangeMoney( ply, amount ) -- Modify someone's money amount.
 
 	-- Come on, Nori, how didn't you see the error in this?
-	--if( ( TIRA.GetCharField( ply, "money" ) - amount ) < 0 ) then return end 
+	--if( ( CAKE.GetCharField( ply, "money" ) - amount ) < 0 ) then return end 
 	
-	TIRA.DayLog( "economy.txt", "Changing " .. ply:SteamID( ) .. "-" .. ply:GetNWString( "uid" ) .. " money by " .. tostring( amount ) )
+	CAKE.DayLog( "economy.txt", "Changing " .. ply:SteamID( ) .. "-" .. ply:GetNWString( "uid" ) .. " money by " .. tostring( amount ) )
 	
-	TIRA.SetCharField( ply, "money", TIRA.GetCharField( ply, "money" ) + amount )
-	if TIRA.GetCharField( ply, "money" ) < 0 then -- An actual negative number block
-		TIRA.SetCharField( ply, "money", 0 )
+	CAKE.SetCharField( ply, "money", CAKE.GetCharField( ply, "money" ) + amount )
+	if CAKE.GetCharField( ply, "money" ) < 0 then -- An actual negative number block
+		CAKE.SetCharField( ply, "money", 0 )
 		ply:SetNWInt("money", 0 )
 	else
-		ply:SetNWInt("money", tonumber( TIRA.GetCharField( ply, "money" ) ))
+		ply:SetNWInt("money", tonumber( CAKE.GetCharField( ply, "money" ) ))
 	end
 
 end
 
-function TIRA.DrugPlayer( pl, mul ) -- DRUG DAT BITCH
+function CAKE.DrugPlayer( pl, mul ) -- DRUG DAT BITCH
 
 	mul = mul / 10 * 2
 
@@ -160,10 +152,10 @@ function TIRA.DrugPlayer( pl, mul ) -- DRUG DAT BITCH
 
 	local IDSteam = string.gsub(pl:SteamID(), ":", "")
 
-	timer.Create(IDSteam, 40 * mul, 1, TIRA.UnDrugPlayer, pl)
+	timer.Create(IDSteam, 40 * mul, 1, CAKE.UnDrugPlayer, pl)
 end
 
-function TIRA.UnDrugPlayer(pl)
+function CAKE.UnDrugPlayer(pl)
 	pl:ConCommand("pp_motionblur 0")
 	pl:ConCommand("pp_dof 0")
 end

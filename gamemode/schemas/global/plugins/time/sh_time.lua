@@ -13,7 +13,7 @@ local monthstable = {
 	[12] = "December"
 }
 
-function TIRA.FindMonthName()
+function CAKE.FindMonthName()
 
 	local formatted = GetGlobalString( "time" )
 	local exp = string.Explode( "/", formatted )
@@ -23,7 +23,7 @@ function TIRA.FindMonthName()
 
 end
 
-function TIRA.FindMonthNumber()
+function CAKE.FindMonthNumber()
 
 	local formatted = GetGlobalString( "time" )
 	local exp = string.Explode( "/", formatted )
@@ -33,7 +33,7 @@ function TIRA.FindMonthNumber()
 	
 end
 
-function TIRA.FindYear()
+function CAKE.FindYear()
 	
 	local formatted = GetGlobalString( "time" )
 	local exp = string.Explode( "/", formatted )
@@ -43,9 +43,9 @@ function TIRA.FindYear()
 
 end
 
-function TIRA.IsLeapYear()
+function CAKE.IsLeapYear()
 
-	local year = TIRA.FindYear()
+	local year = CAKE.FindYear()
 
 	if year < 1582 then
 		return false --Gregorian calendar wasn't set, therefore, leap years do not yet exist.
@@ -59,7 +59,7 @@ function TIRA.IsLeapYear()
 	
 end
 
-function TIRA.FindDayNumber()
+function CAKE.FindDayNumber()
 
 	local formatted = GetGlobalString( "time" )
 	local exp = string.Explode( "/", formatted )
@@ -69,9 +69,9 @@ function TIRA.FindDayNumber()
 
 end
 
-function TIRA.FindCentury()
+function CAKE.FindCentury()
 	
-	local year = TIRA.FindYear() or 0
+	local year = CAKE.FindYear() or 0
 	return math.floor( year / 100 ) + 1
 	
 end
@@ -133,24 +133,24 @@ local centurytable = {
 	[ 31 ] = 2
 }
 
-function TIRA.FindDayName()
+function CAKE.FindDayName()
 
-	if TIRA.FindYear() < 1582 then
+	if CAKE.FindYear() < 1582 then
 		return "Unknown"
 	end
 	
-	local centurynumber = centurytable[ TIRA.FindCentury() ] or 0
-	local last2digits = TIRA.FindYear() - ( TIRA.FindCentury() - 1 ) * 100
+	local centurynumber = centurytable[ CAKE.FindCentury() ] or 0
+	local last2digits = CAKE.FindYear() - ( CAKE.FindCentury() - 1 ) * 100
 	local yearnumber = math.floor( last2digits / 4 )
 	local monthnumber = 0
 	
-	if TIRA.IsLeapYear() then
-		monthnumber = leapyearmonths[ TIRA.FindMonthName() ]
+	if CAKE.IsLeapYear() then
+		monthnumber = leapyearmonths[ CAKE.FindMonthName() ]
 	else
-		monthnumber = regularmonths[ TIRA.FindMonthName() ]
+		monthnumber = regularmonths[ CAKE.FindMonthName() ]
 	end
 	
-	return daytable[ ( centurynumber + last2digits + yearnumber + monthnumber + TIRA.FindDayNumber() ) % 7 ]
+	return daytable[ ( centurynumber + last2digits + yearnumber + monthnumber + CAKE.FindDayNumber() ) % 7 ]
 	
 
 end

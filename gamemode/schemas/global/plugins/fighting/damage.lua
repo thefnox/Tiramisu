@@ -2,9 +2,9 @@ hook.Add("PlayerShouldTakeDamage", "Tiramisu.PlayerShouldTakeDamage", function( 
 	if ply.IsInvulnerable then
 		return false
 	end
-	if ValidEntity( attacker ) then 
+	if IsValid( attacker ) then 
 		if attacker:GetClass() == "prop_physics" then
-			return TIRA.ConVars[ "Prop_Damage" ]
+			return CAKE.ConVars[ "Prop_Damage" ]
 		end
 	end
 end)

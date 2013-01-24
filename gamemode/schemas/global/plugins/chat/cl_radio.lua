@@ -1,5 +1,5 @@
 --Creates an invisible panel to put radio messages on.
-function TIRA.CreateRadioMenu()
+function CAKE.CreateRadioMenu()
 	if !RadioPanel then
 		RadioPanel = vgui.Create( "DFrame" ) -- Creates the frame itself
 		RadioPanel:SetPos( ScrW() - 510,0 ) -- Position on the players screen
@@ -23,7 +23,7 @@ function TIRA.CreateRadioMenu()
 end
 
 --Internal for adding new lines to the invisible panel.
-function TIRA.AddRadioLine( text )
+function CAKE.AddRadioLine( text )
 	if RadioList then
 		local label= vgui.Create("MarkupLabel" )
 		label:SetText( text )
@@ -39,7 +39,7 @@ end
 
 net.Receive( "TiramisuAddToRadio", function( len )
 	local text = net.ReadString()
-	TIRA.CreateRadioMenu()
-	TIRA.Chatbox:AddLine( "<font=BudgetLabel>" .. text .. "</font>", "Radio" )
-	TIRA.AddRadioLine( "<font=BudgetLabel>" .. text .. "</font>" )
+	CAKE.CreateRadioMenu()
+	CAKE.Chatbox:AddLine( "Radio", nil, CAKE.TranslateMarkupToTable("<font=BudgetLabel>" .. text .. "</font>") )
+	CAKE.AddRadioLine( "<font=BudgetLabel>" .. text .. "</font>" )
 end)

@@ -8,9 +8,9 @@ local DoorTypes =
 }
 
 --Determines if an entity is an available door type.
-function TIRA.IsDoor( door )
+function CAKE.IsDoor( door )
 
-	if ValidEntity( door ) then
+	if IsValid( door ) then
 		local class = door:GetClass()
 		
 		for k, v in pairs( DoorTypes ) do

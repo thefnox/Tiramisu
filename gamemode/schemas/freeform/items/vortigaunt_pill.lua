@@ -18,8 +18,8 @@ end
 
 function ITEM:UseItem(ply)
 
-	TIRA.RemoveClothing( ply )
-	TIRA.RemoveAllGear( ply )
+	CAKE.RemoveClothing( ply )
+	CAKE.RemoveAllGear( ply )
 	ply:SetSpecialModel( "models/vortigaunt.mdl" )
 	self:Remove()
 

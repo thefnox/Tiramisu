@@ -25,29 +25,24 @@ local BoneList = {
 }
 
 
-TIRA.Inventory = "none"
-TIRA.UData = {}
-TIRA.InventorySlot = {}
+CAKE.Inventory = "none"
+CAKE.UData = {}
+CAKE.InventorySlot = {}
 
 net.Receive( "Tiramisu.ReceiveUData", function( len )
-	local decoded = net.ReadTable()
-	local uid = decoded.uid
-	if !CAKE.UData[uid] then
-		CAKE.UData[uid] = {}
-	end
-	CAKE.UData[uid].Name = decoded.name
-	CAKE.UData[uid].Wearable = decoded.wearable
-	CAKE.UData[uid].Model = decoded.model
-	CAKE.UData[uid].Container = decoded.container
+	local uid = net.ReadString()
+	local tbl = net.ReadTable()
+	CAKE.UData[uid] = tbl
 	if CAKE.InventorySlot then
 		for _, tbl in pairs(CAKE.InventorySlot) do
 			for k, v in pairs(tbl) do
 				if v and v.Item and CAKE.ItemData[v.Item] and v.ItemID and v.ItemID == uid then
-					v:SetTooltip(decoded.name .. "\n" .. CAKE.ItemData[v.Item].Description or "" )
+					v:SetItem( v.Item, uid )
 				end
 			end
 		end
 	end
+
 end)
 
 net.Receive( "Tiramisu.SendInventory", function( len )
@@ -56,13 +51,12 @@ net.Receive( "Tiramisu.SendInventory", function( len )
 	local uid = decoded.uid
 	local width = decoded.width
 	local height = decoded.height
-	table.Merge(TIRA.UData, decoded.udata)
-	TIRA.Containers[uid] = TIRA.CreateContainerObject( uid )
-	TIRA.Containers[uid]:SetSize( width, height )
-	TIRA.Containers[uid].Items = items
-	TIRA.Inventory = uid
+	CAKE.Containers[uid] = CAKE.CreateContainerObject( uid )
+	CAKE.Containers[uid]:SetSize( width, height )
+	CAKE.Containers[uid].Items = items
+	CAKE.Inventory = uid
 
-	TIRA.CreateInventory()
+	CAKE.CreateInventory()
 end)
 
 --InventorySlot. The square slots used on the inventory.
@@ -100,32 +94,35 @@ end
 
 function PANEL:GetName()
 	if self.Item then
-		if self.ItemID and TIRA.UData[self.ItemID] and TIRA.UData[self.ItemID].Name then
-			return TIRA.UData[self.ItemID].Name
+		if self.ItemID and CAKE.UData[self.ItemID] and CAKE.UData[self.ItemID].Name then
+			return CAKE.UData[self.ItemID].Name
 		else
-			return TIRA.ItemData[self.Item].Name
+			return CAKE.ItemData[self.Item].Name
 		end
 	end
 end
 
 --Sets an item to be used on the inventory slot. The item thing is a table, not a string. Amount defaults to 1.
 function PANEL:SetItem( item, itemid )
-	local itemtable = TIRA.ItemData[item]
+	local itemtable = CAKE.ItemData[item]
+	local udata = CAKE.UData[itemid]
+	self.Item = itemtable.Class
+	self.ItemID = itemid
 	if itemtable then
-		self.Item = itemtable.Class
-		self.ItemID = itemid
 		if !self.Icon then
 			self.Icon = vgui.Create( "ContainerSlot_Icon", self )
 			self:SetIconSize( self.IconSize )
 		end
 		if itemtable.Description != "" then self:SetToolTip( self:GetName() .. "\n" .. itemtable.Description )
 		else self:SetToolTip( self:GetName() ) end
-		if TIRA.UData[itemid] then
-			self.Model = TIRA.UData[itemid].Model or itemtable.Model
-		else
-			self.Model = itemtable.Model
-		end
-		self.Icon:SetModel( self.Model )
+		self.Model = itemtable.Model
+		self.Icon:SetModel(itemtable.Model)
+	end
+	if udata then
+		self:SetTooltip( self:GetName() .. "\n" .. itemtable.Description  or "" )
+		self.Model = udata.model or itemtable.Model
+		self.Icon:SetModel(self.Model)
+		if udata.container then self:SetContainer(udata.container) end
 	end
 end
 
@@ -200,19 +197,20 @@ function PANEL:UseItem(dofunc)
 	if self.Item then
 		if dofunc then
 			LocalPlayer():ConCommand("rp_useinventoryid " .. self:GetItemID() .. " " .. dofunc )
-		elseif !TIRA.ItemData[self:GetItem()].Unusable then
+		elseif !CAKE.ItemData[self:GetItem()].Unusable then
 			LocalPlayer():ConCommand("rp_useinventoryid " .. self:GetItemID() )
 		end
 	end
 end
 
 function PANEL:GetWearable()
+	if self.ItemID and CAKE.UData[self.ItemID] and CAKE.UData[self.ItemID]["wearable"] then
+		return true
+	end
 	if self.Item then
-		if string.match(self.Item, "clothing_") or string.match(self.Item, "helmet_") or TIRA.ItemData[self:GetItem()].Wearable then
+		if string.match(self.Item, "clothing_") or string.match(self.Item, "helmet_") or CAKE.ItemData[self:GetItem()].Wearable then
 			return true
-		elseif TIRA.ItemData[self.Item] and TIRA.ItemData[self.Item].Wearable then
-			return true
-		elseif self.ItemID and TIRA.UData[self.ItemID] and TIRA.UData[self.ItemID].Wearable then
+		elseif CAKE.ItemData[self.Item] and CAKE.ItemData[self.Item].Wearable then
 			return true
 		end
 	end
@@ -266,8 +264,8 @@ function PANEL:EndDrag()
 		LocalPlayer().DragIcon = nil
 		if LocalPlayer().DragTarget then
 			if LocalPlayer().DragTarget:GetContainer() == LocalPlayer().DragContainer then
-				if LocalPlayer().DragTarget.ItemID and TIRA.UData[LocalPlayer().DragTarget.ItemID] and TIRA.UData[LocalPlayer().DragTarget.ItemID].Container then
-					RunConsoleCommand("rp_transfertocontainer", LocalPlayer().DragContainer, TIRA.UData[LocalPlayer().DragTarget.ItemID].Container, LocalPlayer().DragItemClass, LocalPlayer().DragItemID)
+				if LocalPlayer().DragTarget.ItemID and CAKE.UData[LocalPlayer().DragTarget.ItemID] and CAKE.UData[LocalPlayer().DragTarget.ItemID].Container then
+					RunConsoleCommand("rp_transfertocontainer", LocalPlayer().DragContainer, CAKE.UData[LocalPlayer().DragTarget.ItemID].Container, LocalPlayer().DragItemClass, LocalPlayer().DragItemID)
 				elseif LocalPlayer().DragTarget:GetX() != LocalPlayer().DragOriginX or LocalPlayer().DragTarget:GetY() != LocalPlayer().DragOriginY then
 					RunConsoleCommand("rp_containerswap", LocalPlayer().DragContainer, LocalPlayer().DragOriginX, LocalPlayer().DragOriginY, LocalPlayer().DragTarget:GetX(), LocalPlayer().DragTarget:GetY() )
 				end
@@ -307,17 +305,17 @@ end
 ---------------------------------------------------------*/
 function PANEL:OpenMenu()
 	local ContextMenu = DermaMenu()
-	if self:GetItem() and TIRA.ItemData[self.Item] then
-		if !TIRA.ItemData[self:GetItem()].Unusable then
+	if self:GetItem() and CAKE.ItemData[self.Item] then
+		if !CAKE.ItemData[self:GetItem()].Unusable then
 			ContextMenu:AddOption("Use", function() self:UseItem() end)
 		end
-		for k,v in pairs(TIRA.ItemData[self:GetItem()].RightClick or {}) do
+		for k,v in pairs(CAKE.ItemData[self:GetItem()].RightClick or {}) do
 			ContextMenu:AddOption( k, function() self:UseItem(v) end)
 		end
 		if self:GetWearable() then
 			ContextMenu:AddOption("Wear", function() RunConsoleCommand( "rp_wearitem", self:GetItem(), self:GetItemID() ) end)
 		end
-		if TIRA.WornItems and self:GetItemID() and table.HasValue( TIRA.WornItems, self:GetItemID() ) then
+		if CAKE.WornItems and self:GetItemID() and table.HasValue( CAKE.WornItems, self:GetItemID() ) then
 			ContextMenu:AddOption("Take Off", function() RunConsoleCommand( "rp_takeoffitem", self:GetItem(), self:GetItemID() ) end)
 		end
 		if self:GetWearable() and !string.match( self:GetItem(), "clothing_" ) and !string.match( self:GetItem(), "helmet_" ) then
@@ -327,7 +325,7 @@ function PANEL:OpenMenu()
 			end
 		end
 		ContextMenu:AddOption("Rename", function() 
-		TIRA.StringRequest( "Rename an Item", "Rename '" .. self:GetName() .. "' to what?", self:GetName(),
+		CAKE.StringRequest( "Rename an Item", "Rename '" .. self:GetName() .. "' to what?", self:GetName(),
 			function( text )
 				LocalPlayer():ConCommand( "rp_renameitem \"" .. self:GetItemID() .. "\" \"" .. text .. "\"" )
 			end,
@@ -345,12 +343,12 @@ function PANEL:Paint()
 	x, y = self:ScreenToLocal( 0, 0 )
 	surface.SetDrawColor(50,50,50,255)
 	surface.DrawOutlinedRect( 0, 0, self:GetWide(), self:GetTall() )
-	if self.ItemID and TIRA.UData[self.ItemID] and TIRA.UData[self.ItemID].Container then
+	if self.ItemID and CAKE.UData[self.ItemID] and CAKE.UData[self.ItemID].Container then
 		surface.SetDrawColor(0,0,255,255)
 		surface.DrawOutlinedRect( 1, 1, self:GetWide()-1, self:GetTall()-1 )
 		surface.DrawOutlinedRect( 2, 2, self:GetWide()-2, self:GetTall()-2 )	
 	end
-	if TIRA.WornItems and self:GetItemID() and table.HasValue( TIRA.WornItems, self:GetItemID() ) then
+	if CAKE.WornItems and self:GetItemID() and table.HasValue( CAKE.WornItems, self:GetItemID() ) then
 		surface.SetDrawColor(255,0,0,255)
 		surface.DrawOutlinedRect( 1, 1, self:GetWide()-1, self:GetTall()-1 )
 		surface.DrawOutlinedRect( 2, 2, self:GetWide()-2, self:GetTall()-2 )
@@ -361,161 +359,161 @@ vgui.Register( "InventorySlot", PANEL, "Panel" )
 
 --Internal to be hooked to the "Inventory" tab on the main menu.
 function OpenInventory()
-	if !TIRA.InventoryFrame then
-		TIRA.CreateInventory()
+	if !CAKE.InventoryFrame then
+		CAKE.CreateInventory()
 	end
-	TIRA.InventoryFrame.Display = !TIRA.InventoryFrame.Display
-	TIRA.InventoryFrame:MakePopup()
-	TIRA.InventoryFrame:SetVisible( true )
-	TIRA.InventoryFrame:SetKeyboardInputEnabled( false )
-	TIRA.InventoryFrame:SetMouseInputEnabled( true )
-	TIRA.InventoryFrame.CloseButton:SetVisible(true)
-	if !TIRA.InventoryFrame.Display then
-		TIRA.InventoryFrame.Display = false
-	 	TIRA.InventoryFrame:SetKeyboardInputEnabled( false )
-		TIRA.InventoryFrame:SetMouseInputEnabled( false )
-	 	TIRA.InventoryFrame.CloseButton:SetVisible(false)
-	 	TIRA.InventoryFrame:RequestFocus()
+	CAKE.InventoryFrame.Display = !CAKE.InventoryFrame.Display
+	CAKE.InventoryFrame:MakePopup()
+	CAKE.InventoryFrame:SetVisible( true )
+	CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
+	CAKE.InventoryFrame:SetMouseInputEnabled( true )
+	CAKE.InventoryFrame.CloseButton:SetVisible(true)
+	if !CAKE.InventoryFrame.Display then
+		CAKE.InventoryFrame.Display = false
+	 	CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
+		CAKE.InventoryFrame:SetMouseInputEnabled( false )
+	 	CAKE.InventoryFrame.CloseButton:SetVisible(false)
+	 	CAKE.InventoryFrame:RequestFocus()
 	end
 end
 
 --Same as above.
 function CloseInventory()
-	TIRA.InventoryFrame.Display = false
-	TIRA.InventoryFrame:SetKeyboardInputEnabled( false )
-	TIRA.InventoryFrame:SetMouseInputEnabled( false )
-	TIRA.InventoryFrame.CloseButton:SetVisible(false)
-	TIRA.InventoryFrame:RequestFocus()
+	CAKE.InventoryFrame.Display = false
+	CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
+	CAKE.InventoryFrame:SetMouseInputEnabled( false )
+	CAKE.InventoryFrame.CloseButton:SetVisible(false)
+	CAKE.InventoryFrame:RequestFocus()
 end
 
-function TIRA.CreateInventory()
+function CAKE.CreateInventory()
 
-	if TIRA.Inventory == "none" then
+	if CAKE.Inventory == "none" then
 		return
 	end
 
-	if TIRA.InventoryFrame then
-		TIRA.InventoryFrame:Remove()
+	if CAKE.InventoryFrame then
+		CAKE.InventoryFrame:Remove()
 	end
 
-	TIRA.InventorySlot = {}
+	CAKE.InventorySlot = {}
 
-	local container = TIRA.Containers[TIRA.Inventory]
+	local container = CAKE.Containers[CAKE.Inventory]
 
-	TIRA.InventoryFrame = vgui.Create( "DFrame" )
-	TIRA.InventoryFrame:SetSize( 566, 50 + (math.Clamp(TIRA.Containers[TIRA.Inventory].Height,1,4) * 56) )
-	if TIRA.MinimalHUD:GetBool() then
-		TIRA.InventoryFrame:SetPos( ScrW() / 2 - TIRA.InventoryFrame:GetWide() / 2, ScrH() )
+	CAKE.InventoryFrame = vgui.Create( "DFrame" )
+	CAKE.InventoryFrame:SetSize( 566, 50 + (math.Clamp(CAKE.Containers[CAKE.Inventory].Height,1,4) * 56) )
+	if CAKE.MinimalHUD:GetBool() then
+		CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, ScrH() )
 	else
-		if TIRA.InventoryFrame.PropertySheet then
-			TIRA.InventoryFrame:SetPos( ScrW() / 2 - TIRA.InventoryFrame:GetWide() / 2, ScrH() - 100 )
+		if CAKE.InventoryFrame.PropertySheet then
+			CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, ScrH() - 100 )
 		else
-			TIRA.InventoryFrame:SetPos( ScrW() / 2 - TIRA.InventoryFrame:GetWide() / 2, ScrH() - 79 )
+			CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, ScrH() - 79 )
 		end
 	end
-	TIRA.InventoryFrame.Display = false
-	TIRA.InventoryFrame:SetDeleteOnClose( false )
-	TIRA.InventoryFrame:SetMouseInputEnabled( true )
+	CAKE.InventoryFrame.Display = false
+	CAKE.InventoryFrame:SetDeleteOnClose( false )
+	CAKE.InventoryFrame:SetMouseInputEnabled( true )
 	local x, y
-	local color = TIRA.BaseColor or Color( 100, 100, 115, 150 )
+	local color = CAKE.BaseColor or Color( 100, 100, 115, 150 )
 	local alpha = 0
-	TIRA.InventoryFrame.OnCursorEntered = function()
+	CAKE.InventoryFrame.OnCursorEntered = function()
 		LocalPlayer().MouseInFrame = true
 	end
-	TIRA.InventoryFrame.OnCursorExited = function()
+	CAKE.InventoryFrame.OnCursorExited = function()
 		LocalPlayer().MouseInFrame = false
 	end
-	TIRA.InventoryFrame.Paint = function()
-		if TIRA.InventoryFrame.Display then
-			x,y = TIRA.InventoryFrame:GetPos()
-			if !TIRA.InventoryFrame.PropertySheet then
+	CAKE.InventoryFrame.Paint = function()
+		if CAKE.InventoryFrame.Display then
+			x,y = CAKE.InventoryFrame:GetPos()
+			if !CAKE.InventoryFrame.PropertySheet then
 				if y != ScrH() - 250 then
-					TIRA.InventoryFrame:SetPos( ScrW() / 2 - TIRA.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 250 ))
+					CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 250 ))
 				end
 			else
 				if y != ScrH() - 270 then
-					TIRA.InventoryFrame:SetPos( ScrW() / 2 - TIRA.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 270 ))
+					CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 270 ))
 				end
 			end
 			alpha = Lerp( 0.1, alpha, 1 )
 
 			surface.SetDrawColor( color.r, color.g, color.b, alpha * 80 )
-			if !TIRA.InventoryFrame.PropertySheet then
-				surface.DrawRect( 0, 23 , TIRA.InventoryFrame:GetWide(), TIRA.InventoryFrame:GetTall() )
+			if !CAKE.InventoryFrame.PropertySheet then
+				surface.DrawRect( 0, 23 , CAKE.InventoryFrame:GetWide(), CAKE.InventoryFrame:GetTall() )
 			else
-				surface.DrawRect( 0, 43 , TIRA.InventoryFrame:GetWide(), TIRA.InventoryFrame:GetTall() )
+				surface.DrawRect( 0, 43 , CAKE.InventoryFrame:GetWide(), CAKE.InventoryFrame:GetTall() )
 			end
 
 		else
 			alpha = 0
-			x,y = TIRA.InventoryFrame:GetPos()
-			if TIRA.MinimalHUD:GetBool() then
+			x,y = CAKE.InventoryFrame:GetPos()
+			if CAKE.MinimalHUD:GetBool() then
 				if y != ScrH() then
-					TIRA.InventoryFrame:SetPos( ScrW() / 2 - TIRA.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() ))
+					CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() ))
 				end
 			else
-				if !TIRA.InventoryFrame.PropertySheet then
+				if !CAKE.InventoryFrame.PropertySheet then
 					if y != ScrH() - 79 then
-						TIRA.InventoryFrame:SetPos( ScrW() / 2 - TIRA.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 79 ))
+						CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 79 ))
 					end
 				else
 					if y != ScrH() - 106 then
-						TIRA.InventoryFrame:SetPos( ScrW() / 2 - TIRA.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 106 ))
+						CAKE.InventoryFrame:SetPos( ScrW() / 2 - CAKE.InventoryFrame:GetWide() / 2, Lerp( 0.2, y, ScrH() - 106 ))
 					end
 				end
 			end
 		end
 	end
 
-	TIRA.InventoryFrame:SetTitle( "" )
-	TIRA.InventoryFrame:SetDraggable( false )
-	TIRA.InventoryFrame:ShowCloseButton( false )
+	CAKE.InventoryFrame:SetTitle( "" )
+	CAKE.InventoryFrame:SetDraggable( false )
+	CAKE.InventoryFrame:ShowCloseButton( false )
 
-	TIRA.InventoryFrame.CloseButton = vgui.Create( "DButton", TIRA.InventoryFrame )
-	TIRA.InventoryFrame.CloseButton:SetSize(18,18)
-	TIRA.InventoryFrame.CloseButton:SetPos( TIRA.InventoryFrame:GetWide() - 22, 4 )
-	TIRA.InventoryFrame.CloseButton:SetVisible(false)
-	TIRA.InventoryFrame.CloseButton.PaintOver = function()
+	CAKE.InventoryFrame.CloseButton = vgui.Create( "DButton", CAKE.InventoryFrame )
+	CAKE.InventoryFrame.CloseButton:SetSize(18,18)
+	CAKE.InventoryFrame.CloseButton:SetPos( CAKE.InventoryFrame:GetWide() - 22, 4 )
+	CAKE.InventoryFrame.CloseButton:SetVisible(false)
+	CAKE.InventoryFrame.CloseButton.PaintOver = function()
 		surface.SetDrawColor(Color(0, 0, 0, 250 ))
-		
+		surface.SetTexture(EMPTY_TEXTURE)
 		surface.DrawTexturedRectRotated( 5, 9, 18, 5, 45 )
 		surface.DrawTexturedRectRotated( 5, 9, 18, 5, 135 )
 	end
-	TIRA.InventoryFrame.CloseButton.DoClick = function()
-	 	TIRA.InventoryFrame.Display = false
-	 	TIRA.InventoryFrame:SetKeyboardInputEnabled( false )
-		TIRA.InventoryFrame:SetMouseInputEnabled( false )
-	 	TIRA.InventoryFrame.CloseButton:SetVisible(false)
-	 	TIRA.InventoryFrame:RequestFocus()
+	CAKE.InventoryFrame.CloseButton.DoClick = function()
+	 	CAKE.InventoryFrame.Display = false
+	 	CAKE.InventoryFrame:SetKeyboardInputEnabled( false )
+		CAKE.InventoryFrame:SetMouseInputEnabled( false )
+	 	CAKE.InventoryFrame.CloseButton:SetVisible(false)
+	 	CAKE.InventoryFrame:RequestFocus()
  	end
-	TIRA.InventoryFrame.CloseButton:SetDrawBorder( false )
-	TIRA.InventoryFrame.CloseButton:SetDrawBackground( false )
+	CAKE.InventoryFrame.CloseButton:SetDrawBorder( false )
+	CAKE.InventoryFrame.CloseButton:SetDrawBackground( false )
 
-	if TIRA.Containers[TIRA.Inventory].Height <= 4 then
-		local grid = vgui.Create( "DGrid", TIRA.InventoryFrame )
+	if CAKE.Containers[CAKE.Inventory].Height <= 4 then
+		local grid = vgui.Create( "DGrid", CAKE.InventoryFrame )
 		grid:Dock(FILL)
 		grid:SetCols( 10 )
 		grid:SetColWide( 56 )
 		grid:SetRowHeight( 56 )
 
 		for i=1, container.Height do
-			TIRA.InventorySlot[i] = {}
+			CAKE.InventorySlot[i] = {}
 			for j=1, container.Width do
 				local slot = vgui.Create( "InventorySlot" )
 				slot:SetIconSize( 48 )
 				slot:SetPosition( j, i )
-				slot:SetContainer(TIRA.Inventory)
+				slot:SetContainer(CAKE.Inventory)
 				grid:AddItem(slot)
-				TIRA.InventorySlot[i][j] = slot
+				CAKE.InventorySlot[i][j] = slot
 			end 
 		end
-	elseif TIRA.Containers[TIRA.Inventory].Height > 4 then
-		TIRA.InventoryFrame.PropertySheet = vgui.Create( "DPropertySheet", TIRA.InventoryFrame )
-		TIRA.InventoryFrame.PropertySheet:Dock(FILL)
-		TIRA.InventoryFrame.PropertySheet:SetShowIcons( false )
-		TIRA.InventoryFrame.PropertySheet.Paint = function()
+	elseif CAKE.Containers[CAKE.Inventory].Height > 4 then
+		CAKE.InventoryFrame.PropertySheet = vgui.Create( "DPropertySheet", CAKE.InventoryFrame )
+		CAKE.InventoryFrame.PropertySheet:Dock(FILL)
+		CAKE.InventoryFrame.PropertySheet:SetShowIcons( false )
+		CAKE.InventoryFrame.PropertySheet.Paint = function()
 		end
-		local count = TIRA.Containers[TIRA.Inventory].Height
+		local count = CAKE.Containers[CAKE.Inventory].Height
 		local it = 0
 		while count > 4 do
 			count = count - 4
@@ -526,17 +524,17 @@ function TIRA.CreateInventory()
 			grid:SetRowHeight( 56 )
 
 			for i=1 + (it * 4), (it + 1) * 4 do
-				TIRA.InventorySlot[i] = {}
+				CAKE.InventorySlot[i] = {}
 				for j=1, container.Width do
 					local slot = vgui.Create( "InventorySlot" )
 					slot:SetIconSize( 48 )
 					slot:SetPosition( j, i )
-					slot:SetContainer(TIRA.Inventory)
+					slot:SetContainer(CAKE.Inventory)
 					grid:AddItem(slot)
-					TIRA.InventorySlot[i][j] = slot
+					CAKE.InventorySlot[i][j] = slot
 				end 
 			end
-			local tab = TIRA.InventoryFrame.PropertySheet:AddSheet( "Page " .. it + 1, grid, "", false, false, "Page " .. it + 1 )
+			local tab = CAKE.InventoryFrame.PropertySheet:AddSheet( "Page " .. it + 1, grid, "", false, false, "Page " .. it + 1 )
 			tab.Tab.Image:SetVisible(false)
 			it = it + 1
 		end
@@ -548,20 +546,20 @@ function TIRA.CreateInventory()
 			grid:SetRowHeight( 56 )
 
 			for i=container.Height - count + 1, container.Height do
-				TIRA.InventorySlot[i] = {}
+				CAKE.InventorySlot[i] = {}
 				for j=1, container.Width do
 					local slot = vgui.Create( "InventorySlot" )
 					slot:SetIconSize( 48 )
 					slot:SetPosition( j, i )
-					slot:SetContainer(TIRA.Inventory)
+					slot:SetContainer(CAKE.Inventory)
 					grid:AddItem(slot)
-					TIRA.InventorySlot[i][j] = slot
+					CAKE.InventorySlot[i][j] = slot
 				end 
 			end
-			local tab = TIRA.InventoryFrame.PropertySheet:AddSheet( "Page " .. it + 1, grid, "", false, false, "Page " .. it + 1 )
+			local tab = CAKE.InventoryFrame.PropertySheet:AddSheet( "Page " .. it + 1, grid, "", false, false, "Page " .. it + 1 )
 			tab.Tab.Image:SetVisible(false)
 		end
-		for _,item in pairs( TIRA.InventoryFrame.PropertySheet.Items ) do
+		for _,item in pairs( CAKE.InventoryFrame.PropertySheet.Items ) do
 			item.Tab.Paint = function()
 				if item.Tab:GetPropertySheet():GetActiveTab() == item.Tab then
 					draw.RoundedBox( 2, 0, 0, item.Tab:GetWide() - 8, item.Tab:GetTall(), Color( color.r, color.g, color.b, 80 ) )
@@ -573,22 +571,22 @@ function TIRA.CreateInventory()
 			end
 		end
 	end
-	TIRA.InventoryFrame.OldThink = TIRA.InventoryFrame.Think
-	TIRA.InventoryFrame.Think = function()
-		TIRA.InventoryFrame:OldThink()
-		if TIRA.Containers[TIRA.Inventory] then
-			if TIRA.Containers[TIRA.Inventory].Resized then
-				TIRA.Containers[TIRA.Inventory].Resized = false
-				TIRA.CreateInventory()
+	CAKE.InventoryFrame.OldThink = CAKE.InventoryFrame.Think
+	CAKE.InventoryFrame.Think = function()
+		CAKE.InventoryFrame:OldThink()
+		if CAKE.Containers[CAKE.Inventory] then
+			if CAKE.Containers[CAKE.Inventory].Resized then
+				CAKE.Containers[CAKE.Inventory].Resized = false
+				CAKE.CreateInventory()
 			end
-			for i, tbl in pairs(TIRA.InventorySlot) do
+			for i, tbl in pairs(CAKE.InventorySlot) do
 				for j, v in pairs(tbl) do
 					if v then
-						if TIRA.Containers[TIRA.Inventory]:IsSlotEmpty(j,i) then
+						if CAKE.Containers[CAKE.Inventory]:IsSlotEmpty(j,i) then
 							v:ClearItem()
-						elseif TIRA.Containers[TIRA.Inventory].Items[i][j] then
-							if v.Item != TIRA.Containers[TIRA.Inventory].Items[i][j].class or (v.ItemID and v.ItemID != TIRA.Containers[TIRA.Inventory].Items[i][j].itemid) then
-								v:SetItem( TIRA.Containers[TIRA.Inventory].Items[i][j].class, TIRA.Containers[TIRA.Inventory].Items[i][j].itemid )
+						elseif CAKE.Containers[CAKE.Inventory].Items[i][j] then
+							if v.Item != CAKE.Containers[CAKE.Inventory].Items[i][j].class or (v.ItemID and v.ItemID != CAKE.Containers[CAKE.Inventory].Items[i][j].itemid) then
+								v:SetItem( CAKE.Containers[CAKE.Inventory].Items[i][j].class, CAKE.Containers[CAKE.Inventory].Items[i][j].itemid )
 							end
 						end
 					end
@@ -600,5 +598,5 @@ end
 
 
 function CLPLUGIN.Init()
-	TIRA.RegisterMenuTab( "Inventory", OpenInventory, CloseInventory )
+	CAKE.RegisterMenuTab( "Inventory", OpenInventory, CloseInventory )
 end

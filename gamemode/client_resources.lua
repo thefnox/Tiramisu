@@ -4,12 +4,12 @@ function AddResource( res_type, path )
 	if( string.lower( res_type ) == "lua" ) then
 	
 		AddCSLuaFile( path )
-		TIRA.DayLog( "script.txt", "Added clientside lua file '" .. path .. "'" )
+		CAKE.DayLog( "script.txt", "Added clientside lua file '" .. path .. "'" )
 		
 	else
 	
 		resource.AddFile( path )
-		TIRA.DayLog( "script.txt", "Added file '" .. path .. "'" )
+		CAKE.DayLog( "script.txt", "Added file '" .. path .. "'" )
 		
 	end
 	
@@ -19,18 +19,26 @@ local function AddContentFolder( filepath ) --Adds all of the files on the conte
 
 
 	local filepath = filepath or ""
-	local list, dir = file.Find( "gamemodes/" .. TIRA.Name .. "/content" .. filepath  .. "/*", "GAME" )
+
+	--[[ local list = file.Find( "gamemodes/" .. CAKE.Name .. "/content" .. filepath  .. "/*", true ) or {}
+	local list = file.Find( "gamemodes/" .. CAKE.Name .. "/content" .. filepath  .. "/*", "LUA" ) or {}
+
 	for k, v in pairs( list ) do
 		if string.GetExtensionFromFilename(v) and string.GetExtensionFromFilename(v) != "dll" then
 			AddResource( string.GetExtensionFromFilename(v), string.sub( filepath .. "/" .. v, 2 ) ) --Starting from char 2 since char one is a slash.
+		else
+			if v:len() > 2 then --Filters out ".." and "." which are special folder names
+				AddContentFolder( filepath .. "/" .. v )
+			end
+		end --]]
+		local files, folders = file.Find( "gamemodes/" .. CAKE.Name .. "/content" .. filepath  .. "/*", "GAME" )
+		for k, v in pairs( files ) do
+			AddResource( string.GetExtensionFromFilename(v), string.sub( filepath .. "/" .. v, 2 ) ) --Starting from char 2 since char one is a slash.
 		end
-	end
-	for k, v in pairs( list ) do
-		if v != "." and v != ".." then --Filters out ".." and "." which are special folder names
-			AddContentFolder( filepath .. "/" .. v )
-		end
-	end
 
+	for k, v in pairs( folders ) do
+		AddContentFolder( filepath .. "/" .. v )
+	end
 end
 
 hook.Add( "Initialize", "TiramisuAddContent", function()
@@ -40,7 +48,6 @@ hook.Add( "Initialize", "TiramisuAddContent", function()
 end)
 
 -- LUA Files
-AddResource( "lua", "von.lua" ) --Tiramisu's configuration file.
 AddResource( "lua", "configuration.lua" ) --Tiramisu's configuration file.
 AddResource( "lua", "shared.lua" ) -- Shared Functions
 AddResource( "lua", "cl_binds.lua" ) -- Binds
@@ -48,3 +55,4 @@ AddResource( "lua", "cl_init.lua") -- The initialization of clientside gamemode
 AddResource( "lua", "sh_animations.lua") -- Animations
 AddResource( "lua", "sh_anim_tables.lua") -- Animations
 AddResource( "lua", "cl_skin.lua" ) --The skin
+AddResource( "lua", "glon.lua" ) --GLON

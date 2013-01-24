@@ -1,16 +1,20 @@
 hook.Add( "KeyPress", "TiramisuHandleDoors", function( ply, key )
 	if( key == IN_USE ) then
 		local entity = ply:GetEyeTrace( ).Entity
-		if ValidEntity( entity ) then
-			if(TIRA.IsDoor(entity)) then
-				local doorgroup = TIRA.GetDoorGroup(entity) or 0
-				local group = TIRA.GetGroup( TIRA.GetCharField( ply, "activegroup" ))
+		if IsValid( entity ) then
+			if(CAKE.IsDoor(entity)) then
+				local doorgroup = CAKE.GetDoorGroup(entity) or 0
+				local group
 				local groupdoor = 0
-				if group and group:CharInGroup(ply) then
-					groupdoor = tonumber(group:GetField( "doorgroup" )) or 0
-				end
-				if entity:GetClass() == "func_door" and doorgroup == groupdoor then --lol
-					entity:Fire( "open", "", 0 )
+				for k, v in pairs(CAKE.GetCharField( ply, "groups" )) do
+					if CAKE.GroupExists( v ) then
+						group = CAKE.GetGroup( v )
+						groupdoor = math.Round(tonumber(group:GetField( "doorgroup" )))
+						if entity:GetClass() == "func_door" and doorgroup == groupdoor then --lol
+							entity:Fire( "open", "", 0 )
+							break
+						end
+					end
 				end
 			end
 			if( entity:GetClass() == "item_prop" ) then
@@ -27,7 +31,7 @@ function Admin_AddDoor(ply, cmd, args)
 	local tr = ply:GetEyeTrace()
 	local trent = tr.Entity
 	
-	if(!TIRA.IsDoor(trent)) then ply:PrintMessage(3, "You must be looking at a door!") return end
+	if(!CAKE.IsDoor(trent)) then ply:PrintMessage(3, "You must be looking at a door!") return end
 
 	if(table.getn(args) < 1) then ply:PrintMessage(3, "Specify a doorgroup!") return end
 
@@ -40,17 +44,17 @@ function Admin_AddDoor(ply, cmd, args)
 	Door["building"] = tonumber(args[3])
 	Door["purchaseable"] = util.tobool( args[4] )
 
-	table.insert(TIRA.Doors, Door)
+	table.insert(CAKE.Doors, Door)
 	
-	TIRA.SendChat(ply, "Door group added to door")
+	CAKE.SendChat(ply, "Door group added to door")
 
 	trent.doorgroup = Door["doorgroup"]
 	trent.building = Door["building"]
 	trent.purchaseable = Door["purchaseable"]
 	trent.title = Door["title"]
-	TIRA.SetDoorTitle( trent, Door["title"] )
+	CAKE.SetDoorTitle( trent, Door["title"] )
 	
-	TIRA.SaveDoors()
+	CAKE.SaveDoors()
 	
 end
 
@@ -62,11 +66,11 @@ function Admin_SetDoorGroup(ply, cmd, args)
 
 	ent.doorgroup = tonumber(args[2])
 
-	for k, v in pairs( TIRA.Doors ) do
+	for k, v in pairs( CAKE.Doors ) do
 		if v["class"] == ent:GetClass() and v["pos"] == ent:GetPos() then
 			v["doorgroup"] = tonumber(args[2])
-			TIRA.SendChat(ply, "Door group set to " .. args[2])
-			TIRA.SaveDoors()
+			CAKE.SendChat(ply, "Door group set to " .. args[2])
+			CAKE.SaveDoors()
 			return --The whole function ends here.
 		end
 	end
@@ -79,10 +83,10 @@ function Admin_SetDoorGroup(ply, cmd, args)
 	Door["building"] = 0
 	Door["purchaseable"] = false
 
-	table.insert(TIRA.Doors, Door)
+	table.insert(CAKE.Doors, Door)
 	
-	TIRA.SendChat(ply, "Door group set to " .. args[2])
-	TIRA.SaveDoors()
+	CAKE.SendChat(ply, "Door group set to " .. args[2])
+	CAKE.SaveDoors()
 	
 end
 
@@ -94,11 +98,11 @@ function Admin_SetDoorBuilding(ply, cmd, args)
 
 	ent.building = tonumber(args[2])
 
-	for _, Door in pairs( TIRA.Doors ) do
+	for _, Door in pairs( CAKE.Doors ) do
 		if Door[ "pos" ] == ent:GetPos() then
 			Door["building"] = tonumber(args[2])
-			TIRA.SendChat(ply, "Door building set to " .. args[2])
-			TIRA.SaveDoors()
+			CAKE.SendChat(ply, "Door building set to " .. args[2])
+			CAKE.SaveDoors()
 			return --The whole function ends here.
 		end
 	end
@@ -111,10 +115,10 @@ function Admin_SetDoorBuilding(ply, cmd, args)
 	Door["building"] = tonumber(args[2])
 	Door["purchaseable"] = false
 
-	table.insert(TIRA.Doors, Door)
+	table.insert(CAKE.Doors, Door)
 	
-	TIRA.SendChat(ply, "Door building set to " .. args[2])
-	TIRA.SaveDoors()
+	CAKE.SendChat(ply, "Door building set to " .. args[2])
+	CAKE.SaveDoors()
 	
 end
 
@@ -126,13 +130,13 @@ function Admin_SetDoorTitle(ply, cmd, args)
 
 	table.remove(args, 1)
 	ent.title = table.concat( args, " " )
-	TIRA.SetDoorTitle( ent, ent.title )
+	CAKE.SetDoorTitle( ent, ent.title )
 
-	for _, Door in pairs( TIRA.Doors ) do
+	for _, Door in pairs( CAKE.Doors ) do
 		if Door[ "pos" ] == ent:GetPos() then
 			Door["title"] = ent.title
-			TIRA.SendChat(ply, "Door title set to " .. ent.title)
-			TIRA.SaveDoors()
+			CAKE.SendChat(ply, "Door title set to " .. ent.title)
+			CAKE.SaveDoors()
 			return --The whole function ends here.
 		end
 	end
@@ -145,10 +149,10 @@ function Admin_SetDoorTitle(ply, cmd, args)
 	Door["building"] = 0
 	Door["purchaseable"] = false
 
-	table.insert(TIRA.Doors, Door)
+	table.insert(CAKE.Doors, Door)
 	
-	TIRA.SendChat(ply, "Door title set to " .. ent.title)
-	TIRA.SaveDoors()
+	CAKE.SendChat(ply, "Door title set to " .. ent.title)
+	CAKE.SaveDoors()
 	
 end
 
@@ -166,11 +170,11 @@ function Admin_SetDoorPurchaseable(ply, cmd, args)
 	
 	ent.purchaseable = args[2]
 
-	for _, Door in pairs( TIRA.Doors ) do
+	for _, Door in pairs( CAKE.Doors ) do
 		if Door[ "pos" ] == ent:GetPos() then
 			Door["purchaseable"] = args[2]
-			TIRA.SendChat(ply, "Door purchaseable status set to " .. args[2] )
-			TIRA.SaveDoors()
+			CAKE.SendChat(ply, "Door purchaseable status set to " .. args[2] )
+			CAKE.SaveDoors()
 			return --The whole function ends here.
 		end
 	end
@@ -183,19 +187,19 @@ function Admin_SetDoorPurchaseable(ply, cmd, args)
 	Door["building"] = 0
 	Door["purchaseable"] = args[2]
 
-	table.insert(TIRA.Doors, Door)
+	table.insert(CAKE.Doors, Door)
 	
-	TIRA.SendChat(ply, "Door purchaseable status set to " .. tostring(args[2]) )
-	TIRA.SaveDoors()
+	CAKE.SendChat(ply, "Door purchaseable status set to " .. tostring(args[2]) )
+	CAKE.SaveDoors()
 	
 end
 
 function PLUGIN.Init()
 
-	TIRA.AdminCommand( "adddoor", Admin_AddDoor, "Add group permissions to a door", true, true, 4 )
-	TIRA.AdminCommand( "setdoorgroup", Admin_SetDoorGroup, "Set door group access", true, true, 4 )
-	TIRA.AdminCommand( "setdoorbuilding", Admin_SetDoorBuilding, "Assign a door to a building", true, true, 4 )
-	TIRA.AdminCommand( "setdoortitle", Admin_SetDoorTitle, "Set a door's default title", true, true, 4 )
-	TIRA.AdminCommand( "setdoorpurchaseable", Admin_SetDoorPurchaseable, "Set a door's purchaseable status", true, true, 4 )
+	CAKE.AdminCommand( "adddoor", Admin_AddDoor, "Add group permissions to a door", true, true, 4 )
+	CAKE.AdminCommand( "setdoorgroup", Admin_SetDoorGroup, "Set door group access", true, true, 4 )
+	CAKE.AdminCommand( "setdoorbuilding", Admin_SetDoorBuilding, "Assign a door to a building", true, true, 4 )
+	CAKE.AdminCommand( "setdoortitle", Admin_SetDoorTitle, "Set a door's default title", true, true, 4 )
+	CAKE.AdminCommand( "setdoorpurchaseable", Admin_SetDoorPurchaseable, "Set a door's purchaseable status", true, true, 4 )
 	
 end

@@ -1,63 +1,68 @@
-TIRA.Schemas = {  }
-TIRA.Schemafile = {  }
+CAKE.Schemas = {  }
+CAKE.Schemafile = {  }
 
-function TIRA.LoadSchema( schema )
+function CAKE.LoadSchema( schema )
 
 	local path = "schemas/" .. schema .. ".lua"
 	
 	SCHEMA = {  }
 	
 	include( path )
-	table.insert( TIRA.Schemas, SCHEMA )
+	table.insert( CAKE.Schemas, SCHEMA )
 
 	-- Load the base, first.
 
 	if( SCHEMA.Base ) then
 	
-		TIRA.LoadSchema( SCHEMA.Base )
+		CAKE.LoadSchema( SCHEMA.Base )
 		
 	end
 	
-	table.insert( TIRA.Schemafile, schema )
-	TIRA.DayLog( "script.txt", "Loading schema " .. SCHEMA.Name .. " by " .. SCHEMA.Author .. " ( " .. SCHEMA.Description .. " )" )
+	table.insert( CAKE.Schemafile, schema )
+	CAKE.DayLog( "script.txt", "Loading schema " .. SCHEMA.Name .. " by " .. SCHEMA.Author .. " ( " .. SCHEMA.Description .. " )" )
 
 
 	-- Use the new plugin system
 
-	TIRA.LoadPlugin( schema )
+	CAKE.LoadPlugin( schema )
 
 	-- Load the items
-	local list = file.Find( TIRA.Name .. "/gamemode/schemas/" .. schema .. "/items/*.lua", "LUA" )
+	-- local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/items/*.lua" )
+	local list = file.Find( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/items/*.lua", "LUA" )
 	
 	for k, v in pairs( list ) do 
 	
-		TIRA.LoadItem( schema, v )
+		CAKE.LoadItem( schema, v )
 		
 	end
 
 	-- Use the new plugin system
 
-	TIRA.LoadPlugin( schema )
+	CAKE.LoadPlugin( schema )
 	
 	-- Load right click files.
 	
-	local list = file.Find( TIRA.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua", "LUA" )
+	-- local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua" ) or {}
+	-- local list = file.Find( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua", "LUA" ) or {}
+local files, folders = file.Find( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua", "LUA" )
 	
-	for k, v in pairs( list ) do
+	-- for k, v in pairs( list ) do
+	for k, v in pairs( files ) do
 	
-		TIRA.LoadRClick( schema, v )
+		CAKE.LoadRClick( schema, v )
 		
 	end
 	
 end
 
 --Makes schemas run their SetUp function
-function TIRA.InitSchemas( )
+function CAKE.InitSchemas( )
 
-	for _, SCHEMA in ipairs( TIRA.Schemas ) do
-		if !file.Exists( TIRA.Name .. "/" .. SCHEMA.Name .. ".txt", "DATA" ) then
+	for _, SCHEMA in ipairs( CAKE.Schemas ) do
+		-- if !file.Exists( CAKE.Name .. "/" .. SCHEMA.Name .. ".txt" ) then
+		if ( !file.Exists( CAKE.Name .. "/" .. SCHEMA.Name .. ".txt", "DATA" ) ) then
 			print( "Initializing " .. SCHEMA.Name )
-			file.Write( TIRA.Name .. "/" .. SCHEMA.Name .. ".txt", "" )
+			file.Write( CAKE.Name .. "/" .. SCHEMA.Name .. ".txt", "" )
 			SCHEMA.SetUp( )
 		end
 	end

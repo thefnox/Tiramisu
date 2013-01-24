@@ -177,6 +177,8 @@ if SERVER then
 		self:SetNWBool( "specialmodel", true )
 		self:SetNWString( "model", model )
 		self:SetMaterial("")
+		self:SetRenderMode(RENDERMODE_NORMAL)
+		self:SetColor(Color(255,255,255,255))
    		self:SetModel( model )
 	end
 	
@@ -185,7 +187,7 @@ if SERVER then
 		if self:GetNWBool( "arrested", false ) then
 			bool = false
 		end
-		if ValidEntity( wep ) and wep:GetClass() != nil and wep.SetNextPrimaryFire != nil then
+		if IsValid( wep ) and wep:GetClass() != nil and wep.SetNextPrimaryFire != nil then
 			if table.HasValue( Anims.AlwaysAimed, wep:GetClass() ) then
 				bool = true
 			end
@@ -216,12 +218,12 @@ if SERVER then
 	hook.Add( "PlayerSpawn", "TiramisuAnimSpawnHandle", function( ply )
 		ply:SetAiming( false )
 		timer.Create( ply:SteamID() .. "TiramisuAimTimer", 0.1, 0, function()
-			if ValidEntity( ply ) then
-				if ply.TiramisuLastWeapon and ValidEntity( ply:GetActiveWeapon() ) and ply:GetActiveWeapon():GetClass() != ply.TiramisuLastWeapon then
+			if IsValid( ply ) then
+				if ply.TiramisuLastWeapon and IsValid( ply:GetActiveWeapon() ) and ply:GetActiveWeapon():GetClass() != ply.TiramisuLastWeapon then
 					ply:SetAiming( false )
 					ply.TiramisuLastWeapon = ply:GetActiveWeapon():GetClass()
 				else
-					if ValidEntity( ply:GetActiveWeapon() ) then
+					if IsValid( ply:GetActiveWeapon() ) then
 						ply.TiramisuLastWeapon = ply:GetActiveWeapon():GetClass()
 					end
 				end
@@ -230,7 +232,7 @@ if SERVER then
 	end)
 
 	hook.Add( "KeyPress", "TiramisuAimCheck", function(ply, key)
-		if ValidEntity( ply ) and ValidEntity( ply:GetActiveWeapon() ) then
+		if IsValid( ply ) and IsValid( ply:GetActiveWeapon() ) then
 			if key == IN_ATTACK or key == IN_ATTACK2 then
 			ply:SetAiming( true )
 			end
@@ -254,14 +256,14 @@ if SERVER then
 else
 	usermessage.Hook( "Tiramisu.SendPersonality", function(um)
 		local ply = um:ReadEntity()
-		if ValidEntity( ply ) then
+		if IsValid( ply ) then
 			ply:SetPersonality( um:ReadString() )
 		end
 	end)
 
 	usermessage.Hook( "Tiramisu.SetEmote", function(um)
 		local ply = um:ReadEntity()
-		if ValidEntity( ply ) then
+		if IsValid( ply ) then
 			ply.Emote = um:ReadString()
 		end
 	end)
@@ -509,7 +511,7 @@ function GM:HandlePlayerSwimming( ply, velocity ) --Handles swimming.
 		return false 
 	end
 	
-	if !TIRA.ConVars[ "LinuxHotfix" ] then
+	if !CAKE.ConVars[ "LinuxHotfix" ] then
 		ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "swim" ] )
 	else
 		ply.CalcIdeal, ply.CalcSeqOverride = HandleSequence( ply, Anims[ ply:GetGender() ][ "default" ][ "fly" ] )
@@ -685,11 +687,11 @@ function GM:CalcMainActivity( ply, velocity )
 		end
 	else
 		local holdtype = "default"
-		if( ValidEntity(ply:GetActiveWeapon()) ) then
+		if( IsValid(ply:GetActiveWeapon()) ) then
 			holdtype = Anims.DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
 		end
 
-		if (holdtype == "default" and ply:GetPersonality() != "default" and !ply:GetNWBool( "specialmodel" )) or TIRA.ConVars[ "LinuxHotfix" ] then
+		if (holdtype == "default" and ply:GetPersonality() != "default" and !ply:GetNWBool( "specialmodel" )) or CAKE.ConVars[ "LinuxHotfix" ] then
 			holdtype = ply:GetPersonality() --We use the personality custom animation table, rather than the default.
 		end
 
@@ -766,7 +768,7 @@ function GM:CalcMainActivity( ply, velocity )
 		end
 	end
 
-	if CLIENT and TIRA.ForceDraw then
+	if CLIENT and CAKE.ForceDraw then
 		return ACT_IDLE, -1
 	end
 
@@ -784,26 +786,26 @@ end
 function GM:DoAnimationEvent( ply, event, data ) -- This is for gestures.
 
 	holdtype = "default"
-	if( ValidEntity(  ply:GetActiveWeapon() ) ) then
+	if( IsValid(  ply:GetActiveWeapon() ) ) then
 		holdtype = Anims.DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
 	end
 
 	if event == PLAYERANIMEVENT_ATTACK_PRIMARY then
 
 		if Anims[ ply:GetGender() ][ holdtype ][ "fire" ] then
-			ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, Anims[ ply:GetGender() ][ holdtype ][ "fire" ] )
+			ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, Anims[ ply:GetGender() ][ holdtype ][ "fire" ], true )
 		else
-			ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_RANGE_ATTACK_SMG1 )
+			ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_RANGE_ATTACK_SMG1, true )
 		end
 
 		return ACT_VM_PRIMARYATTACK
 	
 	elseif event == PLAYERANIMEVENT_RELOAD then
 
-		if Anims[ ply:GetGender() ][ holdtype ][ "reload" ] then
-			ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_RELOAD_SMG1 )
+		if !Anims[ ply:GetGender() ][ holdtype ][ "reload" ] then
+			ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, ACT_GESTURE_RELOAD_SMG1, true )
 		else
-			ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, Anims[ ply:GetGender() ][ holdtype ][ "reload" ] )
+			ply:AnimRestartGesture( GESTURE_SLOT_ATTACK_AND_RELOAD, Anims[ ply:GetGender() ][ holdtype ][ "reload" ], true )
 		end
 	
 		return ACT_INVALID

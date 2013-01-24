@@ -3,9 +3,9 @@ RCLICK.SubMenu = "Actions"
 
 function RCLICK.Condition(target)
 
-	if target == LocalPlayer() and TIRA.VoiceGroups then
-		for k, v in pairs( TIRA.VoiceGroups ) do
-			if TIRA.CanVoice( LocalPlayer(), k ) then
+	if target == LocalPlayer() and CAKE.VoiceGroups then
+		for k, v in pairs( CAKE.VoiceGroups ) do
+			if CAKE.CanVoice( LocalPlayer(), k ) then
 				return true
 			end
 		end
@@ -21,18 +21,18 @@ function RCLICK.Click(target,ply)
 	timer.Simple( 0, function() --This timer is so the system can close down the previous DermaMenu without closing this one too
 		local dmenu = DermaMenu()
 		local main = dmenu:AddSubMenu( "Voice" )
-		for voicegroup, _ in pairs( TIRA.VoiceGroups ) do
-			if TIRA.CanVoice( LocalPlayer(), voicegroup ) then
+		for voicegroup, _ in pairs( CAKE.VoiceGroups ) do
+			if CAKE.CanVoice( LocalPlayer(), voicegroup ) then
 				local voicemenu = main:AddSubMenu( voicegroup )
 				local tbl = {}
-				for k, v in pairs( TIRA.Voices ) do
+				for k, v in pairs( CAKE.Voices ) do
 					if v.Group == voicegroup then
 						if !tbl[v.Category] then
 							tbl[v.Category] = voicemenu:AddSubMenu( v.Category )
 						end
 					end
 				end
-				for k, v in pairs( TIRA.Voices ) do
+				for k, v in pairs( CAKE.Voices ) do
 					if v.Group == voicegroup then
 						tbl[v.Category]:AddOption(v.Name, function() RunConsoleCommand("rp_voice", k) end)
 					end

@@ -29,7 +29,7 @@ local BoneList = {
 
 function RCLICK.Condition(target)
 
-	if ValidEntity( target) and target:GetClass() == "prop_physics" and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) == 0 then return true end
+	if IsValid( target) and target:GetClass() == "prop_physics" and LocalPlayer():GetNWInt( "TiramisuAdminLevel", 0 ) == 0 then return true end
 
 end
 
@@ -80,6 +80,7 @@ function RCLICK.Click(target,ply)
 	Label:SetTextColor( color_white )
 	InnerPanel:AddItem( Label )
 
+	-- local MultiChoice = vgui.Create( "DMultiChoice", InnerPanel )
 	local MultiChoice = vgui.Create( "DComboBox", InnerPanel )
 	for k, v in pairs( BoneList ) do
 		MultiChoice:AddChoice( v )
@@ -124,7 +125,7 @@ function RCLICK.Click(target,ply)
 	Window:MakePopup()
 
 	/*
-	TIRA.StringRequest( "Item Conversion", "Enter the name you want to give to the new item.", target:GetModel(), function( text )
+	CAKE.StringRequest( "Item Conversion", "Enter the name you want to give to the new item.", target:GetModel(), function( text )
 		ply:ConCommand("rp_admin converttoitem " .. target:EntIndex() .. " \"" .. text .. "\"" )
 	end,
 	function() end, "Accept", "Cancel")*/
