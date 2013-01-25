@@ -477,3 +477,15 @@ hook.Add( "UpdateAnimation", "TiramisuAnimateRotate", function( ply, velocity, m
 		end
 	end
 end)
+
+timer.Create("Tiramisu.SendViewCoordinatesToServer", 0.5, 0, function()
+	if LocalPlayer() and LocalPlayer().CurrentLookAt then
+		net.Start("Tiramisu.GetLookAt")
+			net.WriteAngle(LocalPlayer().CurrentLookAt or Angle(0,0,0))
+		net.SendToServer()
+	else
+		net.Start("Tiramisu.GetLookAt")
+			net.WriteAngle(Angle(0,0,0))
+		net.SendToServer()
+	end 
+end)
