@@ -947,6 +947,7 @@ function SKIN:PaintDeathScreen()
 
 		surface.SetDrawColor(Color(CAKE.DeathScreenRed,0,0,CAKE.DeathScreenAlpha))
 		surface.DrawRect( 0, 0, ScrW(), ScrH() )
+		surface.SetDrawColor(Color(255,255,255,255))
 		LocalPlayer():SetNoDraw( true )
 
 		if CAKE.ClothingTbl then
@@ -971,8 +972,6 @@ function SKIN:PaintDeathScreen()
 		end
 		cam.Start3D( CAKE.CameraPos,CAKE.CameraAngle, LocalPlayer():GetFOV(), 0, 0, ScrW(), ScrH() )
 			cam.IgnoreZ( true )
-			surface.SetDrawColor(Color(255,0,0,redalpha))
-			surface.DrawRect( 0, 0, ScrW(), ScrH() )
 
 			render.SuppressEngineLighting( true )
 			render.SetLightingOrigin( LocalPlayer():GetPos() )
