@@ -125,6 +125,7 @@ function CAKE.DeathMode( ply, noragdoll )
 			ply.rag = nil
 		end
 		rag = CAKE.CreatePlayerRagdoll( ply )
+		rag.deathrag = true
 		ply.rag = rag
 		ply:SetNWInt( "deathmode", 1 )
 		timer.Simple( 1, function()
