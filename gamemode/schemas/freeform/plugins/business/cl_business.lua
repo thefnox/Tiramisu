@@ -89,9 +89,9 @@ local function CloseBusiness()
 	end
 end
 
-datastream.Hook("refreshbusiness", function(handler, id, encoded, decoded )
+net.Receive("refreshbusiness", function(len)
 	
-	BusinessTable = decoded
+	BusinessTable = net.ReadTable()
 	if BusinessTable and table.Count(BusinessTable) != 0 then
 		OpenBusinessMenu()
 	else
@@ -103,6 +103,5 @@ datastream.Hook("refreshbusiness", function(handler, id, encoded, decoded )
 	end
 	
 end )
-
 
 CAKE.RegisterMenuTab( "Business", OpenBusiness, CloseBusiness )
