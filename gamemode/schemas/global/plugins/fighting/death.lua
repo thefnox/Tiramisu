@@ -36,6 +36,7 @@ function GM:PlayerDeathThink(ply)
 			if ply:GetNWInt( "deathmode", 0 ) == 0 then
 				CAKE.StandUp( ply )
 				ply:Spawn()
+				ply.rag.lingertime = CurTime()
 				ply.deathtime = nil
 				ply.nextsecond = nil
 				ply:SetNWInt("deathmoderemaining", 0)
@@ -49,21 +50,10 @@ function GM:PlayerDeathThink(ply)
 					if CAKE.ConVars[ "DeathRagdoll_Linger" ] > 0 then
 						timer.Simple( CAKE.ConVars[ "DeathRagdoll_Linger" ], function()
 							local rag = ply.rag
-							timer.Create("deadragdollremove".. ply:SteamID(), 0.1, 0, function()
-								if IsValid(rag) then
-									--local r, g, b, alpha = rag:GetColor()
-									--if alpha != 0 then
-										--rag:SetColor( 255, 255, 255, math.Clamp( alpha - 25, 0, 255 ))
-									local color = rag:GetColor()
-									if color.a != 0 then
-										rag:SetColor( 255, 255, 255, math.Clamp( color.a - 25, 0, 255 ))
-									else
-										rag:Remove()
-										rag = nil
-										timer.Destroy("deadragdollremove".. ply:SteamID())
-									end
-								end
-							end)
+							if IsValid(rag) then
+								rag:Remove()
+								rag = nil
+							end
 						end)
 					end
 				end
@@ -149,7 +139,6 @@ function CAKE.DeathMode( ply, noragdoll )
 
 	local willrevive = false
 	if ply:HasItem("firstaidkit") and (ply.ReviveCooldown + 120) < os.time() then
-		print("the big man hass the rock")
 		local container = ply:GetInventory()
 		for i, tbl in pairs( container.Items ) do
 			for j, v in pairs(tbl) do
