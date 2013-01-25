@@ -175,7 +175,7 @@ local function OpenOptions()
 	local SetSchemeColor = vgui.Create( "DButton" )
 	SetSchemeColor:SetText( "Set the scheme color" )
 	SetSchemeColor.DoClick = function()
-		local color = SchemeColor:GetColor()
+		local color = schemecolormixer:GetColor() 
 		CAKE.BaseColor = color
 		local tbl = { ["color"] = CAKE.BaseColor }
 		file.Write( CAKE.Name .. "/personaldata/schemecolor.txt", glon.encode( tbl ) )
@@ -205,7 +205,7 @@ local function OpenOptions()
 	local SetOOCColor = vgui.Create( "DButton" )
 	SetOOCColor:SetText( "Set your OOC Color" )
 	SetOOCColor.DoClick = function()
-		local color = OOCColor:GetColor()
+		local color = colormixer:GetColor() 
 		RunConsoleCommand( "rp_ooccolor", tostring( color.r ), tostring( color.g ), tostring( color.b ), tostring( color.a ) )
 	end
 	OOC:AddItem( OOCColor )
