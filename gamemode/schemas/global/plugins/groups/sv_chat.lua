@@ -40,22 +40,14 @@ local function GroupChat( ply, text )
 	
 	if group and group:CharInGroup( ply ) then
 		for k, v in pairs( group:GetOnlineChars() ) do
-			--[[datastream.StreamToClients( v, "TiramisuAddToGroupChat", {
+			net.Start( "TiramisuAddToGroupChat" )
+				net.WriteTable({
 				["text"] = text,
 				["color"] = color,
 				["name"] = ply:Nick(),
 				["channel"] = "[" .. group:Name() .. "]",
 				["handler"] = "/g " .. group.UniqueID .. " "
-			})]]--
-			net.Start( "TiramisuAddToGroupChat" )
-				net.WriteString( text )
-				net.WriteBit( color.r )
-				net.WriteBit( color.g )
-				net.WriteBit( color.b )
-				net.WriteBit( color.a )
-				net.WriteString( ply:Nick( ) )
-				net.WriteString( "[" .. group:Name() .. "]" )
-				net.WriteString( "/g " .. group.UniqueID .. " " )
+			})
 			net.Send( v )
 		end
 	end

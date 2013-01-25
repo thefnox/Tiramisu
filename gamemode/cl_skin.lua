@@ -947,27 +947,30 @@ function SKIN:PaintDeathScreen()
 
 		surface.SetDrawColor(Color(CAKE.DeathScreenRed,0,0,CAKE.DeathScreenAlpha))
 		surface.DrawRect( 0, 0, ScrW(), ScrH() )
-		cam.Start3D( CAKE.CameraPos,CAKE.CameraAngle, LocalPlayer():GetFOV(), 0, 0, ScrW(), ScrH() )
-			if CAKE.ClothingTbl then
-				for k, v in pairs( CAKE.ClothingTbl ) do
-					if IsValid( v ) then
-						v:SetNoDraw( true )
-						v.ForceDraw = true
-					end
+		LocalPlayer():SetNoDraw( true )
+
+		if CAKE.ClothingTbl then
+			for k, v in pairs( CAKE.ClothingTbl ) do
+				if IsValid( v ) then
+					v:SetNoDraw( true )
+					v.ForceDraw = true
 				end
 			end
+		end
 
-			if CAKE.Gear then
-				for _, bone in pairs( CAKE.Gear ) do
-					if bone then
-						for k, v in pairs( bone ) do
-							if IsValid( v.entity ) then
-								v.entity:SetNoDraw( true )
-							end
+		if CAKE.Gear then
+			for _, bone in pairs( CAKE.Gear ) do
+				if bone then
+					for k, v in pairs( bone ) do
+						if IsValid( v.entity ) then
+							v.entity:SetNoDraw( true )
 						end
 					end
 				end
 			end
+		end
+		cam.Start3D( CAKE.CameraPos,CAKE.CameraAngle, LocalPlayer():GetFOV(), 0, 0, ScrW(), ScrH() )
+			cam.IgnoreZ( true )
 			surface.SetDrawColor(Color(255,0,0,redalpha))
 			surface.DrawRect( 0, 0, ScrW(), ScrH() )
 
@@ -986,6 +989,8 @@ function SKIN:PaintDeathScreen()
 					if IsValid( v ) then
 						v:DrawModel()
 						v:CreateShadow()
+						v:SetNoDraw( false )
+						v.ForceDraw = false
 					end
 				end
 			end
@@ -1007,6 +1012,33 @@ function SKIN:PaintDeathScreen()
 			cam.IgnoreZ( false )
 			
 		cam.End3D()
+
+		if CAKE.Thirdperson:GetBool() then
+		
+		LocalPlayer():SetNoDraw( false )
+
+		if CAKE.ClothingTbl then
+			for k, v in pairs( CAKE.ClothingTbl ) do
+				if IsValid( v ) then
+					v:SetNoDraw( false )
+				end
+			end
+		end
+
+		if CAKE.Gear then
+			for _, bone in pairs( CAKE.Gear ) do
+				if bone then
+					for k, v in pairs( bone ) do
+						if IsValid( v.entity ) then
+							v.entity:SetNoDraw( false )
+						end
+					end
+				end
+			end
+		end
+		
+		--CAKE.ForceDraw = false
+	end
 	end
 end
 

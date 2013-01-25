@@ -718,6 +718,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 						["bodygroup2"] = bodygroup2:GetValue(),
 						["bodygroup3"] = bodygroup3:GetValue()
 					})
+				net.SendToServer()
 				PlayerModel:SetTargetBone("ValveBiped.Bip01_Head1")
 				EditorFrame:SetVisible( false )
 				EditorFrame:Remove()

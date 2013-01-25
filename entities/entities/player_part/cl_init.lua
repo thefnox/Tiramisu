@@ -1,49 +1,49 @@
 include('shared.lua')
 
 function ENT:BoneScale( realboneid, scale )
-self:ManipulateBoneScale( realboneid, Vector( scale, scale, scale ) )
+	self:ManipulateBoneScale( realboneid, Vector( scale, scale, scale ) )
 end
 
 function ENT:Draw()
 
-if self.Entity:GetParent() == LocalPlayer() and !hook.Call("ShouldDrawLocalPlayer", GAMEMODE) then
-return
-end
-
-self.Entity:DrawModel()
-self.Entity:DrawShadow( true )
-
-local n = self:GetBoneCount()
-
-	if !self.HeadBonesIndex then
-		self.HeadBonesIndex = {}
-		for _,bone in pairs(self.HeadBones) do
-			index = self.Entity:LookupBone(bone)
-			if index then
-				table.insert(self.HeadBonesIndex, index)
-			end
-		end
+	if self.Entity:GetParent() == LocalPlayer() and !hook.Call("ShouldDrawLocalPlayer", GAMEMODE) then
+		return
 	end
 
-	if !self.HandBonesIndex then
-		self.HandBonesIndex = {}
-		for _,bone in pairs(self.HandBones) do
-			index = self.Entity:LookupBone(bone)
-			if index then
-				table.insert(self.HandBonesIndex, index)
+	self.Entity:DrawModel()
+	self.Entity:DrawShadow( true )
+
+	local n = self:GetBoneCount()
+
+		if !self.HeadBonesIndex then
+			self.HeadBonesIndex = {}
+			for _,bone in pairs(self.HeadBones) do
+				index = self.Entity:LookupBone(bone)
+				if index then
+					table.insert(self.HeadBonesIndex, index)
+				end
 			end
 		end
-	end
 
-if self.Entity:GetParent() == LocalPlayer() and ((!(CAKE.Thirdperson:GetBool() and CAKE.ThirdpersonDistance:GetInt() != 0 ) and !CAKE.FreeScroll and !CAKE.ForceDraw and CAKE.FirstpersonBody:GetBool()) or self.Entity:GetParent():InVehicle()) then
---First person, but with body visible
-for i=0, n do
-if table.HasValue(self.HeadBonesIndex, i) then --If they're part of the head
-self:ManipulateBoneScale(i, Vector(0,0,0)) -- Scale them down so they don't get in the way.
-end	
-end
+		if !self.HandBonesIndex then
+			self.HandBonesIndex = {}
+			for _,bone in pairs(self.HandBones) do
+				index = self.Entity:LookupBone(bone)
+				if index then
+					table.insert(self.HandBonesIndex, index)
+				end
+			end
+		end
 
-else
+	if self.Entity:GetParent() == LocalPlayer() and ((!(CAKE.Thirdperson:GetBool() and CAKE.ThirdpersonDistance:GetInt() != 0 ) and !CAKE.FreeScroll and !CAKE.ForceDraw and CAKE.FirstpersonBody:GetBool()) or self.Entity:GetParent():InVehicle()) then
+		--First person, but with body visible
+		for i=0, n do
+			if table.HasValue(self.HeadBonesIndex, i) then --If they're part of the head
+				self:ManipulateBoneScale(i, Vector(0,0,0)) -- Scale them down so they don't get in the way.
+			end	
+		end
+
+	else
 
 		if self.Entity:GetDTInt( CLOTHING_TYPE ) == CLOTHING_FULL then --Don't do anything.
 			for i=0, n do

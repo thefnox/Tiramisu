@@ -476,8 +476,8 @@ function CAKE.CreateInventory()
 	CAKE.InventoryFrame.CloseButton.PaintOver = function()
 		surface.SetDrawColor(Color(0, 0, 0, 250 ))
 		surface.SetTexture(EMPTY_TEXTURE)
-		surface.DrawTexturedRectRotated( 5, 9, 18, 5, 45 )
-		surface.DrawTexturedRectRotated( 5, 9, 18, 5, 135 )
+		surface.DrawTexturedRectRotated( 9, 9, 18, 5, 45 )
+		surface.DrawTexturedRectRotated( 9, 9, 18, 5, 135 )
 	end
 	CAKE.InventoryFrame.CloseButton.DoClick = function()
 	 	CAKE.InventoryFrame.Display = false

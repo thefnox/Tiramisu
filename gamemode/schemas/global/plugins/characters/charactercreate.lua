@@ -183,6 +183,7 @@ concommand.Add( "rp_ready", function(ply, cmd, args)
 		ply.Ready = true
 		
 		timer.Simple( 1, function()
+			if !IsValid(ply) then return end
 			ply:SetNWBool( "charactercreate", true )
 			
 			umsg.Start( "Tiramisu.InitialSpawn", ply )

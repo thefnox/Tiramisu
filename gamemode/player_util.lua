@@ -90,10 +90,8 @@ function CAKE.CreatePlayerRagdoll( ply )
 	if ply.Gear then
 		for k, v in pairs( ply.Gear ) do
 			if( IsValid( v ) ) then
-				v:SetParent( rag )
-				v:SetDTEntity(1, rag )
-				v:SetDTBool(1, true )
-				v:Initialize()
+				CAKE.HandleGear( rag, v.item, v.bone, v.itemid )
+				v:Remove()
 			end
 		end
 	end

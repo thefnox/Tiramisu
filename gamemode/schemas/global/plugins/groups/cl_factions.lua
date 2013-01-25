@@ -209,7 +209,7 @@ function CAKE.OpenFactionInfo( tbl )
 		end
 	end
 	actions:AddItem(OpenChat)
-
+	/*
 	local OpenInventory = vgui.Create( "DButton" )
 	OpenInventory:SetText( "Open Group Inventory" )
 	OpenInventory:SetTall( 30 )
@@ -218,7 +218,7 @@ function CAKE.OpenFactionInfo( tbl )
 			RunConsoleCommand("rp_opencontainer", tbl.inventory)
 		end
 	end
-	actions:AddItem(OpenInventory)
+	actions:AddItem(OpenInventory)*/
 
 	local LeaveGroup = vgui.Create( "DButton" )
 	LeaveGroup:SetText( "Leave Group" )
@@ -371,7 +371,7 @@ function CAKE.AddFactionRank( tbl )
 		rank["canpromote"] = CanPromote:GetChecked()
 	end
 	Permissions:AddItem(CanPromote)
-
+	/*
 	local CanTakeInventory = vgui.Create( "DCheckBoxLabel" )
 	CanTakeInventory:SetText("Can take things off the inventory")
 	CanTakeInventory:SetChecked(rank["cantakeinventory"])
@@ -386,7 +386,7 @@ function CAKE.AddFactionRank( tbl )
 	CanPlaceInventory.OnChange = function( panel, value )
 		rank["canplaceinventory"] = CanPlaceInventory:GetChecked()
 	end
-	Permissions:AddItem(CanPlaceInventory)
+	Permissions:AddItem(CanPlaceInventory)*/
 
 	local ItemLoadout = vgui.Create( "DButton" )
 	ItemLoadout:SetText( "Edit Item Loadout" )
@@ -567,7 +567,7 @@ function CAKE.EditFactionRank( tbl, rankname )
 		rank["canpromote"] = CanPromote:GetChecked()
 	end
 	Permissions:AddItem(CanPromote)
-
+	/*
 	local CanTakeInventory = vgui.Create( "DCheckBoxLabel" )
 	CanTakeInventory:SetText("Can take things off the inventory")
 	if rank["cantakeinventory"] then
@@ -590,7 +590,7 @@ function CAKE.EditFactionRank( tbl, rankname )
 	CanPlaceInventory.OnChange = function( panel, value )
 		rank["canplaceinventory"] = CanPlaceInventory:GetChecked()
 	end
-	Permissions:AddItem(CanPlaceInventory)
+	Permissions:AddItem(CanPlaceInventory)*/
 
 	local ItemLoadout = vgui.Create( "DButton" )
 	ItemLoadout:SetText( "Edit Item Loadout" )

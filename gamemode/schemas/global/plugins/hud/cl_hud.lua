@@ -25,30 +25,10 @@ end)
 
 function CAKE.ToggleDeathScreen( b )
 	CAKE.DrawDeathScreen = b
+	CAKE.ForceDraw = b
 	if !CAKE.DrawDeathScreen then
 		CAKE.DeathScreenRed = 180
 		CAKE.DeathScreenAlpha = 0
-		LocalPlayer():SetNoDraw( false )
-
-		if CAKE.ClothingTbl then
-			for k, v in pairs( CAKE.ClothingTbl ) do
-				if IsValid( v ) then
-					v:SetNoDraw( false )
-				end
-			end
-		end
-
-		if CAKE.Gear then
-			for _, bone in pairs( CAKE.Gear ) do
-				if bone then
-					for k, v in pairs( bone ) do
-						if IsValid( v.entity ) then
-							v.entity:SetNoDraw( false )
-						end
-					end
-				end
-			end
-		end
 	end
 end
 

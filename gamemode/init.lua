@@ -74,7 +74,6 @@ function file.Write( name, content )
 				for i = 2, k do
 					path = path .. "/" .. dirs[i]
 				end
-				print( path )
 				file.CreateDir( path )
 			else
 				file.CreateDir( v )
@@ -120,7 +119,6 @@ function GM:PlayerInitialSpawn( ply )
 			umsg.String( v )
 		umsg.End( )
 	end
-	print( ply:Name(), "has spawned.")
 
 	-- Set some default variables
 	ply.Ready = false
