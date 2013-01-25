@@ -1,7 +1,7 @@
 "Gamemode"
 {
 	"base"		"sandbox"
-	"title"		"Tiramisu 2"
+	"title"		"Tiramisu 2: Half Life 2 RP"
 	"maps"		"^rp_"
 	"menusystem"	"1"
 }
