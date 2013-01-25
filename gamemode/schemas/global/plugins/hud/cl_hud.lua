@@ -69,6 +69,7 @@ hook.Add( "HUDPaint", "TiramisuDrawHUD", function()
 end)
 
 hook.Add( "PostDrawHUD","TiramisuHUDMessages", function()
+	derma.SkinHook( "Paint", "DeathScreen" ) -- Red to black screen
 	derma.SkinHook( "Paint", "DeathMessage" ) --Messages displayed when dead/unconcious
 end)
 
@@ -161,8 +162,4 @@ hook.Add( "PlayerBindPress", "Tiramisu.HandleWeaponSelection", function(ply, bin
 			end
 		end
 	end
-end)
-
-hook.Add("HUDPaintBackground", "Tiramisu.DrawFadetoDeathScreen", function()
-	derma.SkinHook( "Paint", "DeathScreen" )
 end)

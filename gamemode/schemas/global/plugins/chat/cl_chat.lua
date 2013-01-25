@@ -215,7 +215,7 @@ function PANEL:AddText( ... )
 	local height = 0
 	local label,w,addLater
 	local font = "ChatFont"
-	for k,v in pairs(textToAdd) do
+	for k,v in ipairs(textToAdd) do
 		if type(v) == "string" then
 			label,w,h = self:labelHelper(v, color, font)
 			if right+w > self:GetWide() then
@@ -243,14 +243,16 @@ function PANEL:AddText( ... )
 			label:SetPos(right,self.LHeight)
 			height = math.max(height, h)
 			right = right + w
-			table.insert( self.lines, label )
-		elseif type(v) == "Player" then
-			label,w, h = self:PlayerLabelHelper(v, v:Name(), color)
+			table.insert( self.lines, #self.lines + 1, label )
+		elseif IsValid(v) and v:IsPlayer() then
+			//label,w, h = self:PlayerLabelHelper(v, v:Name(), color)
+			label,w,h = self:labelHelper(v:Name(), color, font)
+			label.isplayer = true
 			label:SetParent(self.txtPanel)
 			label:SetPos(right,self.LHeight)
 			height = math.max(height, h)
 			right = right + w
-			table.insert( self.lines, label )
+			table.insert( self.lines, #self.lines + 1, label )
 		elseif type(v) == "table" and v.r then
 			color = v
 		elseif type(v) == "table" and v.font then
@@ -306,21 +308,15 @@ end
 
 function PANEL:Paint( )
 	if !self.IsVisible then
-		for _, label in pairs(self.lines) do
-			if CurTime() > label.timestamp + 15 then
-				if label.isplayer then
-					label.color.a = 0
-				else
-					label.color.a = 0
-					label:SetFGColor(unpack(label.color))
-				end
-			elseif CurTime() > label.timestamp + 10 then
+		for _, label in ipairs(self.lines) do
+			if CurTime() > label.timestamp + 10 then
 				if label.isplayer then
 					label.color.a = math.max(label.color.a - FrameTime() * 200, 0)
+					label:SetFGColor(unpack(label.color))
 				else
 					label.color.a = math.max(label.color.a - FrameTime() * 100, 0)
-					label:SetFGColor(unpack(label.color))
 				end
+				label:SetFGColor(unpack(label.color))
 			end
 		end
 	end
