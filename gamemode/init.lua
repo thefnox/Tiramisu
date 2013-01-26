@@ -15,9 +15,9 @@ CAKE.Loaded = false
 --    require("datastream");  
 --end  
 
+include( "configuration.lua" ) -- Configuration data
 include( "shared.lua" ) -- Shared Functions
 include( "log.lua" ) -- Logging functions
-include( "configuration.lua" ) -- Configuration data
 include( "player_data.lua" ) -- Player data functions
 include( "player_util.lua" ) -- Player functions
 include( "admin.lua" ) -- Admin functions

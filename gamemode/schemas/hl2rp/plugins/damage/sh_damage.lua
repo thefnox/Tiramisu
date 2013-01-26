@@ -1,6 +1,3 @@
-// Made by VorteX
-// For Tiramisu
-
 local bad_dmg_types = {
 	
 	DMG_CRUSH,
@@ -27,7 +24,14 @@ function Damage_EntityTakeDamage(ent, dmginfo)
 	
 	if table.HasValue(bad_dmg_types, dmgtype) then
 		
-		CAKE.DayLog("combat.txt", CAKE.GetCharSignature(ent) .. " has been hit with \"" .. translation[dmgtype] .. "\"")
+		if ent:Health() >= 60 then return end // they're health enough to sustain it
+		if ent:Armor() != 0 then return end // they has armor, don't knock them out
+		
+		local chance = math.random(1, 3) == 2
+		
+		if !chance then return end // not lucky enough, sorry
+		
+		CAKE.DayLog("combat.txt", CAKE.GetCharSignature(ent) .. " has been knocked out by \"" .. translation[dmgtype] .. "\"")
 		CAKE.UnconciousMode(ent)
 		
 	end
