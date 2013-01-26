@@ -31,7 +31,7 @@ function meta:Nick( ) -- Hotfix. Allows you to fetch a character's name quickly.
 	
 	if self:IsCharLoaded() then
 		
-		return self:GetNWString( "name", "Unnamed" )
+		return self:GetNWString("name", "Unnamed")
 		
 	else
 		
@@ -42,7 +42,9 @@ function meta:Nick( ) -- Hotfix. Allows you to fetch a character's name quickly.
 end
 
 function meta:Title()
-	return self:GetNWString( "title", "" )
+	
+	return self:GetNWString("title", "")
+	
 end
 
 --Calculates the position where an item should be created when dropped.
