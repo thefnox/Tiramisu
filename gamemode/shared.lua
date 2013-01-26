@@ -216,8 +216,11 @@ local _, effectdirs = file.Find(dir1 .. "effects/*", "LUA")
 
 for k, v in pairs(effectdirs) do
 	
-	// just incase something breaks while loading the effect
-	EFFECT = {}
+	if CLIENT then
+		
+		EFFECT = {}
+		
+	end
 	
 	if SERVER then
 		
@@ -229,8 +232,12 @@ for k, v in pairs(effectdirs) do
 		
 	end
 	
-	// ok, so including those files should have created the EFFECT table
-	effects.Register(EFFECT, v) // register the effect
-	EFFECT = nil // clear the entity table
-	
+	if CLIENT then
+		
+		// ok, so including those files should have created the EFFECT table
+		effects.Register(EFFECT, v) // register the effect
+		EFFECT = nil // clear the entity table
+		
+	end
+		
 end
