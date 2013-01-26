@@ -17,6 +17,9 @@ function CAKE.DayLog( outputfile, text )
 	
 	text = string.gsub(text, "\n", "") -- \n fix for all those basteds. >:O
 	
-	file.Append( filedir,  "\n" .. curtime .. " " .. text )
+	local filecontents = file.Read(filedir, "DATA") or ""
+	
+	-- file.Append( filedir,  "\n" .. curtime .. " " .. text )
+	file.Write( filedir,  filecontents .. "\n" .. curtime .. " " .. text )
 	
 end

@@ -76,7 +76,7 @@ function CAKE.FormatText( SteamID )
 	
 end
 
---Finds a player based on its OOC name, its IC name or its SteamID
+--Finds a player based on their OOC name, their IC name or their SteamID
 function CAKE.FindPlayer(name)
 	local count = 0
 
@@ -92,5 +92,145 @@ function CAKE.FindPlayer(name)
 	end
 	
 	return false
+	
+end
+
+// i can't believe it took me ages to find out schema.lua wasn't clientside
+-- Entity Loading by VorteX
+
+local schema = CAKE.ConVars[ "Schema" ]
+
+local dir1 = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/entities/"
+
+local entityfiles, entitydirs = file.Find(dir1 .. "entities/*", "LUA")
+
+for k, v in pairs(entityfiles) do
+	
+	// just incase something breaks while loading the ent
+	ENT = {
+		
+		Type = "anim"
+		
+		}
+	
+	include(dir1 .. "entities/" .. v)
+	// ok, so including that file should have created the ENT table
+	scripted_ents.Register(ENT, v) // register the entity
+	ENT = nil // clear the entity table
+	
+end
+
+for k, v in pairs(entitydirs) do
+	
+	// just incase something breaks while loading the ent
+	ENT = {
+		
+		Type = "anim"
+		
+		}
+	
+	if SERVER then
+		
+		include(dir1 .. "entities/" .. v .. "/init.lua")
+		
+	elseif CLIENT then
+		
+		include(dir1 .. "entities/" .. v .. "/cl_init.lua")
+		
+	end
+	
+	// ok, so including those files should have created the ENT table
+	scripted_ents.Register(ENT, v) // register the entity
+	ENT = nil // clear the entity table
+	
+end
+
+local weaponfiles, weapondirs = file.Find(dir1 .. "weapons/*", "LUA")
+
+for k, v in pairs(weaponfiles) do
+	
+	// just incase something breaks while loading the swep
+	SWEP = {
+		
+		Base = "weapon_base",
+		Primary = {},
+		Secondary = {}
+		
+		}
+	
+	include(dir1 .. "weapons/" .. v)
+	// ok, so including that file should have created the SWEP table
+	weapons.Register(SWEP, v) // register the swep
+	SWEP = nil // clear the swep table
+	
+end
+
+for k, v in pairs(weapondirs) do
+	
+	// just incase something breaks while loading the swep
+	SWEP = {
+		
+		Base = "weapon_base",
+		Primary = {},
+		Secondary = {}
+		
+		}
+	
+	if SERVER then
+		
+		if file.Exists(dir1 .. "weapons/" .. v .. "/init.lua", "LUA") then
+			
+			include(dir1 .. "weapons/" .. v .. "/init.lua")
+			
+		end
+		
+		if file.Exists(dir1 .. "weapons/" .. v .. "/shared.lua", "LUA") then
+			
+			include(dir1 .. "weapons/" .. v .. "/shared.lua")
+			
+		end
+		
+	elseif CLIENT then
+		
+		if file.Exists(dir1 .. "weapons/" .. v .. "/cl_init.lua", "LUA") then
+			
+			include(dir1 .. "weapons/" .. v .. "/cl_init.lua")
+			
+		end
+		
+		if file.Exists(dir1 .. "weapons/" .. v .. "/shared.lua", "LUA") then
+			
+			include(dir1 .. "weapons/" .. v .. "/shared.lua")
+			
+		end
+		
+	end
+	
+	// ok, so including that file should have created the SWEP table
+	weapons.Register(SWEP, v) // register the swep
+	SWEP = nil // clear the swep table
+	
+end
+
+local _, effectdirs = file.Find(dir1 .. "effects/*", "LUA")
+
+for k, v in pairs(effectdirs) do
+	
+	// just incase something breaks while loading the effect
+	EFFECT = {}
+	
+	if SERVER then
+		
+		AddCSLuaFile(dir1 .. "effects/" .. v .. "/init.lua")
+		
+	else
+		
+		include(dir1 .. "effects/" .. v .. "/init.lua")
+		
+	end
+	
+	// ok, so including those files should have created the EFFECT table
+	effects.Register(EFFECT, v) // register the effect
+	EFFECT = nil // clear the entity table
 	
 end
