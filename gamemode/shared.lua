@@ -26,8 +26,19 @@ function meta:CanTraceTo( ent, filter ) -- Can the player and the entity "see" e
 
 end
 
+local oldNick = meta.Nick
 function meta:Nick( ) -- Hotfix. Allows you to fetch a character's name quickly.
-	return self:GetNWString( "name", "Unnamed" )
+	
+	if self:IsCharLoaded() then
+		
+		return self:GetNWString( "name", "Unnamed" )
+		
+	else
+		
+		return oldNick(self)
+		
+	end
+	
 end
 
 function meta:Title()

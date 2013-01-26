@@ -6,6 +6,4 @@ if SERVER then
 	CAKE.ConVars[ "DefaultClothing" ][ "Male" ] = {}
 	CAKE.ConVars[ "DefaultClothing" ][ "Female" ] = {}
 
-	CAKE.AddDataField( 2, "cid", "000000" ) 
-
 end
