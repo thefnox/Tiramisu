@@ -48,6 +48,7 @@ concommand.Add("tiramisu_debug_getaddons", function(ply, cmd, args)
 	if !ply:IsTiraDeveloper() then return end
 
 	local _, addondirs = file.Find("addons/*", "GAME")
+	local workshop, _ = file.Find("addons/*.gm", "GAME")
 
 	CAKE.SendConsole(ply, "Addons:")
 
@@ -56,7 +57,15 @@ concommand.Add("tiramisu_debug_getaddons", function(ply, cmd, args)
 		CAKE.SendConsole(ply, v)
 
 	end
+	
+	CAKE.SendConsole(ply, "---WORKSHOP---")
+	
+	for k, v in pairs(workshop) do
+		
+		CAKE.SendConsole(ply, "")
 
+	end
+	
 	CAKE.SendConsole(ply, "-----")
 
 end)
