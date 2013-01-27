@@ -23,3 +23,28 @@ function CAKE.DayLog( outputfile, text )
 	file.Write( filedir,  filecontents .. "\n" .. curtime .. " " .. text )
 	
 end
+
+function CAKE.AdminLog(clr, str) // i'll eventually make the colors work
+
+	local tbl = {}
+
+	for k, v in pairs(player.GetAll()) do
+		
+		if CAKE.PlayerRank(v) >= 4 then
+			
+			CAKE.SendConsole(v, str)
+
+		end
+
+	end
+
+	-- MsgC(clr, str .. "\n")
+
+end
+
+function CAKE.CombatLog(clr, str)
+
+	CAKE.AdminLog(clr, str)
+	CAKE.DayLog("combat.txt", str)
+
+end

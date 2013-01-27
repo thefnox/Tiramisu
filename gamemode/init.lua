@@ -29,6 +29,7 @@ include( "plugins.lua" ) -- Plugin system
 include( "client_resources.lua" ) -- Sends files to the client
 include( "sh_animations.lua" ) --Animaaaaations.
 include( "sh_anim_tables.lua" ) --Animation tables
+include( "developer_debugging.lua" ) -- Developer Stuff
 
 resource.AddFile( "resource/fonts/YanoneKaffeesatz-Bold.ttf")
 resource.AddFile( "resource/fonts/YanoneKaffeesatz-Regular.ttf")
@@ -271,4 +272,35 @@ end
 --Even more useless for RP are sprays.
 function GM:PlayerSpray(ply)
 	return true
+end
+
+function GM:EntityTakeDamage(ent, dmginfo)
+
+	if ent:IsPlayer() then
+		
+		local attacker = dmginfo:GetAttacker()
+		local attacker_name
+		local amount = dmginfo:GetDamage()
+		local weapon_class = "Unknown"
+
+		if attacker:IsPlayer() and IsValid(attacker:GetActiveWeapon()) then
+			
+			weapon_class = attacker:GetActiveWeapon():GetClass()
+
+		end
+
+		if !attacker:IsPlayer() then
+			
+			attacker_name = attacker:GetClass()
+
+		else
+
+			attacker_name = CAKE.GetCharSignature(attacker)
+
+		end
+
+		CAKE.CombatLog(Color(255, 125, 40), CAKE.GetCharSignature(ent) .. " took " .. amount .. " damage from " .. attacker_name .. " with " .. weapon_class)
+
+	end
+
 end

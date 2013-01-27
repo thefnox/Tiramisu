@@ -67,7 +67,30 @@ end
 function GM:DoPlayerDeath( ply, attacker, dmginfo )
 
 	-- We don't want kills, deaths, nor ragdolls being made. Kthx.
+
+	local attacker_name
+	local weapon_class = "Unknown"
 	
+	if attacker:IsPlayer() and IsValid(attacker:GetActiveWeapon()) then
+		
+		weapon_class = attacker:GetActiveWeapon():GetClass()
+		
+	end
+	
+	if !attacker:IsPlayer() then
+		
+		attacker_name = attacker:GetClass()
+
+	else
+
+		attacker_name = CAKE.GetCharSignature(attacker)
+
+	end
+
+	CAKE.CombatLog(Color(255, 0, 0), CAKE.GetCharSignature(ply) .. " was killed by " .. attacker_name .. " with " .. weapon_class)
+
+
+
 end
 
 -- Disallows suicide
