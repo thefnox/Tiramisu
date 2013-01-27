@@ -21,6 +21,8 @@ function CAKE.LoadSchema( schema )
 	table.insert( CAKE.Schemafile, schema )
 	CAKE.DayLog( "script.txt", "Loading schema " .. SCHEMA.Name .. " by " .. SCHEMA.Author .. " ( " .. SCHEMA.Description .. " )" )
 
+	-- Load the entities
+	CAKE.AddSchemaEntities(schema)
 
 	-- Use the new plugin system
 

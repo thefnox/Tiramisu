@@ -24,7 +24,7 @@ function CAKE.DayLog( outputfile, text )
 	
 end
 
-function CAKE.AdminLog(clr, str) // i'll eventually make the colors work
+function CAKE.AdminLog(clr, str)
 
 	local tbl = {}
 

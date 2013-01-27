@@ -109,148 +109,150 @@ function CAKE.FindPlayer(name)
 end
 
 // i can't believe it took me ages to find out schema.lua wasn't clientside
+
 -- Entity Loading by VorteX
+function CAKE.AddSchemaEntities(schema)
 
-local schema = CAKE.ConVars[ "Schema" ]
+	local dir1 = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/entities/"
 
-local dir1 = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/entities/"
+	local entityfiles, entitydirs = file.Find(dir1 .. "entities/*", "LUA")
 
-local entityfiles, entitydirs = file.Find(dir1 .. "entities/*", "LUA")
-
-for k, v in pairs(entityfiles) do
-	
-	// just incase something breaks while loading the ent
-	ENT = {
+	for k, v in pairs(entityfiles) do
 		
-		Type = "anim"
+		// just incase something breaks while loading the ent
+		ENT = {
+			
+			Type = "anim"
+			
+			}
 		
-		}
-	
-	include(dir1 .. "entities/" .. v)
-	// ok, so including that file should have created the ENT table
-	scripted_ents.Register(ENT, v) // register the entity
-	ENT = nil // clear the entity table
-	
-end
-
-for k, v in pairs(entitydirs) do
-	
-	// just incase something breaks while loading the ent
-	ENT = {
-		
-		Type = "anim"
-		
-		}
-	
-	if SERVER then
-		
-		include(dir1 .. "entities/" .. v .. "/init.lua")
-		
-	elseif CLIENT then
-		
-		include(dir1 .. "entities/" .. v .. "/cl_init.lua")
+		include(dir1 .. "entities/" .. v)
+		// ok, so including that file should have created the ENT table
+		scripted_ents.Register(ENT, v) // register the entity
+		ENT = nil // clear the entity table
 		
 	end
-	
-	// ok, so including those files should have created the ENT table
-	scripted_ents.Register(ENT, v) // register the entity
-	ENT = nil // clear the entity table
-	
-end
 
-local weaponfiles, weapondirs = file.Find(dir1 .. "weapons/*", "LUA")
-
-for k, v in pairs(weaponfiles) do
-	
-	// just incase something breaks while loading the swep
-	SWEP = {
+	for k, v in pairs(entitydirs) do
 		
-		Base = "weapon_base",
-		Primary = {},
-		Secondary = {}
-		
-		}
-	
-	include(dir1 .. "weapons/" .. v)
-	// ok, so including that file should have created the SWEP table
-	weapons.Register(SWEP, v) // register the swep
-	SWEP = nil // clear the swep table
-	
-end
-
-for k, v in pairs(weapondirs) do
-	
-	// just incase something breaks while loading the swep
-	SWEP = {
-		
-		Base = "weapon_base",
-		Primary = {},
-		Secondary = {}
-		
-		}
-	
-	if SERVER then
-		
-		if file.Exists(dir1 .. "weapons/" .. v .. "/init.lua", "LUA") then
+		// just incase something breaks while loading the ent
+		ENT = {
 			
-			include(dir1 .. "weapons/" .. v .. "/init.lua")
+			Type = "anim"
+			
+			}
+		
+		if SERVER then
+			
+			include(dir1 .. "entities/" .. v .. "/init.lua")
+			
+		elseif CLIENT then
+			
+			include(dir1 .. "entities/" .. v .. "/cl_init.lua")
 			
 		end
 		
-		if file.Exists(dir1 .. "weapons/" .. v .. "/shared.lua", "LUA") then
-			
-			include(dir1 .. "weapons/" .. v .. "/shared.lua")
-			
-		end
-		
-	elseif CLIENT then
-		
-		if file.Exists(dir1 .. "weapons/" .. v .. "/cl_init.lua", "LUA") then
-			
-			include(dir1 .. "weapons/" .. v .. "/cl_init.lua")
-			
-		end
-		
-		if file.Exists(dir1 .. "weapons/" .. v .. "/shared.lua", "LUA") then
-			
-			include(dir1 .. "weapons/" .. v .. "/shared.lua")
-			
-		end
+		// ok, so including those files should have created the ENT table
+		scripted_ents.Register(ENT, v) // register the entity
+		ENT = nil // clear the entity table
 		
 	end
-	
-	// ok, so including that file should have created the SWEP table
-	weapons.Register(SWEP, v) // register the swep
-	SWEP = nil // clear the swep table
-	
-end
 
-local _, effectdirs = file.Find(dir1 .. "effects/*", "LUA")
+	local weaponfiles, weapondirs = file.Find(dir1 .. "weapons/*", "LUA")
 
-for k, v in pairs(effectdirs) do
-	
-	if CLIENT then
+	for k, v in pairs(weaponfiles) do
 		
-		EFFECT = {}
+		// just incase something breaks while loading the swep
+		SWEP = {
+			
+			Base = "weapon_base",
+			Primary = {},
+			Secondary = {}
+			
+			}
 		
-	end
-	
-	if SERVER then
-		
-		AddCSLuaFile(dir1 .. "effects/" .. v .. "/init.lua")
-		
-	else
-		
-		include(dir1 .. "effects/" .. v .. "/init.lua")
-		
-	end
-	
-	if CLIENT then
-		
-		// ok, so including those files should have created the EFFECT table
-		effects.Register(EFFECT, v) // register the effect
-		EFFECT = nil // clear the entity table
+		include(dir1 .. "weapons/" .. v)
+		// ok, so including that file should have created the SWEP table
+		weapons.Register(SWEP, v) // register the swep
+		SWEP = nil // clear the swep table
 		
 	end
+
+	for k, v in pairs(weapondirs) do
 		
+		// just incase something breaks while loading the swep
+		SWEP = {
+			
+			Base = "weapon_base",
+			Primary = {},
+			Secondary = {}
+			
+			}
+		
+		if SERVER then
+			
+			if file.Exists(dir1 .. "weapons/" .. v .. "/init.lua", "LUA") then
+				
+				include(dir1 .. "weapons/" .. v .. "/init.lua")
+				
+			end
+			
+			if file.Exists(dir1 .. "weapons/" .. v .. "/shared.lua", "LUA") then
+				
+				include(dir1 .. "weapons/" .. v .. "/shared.lua")
+				
+			end
+			
+		elseif CLIENT then
+			
+			if file.Exists(dir1 .. "weapons/" .. v .. "/cl_init.lua", "LUA") then
+				
+				include(dir1 .. "weapons/" .. v .. "/cl_init.lua")
+				
+			end
+			
+			if file.Exists(dir1 .. "weapons/" .. v .. "/shared.lua", "LUA") then
+				
+				include(dir1 .. "weapons/" .. v .. "/shared.lua")
+				
+			end
+			
+		end
+		
+		// ok, so including that file should have created the SWEP table
+		weapons.Register(SWEP, v) // register the swep
+		SWEP = nil // clear the swep table
+		
+	end
+
+	local _, effectdirs = file.Find(dir1 .. "effects/*", "LUA")
+
+	for k, v in pairs(effectdirs) do
+		
+		if CLIENT then
+			
+			EFFECT = {}
+			
+		end
+		
+		if SERVER then
+			
+			AddCSLuaFile(dir1 .. "effects/" .. v .. "/init.lua")
+			
+		else
+			
+			include(dir1 .. "effects/" .. v .. "/init.lua")
+			
+		end
+		
+		if CLIENT then
+			
+			// ok, so including those files should have created the EFFECT table
+			effects.Register(EFFECT, v) // register the effect
+			EFFECT = nil // clear the entity table
+			
+		end
+			
+	end
+
 end

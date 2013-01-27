@@ -434,6 +434,7 @@ Schemas = {}
 
 usermessage.Hook("Tiramisu.AddSchema", function(data)
 	local schema = data:ReadString()
+	CAKE.AddSchemaEntities(schema)
 	CAKE.AddRightClicks(schema)
 	CAKE.AddClientsidePlugins(schema)
 	CAKE.AddItems(schema)
