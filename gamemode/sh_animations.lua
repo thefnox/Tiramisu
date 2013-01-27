@@ -278,6 +278,34 @@ function meta:GetAiming()
 	return false
 end
 
+local HoldtypeIndex = {
+	[ACT_HL2MP_IDLE_PISTOL] = "pistol",
+	[ACT_HL2MP_IDLE_SMG1] = "smg",
+	[ACT_HL2MP_IDLE_GRENADE] = "grenade",
+	[ACT_HL2MP_IDLE_AR2] = "ar2",
+	[ACT_HL2MP_IDLE_SHOTGUN] = "shotgun",
+	[ACT_HL2MP_IDLE_RPG] = "rpg",
+	[ACT_HL2MP_IDLE_PHYSGUN] = "physgun",
+	[ACT_HL2MP_IDLE_CROSSBOW] = "crossbow",
+	[ACT_HL2MP_IDLE_MELEE] = "melee",
+	[ACT_HL2MP_IDLE_SLAM] = "slam",
+	[ACT_HL2MP_IDLE] = "normal",
+	[ACT_HL2MP_IDLE_FIST] = "fist",
+	[ACT_HL2MP_IDLE_MELEE2] = "melee2",
+	[ACT_HL2MP_IDLE_PASSIVE] = "passive",
+	[ACT_HL2MP_IDLE_KNIFE] = "knife",
+	[ACT_HL2MP_IDLE_DUEL] = "duel",
+	[ACT_HL2MP_IDLE_CAMERA] = "camera",
+	[ACT_HL2MP_IDLE_REVOLVER] = "revolver"
+}
+
+function meta:GetHoldType()
+	if HoldtypeIndex[self:TranslateWeaponActivity(ACT_MP_STAND_IDLE)] then
+		return HoldtypeIndex[self:TranslateWeaponActivity(ACT_MP_STAND_IDLE)] 
+	end
+	return HoldtypeIndex[ACT_HL2MP_IDLE] 
+end
+
 meta = nil
 
 local function FindName( actnum ) --Finds the enumeration name based on it's number.
@@ -688,7 +716,7 @@ function GM:CalcMainActivity( ply, velocity )
 	else
 		local holdtype = "default"
 		if( IsValid(ply:GetActiveWeapon()) ) then
-			holdtype = Anims.DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
+			holdtype = Anims.DetectHoldType( ply:GetHoldType() ) 
 		end
 
 		if (holdtype == "default" and ply:GetPersonality() != "default" and !ply:GetNWBool( "specialmodel" )) or CAKE.ConVars[ "LinuxHotfix" ] then
@@ -787,7 +815,7 @@ function GM:DoAnimationEvent( ply, event, data ) -- This is for gestures.
 
 	holdtype = "default"
 	if( IsValid(  ply:GetActiveWeapon() ) ) then
-		holdtype = Anims.DetectHoldType( ply:GetActiveWeapon():GetHoldType() ) 
+		holdtype = Anims.DetectHoldType( ply:GetHoldType() ) 
 	end
 
 	if event == PLAYERANIMEVENT_ATTACK_PRIMARY then

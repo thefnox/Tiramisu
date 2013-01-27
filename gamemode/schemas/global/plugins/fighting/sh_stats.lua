@@ -84,7 +84,7 @@ else
 				end
 			end
 			if ply.IsRunning then
-				if( IsValid(ply:GetActiveWeapon()) and Anims.DetectHoldType(ply:GetActiveWeapon():GetHoldType()) == "default") then
+				if( IsValid(ply:GetActiveWeapon()) and Anims.DetectHoldType(ply:GetHoldType()) == "default") then
 					if !ply:KeyDown( IN_MOVELEFT ) and !ply:KeyDown( IN_MOVERIGHT ) then
 						ply:SetRunSpeed( Lerp( 0.01, ply:GetRunSpeed(), CAKE.ConVars[ "RunSpeed" ] ))
 					else
