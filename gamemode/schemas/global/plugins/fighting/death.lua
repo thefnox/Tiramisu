@@ -68,22 +68,23 @@ function GM:DoPlayerDeath( ply, attacker, dmginfo )
 
 	-- We don't want kills, deaths, nor ragdolls being made. Kthx.
 
+	local newattacker = dmginfo:GetAttacker()
 	local attacker_name
 	local weapon_class = "Unknown"
 	
-	if attacker:IsPlayer() and IsValid(attacker:GetActiveWeapon()) then
+	if newattacker:IsPlayer() and IsValid(newattacker:GetActiveWeapon()) then
 		
-		weapon_class = attacker:GetActiveWeapon():GetClass()
+		weapon_class = newattacker:GetActiveWeapon():GetClass()
 		
 	end
 	
-	if !attacker:IsPlayer() then
+	if !newattacker:IsPlayer() then
 		
-		attacker_name = attacker:GetClass()
+		attacker_name = newattacker:GetClass()
 
 	else
 
-		attacker_name = CAKE.GetCharSignature(attacker)
+		attacker_name = CAKE.GetCharSignature(newattacker)
 
 	end
 

@@ -32,7 +32,7 @@ function CAKE.AdminLog(clr, str) // i'll eventually make the colors work
 		
 		if CAKE.PlayerRank(v) >= 4 then
 			
-			CAKE.SendConsole(v, str)
+			CAKE.SendConsole(v, clr, str)
 
 		end
 

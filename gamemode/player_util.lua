@@ -27,12 +27,38 @@ end
 
 
 --Sends a message to a player's console
-function CAKE.SendConsole( ply, msg )
+function CAKE.SendConsole( ply, clrmsg, msg )
+	
+	if msg then // we got color
 
-	if ply:IsTiraPlayer() then
-		ply:PrintMessage( 2, msg )
+		if ply:IsTiraPlayer() then
+
+			umsg.Start("CAKE.SendConsole", ply)
+
+				local c = clrmsg
+				umsg.String(msg)
+				umsg.String(c.r .. ":" .. c.g .. ":" .. c.b)
+
+			umsg.End()
+
+		else
+
+			MsgC(clrmsg, msg .. "\n")
+
+		end
+
 	else
-		print( msg )
+
+		if ply:IsTiraPlayer() then
+			
+			ply:PrintMessage( 2, clrmsg )
+
+		else
+
+			MsgN(clrmsg)
+
+		end
+
 	end
 	
 end

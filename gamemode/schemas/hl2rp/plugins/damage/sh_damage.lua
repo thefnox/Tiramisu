@@ -31,7 +31,7 @@ function Damage_EntityTakeDamage(ent, dmginfo)
 		
 		if !chance then return end // not lucky enough, sorry
 		
-		CAKE.DayLog("combat.txt", CAKE.GetCharSignature(ent) .. " has been knocked out by \"" .. translation[dmgtype] .. "\"")
+		CAKE.CombatLog(Color(25, 25, 230), CAKE.GetCharSignature(ent) .. " has been knocked out by \"" .. translation[dmgtype] .. "\"")
 		CAKE.UnconciousMode(ent)
 		
 	end

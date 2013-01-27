@@ -281,11 +281,11 @@ function GM:EntityTakeDamage(ent, dmginfo)
 		local attacker = dmginfo:GetAttacker()
 		local attacker_name
 		local amount = dmginfo:GetDamage()
-		local weapon_class = "Unknown"
+		local weapon_class = ""
 
 		if attacker:IsPlayer() and IsValid(attacker:GetActiveWeapon()) then
 			
-			weapon_class = attacker:GetActiveWeapon():GetClass()
+			weapon_class = " with " .. attacker:GetActiveWeapon():GetClass()
 
 		end
 
@@ -299,7 +299,7 @@ function GM:EntityTakeDamage(ent, dmginfo)
 
 		end
 
-		CAKE.CombatLog(Color(255, 125, 40), CAKE.GetCharSignature(ent) .. " took " .. amount .. " damage from " .. attacker_name .. " with " .. weapon_class)
+		CAKE.CombatLog(Color(255, 125, 40), CAKE.GetCharSignature(ent) .. " took " .. amount .. " damage from " .. attacker_name .. weapon_class)
 
 	end
 

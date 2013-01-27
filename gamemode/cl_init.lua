@@ -402,6 +402,17 @@ end
 function GM:ChatTextChanged()
 end
 
+usermessage.Hook("CAKE.SendConsole", function(um)
+
+	local msg = um:ReadString()
+	local clrstr = um:ReadString()
+	local clrtbl = string.Explode(":", clrstr)
+	local clr = Color(clrtbl[1], clrtbl[2], clrtbl[3], 255)
+
+	MsgC(clr, msg .. "\n")
+
+end)
+
 usermessage.Hook( "runconcommand", function( um ) --Simple fix to garry's fuckup.
 	
 	local cmd = um:ReadString()
