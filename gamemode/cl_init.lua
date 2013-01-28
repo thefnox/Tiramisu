@@ -378,11 +378,11 @@ function GM:InitPostEntity()
 
 	self.BaseClass:InitPostEntity()
 
-	RunConsoleCommand( "rp_ready" )
 	if CAKE.ConVars[ "ForceJigglebones" ] then
 		RunConsoleCommand( "cl_jiggle_bone_framerate_cutoff", "1" )
 	end
 	CAKE.EnableBlackScreen( CAKE.ConVars[ "SpawnWithBlackScreen" ], CAKE.ConVars[ "SpawnWithBlackScreen" ] )
+	RunConsoleCommand( "rp_ready" )
 	
 end
 

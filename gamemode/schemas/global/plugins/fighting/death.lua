@@ -36,7 +36,6 @@ function GM:PlayerDeathThink(ply)
 			if ply:GetNWInt( "deathmode", 0 ) == 0 then
 				CAKE.StandUp( ply )
 				ply:Spawn()
-				ply.rag.lingertime = CurTime()
 				ply.deathtime = nil
 				ply.nextsecond = nil
 				ply:SetNWInt("deathmoderemaining", 0)
@@ -90,18 +89,22 @@ function CAKE.DeathMode( ply, noragdoll )
 	local speed = ply:GetVelocity()
 
 	timer.Destroy("deadragdollremove".. ply:SteamID())
+	local container = ply:GetInventory()
 
-	if CAKE.ConVars[ "LoseWeaponsOnDeath" ] then
-		local container = ply:GetInventory()
+	if CAKE.ConVars[ "LoseItemsOnDeath" ] then
 		for i, tbl in pairs( ply:GetInventory().Items ) do
 			for j, v in pairs(tbl) do
-				if CAKE.GetUData( v.itemid, "weaponclass" ) or string.match( v.class, "weapon_" ) then
+				container:ClearSlot(j,i)
+			end
+		end
+		ply:RemoveAllAmmo()
+	elseif CAKE.ConVars[ "LoseWeaponsOnDeath" ] then
+		for i, tbl in pairs( ply:GetInventory().Items ) do
+			for j, v in pairs(tbl) do
+				if CAKE.GetUData( v.itemid or "", "weaponclass" ) or string.match( v.class or "", "weapon_" ) then
 					container:ClearSlot(j,i)
 				end
 			end
-		end
-		if CAKE.ConVars[ "LoseItemsOnDeath" ] then
-			container:Clear()
 		end
 		ply:RemoveAllAmmo()
 	end

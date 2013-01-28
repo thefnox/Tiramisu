@@ -2,6 +2,25 @@
 DeriveGamemode( "sandbox" )
 include("glon.lua")
 
+local fw = file.Write
+function file.Write( name, content )
+	if not file.IsDir( string.GetPathFromFilename( name ) or ".", "DATA" ) then
+		local dirs = string.Explode( "/", string.GetPathFromFilename( name ) )
+		for k, v in pairs( dirs ) do
+			if k > 1 then
+				local path = dirs[1]
+				for i = 2, k do
+					path = path .. "/" .. dirs[i]
+				end
+				file.CreateDir( path )
+			else
+				file.CreateDir( v )
+			end
+		end
+	end
+	fw( name, content )
+end
+
 -- Define global variables
 CAKE = {  }
 TIRA = CAKE
@@ -64,25 +83,6 @@ CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ) -- Load the schema and plugins, this
 
 CAKE.Loaded = true -- Tell the server that we're loaded up
 
-local fw = file.Write
-function file.Write( name, content )
-	if not file.IsDir( string.GetPathFromFilename( name ) or ".", "DATA" ) then
-		local dirs = string.Explode( "/", string.GetPathFromFilename( name ) )
-		for k, v in pairs( dirs ) do
-			if k > 1 then
-				local path = dirs[1]
-				for i = 2, k do
-					path = path .. "/" .. dirs[i]
-				end
-				file.CreateDir( path )
-			else
-				file.CreateDir( v )
-			end
-		end
-	end
-	fw( name, content )
-end
-
 function GM:Initialize( ) -- Initialize the gamemode
 	
 	-- My reasoning for this certain order is due to the fact that plugins are meant to modify the gamemode sometimes.
@@ -128,7 +128,7 @@ function GM:PlayerInitialSpawn( ply )
 
 	-- Load their data, or create a new datafile for them.
 	CAKE.LoadPlayerDataFile( ply )
-	
+
 	self.BaseClass:PlayerInitialSpawn( ply )
 
 end
