@@ -304,7 +304,7 @@ surface.CreateFont( "TiramisuTitlesFont",
 -- surface.CreateFont(CAKE.ConVars[ "OOCFont" ], 16, 500, true, false, "TiramisuOOCFontOutline", false, false)
 -- surface.CreateFont(CAKE.ConVars[ "NoteFont" ], 18, 500, true, false, "TiramisuNoteFont" )
 -- surface.CreateFont(CAKE.ConVars[ "NamesFont"], 20, 400, true, false, "TiramisuNamesFont" ) --Font used for names
--- -- surface.CreateFont(CAKE.ConVars[ "TitlesFont"], 14, 400, true, false, "TiramisuTitlesFont" ) --Font used for titles
+-- surface.CreateFont(CAKE.ConVars[ "TitlesFont"], 14, 400, true, false, "TiramisuTitlesFont" ) --Font used for titles
 
 -- Client Includes
 include( "sh_animations.lua" )
@@ -498,7 +498,6 @@ function CAKE.AddClientsidePlugins( schema, filename )
 	-- local list = file.Find( path .. "*", "LUA" ) or {}
 	local files, folders = file.Find( path .. "*", "LUA" )
 
-
 	for k, v in pairs( files ) do
 		if v:sub( 1, 3 ) == "cl_" or v:sub( 1,3 ) == "sh_" then --Filters out serverside files that may have got sent
 			PLUGIN = {} -- Support for shared plugins. 
@@ -530,9 +529,55 @@ function CAKE.AddClientsidePlugins( schema, filename )
 		end
 	end
 
-	for k, v in pairs( folders ) do 
-		CAKE.AddClientsidePlugins( schema, filename .. v .. "/" )
+	for k, v in pairs( folders ) do
+
+		if v != "entities" then
+
+			CAKE.AddClientsidePlugins( schema, filename .. v .. "/" )
+
+		end
+		
 	end
+
+	// Entity Loading
+	local dir1 = path .. "entities/"
+	
+	local entityfiles, entitydirs = file.Find(dir1 .. "entities/*", "LUA")
+
+	for k, v in pairs(entityfiles) do
+		
+		CAKE.AddEntity(dir1 .. "entities/" .. v)
+		
+	end
+
+	for k, v in pairs(entitydirs) do
+		
+		CAKE.AddEntity(dir1 .. "entities/" .. v .. "/")
+		
+	end
+
+	local weaponfiles, weapondirs = file.Find(dir1 .. "weapons/*", "LUA")
+	
+	for k, v in pairs(weaponfiles) do
+		
+		CAKE.AddWeapon(dir1 .. "weapons/" .. v)
+		
+	end
+
+	for k, v in pairs(weapondirs) do
+		
+		CAKE.AddWeapon(dir1 .. "weapons/" .. v .. "/")
+		
+	end
+
+	local _, effectdirs = file.Find(dir1 .. "effects/*", "LUA")
+
+	for k, v in pairs(effectdirs) do
+
+		CAKE.AddEffect(dir1 .. "effects/" .. v .. "/init.lua")
+			
+	end
+
 end
 
 function CAKE.AddItems( schema )
@@ -545,7 +590,7 @@ function CAKE.AddItems( schema )
 
 	for k, v in pairs( files ) do
 		ITEM = {  }
-		MsgN( "Loading " .. path ..v )
+		-- MsgN( "Loading " .. path ..v )
 		include( path .. v )
 		for k,v in pairs(ITEM) do
 			if type(v) == "function" then

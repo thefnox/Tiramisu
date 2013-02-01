@@ -19,6 +19,7 @@ function CAKE.LoadPlugin( schema, filename )
 
 	-- for k, v in pairs( list ) do
 	for k, v in pairs( files ) do
+
 		PLUGIN = {}
 		--[[ if v != "." and v != ".." and v != filename then
 			if string.GetExtensionFromFilename( v ) and string.GetExtensionFromFilename( v ) == "lua" then
@@ -49,8 +50,54 @@ function CAKE.LoadPlugin( schema, filename )
 	end
 
 	for k, v in pairs( folders or {} ) do
-		CAKE.LoadPlugin( schema, filename .. v .. "/" )
+
+		if v != "entities" then
+			
+			CAKE.LoadPlugin( schema, filename .. v .. "/" )
+
+		end
+		
 	end
+
+	// Entity Loading
+	local dir1 = path .. "entities/"
+
+	local entityfiles, entitydirs = file.Find(dir1 .. "entities/*", "LUA")
+
+	for k, v in pairs(entityfiles) do
+		
+		CAKE.AddEntity(dir1 .. "entities/" .. v)
+		
+	end
+
+	for k, v in pairs(entitydirs) do
+		
+		CAKE.AddEntity(dir1 .. "entities/" .. v .. "/")
+		
+	end
+
+	local weaponfiles, weapondirs = file.Find(dir1 .. "weapons/*", "LUA")
+
+	for k, v in pairs(weaponfiles) do
+		
+		CAKE.AddWeapon(dir1 .. "weapons/" .. v)
+		
+	end
+
+	for k, v in pairs(weapondirs) do
+		
+		CAKE.AddWeapon(dir1 .. "weapons/" .. v .. "/")
+		
+	end
+
+	local _, effectdirs = file.Find(dir1 .. "effects/*", "LUA")
+
+	for k, v in pairs(effectdirs) do
+
+		CAKE.AddEffect(dir1 .. "effects/" .. V .. "/init.lua")
+			
+	end
+
 end
 
 --Initializes plugins. This is the equivalent of hooking something to the Initialize hook
