@@ -265,7 +265,13 @@ function CAKE.SelectChar( ply, uid )
 				CAKE.HandleGear( ply, v[ "item" ], v[ "bone" ], v[ "itemid" ], v[ "offset" ], v[ "angle" ], v[ "scale" ], v[ "skin" ] )
 			end
 			
+			local str = CAKE.GetCharSignature(ply) .. " has loaded the character " .. CAKE.GetCharField(ply, "name")
+			
+			CAKE.AdminLog(Color(97, 145, 61), str)
+			CAKE.DayLog("characters.txt", str)
+			
 			CAKE.SendGearToClient( ply )
+
 		else
 			ply:SetNWBool( "specialmodel", true ) 
 			ply:SetModel( tostring( special ) )
