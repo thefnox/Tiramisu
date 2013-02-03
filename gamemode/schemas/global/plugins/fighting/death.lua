@@ -36,7 +36,6 @@ function GM:PlayerDeathThink(ply)
 			if ply:GetNWInt( "deathmode", 0 ) == 0 then
 				CAKE.StandUp( ply )
 				ply:Spawn()
-				ply.rag.lingertime = CurTime()
 				ply.deathtime = nil
 				ply.nextsecond = nil
 				ply:SetNWInt("deathmoderemaining", 0)
