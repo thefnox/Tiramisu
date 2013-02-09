@@ -1289,14 +1289,40 @@ end
 /*---------------------------------------------------------
 	TiramisuCrosshair
 ---------------------------------------------------------*/
---[[local trace, pos
+function SetupChitpos()
+	local tracedata = {}
+	tracedata.start = CAKE.CameraPos
+	tracedata.endpos = CAKE.CameraPos + (CAKE.OldAngles:Forward() * 3000)
+	local trace = util.TraceLine(tracedata)
+
+		--Hit Correction
+			--if IsValid(trace.Entity) and !trace.HitWorld and !trace.HitSky then
+				--local head = trace.Entity:LookupBone("ValveBiped.Bip01_Head1")
+				--if head then
+					--  hitpos = Lerp( 0.3, trace.HitPos, trace.Entity:GetBonePosition(head) )
+				--else
+					--  hitpos = Lerp( 0.3, trace.HitPos, trace.Entity:LocalToWorld(trace.Entity:OBBCenter()))
+				--end
+			--else
+					--  hitpos = trace.HitPos
+			--end
+
+	--hitpos = hitpos - trace.HitNormal
+				
+	chitpos = trace.HitPos
+end
+
+local trace, pos
 function SKIN:PaintTiramisuCrosshair()
+		if !chitpos then
+			SetupChitpos()
+		end
 		surface.SetDrawColor( 220, 220, 220, 220 )
 		nv = chitpos:ToScreen()
 		scrw = ScrW()/2
 		scrh = ScrH()/2
 		surface.DrawLine( scrw - 5, scrh, scrw + 5, scrh )
 		surface.DrawLine( scrw, scrh - 5, scrw, scrh + 5 )
-end]]--
+end
 
 derma.DefineSkin( "Tiramisu", "Made to look like some good stuff", SKIN )
