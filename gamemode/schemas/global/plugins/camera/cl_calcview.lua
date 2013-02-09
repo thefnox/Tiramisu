@@ -231,27 +231,6 @@ hook.Add( "CreateMove", "TiramisuCreateMoveCamera", function( cmd )
 					mins = Vector(-12,-12,-12),
 					maxs = Vector( 12, 12, 12),
 				} )]]--
-
-				local tracedata = {}
-				tracedata.start = CAKE.CameraPos
-				tracedata.endpos = CAKE.CameraPos + (CAKE.OldAngles:Forward() * 3000)
-				local trace = util.TraceLine(tracedata)
-
-				--Hit Correction
-				--if IsValid(trace.Entity) and !trace.HitWorld and !trace.HitSky then
-					--local head = trace.Entity:LookupBone("ValveBiped.Bip01_Head1")
-					--if head then
-					--  hitpos = Lerp( 0.3, trace.HitPos, trace.Entity:GetBonePosition(head) )
-					--else
-					--  hitpos = Lerp( 0.3, trace.HitPos, trace.Entity:LocalToWorld(trace.Entity:OBBCenter()))
-					--end
-				--else
-				--  hitpos = trace.HitPos
-				--end
-
-				--hitpos = hitpos - trace.HitNormal
-				
-				chitpos = trace.HitPos
 								
 				vecMove.x = cmd:GetForwardMove()
 				vecMove.y = cmd:GetSideMove()
