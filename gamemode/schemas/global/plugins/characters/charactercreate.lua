@@ -246,10 +246,22 @@ end
 
 function CAKE.SelectChar( ply, uid )
 	local SteamID = CAKE.FormatText(ply:SteamID())
-	if( CAKE.PlayerData[ SteamID ][ "characters" ][ uid ] != nil ) then
-		local char = CAKE.PlayerData[ SteamID ][ "characters" ][ uid ]
+	local char = CAKE.PlayerData[ SteamID ][ "characters" ][ uid ]
+	local shouldload, reason = hook.Call("PlayerSelectChar", GAMEMODE, ply, uid, char)
+	reason = reason or "You cannot select this character at this time."
+	
+	if char != nil then
+		-- local char = CAKE.PlayerData[ SteamID ][ "characters" ][ uid ]
+		if shouldload == false then
+			
+			CAKE.SendError(ply, reason)
+			return
+			
+		end
+		
 		local special = char[ "specialmodel" ]
 		if special == "none" or special == "" then
+			
 			ply:SetNWBool( "specialmodel", false ) 
 			local m = char[ "gender" ]
 			ply:SetModel( Anims[m][ "models" ][1] )
@@ -271,14 +283,18 @@ function CAKE.SelectChar( ply, uid )
 			CAKE.DayLog("characters.txt", str)
 			
 			CAKE.SendGearToClient( ply )
-
+			
 		else
+			
 			ply:SetNWBool( "specialmodel", true ) 
 			ply:SetModel( tostring( special ) )
-		end 	
+			
+		end 
+		
 		umsg.Start("SelectThisCharacter")
 			umsg.Long( uid )
 		umsg.End()
+		
 	end
 
 end

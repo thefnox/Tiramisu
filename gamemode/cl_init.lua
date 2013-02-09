@@ -433,12 +433,23 @@ end)
 Schemas = {}
 
 usermessage.Hook("Tiramisu.AddSchema", function(data)
+	
 	local schema = data:ReadString()
+	
+	local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/configuration.lua"
+	
+	if file.Exists( path, "LUA" ) then
+		
+		include(path)
+		
+	end
+	
 	CAKE.AddSchemaEntities(schema)
 	CAKE.AddRightClicks(schema)
 	CAKE.AddClientsidePlugins(schema)
 	CAKE.AddItems(schema)
-end )
+	
+end)
 
 usermessage.Hook( "Tiramisu.EnableBlackScreen", function( um)
 	CAKE.EnableBlackScreen( um:ReadBool(), false )

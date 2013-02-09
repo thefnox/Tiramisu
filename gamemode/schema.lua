@@ -20,7 +20,16 @@ function CAKE.LoadSchema( schema )
 	
 	table.insert( CAKE.Schemafile, schema )
 	CAKE.DayLog( "script.txt", "Loading schema " .. SCHEMA.Name .. " by " .. SCHEMA.Author .. " ( " .. SCHEMA.Description .. " )" )
-
+	
+	local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/configuration.lua"
+	
+	if file.Exists( path, "LUA" ) then
+		
+		AddCSLuaFile(path)
+		include(path)
+		
+	end
+	
 	-- Load the entities
 	CAKE.AddSchemaEntities(schema)
 
