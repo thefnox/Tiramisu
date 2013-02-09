@@ -136,8 +136,12 @@ function CAKE.WakeUp(ply, dontdestroyragdoll)
 	ply:SetVelocity( Vector(0,0,0))
 end
 
-function CAKE.RagDamage( ent, inflictor, attacker, amount )
- 
+function CAKE.RagDamage( ent, dmginfo )
+ 	
+ 	local inflictor = dmginfo:GetInflictor()
+ 	local attacker = dmginfo:GetAttacker()
+ 	local amount = dmginfo:GetDamage()
+
 	if IsValid(ent.ply) and ent.ply:Alive() and IsValid(inflictor) and (inflictor:IsPlayer() or inflictor:IsNPC()) then
 		if CAKE.ConVars[ "DamageWhileUnconcious" ] then
 			ent.ply:SetHealth(ent.ply:Health()-amount)

@@ -66,7 +66,31 @@ end
 function GM:DoPlayerDeath( ply, attacker, dmginfo )
 
 	-- We don't want kills, deaths, nor ragdolls being made. Kthx.
+
+	local newattacker = dmginfo:GetAttacker()
+	local attacker_name
+	local weapon_class = "Unknown"
 	
+	if newattacker:IsPlayer() and IsValid(newattacker:GetActiveWeapon()) then
+		
+		weapon_class = newattacker:GetActiveWeapon():GetClass()
+		
+	end
+	
+	if !newattacker:IsPlayer() then
+		
+		attacker_name = newattacker:GetClass()
+
+	else
+
+		attacker_name = CAKE.GetCharSignature(newattacker)
+
+	end
+
+	CAKE.CombatLog(Color(255, 0, 0), CAKE.GetCharSignature(ply) .. " was killed by " .. attacker_name .. " with " .. weapon_class)
+
+
+
 end
 
 -- Disallows suicide
@@ -89,22 +113,18 @@ function CAKE.DeathMode( ply, noragdoll )
 	local speed = ply:GetVelocity()
 
 	timer.Destroy("deadragdollremove".. ply:SteamID())
-	local container = ply:GetInventory()
 
-	if CAKE.ConVars[ "LoseItemsOnDeath" ] then
+	if CAKE.ConVars[ "LoseWeaponsOnDeath" ] then
+		local container = ply:GetInventory()
 		for i, tbl in pairs( ply:GetInventory().Items ) do
 			for j, v in pairs(tbl) do
-				container:ClearSlot(j,i)
-			end
-		end
-		ply:RemoveAllAmmo()
-	elseif CAKE.ConVars[ "LoseWeaponsOnDeath" ] then
-		for i, tbl in pairs( ply:GetInventory().Items ) do
-			for j, v in pairs(tbl) do
-				if CAKE.GetUData( v.itemid or "", "weaponclass" ) or string.match( v.class or "", "weapon_" ) then
+				if CAKE.GetUData( v.itemid, "weaponclass" ) or string.match( v.class, "weapon_" ) then
 					container:ClearSlot(j,i)
 				end
 			end
+		end
+		if CAKE.ConVars[ "LoseItemsOnDeath" ] then
+			container:Clear()
 		end
 		ply:RemoveAllAmmo()
 	end

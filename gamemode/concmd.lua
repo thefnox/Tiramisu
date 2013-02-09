@@ -2,6 +2,15 @@
 concommand.Remove( "gmod_admin_cleanup" )
 concommand.Add( "gmod_admin_cleanup", function( ply, cmd, args )
 	-- Thanks SirMasterCombat
+	if IsValid(ply) then
+		
+		CAKE.SendChat("Cannot use cleanup in this gamemode!")
+		
+	else
+		
+		print("Cannot use cleanup in this gamemode!")
+		
+	end
 	print("Cannot use cleanup in this gamemode!")
 end)
 
@@ -37,10 +46,10 @@ concommand.Add( "rp_givemoney", function( ply, cmd, args )
 			if( tonumber( CAKE.GetCharField( ply, "money" ) ) >= tonumber( args[ 2 ] ) ) then
 				CAKE.ChangeMoney( target, args[ 2 ] )
 				CAKE.ChangeMoney( ply, 0 - args[ 2 ] )
-				CAKE.SendChat( ply, "You gave " .. target:Nick( ) .. " " .. args[ 2 ] .. " credits!" )
-				CAKE.SendChat( target, ply:Nick( ) .. " gave you " .. args[ 2 ] .. " credits!" )
+				CAKE.SendChat( ply, "You gave " .. target:Nick( ) .. " " .. args[ 2 ] .. " " .. CAKE.ConVars[ "CurrencyName" ] .. "(s)!" )
+				CAKE.SendChat( target, ply:Nick( ) .. " gave you " .. args[ 2 ] .. CAKE.ConVars[ "CurrencyName" ] .. "(s)!" )
 			else
-				CAKE.SendChat( ply, "You do not have that many tokens!" )
+				CAKE.SendChat( ply, "You do not have that many " .. CAKE.ConVars[ "CurrencyName" ] .. "(s)!" )
 			end
 		else
 			CAKE.SendChat( ply, "Invalid amount of money!" )

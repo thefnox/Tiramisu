@@ -2,25 +2,6 @@
 DeriveGamemode( "sandbox" )
 include("glon.lua")
 
-local fw = file.Write
-function file.Write( name, content )
-	if not file.IsDir( string.GetPathFromFilename( name ) or ".", "DATA" ) then
-		local dirs = string.Explode( "/", string.GetPathFromFilename( name ) )
-		for k, v in pairs( dirs ) do
-			if k > 1 then
-				local path = dirs[1]
-				for i = 2, k do
-					path = path .. "/" .. dirs[i]
-				end
-				file.CreateDir( path )
-			else
-				file.CreateDir( v )
-			end
-		end
-	end
-	fw( name, content )
-end
-
 -- Define global variables
 CAKE = {  }
 TIRA = CAKE
@@ -34,9 +15,9 @@ CAKE.Loaded = false
 --    require("datastream");  
 --end  
 
+include( "configuration.lua" ) -- Configuration data
 include( "shared.lua" ) -- Shared Functions
 include( "log.lua" ) -- Logging functions
-include( "configuration.lua" ) -- Configuration data
 include( "player_data.lua" ) -- Player data functions
 include( "player_util.lua" ) -- Player functions
 include( "admin.lua" ) -- Admin functions
@@ -48,6 +29,7 @@ include( "plugins.lua" ) -- Plugin system
 include( "client_resources.lua" ) -- Sends files to the client
 include( "sh_animations.lua" ) --Animaaaaations.
 include( "sh_anim_tables.lua" ) --Animation tables
+include( "developer_debugging.lua" ) -- Developer Stuff
 
 resource.AddFile( "resource/fonts/YanoneKaffeesatz-Bold.ttf")
 resource.AddFile( "resource/fonts/YanoneKaffeesatz-Regular.ttf")
@@ -82,6 +64,25 @@ GM.Name = "Tiramisu " .. CAKE.ConVars[ "Tiramisu" ]
 CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ) -- Load the schema and plugins, this is NOT initializing.
 
 CAKE.Loaded = true -- Tell the server that we're loaded up
+
+local fw = file.Write
+function file.Write( name, content )
+	if not file.IsDir( string.GetPathFromFilename( name ) or ".", "DATA" ) then
+		local dirs = string.Explode( "/", string.GetPathFromFilename( name ) )
+		for k, v in pairs( dirs ) do
+			if k > 1 then
+				local path = dirs[1]
+				for i = 2, k do
+					path = path .. "/" .. dirs[i]
+				end
+				file.CreateDir( path )
+			else
+				file.CreateDir( v )
+			end
+		end
+	end
+	fw( name, content )
+end
 
 function GM:Initialize( ) -- Initialize the gamemode
 	
@@ -128,7 +129,7 @@ function GM:PlayerInitialSpawn( ply )
 
 	-- Load their data, or create a new datafile for them.
 	CAKE.LoadPlayerDataFile( ply )
-
+	
 	self.BaseClass:PlayerInitialSpawn( ply )
 
 end
@@ -271,4 +272,35 @@ end
 --Even more useless for RP are sprays.
 function GM:PlayerSpray(ply)
 	return true
+end
+
+function GM:EntityTakeDamage(ent, dmginfo)
+
+	if ent:IsPlayer() then
+		
+		local attacker = dmginfo:GetAttacker()
+		local attacker_name
+		local amount = dmginfo:GetDamage()
+		local weapon_class = ""
+
+		if attacker:IsPlayer() and IsValid(attacker:GetActiveWeapon()) then
+			
+			weapon_class = " with " .. attacker:GetActiveWeapon():GetClass()
+
+		end
+
+		if !attacker:IsPlayer() then
+			
+			attacker_name = attacker:GetClass()
+
+		else
+
+			attacker_name = CAKE.GetCharSignature(attacker)
+
+		end
+
+		CAKE.CombatLog(Color(255, 125, 40), CAKE.GetCharSignature(ent) .. " took " .. amount .. " damage from " .. attacker_name .. weapon_class)
+
+	end
+
 end

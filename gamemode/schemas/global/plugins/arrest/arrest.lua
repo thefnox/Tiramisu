@@ -1,4 +1,4 @@
-PLUGIN.Name = "HL2RP Arresting" -- What is the plugin name
+PLUGIN.Name = "Arrest Utilities" -- What is the plugin name
 PLUGIN.Author = "FNox" -- Author of the plugin
 PLUGIN.Description = "Utilities for zipties." -- The description or purpose of the plugin
 

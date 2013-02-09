@@ -119,8 +119,14 @@ function ccDropItem( ply, cmd, args )
 	if !args[ 1 ] then return end
 
 	if ply:HasItemID( args[ 1 ] ) then
+		
 		local class = ply:TakeItemID( args[ 1 ] )
 		CAKE.CreateItem( class, ply:CalcDrop( ), Angle( 0,0,0 ), args[ 1 ] )
+		
+		local str = CAKE.GetCharSignature(ply) .. " has dropped " .. class .. " at " .. tostring(ply:CalcDrop())
+		CAKE.AdminLog(Color(191, 115, 41), str)
+		CAKE.DayLog("items.txt", str)
+		
 	end
 
 end
@@ -137,6 +143,10 @@ function ccDropItemUnspecific( ply, cmd, args )
 			for k, v in pairs(tbl) do
 				CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ), v.itemid )
 				ply:TakeItem( args[ 1 ] )
+				
+				local str = CAKE.GetCharSignature(ply) .. " has dropped " .. class .. " at " .. tostring(ply:CalcDrop())
+				CAKE.AdminLog(Color(191, 115, 41), str)
+				CAKE.DayLog("items.txt", str)
 				return
 			end
 		end
@@ -154,6 +164,10 @@ function ccDropAllItem( ply, cmd, args )
 			if v.class == args[1]then
 				CAKE.CreateItem( args[ 1 ], ply:CalcDrop( ), Angle( 0,0,0 ), v.itemid )
 				ply:TakeItem( args[ 1 ] )
+				
+				local str = CAKE.GetCharSignature(ply) .. " has dropped " .. class .. " at " .. tostring(ply:CalcDrop())
+				CAKE.AdminLog(Color(191, 115, 41), str)
+				CAKE.DayLog("items.txt", str)
 			end
 		end
 	end
@@ -172,8 +186,14 @@ function ccPickupItem( ply, cmd, args )
 	end
 
 	if( item != nil and item:IsValid( ) and item:GetClass( ) == "item_prop" and item:GetPos( ):Distance( ply:GetShootPos( ) ) <= 200 ) then
+		local pos = item:GetPos()
 		item:Pickup( ply )
 		ply:GiveItem( item.Class, item:GetNWString("id") )
+		
+		local str = CAKE.GetCharSignature(ply) .. " has picked up " .. item.Class .. " from " .. tostring(pos)
+		CAKE.AdminLog(Color(191, 115, 41), str)
+		CAKE.DayLog("items.txt", str)
+		
 	end
 
 end
@@ -186,13 +206,18 @@ function ccUseItem( ply, cmd, args )
 	
 	if item and IsValid(item) and item:GetClass( ) == "item_prop" and item:GetPos():Distance(ply:GetShootPos()) <= 200 then
 		local class = item:GetNWString("Class", "")
-		if class != "" then
+		if class != "" then		
 			if funcrun and CAKE.ItemData[ class ][funcrun] then
 				funcrun = CAKE.ItemData[ class ][funcrun]
 				funcrun(item, ply )
 			else
 				item:UseItem( ply )
 			end
+			
+			local str = CAKE.GetCharSignature(ply) .. " has used " .. class
+			CAKE.AdminLog(Color(191, 115, 41), str)
+			CAKE.DayLog("items.txt", str)
+			
 		end
 	end
 
@@ -220,6 +245,9 @@ function ccUseOnInventoryID( ply, cmd, args )
 				ply:TakeItemID( id )
 			end
 		end
+		local str = CAKE.GetCharSignature(ply) .. " has used " .. class
+		CAKE.AdminLog(Color(191, 115, 41), str)
+		CAKE.DayLog("items.txt", str)
 	end
 
 end

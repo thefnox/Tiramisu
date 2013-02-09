@@ -1,3 +1,4 @@
+if true then return end // some stuff in here is broken, lets just ignore this for now
 if SERVER then
 
 	function CAKE.SetCID( ply )
@@ -14,6 +15,12 @@ if SERVER then
 
 	hook.Add( "PlayerSpawn", "HL2RPSendCID", function( ply )
 		if ply:IsCharLoaded() then
+			if CAKE.GetCharField(ply, "cid") == "000000" then
+				
+				CAKE.SetCID(ply)
+				
+			end
+			
 			ply:SetNWString( "cid", CAKE.GetCharField( ply, "cid" ) )
 		end
 	end)

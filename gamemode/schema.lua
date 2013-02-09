@@ -20,7 +20,18 @@ function CAKE.LoadSchema( schema )
 	
 	table.insert( CAKE.Schemafile, schema )
 	CAKE.DayLog( "script.txt", "Loading schema " .. SCHEMA.Name .. " by " .. SCHEMA.Author .. " ( " .. SCHEMA.Description .. " )" )
-
+	
+	local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/configuration.lua"
+	
+	if file.Exists( path, "LUA" ) then
+		
+		AddCSLuaFile(path)
+		include(path)
+		
+	end
+	
+	-- Load the entities
+	CAKE.AddSchemaEntities(schema)
 
 	-- Use the new plugin system
 
@@ -44,7 +55,7 @@ function CAKE.LoadSchema( schema )
 	
 	-- local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua" ) or {}
 	-- local list = file.Find( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua", "LUA" ) or {}
-local files, folders = file.Find( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua", "LUA" )
+	local files, folders = file.Find( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua", "LUA" )
 	
 	-- for k, v in pairs( list ) do
 	for k, v in pairs( files ) do
