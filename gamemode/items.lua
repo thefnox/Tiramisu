@@ -1,9 +1,10 @@
 CAKE.ItemData = {  }
 CAKE.UData = {  }
 
-function CAKE.LoadItem( schema, filename )
+function CAKE.LoadItem( schema, filename, global )
 
 	local path = "schemas/" .. schema .. "/items/" .. filename
+	if global then path = CAKE.Name .. "/gamemode/items/" .. filename end
 	AddResource("lua", path)
 	
 	ITEM = {  }
@@ -114,8 +115,8 @@ function CAKE.CreateItem( class, pos, ang, id )
 	
 end
 
-function ccDropItem( ply, cmd, args )
-	
+concommand.Add( "rp_dropitem", function(ply, cmd, args)
+
 	if !args[ 1 ] then return end
 
 	if ply:HasItemID( args[ 1 ] ) then
@@ -129,10 +130,9 @@ function ccDropItem( ply, cmd, args )
 		
 	end
 
-end
-concommand.Add( "rp_dropitem", ccDropItem )
+end )
 
-function ccDropItemUnspecific( ply, cmd, args )
+concommand.Add( "rp_dropitemunspecific", function(ply, cmd, args)
 
 	if !args[ 1 ] then return end
 	
@@ -152,11 +152,11 @@ function ccDropItemUnspecific( ply, cmd, args )
 		end
 	end
 
-end
-concommand.Add( "rp_dropitemunspecific", ccDropItemUnspecific )
 
-function ccDropAllItem( ply, cmd, args )
-	
+end )
+
+concommand.Add( "rp_dropallitem", function( ply, cmd, args )
+
 	local inv =	ply:GetInventory()
 
 	for _, tbl in pairs( inv.Items ) do
@@ -172,10 +172,9 @@ function ccDropAllItem( ply, cmd, args )
 		end
 	end
 
-end
-concommand.Add( "rp_dropallitem", ccDropAllItem )
+end )
 
-function ccPickupItem( ply, cmd, args )
+concommand.Add( "rp_pickup", function( ply, cmd, args )
 
 	local item = ents.GetByIndex( tonumber( args[ 1 ] ) )
 	local inv = ply:GetInventory()
@@ -196,11 +195,10 @@ function ccPickupItem( ply, cmd, args )
 		
 	end
 
-end
-concommand.Add( "rp_pickup", ccPickupItem )
+end )
 
-function ccUseItem( ply, cmd, args )
-	
+concommand.Add( "rp_useitem", function( ply, cmd, args )
+
 	local item = ents.GetByIndex(tonumber( args[ 1 ] ))
 	local funcrun = args [ 2 ]
 	
@@ -221,10 +219,10 @@ function ccUseItem( ply, cmd, args )
 		end
 	end
 
-end
-concommand.Add( "rp_useitem", ccUseItem )
+end )
 
-function ccUseOnInventoryID( ply, cmd, args )
+concommand.Add( "rp_useinventoryid", function( ply, cmd, args )
+
 	local id = args [ 1 ]
 	local class = ply:HasItemID(id) 
 	local funcrun = args [ 2 ]
@@ -250,8 +248,7 @@ function ccUseOnInventoryID( ply, cmd, args )
 		CAKE.DayLog("items.txt", str)
 	end
 
-end
-concommand.Add( "rp_useinventoryid", ccUseOnInventoryID)
+end )
 
 local meta = FindMetaTable( "Player" )
 

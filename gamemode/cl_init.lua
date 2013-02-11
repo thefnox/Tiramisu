@@ -311,7 +311,9 @@ include( "sh_animations.lua" )
 include( "sh_anim_tables.lua" )
 include( "shared.lua" )
 include( "cl_binds.lua" )
+include( "cl_items.lua" )
 include( "cl_skin.lua" )
+include( "cl_plugins.lua" )
 
 for _,mdl in pairs(CAKE.ConVars[ "DefaultModels" ].Male) do
 	util.PrecacheModel( mdl )
@@ -369,6 +371,7 @@ end
 function GM:Initialize()
 
 	CAKE.Running = true
+	CAKE.LoadGlobalSchema()
 
 	self.BaseClass:Initialize()
 
@@ -401,6 +404,25 @@ end
 
 function GM:ChatTextChanged()
 end
+
+local blackscreenalpha = 0
+hook.Add( "PostDrawHUD", "Tiramisu.DrawBlackScreen", function()
+	if CAKE.DrawBlackScreen then
+		if !CAKE.ForceBlackScreen then
+			blackscreenalpha = Lerp( RealFrameTime() * 1.5, blackscreenalpha, 255 )
+		else
+			blackscreenalpha = 255
+		end
+		surface.SetDrawColor( 0, 0, 0, blackscreenalpha )
+		surface.DrawRect( -1, -1, ScrW() + 1, ScrH() + 1 )
+	else
+		if blackscreenalpha != 0 then
+			blackscreenalpha = Lerp( RealFrameTime(), blackscreenalpha, 0 )
+			surface.SetDrawColor( 0, 0, 0, blackscreenalpha )
+			surface.DrawRect( -1, -1, ScrW() + 1, ScrH() + 1 )
+		end
+	end
+end)
 
 usermessage.Hook("CAKE.SendConsole", function(um)
 
@@ -435,6 +457,11 @@ Schemas = {}
 usermessage.Hook("Tiramisu.AddSchema", function(data)
 	
 	local schema = data:ReadString()
+
+	if schema == "global" then
+		//We're loading the global schema separately.
+		return
+	end
 	
 	local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/configuration.lua"
 	
@@ -484,146 +511,6 @@ usermessage.Hook( "Tiramisu.DisplayRespawnButton", function(um)
 	end
 end)
 
-RclickTable = {}
-
-function CAKE.AddRightClicks(schema)
-	-- local list = file.FindInLua( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua" )	
-	local files, folders = file.Find( CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/*.lua", "LUA" )
-	
-	for k,v in pairs( files ) do
-		local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/rclick/" .. v
-		RCLICK = { }
-		MsgN( "Loading " .. path )
-		include( path )
-		table.insert(RclickTable, RCLICK)
-	end
-end
-
-CAKE.CLPlugin = {}
-
-function CAKE.AddClientsidePlugins( schema, filename )
-
-	local filename = filename or ""
-	local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/plugins/" .. filename
-	-- local list = file.FindInLua( path .. "*" ) or {}
-	-- local list = file.Find( path .. "*", "LUA" ) or {}
-	local files, folders = file.Find( path .. "*", "LUA" )
-
-	for k, v in pairs( files ) do
-		if v:sub( 1, 3 ) == "cl_" or v:sub( 1,3 ) == "sh_" then --Filters out serverside files that may have got sent
-			PLUGIN = {} -- Support for shared plugins. 
-			CLPLUGIN = {}
-			MsgN( "Loading " .. path ..v )
-			include( path .. v )
-			CLPLUGIN.Name = CLPLUGIN.Name or schema .. "/plugins/" .. filename .. v
-			CAKE.CLPlugin[CLPLUGIN.Name] = {}
-			if CLPLUGIN and CLPLUGIN.Init then
-				CAKE.CLPlugin[CLPLUGIN.Name].Init = CLPLUGIN.Init or function() end
-				CAKE.CLPlugin[CLPLUGIN.Name].Init()
-	--[[ for k, v in pairs( list ) do
-		if v != "." and v != ".." then
-			if string.GetExtensionFromFilename( v ) and string.GetExtensionFromFilename( v ) == "lua" then
-				if v:sub( 1, 3 ) == "cl_" or v:sub( 1,3 ) == "sh_" then --Filters out serverside files that may have got sent
-					PLUGIN = {} -- Support for shared plugins. 
-					CLPLUGIN = {}
-					include( path .. v )
-					CLPLUGIN.Name = CLPLUGIN.Name or schema .. "/plugins/" .. filename .. v 
-					CAKE.CLPlugin[CLPLUGIN.Name] = {}
-					if CLPLUGIN and CLPLUGIN.Init then
-						CAKE.CLPlugin[CLPLUGIN.Name].Init = CLPLUGIN.Init or function() end
-					   	CAKE.CLPlugin[CLPLUGIN.Name].Init()
-					end
-				end
-			else --It's a folder
-				CAKE.AddClientsidePlugins( schema, filename .. v .. "/" ) ]]--
-			end
-		end
-	end
-
-	for k, v in pairs( folders ) do
-
-		if v != "entities" then
-
-			CAKE.AddClientsidePlugins( schema, filename .. v .. "/" )
-
-		end
-		
-	end
-
-	// Entity Loading
-	local dir1 = path .. "entities/"
-	
-	local entityfiles, entitydirs = file.Find(dir1 .. "entities/*", "LUA")
-
-	for k, v in pairs(entityfiles) do
-		
-		CAKE.AddEntity(dir1 .. "entities/" .. v)
-		
-	end
-
-	for k, v in pairs(entitydirs) do
-		
-		CAKE.AddEntity(dir1 .. "entities/" .. v .. "/")
-		
-	end
-
-	local weaponfiles, weapondirs = file.Find(dir1 .. "weapons/*", "LUA")
-	
-	for k, v in pairs(weaponfiles) do
-		
-		CAKE.AddWeapon(dir1 .. "weapons/" .. v)
-		
-	end
-
-	for k, v in pairs(weapondirs) do
-		
-		CAKE.AddWeapon(dir1 .. "weapons/" .. v .. "/")
-		
-	end
-
-	local _, effectdirs = file.Find(dir1 .. "effects/*", "LUA")
-
-	for k, v in pairs(effectdirs) do
-
-		CAKE.AddEffect(dir1 .. "effects/" .. v .. "/init.lua")
-			
-	end
-
-end
-
-function CAKE.AddItems( schema )
-
-	local filename = filename or ""
-	local path = CAKE.Name .. "/gamemode/schemas/" .. schema .. "/items/"
-	-- local list = file.FindInLua( path .. "*" ) or {}
-	-- local list = file.Find( path .. "*", "LUA" ) or {}
-	local files, folders = file.Find( path .. "*", "LUA" )
-
-	for k, v in pairs( files ) do
-		ITEM = {  }
-		-- MsgN( "Loading " .. path ..v )
-		include( path .. v )
-		for k,v in pairs(ITEM) do
-			if type(v) == "function" then
-				ITEM[k] = nil
-	--[[ for k, v in pairs( list ) do
-		if v != "." and v != ".." then
-			if string.GetExtensionFromFilename( v ) and string.GetExtensionFromFilename( v ) == "lua" then
-				ITEM = {  }
-				include( path .. v )
-				for k,v in pairs(ITEM) do
-					if type(v) == "function" then
-						ITEM[k] = nil
-					end
-				end
-				CAKE.ItemData[ ITEM.Class ] = ITEM --]]
-			end
-		end
-		CAKE.ItemData[ ITEM.Class ] = ITEM
-	end
-
-end
-
 function CAKE.RegisterMenuTab( name, func, closefunc ) --The third argument is the function used for closing your panel.
 	CAKE.MenuTabs[ name ] = {}
 	CAKE.MenuTabs[ name ][ "function" ] = func or function() end
@@ -651,25 +538,6 @@ function CAKE.SetActiveTab( name )
 	end
 	CAKE.ActiveTab = name
 end
-
-local blackscreenalpha = 0
-hook.Add( "PostDrawHUD", "Tiramisu.DrawBlackScreen", function()
-	if CAKE.DrawBlackScreen then
-		if !CAKE.ForceBlackScreen then
-			blackscreenalpha = Lerp( RealFrameTime() * 1.5, blackscreenalpha, 255 )
-		else
-			blackscreenalpha = 255
-		end
-		surface.SetDrawColor( 0, 0, 0, blackscreenalpha )
-		surface.DrawRect( -1, -1, ScrW() + 1, ScrH() + 1 )
-	else
-		if blackscreenalpha != 0 then
-			blackscreenalpha = Lerp( RealFrameTime(), blackscreenalpha, 0 )
-			surface.SetDrawColor( 0, 0, 0, blackscreenalpha )
-			surface.DrawRect( -1, -1, ScrW() + 1, ScrH() + 1 )
-		end
-	end
-end)
 
 function CAKE.EnableBlackScreen( bool, force )
 	CAKE.DrawBlackScreen, CAKE.ForceBlackScreen = bool, force

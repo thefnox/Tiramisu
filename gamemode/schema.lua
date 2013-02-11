@@ -1,7 +1,92 @@
 CAKE.Schemas = {  }
 CAKE.Schemafile = {  }
 
+//We're now making the global schema load outside the schema folder
+
+function CAKE.LoadGlobalSchema()
+
+	CAKE.DayLog( "script.txt", "Loading global schema" )
+
+	-- Load the entities
+	CAKE.AddSchemaEntities("global", nil, true)
+
+	-- Use the new plugin system
+
+	CAKE.LoadPlugin( "global", nil, true )
+
+	-- Load the items
+	-- local list = file.FindInLua( CAKE.Name .. "/gamemode/items/*.lua" )
+	local list = file.Find( CAKE.Name .. "/gamemode/items/*.lua", "LUA" )
+	
+	for k, v in pairs( list ) do 
+	
+		CAKE.LoadItem( "global", v, true )
+		
+	end
+	
+	-- Load right click files.
+	local files, folders = file.Find( CAKE.Name .. "/gamemode/rclick/*.lua", "LUA" )
+	
+	-- for k, v in pairs( list ) do
+	for k, v in pairs( files ) do
+	
+		CAKE.LoadRClick( "global", v, true )
+		
+	end
+
+	//Legacy support here
+	if file.Exists(CAKE.Name .. "/gamemode/schemas/global.lua", "LUA") then
+		SCHEMA = {  }
+		
+		include( "schemas/global.lua"  )
+	
+		CAKE.DayLog( "script.txt", "Loading schema " .. SCHEMA.Name .. " by " .. SCHEMA.Author .. " ( " .. SCHEMA.Description .. " )" )
+		
+		local path = CAKE.Name .. "/gamemode/schemas/global/configuration.lua"
+		
+		if file.Exists( path, "LUA" ) then
+			
+			AddCSLuaFile(path)
+			include(path)
+			
+		end
+
+		-- Load the entities
+		CAKE.AddSchemaEntities("global")
+
+
+		-- Use the new plugin system
+		CAKE.LoadPlugin( "global" )
+	
+		-- Load the items
+		local list = file.Find( CAKE.Name .. "/gamemode/schemas/global/items/*.lua", "LUA" )
+		
+		for k, v in pairs( list ) do 
+		
+			CAKE.LoadItem( "global", v )
+			
+		end
+		
+		-- Load right click files.
+
+		local files, folders = file.Find( CAKE.Name .. "/gamemode/schemas/global/rclick/*.lua", "LUA" )
+		
+		-- for k, v in pairs( list ) do
+		for k, v in pairs( files ) do
+		
+			CAKE.LoadRClick( "global", v )
+			
+		end
+	end
+
+end
+
 function CAKE.LoadSchema( schema )
+
+	if schema == "global" then
+		CAKE.LoadGlobalSchema()
+		return
+	end
 
 	local path = "schemas/" .. schema .. ".lua"
 	
@@ -46,10 +131,6 @@ function CAKE.LoadSchema( schema )
 		CAKE.LoadItem( schema, v )
 		
 	end
-
-	-- Use the new plugin system
-
-	CAKE.LoadPlugin( schema )
 	
 	-- Load right click files.
 	
