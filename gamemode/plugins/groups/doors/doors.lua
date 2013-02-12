@@ -32,10 +32,42 @@ function CAKE.LoadDoors()
 
 end
 
+function CAKE.LoadDoors()
+
+	if(file.Exists(CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt", "DATA")) then
+
+		local tabledata = CAKE.DeserializeFile(CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt")
+		
+		CAKE.Doors = tabledata
+		local entities
+
+		for _, door in pairs( CAKE.Doors ) do
+			entities = ents.FindByClass( door["class"] )
+			for _, entity in pairs( entities ) do
+				if IsValid( entity ) and entity:GetPos() == door["pos"] then
+					entity.doorgroup = door["doorgroup"]
+					entity.title = door["title"]
+					entity.building = door["building"]
+					entity.purchaseable = door["purchaseable"]
+					CAKE.SetDoorTitle( entity, entity.title )
+				end
+			end
+		end
+		
+	end 
+
+end
+
 function CAKE.SaveDoors()
 
 	local keys = glon.encode(CAKE.Doors)
 	file.Write(CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt", keys)
+
+end
+
+function CAKE.SaveDoors()
+	
+	CAKE.SerializeFile(CAKE.Name .. "/DoorData/" .. game.GetMap() .. ".txt", CAKE.Doors)
 
 end
 

@@ -57,6 +57,19 @@ function CAKE.HasSavedData( ply )
 	
 end
 
+function CAKE.HasSavedData(ply)
+	
+	if file.Exists(CAKE.Name .. "/playerdata/" .. CAKE.ConVars["Schema"] .. "/" .. CAKE.FormatText(ply:SteamID()) .. ".txt", "DATA") then
+		
+		local data_table = CAKE.DeserializeFile(CAKE.Name .. "/playerdata/" .. CAKE.ConVars["Schema"] .. "/" .. CAKE.FormatText(ply:SteamID()) .. ".txt")
+		if data_table and table.Count(datatable or {}) > 1 then return true end
+		
+	end
+	
+	return false
+	
+end
+
 function CAKE.CreateNewDataFile( ply )
 
 	local SteamID = CAKE.FormatText( ply:SteamID( ) )
@@ -99,13 +112,14 @@ function CAKE.LoadPlayerDataFile( ply )
 		CAKE.DayLog( "script.txt", "Loading player data file for " .. ply:SteamID( ) )
 		
 		-- Read the data from their data file
-		local Data_Raw = file.Read( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" )
+		-- local Data_Raw = file.Read( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" )
 		
 		-- Convert the data into a table
-		local Data_Table = CAKE.NilFix(glon.decode( Data_Raw ), { })
+		-- local Data_Table = CAKE.NilFix(glon.decode( Data_Raw ), { })
 		
 		-- Insert the table into the data table
-		CAKE.PlayerData[ SteamID ] = Data_Table
+		-- CAKE.PlayerData[ SteamID ] = Data_Table
+		CAKE.PlayerData[ SteamID ] = CAKE.DeserializeFile(CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt") or {}
 		
 		-- Retrieve the data table for easier access
 		local PlayerTable = CAKE.PlayerData[ SteamID ]
@@ -263,6 +277,16 @@ function CAKE.SavePlayerData( ply )
 		local keys = glon.encode(CAKE.PlayerData[CAKE.FormatText( ply:SteamID() )])
 		file.Write( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" , keys)
 	end
+end
+
+function CAKE.SavePlayerData(ply)
+	
+	if IsValid(ply) then
+		
+		CAKE.SerializeFile( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt", CAKE.PlayerData[CAKE.FormatText(ply:SteamID())])
+		
+	end
+	
 end
 
 function CAKE.RemoveCharacter( ply, id )

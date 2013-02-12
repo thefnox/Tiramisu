@@ -161,6 +161,12 @@ if SERVER then
 			file.Write(CAKE.Name .. "/containers/" .. CAKE.ConVars[ "Schema" ] .. "/" .. self.UniqueID.. ".txt", glon.encode(self))
 		end
 	end
+	
+	function meta:Save()
+		if self.UniqueID then
+			CAKE.SerializeFile(CAKE.Name .. "/containers/" .. CAKE.ConVars[ "Schema" ] .. "/" .. self.UniqueID.. ".txt", self)
+		end
+	end
 
 	function meta:GetItemCount()
 		local count = 0
@@ -234,7 +240,8 @@ if SERVER then
 
 		-- if filename and file.Exists( filename ) then
 		if filename and file.Exists( filename, "DATA" ) then
-			local tbl = glon.decode( file.Read(filename) )
+			-- local tbl = glon.decode( file.Read(filename) )
+			local tbl = CAKE.DeserializeFile(filename)
 			container.UniqueID = tbl.UniqueID
 			container:Save()
 		else

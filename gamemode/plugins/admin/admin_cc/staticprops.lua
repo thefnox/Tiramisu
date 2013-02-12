@@ -70,11 +70,33 @@ function CAKE.SavePermaProps()
 
 end
 
+function CAKE.SavePermaProps()
+	
+	local map = game.GetMap()
+	
+	CAKE.SerializeFile(CAKE.Name .. "/PermaProps/" .. CAKE.ConVars[ "Schema" ] .. "/" .. map .. ".txt", CAKE.PermaProps[map])
+	
+end
+
 --Loads all permaprops on initialization.
 function CAKE.LoadPermaProps()
 	local map = game.GetMap()
 	if file.Exists( CAKE.Name .. "/PermaProps/" .. CAKE.ConVars[ "Schema" ] .. "/" .. map .. ".txt", "DATA" ) then
 		CAKE.PermaProps[ map ] = glon.decode(file.Read( CAKE.Name .. "/PermaProps/" .. CAKE.ConVars[ "Schema" ] .. "/" .. map .. ".txt" ))
+		local time = 0
+		for k, v in ipairs( CAKE.PermaProps[ map ] ) do
+			timer.Simple( time + 0.1, function()
+				CAKE.CreatePermaProp( k )
+			end)
+			time = time + 0.1
+		end
+	end
+end
+
+function CAKE.LoadPermaProps()
+	local map = game.GetMap()
+	if file.Exists( CAKE.Name .. "/PermaProps/" .. CAKE.ConVars[ "Schema" ] .. "/" .. map .. ".txt", "DATA" ) then
+		CAKE.PermaProps[ map ] = CAKE.DeserializeFile( CAKE.Name .. "/PermaProps/" .. CAKE.ConVars[ "Schema" ] .. "/" .. map .. ".txt" )
 		local time = 0
 		for k, v in ipairs( CAKE.PermaProps[ map ] ) do
 			timer.Simple( time + 0.1, function()

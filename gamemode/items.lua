@@ -22,9 +22,23 @@ function CAKE.SaveUData( id )
 	CAKE.SendUData( ply, id )
 end
 
+function CAKE.SaveUData(id)
+	
+	if !id then return end
+	CAKE.SerializeFile(CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. id .. ".txt", CAKE.UData[id])
+	CAKE.SendUData(ply, id)
+	
+end
+
 function CAKE.LoadUData( id )
 	if !id then return end
 	CAKE.UData[id] = glon.decode(file.Read( CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. id .. ".txt"))
+end
+
+function CAKE.LoadUData(id)
+	if !id then return end
+	CAKE.UData[id] = CAKE.DeserializeFile(CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. id .. ".txt")
+	
 end
 
 function CAKE.SetUData( id, key, value )

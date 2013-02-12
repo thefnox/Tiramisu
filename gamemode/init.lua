@@ -1,6 +1,5 @@
 -- Set up the gamemode
 DeriveGamemode( "sandbox" )
-include("glon.lua")
 
 -- Define global variables
 CAKE = {  }
@@ -14,6 +13,8 @@ CAKE.Loaded = false
 --if not(datastream) then  
 --    require("datastream");  
 --end  
+
+include("serialization.lua")
 
 include( "configuration.lua" ) -- Configuration data
 include( "shared.lua" ) -- Shared Functions

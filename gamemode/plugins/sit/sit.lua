@@ -43,10 +43,22 @@ function CAKE.SaveChairs()
 	file.Write( CAKE.Name .. "/chairs.txt", keys )
 end
 
+function CAKE.SaveChairs()
+	
+	CAKE.SerializeFile(CAKE.Name .. "/chairs.txt", CAKE.Chairs)
+	
+end
+
 --Fetches all chairs from file
 function CAKE.LoadChairs()
 	if file.Exists( CAKE.Name .. "/chairs.txt", "DATA" ) then
 		CAKE.Chairs = glon.decode(file.Read( CAKE.Name .. "/chairs.txt" ))
+	end
+end
+
+function CAKE.LoadChairs()
+	if file.Exists( CAKE.Name .. "/chairs.txt", "DATA" ) then
+		CAKE.Chairs = CAKE.DeserializeFile( CAKE.Name .. "/chairs.txt" )
 	end
 end
 

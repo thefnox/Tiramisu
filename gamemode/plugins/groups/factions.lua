@@ -24,10 +24,15 @@ function CAKE.SaveFactions()
 	file.Write(CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/factions.txt", glon.encode(CAKE.Factions))
 end
 
+function CAKE.SaveFactions()
+	CAKE.SerializeFile(CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/factions.txt", CAKE.Factions)
+end
+
 --Loads all factions
 function CAKE.LoadAllFactions()
 	if file.Exists( CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/factions.txt", "DATA" ) then
-		CAKE.Factions = glon.decode(file.Read(CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/factions.txt"))
+		-- CAKE.Factions = glon.decode(file.Read(CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/factions.txt"))
+		CAKE.Factions = CAKE.DeserializeFile(CAKE.Name .. "/groups/" .. CAKE.ConVars[ "Schema" ] .. "/factions.txt")
 		local groupexists, fileexists
 		for k, v in pairs( CAKE.Factions ) do
 			groupexists, fileexists = CAKE.GroupExists( v )

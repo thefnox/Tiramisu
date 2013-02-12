@@ -4,4 +4,4 @@ CAKE.CityNumber = 17 --This provides a quick way of changing the name of the cit
 CAKE.ConVars[ "IntroText" ] = "WELCOME TO CITY " .. CAKE.CityNumber
 CAKE.ConVars[ "IntroSubtitle" ] = "\"IT'S SAFER HERE\""
 
-CAKE.ConVars[ "MenuTitle" ] = "HALF-LIFE 2: ROLEPLAY"
+CAKE.ConVars[ "MenuTitle" ] = "HALF-LIFE 2 RP"

@@ -14,7 +14,8 @@ function CAKE.CreateContainerObject( filename )
 	local container = FindMetaTable("Container"):New()
 
 	if filename and file.Exists( filename, "DATA" ) then
-		local tbl = glon.decode( file.Read(filename) )
+		-- local tbl = glon.decode( file.Read(filename) )
+		local tbl = CAKE.DeserializeFile(filename)
 		container.UniqueID = tbl.UniqueID
 		container:SetSize(tbl.Width, tbl.Height)
 		container.Items = tbl.Items
