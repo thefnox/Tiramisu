@@ -6,7 +6,7 @@ CAKE._Serialization = false
 local function hondeserialize(str)
 	
 	RunString("z = " .. str)
-	local tbl = z
+	local tbl = table.Copy(z)
 	z = nil
 	return tbl
 	
