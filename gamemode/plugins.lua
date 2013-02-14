@@ -51,11 +51,21 @@ function CAKE.LoadPlugin( schema, filename, global )
 	end
 
 	for k, v in pairs( folders or {} ) do
-		if v != "entities" then
+		if v != "entities" and v != "items" then
 			CAKE.LoadPlugin( schema, filename .. v .. "/", global )
 		end
 	end
-
+	
+	local itemdir = path .. "items/"
+	
+	local itemfiles, _ = file.Find(itemdir, "LUA")
+	
+	for k, v in pairs(itemfiles) do
+		
+		CAKE.LoadItemM(itemdir .. v)
+		
+	end
+	
 	// Entity Loading
 	local dir1 = path .. "entities/"
 

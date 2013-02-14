@@ -15,6 +15,18 @@ function CAKE.LoadItem( schema, filename, global )
 	
 end
 
+function CAKE.LoadItemM(path)
+	
+	AddResource("lua", path)
+	
+	ITEM = {}
+	
+	include(path)
+	
+	CAKE.ItemData[ ITEM.Class ] = ITEM
+	
+end
+
 function CAKE.SaveUData( id )
 	if !id then return end
 	local savetable = glon.encode(CAKE.UData[id])
@@ -38,7 +50,6 @@ end
 function CAKE.LoadUData(id)
 	if !id then return end
 	CAKE.UData[id] = CAKE.DeserializeFile(CAKE.Name .. "/udata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. id .. ".txt")
-	
 end
 
 function CAKE.SetUData( id, key, value )
