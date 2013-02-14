@@ -41,22 +41,6 @@ function CAKE.AddDataField( fieldtype, fieldname, default )
 
 end
 
-function CAKE.HasSavedData( ply )
-
-	-- if( file.Exists( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" ) ) then
-	-- if ( file.Exists( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt", "DATA" ) ) then
-	if( file.Exists( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt", "DATA" ) ) then
-		-- Read the data from their data file
-		local Data_Raw = file.Read( CAKE.Name .. "/playerdata/" .. CAKE.ConVars[ "Schema" ] .. "/" .. CAKE.FormatText( ply:SteamID() ) .. ".txt" )
-		-- Convert the data into a table
-		local Data_Table = glon.decode( Data_Raw )			
-		if Data_Table and table.Count( Data_Table or {}) > 1 then return true end
-	end
-		
-	return false
-	
-end
-
 function CAKE.HasSavedData(ply)
 	
 	if file.Exists(CAKE.Name .. "/playerdata/" .. CAKE.ConVars["Schema"] .. "/" .. CAKE.FormatText(ply:SteamID()) .. ".txt", "DATA") then

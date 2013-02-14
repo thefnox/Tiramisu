@@ -314,6 +314,7 @@ include( "cl_binds.lua" )
 include( "cl_items.lua" )
 include( "cl_skin.lua" )
 include( "cl_plugins.lua" )
+include( "serialization.lua" )
 
 for _,mdl in pairs(CAKE.ConVars[ "DefaultModels" ].Male) do
 	util.PrecacheModel( mdl )

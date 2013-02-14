@@ -58,3 +58,5 @@ AddResource( "lua", "cl_skin.lua" ) --The skin
 AddResource( "lua", "cl_items.lua" ) --Items clientside
 AddResource( "lua", "cl_plugins.lua" ) --Plugins clientside
 AddResource( "lua", "glon.lua" ) --GLON
+AddResource( "lua", "honsolo.lua") --HON
+AddResource( "lua", "serialization.lua" ) --Serialization module

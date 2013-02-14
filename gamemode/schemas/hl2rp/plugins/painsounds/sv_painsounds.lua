@@ -62,7 +62,11 @@ function PS_EntityTakeDamage(ent, dmginfo)
 		
 	end
 	
-	ent:EmitSound(moansound)
-	
+	--I added a timer for them so they don't play all the time
+	if !ent.LastPlayedMoanSound then ent.LastPlayedMoanSound = CurTime() end
+	if ent.LastPlayedMoanSound <= CurTime() then 
+		ent:EmitSound(moansound)
+		ent.LastPlayedMoanSound = CurTime() + math.random(1, 4)
+	end
 end
 hook.Add("EntityTakeDamage", "PainSounds_ETD", PS_EntityTakeDamage)
