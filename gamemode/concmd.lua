@@ -11,23 +11,37 @@ concommand.Add( "gmod_admin_cleanup", function( ply, cmd, args )
 		print("Cannot use cleanup in this gamemode!")
 		
 	end
-	print("Cannot use cleanup in this gamemode!")
 end)
 
 
 -- Set Title
 concommand.Add( "rp_title", function( ply, cmd, args )
-
+	
+	if !IsValid(ply) then return end
+		
 	local title = table.concat( args, " " )
+	
+	hook.Call( "TiramisuPlayerChangeTitle", GAMEMODE, ply, title, ply:GetNWString("title", "") )
 
 	CAKE.SetCharField( ply, "title", title )
 	ply:SetNWString("title", title)
 
 end)
 
+CAKE.NameChangeCV = CreateConVar("tiramisu_namechanging", 0)
+
 --Set Name
 concommand.Add( "rp_changename", function( ply, cmd, args )
-
+	
+	if !IsValid(ply) then return end
+	
+	if CAKE.NameChangeCV:GetInt() != 1 then
+		
+		CAKE.SendChat("Name changing is disabled.")
+		return
+		
+	end
+	
 	local name = table.concat( args, " " )
 
 	hook.Call( "TiramisuPlayerChangeName", GAMEMODE, ply, name, ply:GetNWString("name", "") )

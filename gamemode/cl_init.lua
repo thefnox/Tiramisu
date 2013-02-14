@@ -1,11 +1,9 @@
 -- Set up the gamemode
 CAKE = {  }
 TIRA = CAKE
-include("glon.lua")
+
 
 DeriveGamemode( "sandbox" )
--- require( "datastream" )
-
 -- Menu texture, don't touch this
 EMPTY_TEXTURE = surface.GetTextureID("VGUI/white.vtf")
  

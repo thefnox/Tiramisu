@@ -5,3 +5,8 @@ CAKE.ConVars[ "IntroText" ] = "WELCOME TO CITY " .. CAKE.CityNumber
 CAKE.ConVars[ "IntroSubtitle" ] = "\"IT'S SAFER HERE\""
 
 CAKE.ConVars[ "MenuTitle" ] = "HALF-LIFE 2 RP"
+
+--Money
+CAKE.ConVars[ "CurrencyName" ] = "Token"
+CAKE.ConVars[ "CurrencyNamePlural" ] = "Tokens"
+CAKE.ConVars[ "CurrencySlang" ] = "token"
