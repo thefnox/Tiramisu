@@ -4,20 +4,23 @@ include("honsolo.lua") // include HON
 CAKE._Serialization = false
 
 local function hondeserialize(str)
-	local tbl = {}
-	RunString("tbl = " .. str)
+	
+	RunString("z = " .. str)
+	local tbl = table.Copy(z)
+	z = nil
 	return tbl
+	
 end
 
 function CAKE.Serialize(tbl)
-	return honsolo.encode(tbl, true)
+	
+	return honsolo.encode(tbl)
+	
 end
 
 function CAKE.Deserialize(str)
-
-	if !str then return {} end
 	
-	if str[1] != "{" then
+	if string.sub(str, 1, 1) != "{" then
 		
 		CAKE._Serialization = true
 		return glon.decode(str)

@@ -7,13 +7,6 @@ TIRA = CAKE
 CAKE.Running = false
 CAKE.Loaded = false
 
--- Server Includes
--- include( "von.lua" )
-
---if not(datastream) then  
---    require("datastream");  
---end  
-
 include("serialization.lua")
 
 include( "configuration.lua" ) -- Configuration data
