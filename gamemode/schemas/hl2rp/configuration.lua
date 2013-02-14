@@ -10,3 +10,7 @@ CAKE.ConVars[ "MenuTitle" ] = "HALF-LIFE 2 RP"
 CAKE.ConVars[ "CurrencyName" ] = "Token"
 CAKE.ConVars[ "CurrencyNamePlural" ] = "Tokens"
 CAKE.ConVars[ "CurrencySlang" ] = "token"
+
+--Loading Screen
+CAKE.ConVars[ "LoadingScreenTitle" ] = "HALF-LIFE 2 ROLEPLAY"
+CAKE.ConVars[ "LoadingScreenBox" ] = [[This server is running Half-Life 2 Roleplay]]

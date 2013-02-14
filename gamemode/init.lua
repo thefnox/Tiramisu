@@ -59,6 +59,15 @@ CAKE.LoadSchema( CAKE.ConVars[ "Schema" ] ) -- Load the schema and plugins, this
 
 CAKE.Loaded = true -- Tell the server that we're loaded up
 
+
+-- Customizable loading screen made by VorteX
+local title = util.Base64Encode(CAKE.ConVars["LoadingScreenTitle"])
+local box = util.Base64Encode(CAKE.ConVars["LoadingScreenBox"])
+
+RunConsoleCommand("sv_loadingurl", "http://vormangaming.nn.pe/tiramisu/loading/?ver=" .. CAKE.Version .. "&title=" .. title .. "&box=" .. box)
+-----
+
+
 local fw = file.Write
 function file.Write( name, content )
 	if not file.IsDir( string.GetPathFromFilename( name ) or ".", "DATA" ) then

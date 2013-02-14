@@ -1,5 +1,10 @@
 -- You can change these in the schema definition file as well.
 
+// dont mess with this //
+CAKE.Version = 2.02
+// dont mess with this //
+
+
 CAKE.ConVars = {  }
 
 CAKE.ConVars[ "LinuxHotfix" ] = false -- TURN THIS ON ONLY IF YOUR SERVER USES LINUX. This is to turn off model swapping therefore disabling some animations. It's the only solution to a current bug in the SRCDS.
@@ -154,3 +159,7 @@ CAKE.ConVars[ "IntroSubtitle" ] = "A new era in roleplay" -- Character menu and 
 CAKE.ConVars[ "Webpage" ] = "http://www.google.com/" --Set this to whatever you want to, it'll be accessible on the "Forums" tab
 
 CAKE.ConVars[ "MenuTitle" ] = "Tiramisu" --Title for the main menu
+
+--Loading Screen
+CAKE.ConVars[ "LoadingScreenTitle" ] = "Tiramisu " .. CAKE.Version
+CAKE.ConVars[ "LoadingScreenBox" ] = [[Tiramisu is a roleplay gamemode coded by the Tiramisu Development Team]]
