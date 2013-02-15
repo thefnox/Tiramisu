@@ -18,11 +18,11 @@ surface.CreateFont( "TiramisuHL2RPFont1",
 
 } )
 
-local introsound = Sound( "music/HL1_song11.mp3" )
-introsound = CreateSound(LocalPlayer(), introsound)
-
 function SKIN:InitIntro()
+	local introsound = Sound( "music/HL1_song11.mp3" )
+	introsound = CreateSound(LocalPlayer(), introsound)
 	introsound:Play()
+	
 	CAKE.IntroStage1 = false
 	CAKE.IntroStage2 = false
 	CAKE.IntroStage3 = false
