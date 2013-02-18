@@ -1,14 +1,12 @@
 include("glon.lua") // include glon
 include("honsolo.lua") // include HON
 
-CAKE._Serialization = false
+CAKE._Serialization = {}
 
 local function hondeserialize(str)
-	
-	RunString("z = " .. str)
-	local tbl = table.Copy(z)
-	z = nil
-	return tbl
+	CAKE._Serialization = {}
+	RunString("CAKE._Serialization = " .. str)
+	return CAKE._Serialization
 	
 end
 
@@ -22,13 +20,10 @@ function CAKE.Deserialize(str)
 	
 	if string.sub(str, 1, 1) != "{" then
 		
-		CAKE._Serialization = true
-		return glon.decode(str)
+		return glon.decode(str), true
 		
 	else
-		
-		CAKE._Serialization = false
-		return hondeserialize(str)
+		return hondeserialize(str), false
 		
 	end
 	
@@ -43,9 +38,9 @@ end
 function CAKE.DeserializeFile(filename)
 	
 	local filec = file.Read(filename, "DATA")
-	local tbl = CAKE.Deserialize(filec)
+	local tbl, serialized = CAKE.Deserialize(filec)
 	
-	if CAKE._Serialization then // ok so the file uses glon
+	if serialized then // ok so the file uses glon
 		
 		MsgC(Color(255, 0, 0), "Fixing file: " .. filename .. "\n")
 		file.Write(filename, CAKE.Serialize(tbl))

@@ -42,7 +42,7 @@ function CAKE.LoadAllFactions()
 				CAKE.Factions[CAKE.Groups[v]:Name()] = v
 			elseif !groupexists and !fileexists then
 				print( "Removing Faction", v )
-				table.remove( CAKE.Factions, k )
+				CAKE.Factions[k] = nil
 			end
 		end
 		CAKE.SaveFactions()
