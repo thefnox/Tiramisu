@@ -324,7 +324,7 @@ function SKIN:LayoutCharacterSelection( hideclosebutton )
 		CharacterMenu:SetSize( ScrW(), ScrH() )
 		CharacterMenu:Center()
 		CharacterMenu:SetDraggable( false )
-		CharacterMenu:ShowCloseButton( false )
+		CharacterMenu:ShowCloseButton( true )
 		CharacterMenu:SetTitle( "" )
 		CharacterMenu.Paint = function()
 			CAKE.DrawBlurScreen()
@@ -737,15 +737,13 @@ function SKIN:CharacterCreationStep1()
 		gobacklabel = vgui.Create( "DButton", CharacterMenu )
 		gobacklabel:SetSize( 80, 26 )
 		gobacklabel:SetText( "" )
-		gobacklabel:SetPos( ScrW() + 240, ScrH() - 85 )
-		gobacklabel.Paint = function() end
-		gobacklabel.PaintOver = function()
+		gobacklabel:SetPos( ScrW() - 240, ScrH() - 85 )
+		gobacklabel.OldPaint = gobacklabel.Paint
+		gobacklabel.Paint = function()
 			if gobacklabel then
 				draw.SimpleText( "Go Back", "Tiramisu24Font", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
 				x,y = gobacklabel:GetPos()
-				if !gobacklabel.SlideOut then
-					gobacklabel:SetPos( ScrW() - Lerp( 3 * RealFrameTime(), -(x - ScrW()), 240), y )
-				else
+				if gobacklabel.SlideOut then
 					gobacklabel:SetPos( ScrW() + Lerp( 3 * RealFrameTime(), x - ScrW(), 240), y )
 					if x > ScrW() + 110 then
 						gobacklabel:Remove()
@@ -769,15 +767,12 @@ function SKIN:CharacterCreationStep1()
 		createlabel = vgui.Create( "DButton", CharacterMenu )
 		createlabel:SetSize( 200, 26 )
 		createlabel:SetText( "" )
-		createlabel:SetPos(ScrW() + 160, ScrH() - 85 )
-		createlabel.Paint = function() end
-		createlabel.PaintOver = function()
+		createlabel:SetPos(ScrW() - 160, ScrH() - 85 )
+		createlabel.Paint = function()
 			if createlabel then
 				draw.SimpleText( "Finish Creation", "Tiramisu24Font", 70, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
 				x,y = createlabel:GetPos()
-				if !createlabel.SlideOut then
-					createlabel:SetPos( ScrW() - Lerp( 3 * RealFrameTime(), -(x - ScrW()), 160), y )
-				else
+				if createlabel.SlideOut then
 					createlabel:SetPos( ScrW() - Lerp( 3 * RealFrameTime(), x - ScrW(), 160), y )
 					if x > ScrW() + 110 then
 						createlabel:Remove()
