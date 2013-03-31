@@ -112,12 +112,15 @@ function EditGear()
 	PlayerMenu:SetSize( ScrW(), ScrH() )
 	PlayerMenu:Center()
 	PlayerMenu:SetDraggable( false )
-	PlayerMenu:ShowCloseButton( false )
 	PlayerMenu:SetTitle( "" )
+	PlayerMenu:SetDeleteOnClose( false )
 	PlayerMenu.Paint = function()
-
 		CAKE.DrawBlurScreen()
-
+		if EditorFrame then
+			EditMenu:SetVisible(false)
+		else
+			EditMenu:SetVisible(true)
+		end
 	end
 	PlayerMenu:MakePopup()
 
@@ -402,37 +405,30 @@ function EditGear()
 		end
 	end
 
+	PlayerMenu.OnClose = function( this )
+		if EditorFrame then
+			EditorFrame:Close()
+			this:SetVisible(true)
+		else
+			PlayerModel:Close()
+			if CAKE.ConVars[ "AllowRescaling" ] then
+				RunConsoleCommand( "rp_scaleclothing", tostring(headslider:GetValue()), tostring(bodyslider:GetValue()), tostring(handslider:GetValue()))
+			end
+			if CAKE.ConVars[ "AllowBodygroups" ] then
+				if plyskin then
+					RunConsoleCommand( "rp_setplayerskin", tostring(plyskin:GetValue()))
+				end
+				RunConsoleCommand( "rp_bodygroupsclothing", tostring(bodygroup1:GetValue()),tostring(bodygroup2:GetValue()),tostring(bodygroup3:GetValue()))
+			end
+			CloseGear()
+		end
+	end
 
 	GearTree = vgui.Create( "DTree" )
 	GearTree:SetPadding( 5 )
 	PropertySheet:AddSheet( "Gear/Accessories", GearTree, "gui/silkicons/wrench", false, false, "Edit your gear" )
 
 	RefreshGearTree()
-
-	local x, y 
-	local closelabel = vgui.Create( "DButton", PlayerMenu )
-	closelabel:SetSize( 80, 26 )
-	closelabel:SetText( "" )
-	closelabel:SetPos( (ScrW() / 2 )- 60, ScrH() + 500  )
-	closelabel.Paint = function() end
-	closelabel.PaintOver = function()
-		draw.SimpleText( "Close Menu", "Tiramisu18Font", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
-		x,y = closelabel:GetPos()
-		closelabel:SetPos( (ScrW() / 2 )- 40, Lerp( 0.1, y, ScrH() / 2 + 230 ))
-	end
-	closelabel.DoClick = function()
-		PlayerModel:Close()
-		if CAKE.ConVars[ "AllowRescaling" ] then
-			RunConsoleCommand( "rp_scaleclothing", tostring(headslider:GetValue()), tostring(bodyslider:GetValue()), tostring(handslider:GetValue()))
-		end
-		if CAKE.ConVars[ "AllowBodygroups" ] then
-			if plyskin then
-				RunConsoleCommand( "rp_setplayerskin", tostring(plyskin:GetValue()))
-			end
-			RunConsoleCommand( "rp_bodygroupsclothing", tostring(bodygroup1:GetValue()),tostring(bodygroup2:GetValue()),tostring(bodygroup3:GetValue()))
-		end
-		CloseGear()
-	end
 
 end
 
@@ -723,6 +719,7 @@ function StartGearEditor( entity, item, bone, offset, angle, scale, skin, name, 
 				EditorFrame:SetVisible( false )
 				EditorFrame:Remove()
 				RefreshGearTree()
+				EditorFrame = nil
 			end,
 			"No", function()
 				entity:SetDTVector( 1, offset )

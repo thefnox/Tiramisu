@@ -324,8 +324,7 @@ function SKIN:LayoutCharacterSelection( hideclosebutton )
 		CharacterMenu:SetSize( ScrW(), ScrH() )
 		CharacterMenu:Center()
 		CharacterMenu:SetDraggable( false )
-		CharacterMenu:ShowCloseButton( true )
-		--CharacterMenu:ShowCloseButton( false )
+		CharacterMenu:ShowCloseButton( !hideclosebutton )
 		CharacterMenu:SetTitle( "" )
 		CharacterMenu.Paint = function()
 			CAKE.DrawBlurScreen()
@@ -345,6 +344,10 @@ function SKIN:LayoutCharacterSelection( hideclosebutton )
 					end
 				end
 			end
+		end
+		CharacterMenu.OnClose = function()
+			RunConsoleCommand("rp_selectchar", tostring( CAKE.CurrentChar ))
+			derma.SkinHook( "Close", "CharacterSelection")
 		end
 		CharacterMenu.AddChild = function( panel )
 			if !CharacterMenu.Children then
@@ -372,8 +375,8 @@ function SKIN:LayoutCharacterSelection( hideclosebutton )
 		CharacterMenu.AddChild(subtitlelabel)
 
 		PlayerModel = vgui.Create( "PlayerPanel", CharacterMenu )
-		PlayerModel:SetSize( ScrH(), ScrH())
-		PlayerModel:SetPos( ScrW() - ScrH(), 0 )
+		PlayerModel:SetSize( ScrH()-30, ScrH()-30)
+		PlayerModel:SetPos( ScrW() - ScrH(), 30 )
 		PlayerModel.PaintOver = function()
 			if PlayerModel.SlideOut then
 				x, y = PlayerModel:GetPos()
@@ -527,26 +530,6 @@ function SKIN:LayoutCharacterSelectionButtons( canclose )
 		end
 	end
 	CharacterMenu.AddChild( introlabel )
-
-	if canclose then
-		local x, y 
-		closelabel = vgui.Create( "DButton", CharacterMenu )
-		closelabel:SetSize( 120, 26 )
-		closelabel:SetText( "" )
-		closelabel:SetPos( (ScrW() / 2 )- 40, ScrH() - 85  )
-		closelabel.Paint = function() end
-		closelabel.PaintOver = function()
-			surface.SetFont("Tiramisu24Font")
-			surface.SetDrawColor(Color(30, 30, 30, 150 ))
-			surface.DrawRect( 0, 0, surface.GetTextSize(" Close Menu "))
-			draw.SimpleText( " Close Menu ", "Tiramisu24Font", 0, 0, Color(255,255,255), TEXT_ALIGN_LEFT )
-		end
-		closelabel.DoClick = function()
-			RunConsoleCommand("rp_selectchar", tostring( CAKE.CurrentChar ))
-			derma.SkinHook( "Close", "CharacterSelection")
-		end
-		CharacterMenu.AddChild( closelabel )
-	end
 end
 
 function SKIN:CloseCharacterSelection()
