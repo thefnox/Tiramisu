@@ -34,6 +34,7 @@ CAKE.Loaded = false
 --    require("datastream");  
 --end  
 
+AddCSLuaFile("cl_init.lua")
 include( "shared.lua" ) -- Shared Functions
 include( "log.lua" ) -- Logging functions
 include( "configuration.lua" ) -- Configuration data
