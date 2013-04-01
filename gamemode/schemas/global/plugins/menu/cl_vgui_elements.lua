@@ -138,6 +138,9 @@ function PANEL:GetCamOrigin()
 	return self.LastCamOrigin, self.LastCamAngle
 end
 
+function PANEL:PaintOver()
+end
+
 function PANEL:EndDraw()
 	// Note: Not in menu dll
 	if ( !ClientsideModel ) then return end		
@@ -230,6 +233,8 @@ function PANEL:Paint()
 	self.LastPaint = RealTime()
 
 	self:EndDraw()
+
+	self:PaintOver()
 	
 end
 

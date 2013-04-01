@@ -395,7 +395,8 @@ function GM:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- This handles 
 		end
 		
 	end
-		
+	
+	local eye = ply:EyeAngles()
 	local estyaw = math.Clamp( math.atan2(velocity.y, velocity.x) * 180 / 3.141592, -180, 180 )
 	local myaw = math.NormalizeAngle(math.NormalizeAngle(eye.y) - estyaw)
 

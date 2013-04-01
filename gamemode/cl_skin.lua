@@ -324,16 +324,15 @@ function SKIN:LayoutCharacterSelection( hideclosebutton )
 		CharacterMenu:SetSize( ScrW(), ScrH() )
 		CharacterMenu:Center()
 		CharacterMenu:SetDraggable( false )
-		CharacterMenu:ShowCloseButton( !hideclosebutton )
+		--CharacterMenu:ShowCloseButton( !hideclosebutton )
+		CharacterMenu:ShowCloseButton( true )
 		CharacterMenu:SetTitle( "" )
 		CharacterMenu.Paint = function()
 			CAKE.DrawBlurScreen()
-		end
-		CharacterMenu.PaintOver = function()
-			if CharacterMenu.Children then
-				for k, panel in pairs( CharacterMenu.Children ) do
+			if CharacterMenu.ChildrenToLerp then
+				for k, panel in pairs( CharacterMenu.ChildrenToLerp ) do
 					if !panel or !panel.GetPos then
-						table.remove( CharacterMenu.Children, k )
+						table.remove( CharacterMenu.ChildrenToLerp, k )
 					else
 						x, y = panel:GetPos()
 						if CharacterMenu.SlideOut then
@@ -349,13 +348,14 @@ function SKIN:LayoutCharacterSelection( hideclosebutton )
 			RunConsoleCommand("rp_selectchar", tostring( CAKE.CurrentChar ))
 			derma.SkinHook( "Close", "CharacterSelection")
 		end
-		CharacterMenu.AddChild = function( panel )
-			if !CharacterMenu.Children then
-				CharacterMenu.Children = {}
+		CharacterMenu.AddChild = function( panel, x, y )
+			if !CharacterMenu.ChildrenToLerp then
+				CharacterMenu.ChildrenToLerp = {}
 			end
 			if panel then
-				panel.OriginalPosX, panel.OriginalPosY = panel:GetPos()
-				table.insert( CharacterMenu.Children, panel )
+				panel.OriginalPosX = x or 0
+				panel.OriginalPosY = y or 0
+				table.insert( CharacterMenu.ChildrenToLerp, panel )
 			end
 		end
 		CharacterMenu:MakePopup()
@@ -365,14 +365,14 @@ function SKIN:LayoutCharacterSelection( hideclosebutton )
 		titlelabel:SetFont( "Tiramisu64Font" )
 		titlelabel:SizeToContents()
 		titlelabel:SetPos( 20, 20 )
-		CharacterMenu.AddChild(titlelabel)
+		CharacterMenu.AddChild(titlelabel, 20, 20)
 
 		subtitlelabel = vgui.Create( "DLabel", CharacterMenu )
 		subtitlelabel:SetText( CAKE.ConVars[ "IntroSubtitle" ] )
 		subtitlelabel:SetFont( "Tiramisu32Font" )
 		subtitlelabel:SizeToContents()
 		subtitlelabel:SetPos( 20, 30 + titlelabel:GetTall() )
-		CharacterMenu.AddChild(subtitlelabel)
+		CharacterMenu.AddChild(subtitlelabel, 20, 30 + titlelabel:GetTall())
 
 		PlayerModel = vgui.Create( "PlayerPanel", CharacterMenu )
 		PlayerModel:SetSize( ScrH()-30, ScrH()-30)
@@ -405,7 +405,7 @@ function SKIN:LayoutCharacterList()
 			CharacterListPanel:SetSpacing( 5 )
 			CharacterListPanel:SetAutoSize( false )
 			CharacterListPanel:EnableVerticalScrollbar( true )
-			CharacterMenu.AddChild( CharacterListPanel )
+			CharacterMenu.AddChild( CharacterListPanel, 100, 170  )
 			CharacterListPanel.Paint = function()
 			end
 		elseif CharacterListPanel and CharacterListPanel:Valid() then
@@ -458,8 +458,7 @@ function SKIN:LayoutCharacterSelectionButtons( canclose )
 	spawnlabel:SetSize( 80, 26 )
 	spawnlabel:SetText( "" )
 	spawnlabel:SetPos(  220, ScrH() - 85 )
-	spawnlabel.Paint = function() end
-	spawnlabel.PaintOver = function()
+	spawnlabel.Paint = function()
 		surface.SetFont("Tiramisu24Font")
 		surface.SetDrawColor(Color(30, 30, 30, 150 ))
 		surface.DrawRect( 0, 0, surface.GetTextSize(" Spawn "))
@@ -473,14 +472,13 @@ function SKIN:LayoutCharacterSelectionButtons( canclose )
 			CAKE.Message( "You need to select a character first!", "Warning", "OK", Color( 140, 100, 100) )
 		end
 	end
-	CharacterMenu.AddChild( spawnlabel )
+	CharacterMenu.AddChild( spawnlabel,  220, ScrH() - 85 )
 
 	local disconnectlabel = vgui.Create( "DButton", CharacterMenu )
 	disconnectlabel:SetSize( 120, 26 )
 	disconnectlabel:SetText( "" )
 	disconnectlabel:SetPos( 80, ScrH() - 85 )
-	disconnectlabel.Paint = function() end
-	disconnectlabel.PaintOver = function()
+	disconnectlabel.Paint = function()
 		surface.SetFont("Tiramisu24Font")
 		surface.SetDrawColor(Color(30, 30, 30, 150 ))
 		surface.DrawRect( 0, 0, surface.GetTextSize(" Disconnect "))
@@ -489,15 +487,14 @@ function SKIN:LayoutCharacterSelectionButtons( canclose )
 	disconnectlabel.DoClick = function()
 		RunConsoleCommand( "disconnect" )
 	end
-	CharacterMenu.AddChild( disconnectlabel )
+	CharacterMenu.AddChild( disconnectlabel, 80, ScrH() - 85 )
 
 	local createcharacter = vgui.Create( "DButton", CharacterMenu )
 	createcharacter:SetText( "" )
 	createcharacter:SetSize( 220, 26 )
 	createcharacter:SetColor(Color( 200, 255, 200 ))
 	createcharacter:SetPos( 340, ScrH() - 85 )
-	createcharacter.Paint = function() end
-	createcharacter.PaintOver = function()
+	createcharacter.Paint = function()
 		surface.SetFont("Tiramisu24Font")
 		surface.SetDrawColor(Color(30, 30, 30, 150 ))
 		surface.DrawRect( 0, 0, surface.GetTextSize(" Create New Character "))
@@ -506,15 +503,14 @@ function SKIN:LayoutCharacterSelectionButtons( canclose )
 	createcharacter.DoClick = function()
 		RunConsoleCommand( "rp_begincreate" )
 	end
-	CharacterMenu.AddChild( createcharacter )
+	CharacterMenu.AddChild( createcharacter, 340, ScrH() - 85 )
 
 	local x, y 
 	introlabel = vgui.Create( "DButton", CharacterMenu )
 	introlabel:SetSize( 100, 26 )
 	introlabel:SetText( "" )
 	introlabel:SetPos( ScrW() - 110, ScrH() - 30 )
-	introlabel.Paint = function() end
-	introlabel.PaintOver = function()
+	introlabel.Paint = function() 
 		surface.SetFont("Tiramisu24Font")
 		surface.SetDrawColor(Color(30, 30, 30, 150 ))
 		surface.DrawRect( 0, 0, surface.GetTextSize(" Play Intro "))
@@ -529,7 +525,7 @@ function SKIN:LayoutCharacterSelectionButtons( canclose )
 			CharacterMenu = nil
 		end
 	end
-	CharacterMenu.AddChild( introlabel )
+	CharacterMenu.AddChild( introlabel, ScrW() - 110, ScrH() - 30 )
 end
 
 function SKIN:CloseCharacterSelection()
@@ -573,59 +569,19 @@ function SKIN:CharacterCreationStep1()
 		titlelabel:SetText( "Create a Character" )
 		titlelabel:SetFont( "Tiramisu64Font" )
 		titlelabel:SizeToContents()
-		titlelabel:SetPos( ScrW() + 100, 20 )
-		titlelabel.PaintOver = function()
-			if titlelabel then
-				x,y = titlelabel:GetPos()
-				if !titlelabel.SlideOut then
-					titlelabel:SetPos( ScrW() - Lerp( 3 * RealFrameTime(), -(x - ScrW()), titlelabel:GetWide() + 20), y )
-				else
-					titlelabel:SetPos( ScrW() + Lerp( 3 * RealFrameTime(), x - ScrW(), 200), y )
-					if x > ScrW() + 110 then
-						titlelabel:Remove()
-						titlelabel = nil
-					end
-				end
-			end
-		end
+		titlelabel:SetPos( 20, 20 )
 
 		local subtitlelabel = vgui.Create( "DLabel", CharacterMenu )
 		subtitlelabel:SetText( "Live a new life" )
 		subtitlelabel:SetFont( "Tiramisu32Font" )
 		subtitlelabel:SizeToContents()
-		subtitlelabel:SetPos( ScrW() + 100, 30 + titlelabel:GetTall() )
-		subtitlelabel.PaintOver = function()
-			if subtitlelabel then
-				x,y = subtitlelabel:GetPos()
-				if !subtitlelabel.SlideOut then
-					subtitlelabel:SetPos( ScrW() - Lerp( 3 * RealFrameTime(), -(x - ScrW()), subtitlelabel:GetWide() + 20), y )
-				else
-					subtitlelabel:SetPos( ScrW() + Lerp( 3 * RealFrameTime(), x - ScrW(), 200), y )
-					if x > ScrW() + 110 then
-						subtitlelabel:Remove()
-						subtitlelabel = nil
-					end
-				end
-			end
-		end
+		subtitlelabel:SetPos( 20, 30 + titlelabel:GetTall() )
 
 		local panel = vgui.Create( "DPanelList", CharacterMenu)
 		panel:SetSize( ScrW() - ScrH() - 50, ScrH() - 270 )
 		panel:SetPos( ScrH(), 170 )
 		panel:SetPadding( 5 )
 		panel:SetSpacing( 10 )
-		panel.Paint = function()
-			x,y = panel:GetPos()
-			if panel.SlideOut then
-				panel:SetPos( Lerp( 10 * RealFrameTime(), x, ScrW() + 500 ) , ScrH() / 2 - 250)
-				if x > ScrW() then
-					panel:Remove()
-					panel = nil
-				end
-			else
-				--panel:SetPos( Lerp( 10 * RealFrameTime(), x, ScrW() / 2 ) , ScrH() / 2 - 250)
-			end
-		end
 
 		local label
 
@@ -721,54 +677,17 @@ function SKIN:CharacterCreationStep1()
 		gobacklabel = vgui.Create( "DButton", CharacterMenu )
 		gobacklabel:SetSize( 80, 26 )
 		gobacklabel:SetText( "" )
-		gobacklabel:SetPos( ScrW() + 240, ScrH() - 85 )
-		gobacklabel.Paint = function() end
-		gobacklabel.PaintOver = function()
-			if gobacklabel then
-				draw.SimpleText( "Go Back", "Tiramisu24Font", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
-				x,y = gobacklabel:GetPos()
-				if !gobacklabel.SlideOut then
-					gobacklabel:SetPos( ScrW() - Lerp( 3 * RealFrameTime(), -(x - ScrW()), 240), y )
-				else
-					gobacklabel:SetPos( ScrW() + Lerp( 3 * RealFrameTime(), x - ScrW(), 240), y )
-					if x > ScrW() + 110 then
-						gobacklabel:Remove()
-						gobacklabel = nil
-					end
-				end
-			end
-		end
-		gobacklabel.DoClick = function()
-			RunConsoleCommand( "rp_escapecreate" )
-			RunConsoleCommand("rp_selectchar", tostring( CAKE.SelectedChar ))
-			panel.SlideOut = true
-			gobacklabel.SlideOut = true
-			createlabel.SlideOut = true
-			subtitlelabel.SlideOut = true
-			titlelabel.SlideOut = true
-
-			derma.SkinHook( "Layout", "CharacterSelection" )
+		gobacklabel:SetPos(20, ScrH() - 85 )
+		gobacklabel.Paint = function()
+			draw.SimpleText( "Go Back", "Tiramisu24Font", 40, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
 		end
 
 		createlabel = vgui.Create( "DButton", CharacterMenu )
 		createlabel:SetSize( 200, 26 )
 		createlabel:SetText( "" )
-		createlabel:SetPos(ScrW() + 160, ScrH() - 85 )
-		createlabel.Paint = function() end
-		createlabel.PaintOver = function()
-			if createlabel then
-				draw.SimpleText( "Finish Creation", "Tiramisu24Font", 70, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
-				x,y = createlabel:GetPos()
-				if !createlabel.SlideOut then
-					createlabel:SetPos( ScrW() - Lerp( 3 * RealFrameTime(), -(x - ScrW()), 160), y )
-				else
-					createlabel:SetPos( ScrW() - Lerp( 3 * RealFrameTime(), x - ScrW(), 160), y )
-					if x > ScrW() + 110 then
-						createlabel:Remove()
-						createlabel = nil
-					end
-				end
-			end
+		createlabel:SetPos(ScrW() - 260, ScrH() - 85 )
+		createlabel.Paint = function()
+			draw.SimpleText( "Finish Creation", "Tiramisu24Font", 70, 0, Color(255,255,255), TEXT_ALIGN_CENTER )
 		end
 		createlabel.DoClick = function()
 			Title1 = string.sub(titletext:GetValue(), 1, 255)
@@ -784,15 +703,24 @@ function SKIN:CharacterCreationStep1()
 				RunConsoleCommand("rp_facevariation", facev:GetValue() )
 			end
 			RunConsoleCommand( "rp_finishcreate" )
-			panel.SlideOut = true
-			gobacklabel.SlideOut = true
-			createlabel.SlideOut = true
-			subtitlelabel.SlideOut = true
-			titlelabel.SlideOut = true
-
 			derma.SkinHook( "Layout", "CharacterSelection" )
+			panel:Remove()
+			subtitlelabel:Remove()
+			titlelabel:Remove()
+			gobacklabel:Remove()
+			createlabel:Remove()
 		end
 
+		gobacklabel.DoClick = function()
+			RunConsoleCommand( "rp_escapecreate" )
+			RunConsoleCommand("rp_selectchar", tostring( CAKE.SelectedChar ))
+			derma.SkinHook( "Layout", "CharacterSelection" )
+			panel:Remove()
+			createlabel:Remove()
+			subtitlelabel:Remove()
+			titlelabel:Remove()
+			gobacklabel:Remove()
+		end
 	end
 end
 
