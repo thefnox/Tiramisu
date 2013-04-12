@@ -71,7 +71,7 @@ function CAKE.TranslateMarkupToTable( str )
 				table.insert(chatargs,#chatargs+1,{ ["font"] = s })
 			elseif string.match(s, "player=") then
 				s = string.gsub( s, "player=", "" )
-				table.insert(chatargs,#chatargs+1,player.GetByUniqueID(s))
+				table.insert(chatargs,#chatargs+1,player.GetByUniqueID(s):Name())
 			else
 				s = string.gsub( s, " ", "" )
 				s = string.gsub( s, "color=", "" )
@@ -129,7 +129,7 @@ net.Receive( "TiramisuAddToOOC", function( len )
 	text = text:gsub("</font>", "")
 	text = text:gsub("<%s*%w*%s*=%s*%w*%s*,%s*%w*%s*,%s*%w*%s*,%s*%w*%s*>", "")
 	text = text:gsub("</color>", "")
-	CAKE.Chatbox:AddLine( "OOC", "" , CAKE.TranslateMarkupToTable("<font=TiramisuOOCFontOutline><color=white>[OOC]</color><color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. "><player=" .. ply:UniqueID() .. "></color><color=white> :" .. text .. "</color></font>" ))
+	CAKE.Chatbox:AddLine( "OOC", "" , CAKE.TranslateMarkupToTable("<font=TiramisuOOCFontOutline><color=white>[OOC]<color=" .. tostring( color.r ) .. "," .. tostring( color.g ) .. "," .. tostring( color.b ) .. ">" ..  ply:Name() .. "<color=white> : " .. text .. "</font>" ))
 end)
 
 local PANEL = {}
@@ -163,19 +163,13 @@ function PANEL:GetAlpha()
 end
 
 function PANEL:labelHelper(text, color, font)
-	if self.PrintMessages then MsgC( color, text ) end
 	local label = vgui.Create( "DLabel" )
 	label.timestamp = CurTime()
 	label.color = color or Color(255,255,255,255)
 	label.color.a = 255
-	label.ApplySchemeSettings = function( self )
-		self:SetFGColor( self.color )
-	end
-	label.Paint = function()
-		surface.SetTextColor(label.color )
-		surface.SetTextPos( 0, 0 )
-		surface.SetFont(font or "ChatFont")
-		surface.DrawText( label:GetText() )
+	label.font = font
+	label.ApplySchemeSettings = function( this )
+		this:SetFGColor( this.color )
 	end
 	label:SetFont( font or "ChatFont" )
 	label:SetText( text )
@@ -185,7 +179,7 @@ function PANEL:labelHelper(text, color, font)
 end
 
 function PANEL:PlayerLabelHelper(ply, text, color, font)
-	if self.PrintMessages then MsgC( color, text ) end
+	--if self.PrintMessages then MsgC( color, text ) end
 	local label = vgui.Create( "DButton" )
 	label.timestamp = CurTime()
 	label.color = color or Color(255,255,255,255)
@@ -193,7 +187,7 @@ function PANEL:PlayerLabelHelper(ply, text, color, font)
 	label.isplayer = true
 	label.PaintOver = function() end
 	function label:Paint( w, h )
-		surface.SetTextColor(self.color )
+		surface.SetTextColor(label.color )
 		surface.SetTextPos( 0, 0 )
 		surface.SetFont(font or "ChatFont")
 		surface.DrawText( text )
@@ -218,7 +212,7 @@ function PANEL:AddText( ... )
 	for k,v in ipairs(textToAdd) do
 		if type(v) == "string" then
 			label,w,h = self:labelHelper(v, color, font)
-			if right+w > self:GetWide() then
+			if right+w > self:GetWide() - 20 then
 				local len = string.len(v)
 				local tot,chs,w = right, 0, 0
 				for i=1,len do
@@ -243,15 +237,16 @@ function PANEL:AddText( ... )
 			label:SetPos(right,self.LHeight)
 			height = math.max(height, h)
 			right = right + w
+			if self.PrintMessages then MsgC( color, v ) end
 			table.insert( self.lines, #self.lines + 1, label )
 		elseif IsValid(v) and v:IsPlayer() then
 			//label,w, h = self:PlayerLabelHelper(v, v:Name(), color)
 			label,w,h = self:labelHelper(v:Name(), color, font)
-			label.isplayer = true
 			label:SetParent(self.txtPanel)
 			label:SetPos(right,self.LHeight)
 			height = math.max(height, h)
 			right = right + w
+			if self.PrintMessages then MsgC( color, v ) end
 			table.insert( self.lines, #self.lines + 1, label )
 		elseif type(v) == "table" and v.r then
 			color = v
@@ -267,12 +262,14 @@ function PANEL:AddText( ... )
 	else
 		Msg("\n")
 	end
-	self.VBar:SetScroll(self.VBar:GetScroll()+10000)
+	if self.VBar.Scroll >= self.VBar.CanvasSize-10 then
+		self.VBar:SetScroll(self.VBar:GetScroll()+self.VBar.CanvasSize)
+	end
 end
 
 function PANEL:Think()
 	if self.IsVisible then
-		self.VBar:SetScroll(self.VBar:GetScroll()+1)
+		--self.VBar:SetScroll(self.VBar:GetScroll()+1)
 	end
 end
 
@@ -292,6 +289,7 @@ function PANEL:Hide( )
 	self.VBar.btnUp:SetVisible(false)
 	self.VBar.btnDown:SetVisible(false)
 	self.VBar.btnGrip:SetVisible(false)
+	self.VBar:SetScroll(self.VBar:GetScroll()+self.VBar.CanvasSize)
 end
 
 function PANEL:Show( )
@@ -302,7 +300,7 @@ function PANEL:Show( )
 	self.VBar.btnGrip:SetVisible(true)
 	for _, label in pairs(self.lines) do
 		label.color.a = 255
-		label:SetFGColor(unpack(label.color))
+		label:SetFGColor(label.color.r, label.color.g, label.color.b, label.color.a)
 	end
 end
 
@@ -310,13 +308,8 @@ function PANEL:Paint( )
 	if !self.IsVisible then
 		for _, label in ipairs(self.lines) do
 			if CurTime() > label.timestamp + 10 then
-				if label.isplayer then
-					label.color.a = math.max(label.color.a - FrameTime() * 200, 0)
-					label:SetFGColor(unpack(label.color))
-				else
-					label.color.a = math.max(label.color.a - FrameTime() * 100, 0)
-				end
-				label:SetFGColor(unpack(label.color))
+				label.color.a = math.max(label.color.a - FrameTime()*100, 0)
+				label:SetFGColor(label.color.r, label.color.g, label.color.b, label.color.a)
 			end
 		end
 	end

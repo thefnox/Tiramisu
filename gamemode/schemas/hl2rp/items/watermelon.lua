@@ -1,6 +1,6 @@
 ITEM.Name = "Watermelon"
 ITEM.Class = "watermelon"
-ITEM.Description = "Watch out, that black man might steal it."
+ITEM.Description = "fuck you."
 ITEM.Model = "models/props_junk/watermelon01.mdl"
 ITEM.Purchaseable = true
 ITEM.Price = 10
