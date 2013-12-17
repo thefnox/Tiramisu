@@ -242,12 +242,15 @@ function CAKE.HandleClothing( ply, item, ctype, itemid, modeloverride )
 		ply.Clothing = {}
 	end
 		
-	if IsValid( ply.Clothing[ ctype ] ) and ply.Clothing[ tcype ]:GetParent() == ply then
-		ply.Clothing[ ctype ]:Remove()
+	for _,v in pairs(ents.FindByClass("player_part")) do
+		if IsValid(v:GetParent()) and v:GetParent() == ply and v.ctype == ctype then
+			v:Remove()
+		end
 	end
 	
 	ply.Clothing[ ctype ] = ents.Create( "player_part" )
 	ply.Clothing[ ctype ]:SetDTInt( CLOTHING_TYPE, ctype )
+	ply.Clothing[ ctype ].ctype = ctype
 	ply.Clothing[ ctype ]:SetDTInt( CLOTHING_PARENTINDEX, ply:EntIndex() )
 	ply.Clothing[ ctype ]:SetDTFloat( CLOTHING_HEADRATIO, CAKE.GetCharField( ply, "headratio" ) )
 	ply.Clothing[ ctype ]:SetDTFloat( CLOTHING_BODYRATIO, CAKE.GetCharField( ply, "bodyratio" ) )
