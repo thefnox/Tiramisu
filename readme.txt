@@ -1,3 +1,5 @@
+**THIS REPO HAS BEEN ARCHIVED**
+
 Final version of Tiramisu 2, for GMod 13
 
 Installation instructions:
